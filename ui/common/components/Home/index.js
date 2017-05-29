@@ -39,7 +39,7 @@ class Home extends Component {
         return (
             <div>
                 <Button type="primary">Primary</Button>
-                <Button type="primary" onClick={this.showModal}>Open WTFs</Button>
+                <Button type="primary" onClick={this.showModal}>Open WTF</Button>
                 <DatePicker />
                 <Modal
                     title="Basic Modal"
