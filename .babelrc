@@ -1,0 +1,19 @@
+{
+    "presets": [
+        "es2015",
+        "stage-0",
+        "react"
+    ],
+    "plugins": [
+        "react-hot-loader/babel",
+        "transform-runtime",
+        "transform-async-to-generator",
+        [
+            "import",
+            {
+                "libraryName": "antd",
+                "libraryDirectory": "lib"
+            }
+        ]
+    ]
+}
