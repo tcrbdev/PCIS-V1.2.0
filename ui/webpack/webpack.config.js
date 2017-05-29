@@ -19,38 +19,42 @@ module.exports = {
         filename: 'bundle.js'
     },
     module: {
-        loaders: [{
+        rules: [{
             test: /\.jsx?$/,
             exclude: /node_modules/,
-            loaders: [
-                'babel-loader'
-            ]
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    plugins: ['transform-runtime']
+                }
+            }
         }, {
             test: /\.css$/,
-            loaders: [
+            exclude: /node_modules/,
+            use: [
                 'style-loader',
                 'css-loader'
             ]
         }, {
             test: /\.scss$/,
             exclude: /node_modules/,
-            loaders: [
-                'style-loader', {
-                    loader: 'css-loader',
-                    query: {
-                        sourceMap: true,
-                        module: true,
-                        localIdentName: '[local]___[hash:base64:5]'
-                    }
-                }, {
-                    loader: 'sass-loader',
-                    query: {
-                        outputStyle: 'expanded',
-                        sourceMap: true
-                    }
-                },
-                'postcss-loader'
-            ]
+            use: [{
+                loader: 'style-loader',
+            }, {
+                loader: 'css-loader',
+                options: {
+                    module: true,
+                    localIdentName: '[local]___[hash:base64:5]'
+                }
+            }, {
+                loader: 'sass-loader',
+                options: {
+                    outputStyle: 'expanded',
+                    sourceMap: true
+                }
+            }, {
+                loader: 'postcss-loader'
+            }]
         }]
     },
     plugins: [
