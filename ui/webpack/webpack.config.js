@@ -11,7 +11,9 @@ module.exports = {
         'webpack/hot/only-dev-server',
         './ui/common/theme/reset.css',
         './ui/common/theme/antd.min.css',
+        './ui/common/theme/smooth-scrollbar.css',
         './ui/common/theme/elements.css',
+        'whatwg-fetch',
         './ui/client/index.js'],
     output: {
         publicPath: `http://${config.webPackHost}:${config.webPackDevServPort}/static/`,

@@ -1,12 +1,34 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+import { Input, Button, DatePicker, Timeline, Modal, Spin, Table } from 'antd';
+import { Card, Icon, Image } from 'semantic-ui-react'
 import moment from 'moment'
-import { Input, Button, DatePicker, Timeline, Modal } from 'antd';
+import _ from 'lodash'
+
+import { getMasterAll } from '../../actions/master'
 
 class Home extends Component {
 
     state = {
         value: null,
-        visible: false
+        visible: false,
+        loading: true,
+        data: []
+    }
+
+    componentWillMount() {
+        this.props.getMasterAll()
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { MASTER_ALL } = nextProps
+
+        this.setState({ loading: MASTER_ALL.load })
+
+        if (!MASTER_ALL.load && _.isEmpty(this.state.data)) {
+            this.setState({ loading: false, data: MASTER_ALL.data.province })
+        }
     }
 
     handleChange(value) {
@@ -35,9 +57,51 @@ class Home extends Component {
         });
     }
 
-    render() {
+    expandedRowRender(record) {
+        console.log("Record : ", record)
         return (
-            <div>
+            <Card>
+                <Image src='http://172.17.9.94/pcisservices/StaffPicture/58385 Janewit.jpg' />
+                <Card.Content>
+                    <Card.Header>
+                        {record.RegionCode}
+                    </Card.Header>
+                    <Card.Meta>
+                        <span className='date'>
+                            {record.ProvinceNameTH}
+                        </span>
+                    </Card.Meta>
+                    <Card.Description>
+                        {record.ProvinceNameEN}
+                    </Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                    <a>
+                        <Icon name='user' />
+                        22 Friends
+                        </a>
+                </Card.Content>
+            </Card>
+        )
+    }
+
+    render() {
+        const columns = [{
+            title: 'Region Code',
+            dataIndex: 'RegionCode',
+            key: 'RegionCode',
+        }, {
+            title: 'Province Code',
+            dataIndex: 'ProvinceCode',
+            key: 'ProvinceCode',
+        }, {
+            title: 'Province Name TH',
+            dataIndex: 'ProvinceNameTH',
+            key: 'ProvinceNameTH',
+        }];
+
+        return (
+            <Spin size="large" spinning={this.state.loading}>
                 <Button type="primary">Primary</Button>
                 <Button type="primary" onClick={this.showModal}>Open WTF</Button>
                 <DatePicker />
@@ -46,7 +110,7 @@ class Home extends Component {
                     visible={this.state.visible}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}>
-                    
+
                     <Input placeholder="Basic usage" onChange={e => this.handleChange(e.target.value)} />
                     <Timeline>
                         <Timeline.Item>{this.state.value}</Timeline.Item>
@@ -54,10 +118,16 @@ class Home extends Component {
                         <Timeline.Item>Network problems being solved 2015-09-01</Timeline.Item>
                     </Timeline>
                 </Modal>
-            </div>
+                <Table dataSource={this.state.data} rowKey="SysNO" columns={columns} expandedRowRender={this.expandedRowRender} />
+            </Spin>
         )
     }
 
 }
 
-export default Home
+export default connect(
+    (state) => ({
+        MASTER_ALL: state.MASTER_ALL
+    }), {
+        getMasterAll: getMasterAll
+    })(Home)

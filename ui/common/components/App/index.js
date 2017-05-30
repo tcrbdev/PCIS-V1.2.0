@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Scrollbar from 'react-smooth-scrollbar';
 
 import styles from './index.scss'
 
@@ -9,8 +10,9 @@ class App extends Component {
             <div className={styles['app-container']}>
                 <header className={styles['header']}></header>
                 <div className={styles['body-container']}>
-                    <h1 className={styles['h1']}>Hello World</h1>
+                    <Scrollbar style={{ height: '100%' }} overscrollEffect={true}>
                     {this.props.children}
+                    </Scrollbar>
                 </div>
             </div>
         )

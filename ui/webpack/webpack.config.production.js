@@ -19,9 +19,11 @@ module.exports = {
             'redux-api-middleware',
             'react-router-redux',
             'redux-logger',
+            'bluebird',
             'moment'
         ],
-        antd: ['antd']
+        antd: ['antd'],
+        semantic: 'semantic-ui-react'
     },
     output: {
         path: path.join(__dirname, 'asset'),
@@ -57,7 +59,7 @@ module.exports = {
     plugins: [
         extractSass,
         new webpack.optimize.CommonsChunkPlugin({
-            names: ['vendors', 'antd'],
+            names: ['vendors', 'antd', 'semantic'],
             filename: '[name].min.js',
             minChunks: Infinity
         }),

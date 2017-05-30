@@ -6,9 +6,6 @@ import { App, Home } from './components'
 
 
 export default (store, history) => {
-
-    console.log(store, history, syncHistoryWithStore(history, store).getCurrentLocation(), "hod")
-
     return (
         <Router history={syncHistoryWithStore(history, store)}>
             <Route path='/' component={App}>
