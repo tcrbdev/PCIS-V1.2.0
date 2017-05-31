@@ -8,7 +8,7 @@ const rootEl = document.getElementById('app')
 
 render(
     <AppContainer>
-        <Root />
+            <Root />
     </AppContainer>,
     rootEl
 )
@@ -18,7 +18,7 @@ if (module.hot) {
         const NextRootApp = require('../common/containers/Root').default
         render(
             <AppContainer>
-                <NextRootApp />
+                    <NextRootApp />
             </AppContainer>,
             rootEl);
     });

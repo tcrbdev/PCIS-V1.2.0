@@ -1,0 +1,80 @@
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { authenticate } from '../../actions/login'
+import { withCookies, Cookies } from 'react-cookie';
+import md5 from 'md5'
+
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
+const FormItem = Form.Item;
+
+class NormalLoginForm extends React.Component {
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                this.props.authenticate({
+                    name: values.name,
+                    password: md5(values.password)
+                })
+            }
+        });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { AUTH, cookies } = nextProps
+        if (AUTH.data)
+            if (AUTH.data.success) {
+                cookies.set('token', AUTH.data.token, { path: '/' })
+                this.props.router.push("/index")
+            }
+    }
+
+    render() {
+        const { getFieldDecorator } = this.props.form;
+        return (
+            <Form onSubmit={this.handleSubmit} className="login-form">
+                <FormItem>
+                    {getFieldDecorator('name', {
+                        initialValue: 'Mariana',
+                        rules: [{ required: true, message: 'Please input your username!' }],
+                    })(
+                        <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
+                        )}
+                </FormItem>
+                <FormItem>
+                    {getFieldDecorator('password', {
+                        initialValue: 'password',
+                        rules: [{ required: true, message: 'Please input your Password!' }],
+                    })(
+                        <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
+                        )}
+                </FormItem>
+                <FormItem>
+                    {getFieldDecorator('remember', {
+                        valuePropName: 'checked',
+                        initialValue: true,
+                    })(
+                        <Checkbox>Remember me</Checkbox>
+                        )}
+                    <a className="login-form-forgot" href="">Forgot password</a>
+                    <Button type="primary" htmlType="submit" className="login-form-button">
+                        Log in
+                    </Button>
+                    Or <a href="">register now!</a>
+                </FormItem>
+            </Form >
+        );
+    }
+}
+
+const WrappedNormalLoginForm = Form.create()(NormalLoginForm);
+
+const CookiesLoginForm = withCookies(WrappedNormalLoginForm)
+
+export default connect(
+    (state) => ({
+        AUTH: state.AUTH
+    }), {
+        authenticate: authenticate
+    })(CookiesLoginForm)

@@ -3,12 +3,13 @@ import { Provider } from 'react-redux'
 import routes from '../routes'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { LocaleProvider } from 'antd';
+
 import enUS from 'antd/lib/locale-provider/en_US';
 
 import configureStore from '../store/configureStore'
 import { browserHistory } from 'react-router'
 
-export default class App extends Component {
+class App extends Component {
 
     componentWillMount() {
         injectTapEventPlugin()
@@ -26,3 +27,5 @@ export default class App extends Component {
         )
     }
 }
+
+export default App

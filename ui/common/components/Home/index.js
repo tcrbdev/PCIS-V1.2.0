@@ -7,6 +7,7 @@ import moment from 'moment'
 import _ from 'lodash'
 
 import { getMasterAll } from '../../actions/master'
+import { authenticate } from '../../actions/login'
 
 class Home extends Component {
 
@@ -58,7 +59,8 @@ class Home extends Component {
     }
 
     expandedRowRender(record) {
-        console.log("Record : ", record)
+        console.log("Record : ", record, this.props)
+
         return (
             <Card>
                 <Image src='http://172.17.9.94/pcisservices/StaffPicture/58385 Janewit.jpg' />
@@ -85,6 +87,10 @@ class Home extends Component {
         )
     }
 
+    gotoCustomerInfo() {
+        this.props.router.push("/index/customer")
+    }
+
     render() {
         const columns = [{
             title: 'Region Code',
@@ -100,10 +106,18 @@ class Home extends Component {
             key: 'ProvinceNameTH',
         }];
 
+        const signOut = () => {
+            this.props.authenticate({
+                name: 'Mariana',
+                password: '1234'
+            })
+        }
+
         return (
             <Spin size="large" spinning={this.state.loading}>
-                <Button type="primary">Primary</Button>
                 <Button type="primary" onClick={this.showModal}>Open WTF</Button>
+                <Button type="primary" onClick={signOut}>Sign Out</Button>
+                <Button type="primary" onClick={this.gotoCustomerInfo.bind(this)}>Go to Customer</Button>
                 <DatePicker />
                 <Modal
                     title="Basic Modal"
@@ -129,5 +143,6 @@ export default connect(
     (state) => ({
         MASTER_ALL: state.MASTER_ALL
     }), {
-        getMasterAll: getMasterAll
+        getMasterAll: getMasterAll,
+        authenticate: authenticate
     })(Home)

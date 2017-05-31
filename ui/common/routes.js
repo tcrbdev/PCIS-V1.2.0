@@ -2,18 +2,23 @@ import React from 'react'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
-import { App, Home } from './components'
+import { App, Home, CustomerInfo } from './components'
+import { Login } from './containers'
 
+import { CookiesProvider } from 'react-cookie'
 
 export default (store, history) => {
     return (
-        <Router history={syncHistoryWithStore(history, store)}>
-            <Route path='/' component={App}>
-                <IndexRoute component={Home} />
-            </Route>
-            <Route path='/reactweb/' component={App}>
-                <IndexRoute component={Home} />
-            </Route>
-        </Router>
+        <CookiesProvider>
+            <Router history={syncHistoryWithStore(history, store)}>
+                <Route path='/login' component={Login}>
+                </Route>
+                <Route path='/index' component={App}>
+                    <IndexRoute component={Home} />
+                    <Route path='customer' component={CustomerInfo}>
+                    </Route>
+                </Route>
+            </Router>
+        </CookiesProvider>
     )
 }
