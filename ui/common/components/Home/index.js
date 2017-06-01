@@ -6,6 +6,9 @@ import { Card, Icon, Image } from 'semantic-ui-react'
 import moment from 'moment'
 import _ from 'lodash'
 
+import { withCookies } from 'react-cookie';
+import config from '../../../config'
+
 import { getMasterAll } from '../../actions/master'
 import { authenticate } from '../../actions/login'
 
@@ -59,7 +62,7 @@ class Home extends Component {
     }
 
     expandedRowRender(record) {
-        console.log("Record : ", record, this.props)
+        console.log("Record : ", record)
 
         return (
             <Card>
@@ -88,7 +91,7 @@ class Home extends Component {
     }
 
     gotoCustomerInfo() {
-        this.props.router.push("/index/customer")
+        this.props.router.push("/customer")
     }
 
     render() {
@@ -107,7 +110,9 @@ class Home extends Component {
         }];
 
         const signOut = () => {
-            this.props.authenticate({
+            const { authenticate, cookies } = this.props
+            cookies.remove(config.tokenName, { path: config.tokenPath })
+            authenticate({
                 name: 'Mariana',
                 password: '1234'
             })
@@ -139,10 +144,12 @@ class Home extends Component {
 
 }
 
+const CookiesHomeForm = withCookies(Home)
+
 export default connect(
     (state) => ({
         MASTER_ALL: state.MASTER_ALL
     }), {
         getMasterAll: getMasterAll,
         authenticate: authenticate
-    })(Home)
+    })(CookiesHomeForm)

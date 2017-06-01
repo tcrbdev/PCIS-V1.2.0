@@ -4,5 +4,7 @@ module.exports = {
     apiHost: '172.17.9.94',
     apiPort: 8080,
     apiDevHost: 'localhost',
-    apiDevPort: 5555
+    apiDevPort: 5555,
+    tokenName: 'AUTH_TOKEN',
+    tokenPath: '/'
 }
