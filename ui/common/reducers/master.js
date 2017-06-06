@@ -1,15 +1,11 @@
-const initialState = {
-    load: false,
-    data: null
-}
+import { MASTER_ALL_SUCCESS } from '../constants/actionsType'
+
+const initialState = {}
 
 export const MASTER_ALL = (state = initialState, action) => {
     switch (action.type) {
-        case 'ALL_LOAD':
-            return { load: true, data: null }
-            break;
-        case 'ALL_SUCCESS':
-            return { load: false, data: action.payload }
+        case MASTER_ALL_SUCCESS:
+            return action.payload
             break;
         default:
             return state

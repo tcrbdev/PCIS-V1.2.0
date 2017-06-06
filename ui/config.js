@@ -1,3 +1,6 @@
+let expiredDate = new Date()
+expiredDate.setMonth((new Date).getMonth() + 3)
+
 module.exports = {
     webPackHost: '127.0.0.1',
     webPackDevServPort: 8080,
@@ -5,6 +8,7 @@ module.exports = {
     apiPort: 8080,
     apiDevHost: 'localhost',
     apiDevPort: 5555,
-    tokenName: 'AUTH_TOKEN',
-    tokenPath: '/'
+    tokenName: 'c_user',
+    tokenPath: '/',
+    tokenExpired: expiredDate
 }

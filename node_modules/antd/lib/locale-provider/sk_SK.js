@@ -24,15 +24,15 @@ var _sk_SK7 = require('../calendar/locale/sk_SK');
 
 var _sk_SK8 = _interopRequireDefault(_sk_SK7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('sk');
-exports["default"] = {
+_moment2['default'].locale('sk');
+exports['default'] = {
     locale: 'sk',
-    Pagination: _sk_SK2["default"],
-    DatePicker: _sk_SK4["default"],
-    TimePicker: _sk_SK6["default"],
-    Calendar: _sk_SK8["default"],
+    Pagination: _sk_SK2['default'],
+    DatePicker: _sk_SK4['default'],
+    TimePicker: _sk_SK6['default'],
+    Calendar: _sk_SK8['default'],
     Table: {
         filterTitle: 'Filter',
         filterConfirm: 'OK',

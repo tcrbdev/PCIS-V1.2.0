@@ -31,7 +31,7 @@ class Home extends Component {
         this.setState({ loading: MASTER_ALL.load })
 
         if (!MASTER_ALL.load && _.isEmpty(this.state.data)) {
-            this.setState({ loading: false, data: MASTER_ALL.data.province })
+            this.setState({ loading: false, data: MASTER_ALL.province })
         }
     }
 

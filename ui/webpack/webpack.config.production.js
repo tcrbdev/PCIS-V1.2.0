@@ -9,7 +9,6 @@ module.exports = {
     devtool: 'cheap-module-source-map',
     entry: {
         index: './ui/client/index_pro.js',
-        login: './ui/common/containers/Login/index.js',
         vendors: [
             'react',
             'react-dom',

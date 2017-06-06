@@ -24,15 +24,15 @@ var _en_US3 = require('../calendar/locale/en_US');
 
 var _en_US4 = _interopRequireDefault(_en_US3);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('tr');
-exports["default"] = {
+_moment2['default'].locale('tr');
+exports['default'] = {
     locale: 'tr',
-    Pagination: _en_US2["default"],
-    DatePicker: _tr_TR2["default"],
-    TimePicker: _tr_TR4["default"],
-    Calendar: _en_US4["default"],
+    Pagination: _en_US2['default'],
+    DatePicker: _tr_TR2['default'],
+    TimePicker: _tr_TR4['default'],
+    Calendar: _en_US4['default'],
     Table: {
         filterTitle: 'Menü Filtrele',
         filterConfirm: 'Tamam',

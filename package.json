@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "antd": "^2.10.2",
+    "antd": "^2.10.4",
     "autoprefixer": "^7.1.1",
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",
@@ -26,8 +26,10 @@
     "bluebird": "^3.5.0",
     "chart.js": "^2.6.0",
     "css-loader": "^0.28.2",
+    "es6-promise": "^4.1.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.1",
+    "isomorphic-fetch": "^2.2.1",
     "json-loader": "^0.5.4",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
@@ -48,8 +50,6 @@
     "redux-api-middleware": "^1.0.3",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1",
     "sass-loader": "^6.0.5",
     "semantic-ui-react": "^0.68.3",
     "smooth-scrollbar": "^7.3.0",
@@ -57,7 +57,6 @@
     "style-loader": "^0.18.1",
     "url-loader": "^0.5.8",
     "webpack": "^2.6.0",
-    "webpack-dev-server": "^2.4.5",
-    "whatwg-fetch": "^2.0.3"
+    "webpack-dev-server": "^2.4.5"
   }
 }

@@ -1,0 +1,11 @@
+.Icon-Panel {
+    display: flex;
+    align-items: center;
+            font-size: 16px;
+    &>i {
+        color: #00bcd4;
+    }
+    &>span {
+        margin-left: 5px;
+    }
+}

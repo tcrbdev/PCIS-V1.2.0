@@ -24,15 +24,15 @@ var _fi_FI7 = require('../calendar/locale/fi_FI');
 
 var _fi_FI8 = _interopRequireDefault(_fi_FI7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('fi');
-exports["default"] = {
+_moment2['default'].locale('fi');
+exports['default'] = {
     locale: 'fi',
-    Pagination: _fi_FI2["default"],
-    DatePicker: _fi_FI4["default"],
-    TimePicker: _fi_FI6["default"],
-    Calendar: _fi_FI8["default"],
+    Pagination: _fi_FI2['default'],
+    DatePicker: _fi_FI4['default'],
+    TimePicker: _fi_FI6['default'],
+    Calendar: _fi_FI8['default'],
     Table: {
         filterTitle: 'Suodatus valikko',
         filterConfirm: 'OK',

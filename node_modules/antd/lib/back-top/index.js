@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -12,6 +11,10 @@ var _extends3 = _interopRequireDefault(_extends2);
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
 
@@ -53,9 +56,9 @@ var _getRequestAnimationFrame = require('../_util/getRequestAnimationFrame');
 
 var _getRequestAnimationFrame2 = _interopRequireDefault(_getRequestAnimationFrame);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var reqAnimFrame = (0, _getRequestAnimationFrame2["default"])();
+var reqAnimFrame = (0, _getRequestAnimationFrame2['default'])();
 var easeInOutCubic = function easeInOutCubic(t, b, c, d) {
     var cc = c - b;
     t /= d / 2;
@@ -71,12 +74,12 @@ function getDefaultTarget() {
 }
 
 var BackTop = function (_React$Component) {
-    (0, _inherits3["default"])(BackTop, _React$Component);
+    (0, _inherits3['default'])(BackTop, _React$Component);
 
     function BackTop(props) {
-        (0, _classCallCheck3["default"])(this, BackTop);
+        (0, _classCallCheck3['default'])(this, BackTop);
 
-        var _this = (0, _possibleConstructorReturn3["default"])(this, _React$Component.call(this, props));
+        var _this = (0, _possibleConstructorReturn3['default'])(this, (BackTop.__proto__ || Object.getPrototypeOf(BackTop)).call(this, props));
 
         _this.getCurrentScrollTop = function () {
             var targetNode = (_this.props.target || getDefaultTarget)();
@@ -105,7 +108,7 @@ var BackTop = function (_React$Component) {
                 _this$props$target = _this$props.target,
                 target = _this$props$target === undefined ? getDefaultTarget : _this$props$target;
 
-            var scrollTop = (0, _getScroll2["default"])(target(), true);
+            var scrollTop = (0, _getScroll2['default'])(target(), true);
             _this.setState({
                 visible: scrollTop > visibilityHeight
             });
@@ -116,59 +119,64 @@ var BackTop = function (_React$Component) {
         return _this;
     }
 
-    BackTop.prototype.setScrollTop = function setScrollTop(value) {
-        var targetNode = (this.props.target || getDefaultTarget)();
-        if (targetNode === window) {
-            document.body.scrollTop = value;
-            document.documentElement.scrollTop = value;
-        } else {
-            targetNode.scrollTop = value;
+    (0, _createClass3['default'])(BackTop, [{
+        key: 'setScrollTop',
+        value: function setScrollTop(value) {
+            var targetNode = (this.props.target || getDefaultTarget)();
+            if (targetNode === window) {
+                document.body.scrollTop = value;
+                document.documentElement.scrollTop = value;
+            } else {
+                targetNode.scrollTop = value;
+            }
         }
-    };
-
-    BackTop.prototype.componentDidMount = function componentDidMount() {
-        this.handleScroll();
-        this.scrollEvent = (0, _addEventListener2["default"])((this.props.target || getDefaultTarget)(), 'scroll', this.handleScroll);
-    };
-
-    BackTop.prototype.componentWillUnmount = function componentWillUnmount() {
-        if (this.scrollEvent) {
-            this.scrollEvent.remove();
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.handleScroll();
+            this.scrollEvent = (0, _addEventListener2['default'])((this.props.target || getDefaultTarget)(), 'scroll', this.handleScroll);
         }
-    };
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            if (this.scrollEvent) {
+                this.scrollEvent.remove();
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _props = this.props,
+                _props$prefixCls = _props.prefixCls,
+                prefixCls = _props$prefixCls === undefined ? 'ant-back-top' : _props$prefixCls,
+                _props$className = _props.className,
+                className = _props$className === undefined ? '' : _props$className,
+                children = _props.children;
 
-    BackTop.prototype.render = function render() {
-        var _props = this.props,
-            _props$prefixCls = _props.prefixCls,
-            prefixCls = _props$prefixCls === undefined ? 'ant-back-top' : _props$prefixCls,
-            _props$className = _props.className,
-            className = _props$className === undefined ? '' : _props$className,
-            children = _props.children;
-
-        var classString = (0, _classnames2["default"])(prefixCls, className);
-        var defaultElement = _react2["default"].createElement(
-            'div',
-            { className: prefixCls + '-content' },
-            _react2["default"].createElement(_icon2["default"], { className: prefixCls + '-icon', type: 'to-top' })
-        );
-        // fix https://fb.me/react-unknown-prop
-        var divProps = (0, _omit2["default"])(this.props, ['prefixCls', 'className', 'children', 'visibilityHeight']);
-        var backTopBtn = this.state.visible ? _react2["default"].createElement(
-            'div',
-            (0, _extends3["default"])({}, divProps, { className: classString, onClick: this.scrollToTop }),
-            children || defaultElement
-        ) : null;
-        return _react2["default"].createElement(
-            _rcAnimate2["default"],
-            { component: '', transitionName: 'fade' },
-            backTopBtn
-        );
-    };
-
+            var classString = (0, _classnames2['default'])(prefixCls, className);
+            var defaultElement = _react2['default'].createElement(
+                'div',
+                { className: prefixCls + '-content' },
+                _react2['default'].createElement(_icon2['default'], { className: prefixCls + '-icon', type: 'to-top' })
+            );
+            // fix https://fb.me/react-unknown-prop
+            var divProps = (0, _omit2['default'])(this.props, ['prefixCls', 'className', 'children', 'visibilityHeight']);
+            var backTopBtn = this.state.visible ? _react2['default'].createElement(
+                'div',
+                (0, _extends3['default'])({}, divProps, { className: classString, onClick: this.scrollToTop }),
+                children || defaultElement
+            ) : null;
+            return _react2['default'].createElement(
+                _rcAnimate2['default'],
+                { component: '', transitionName: 'fade' },
+                backTopBtn
+            );
+        }
+    }]);
     return BackTop;
-}(_react2["default"].Component);
+}(_react2['default'].Component);
 
-exports["default"] = BackTop;
+exports['default'] = BackTop;
 
 BackTop.defaultProps = {
     visibilityHeight: 400

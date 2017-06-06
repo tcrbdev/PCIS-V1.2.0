@@ -12,7 +12,7 @@ var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
-exports["default"] = ButtonGroup;
+exports['default'] = ButtonGroup;
 
 var _react = require('react');
 
@@ -22,7 +22,7 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var __rest = undefined && undefined.__rest || function (s, e) {
     var t = {};
@@ -53,7 +53,7 @@ function ButtonGroup(props) {
         default:
             break;
     }
-    var classes = (0, _classnames2["default"])(prefixCls, (0, _defineProperty3["default"])({}, prefixCls + '-' + sizeCls, sizeCls), className);
-    return _react2["default"].createElement('div', (0, _extends3["default"])({}, others, { className: classes }));
+    var classes = (0, _classnames2['default'])(prefixCls, (0, _defineProperty3['default'])({}, prefixCls + '-' + sizeCls, sizeCls), className);
+    return _react2['default'].createElement('div', (0, _extends3['default'])({}, others, { className: classes }));
 }
 module.exports = exports['default'];

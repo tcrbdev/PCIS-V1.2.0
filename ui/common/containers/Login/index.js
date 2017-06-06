@@ -18,6 +18,7 @@ class NormalLoginForm extends React.Component {
                 this.props.authenticate({
                     name: values.name,
                     password: md5(values.password)
+                    // password: values.password
                 })
             }
         });
@@ -26,14 +27,14 @@ class NormalLoginForm extends React.Component {
     componentWillReceiveProps(nextProps) {
         const { AUTH, cookies } = nextProps
 
-        console.log()
+        console.log(config.tokenExpired)
 
         if (AUTH)
             if (AUTH.success) {
                 if (nextProps.form.getFieldValue('remember')) {
-                    cookies.set(config.tokenName, AUTH.token, { path: config.tokenPath })
+                    cookies.set(config.tokenName, AUTH.token, { path: config.tokenPath, expires: config.tokenExpired })
                 }
-                this.props.router.push("/index")
+                this.props.router.push("/home")
             }
     }
 

@@ -14,7 +14,7 @@ export default (store, history) => {
             <Router history={syncHistoryWithStore(history, store)}>
                 <Route path='/login' component={Login} />
                 <Route component={Auth} >
-                    <Route path='/index' component={App} >
+                    <Route path='/' component={App} >
                         <IndexRoute component={Home} />
                         <Route path='/customer(/:name)' component={CustomerInfo} />
                         <Route path='/home' component={Home} />

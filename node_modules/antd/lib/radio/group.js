@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = undefined;
 
 var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
@@ -12,6 +11,10 @@ var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
 
@@ -41,12 +44,12 @@ var _radio = require('./radio');
 
 var _radio2 = _interopRequireDefault(_radio);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function getCheckedValue(children) {
     var value = null;
     var matched = false;
-    _react2["default"].Children.forEach(children, function (radio) {
+    _react2['default'].Children.forEach(children, function (radio) {
         if (radio && radio.props && radio.props.checked) {
             value = radio.props.value;
             matched = true;
@@ -56,12 +59,12 @@ function getCheckedValue(children) {
 }
 
 var RadioGroup = function (_React$Component) {
-    (0, _inherits3["default"])(RadioGroup, _React$Component);
+    (0, _inherits3['default'])(RadioGroup, _React$Component);
 
     function RadioGroup(props) {
-        (0, _classCallCheck3["default"])(this, RadioGroup);
+        (0, _classCallCheck3['default'])(this, RadioGroup);
 
-        var _this = (0, _possibleConstructorReturn3["default"])(this, _React$Component.call(this, props));
+        var _this = (0, _possibleConstructorReturn3['default'])(this, (RadioGroup.__proto__ || Object.getPrototypeOf(RadioGroup)).call(this, props));
 
         _this.onRadioChange = function (ev) {
             var lastValue = _this.state.value;
@@ -92,80 +95,85 @@ var RadioGroup = function (_React$Component) {
         return _this;
     }
 
-    RadioGroup.prototype.getChildContext = function getChildContext() {
-        return {
-            radioGroup: {
-                onChange: this.onRadioChange,
-                value: this.state.value,
-                disabled: this.props.disabled
-            }
-        };
-    };
-
-    RadioGroup.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-        if ('value' in nextProps) {
-            this.setState({
-                value: nextProps.value
-            });
-        } else {
-            var checkedValue = getCheckedValue(nextProps.children);
-            if (checkedValue) {
+    (0, _createClass3['default'])(RadioGroup, [{
+        key: 'getChildContext',
+        value: function getChildContext() {
+            return {
+                radioGroup: {
+                    onChange: this.onRadioChange,
+                    value: this.state.value,
+                    disabled: this.props.disabled
+                }
+            };
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            if ('value' in nextProps) {
                 this.setState({
-                    value: checkedValue.value
+                    value: nextProps.value
+                });
+            } else {
+                var checkedValue = getCheckedValue(nextProps.children);
+                if (checkedValue) {
+                    this.setState({
+                        value: checkedValue.value
+                    });
+                }
+            }
+        }
+    }, {
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate(nextProps, nextState) {
+            return !(0, _shallowequal2['default'])(this.props, nextProps) || !(0, _shallowequal2['default'])(this.state, nextState);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var props = this.props;
+            var _props$prefixCls = props.prefixCls,
+                prefixCls = _props$prefixCls === undefined ? 'ant-radio-group' : _props$prefixCls,
+                _props$className = props.className,
+                className = _props$className === undefined ? '' : _props$className;
+
+            var classString = (0, _classnames2['default'])(prefixCls, (0, _defineProperty3['default'])({}, prefixCls + '-' + props.size, props.size), className);
+            var children = props.children;
+            // 如果存在 options, 优先使用
+            if (props.options && props.options.length > 0) {
+                children = props.options.map(function (option, index) {
+                    if (typeof option === 'string') {
+                        return _react2['default'].createElement(
+                            _radio2['default'],
+                            { key: index, disabled: _this2.props.disabled, value: option, onChange: _this2.onRadioChange, checked: _this2.state.value === option },
+                            option
+                        );
+                    } else {
+                        return _react2['default'].createElement(
+                            _radio2['default'],
+                            { key: index, disabled: option.disabled || _this2.props.disabled, value: option.value, onChange: _this2.onRadioChange, checked: _this2.state.value === option.value },
+                            option.label
+                        );
+                    }
                 });
             }
+            return _react2['default'].createElement(
+                'div',
+                { className: classString, style: props.style, onMouseEnter: props.onMouseEnter, onMouseLeave: props.onMouseLeave },
+                children
+            );
         }
-    };
-
-    RadioGroup.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
-        return !(0, _shallowequal2["default"])(this.props, nextProps) || !(0, _shallowequal2["default"])(this.state, nextState);
-    };
-
-    RadioGroup.prototype.render = function render() {
-        var _this2 = this;
-
-        var props = this.props;
-        var _props$prefixCls = props.prefixCls,
-            prefixCls = _props$prefixCls === undefined ? 'ant-radio-group' : _props$prefixCls,
-            _props$className = props.className,
-            className = _props$className === undefined ? '' : _props$className;
-
-        var classString = (0, _classnames2["default"])(prefixCls, (0, _defineProperty3["default"])({}, prefixCls + '-' + props.size, props.size), className);
-        var children = props.children;
-        // 如果存在 options, 优先使用
-        if (props.options && props.options.length > 0) {
-            children = props.options.map(function (option, index) {
-                if (typeof option === 'string') {
-                    return _react2["default"].createElement(
-                        _radio2["default"],
-                        { key: index, disabled: _this2.props.disabled, value: option, onChange: _this2.onRadioChange, checked: _this2.state.value === option },
-                        option
-                    );
-                } else {
-                    return _react2["default"].createElement(
-                        _radio2["default"],
-                        { key: index, disabled: option.disabled || _this2.props.disabled, value: option.value, onChange: _this2.onRadioChange, checked: _this2.state.value === option.value },
-                        option.label
-                    );
-                }
-            });
-        }
-        return _react2["default"].createElement(
-            'div',
-            { className: classString, style: props.style, onMouseEnter: props.onMouseEnter, onMouseLeave: props.onMouseLeave },
-            children
-        );
-    };
-
+    }]);
     return RadioGroup;
-}(_react2["default"].Component);
+}(_react2['default'].Component);
 
-exports["default"] = RadioGroup;
+exports['default'] = RadioGroup;
 
 RadioGroup.defaultProps = {
     disabled: false
 };
 RadioGroup.childContextTypes = {
-    radioGroup: _propTypes2["default"].any
+    radioGroup: _propTypes2['default'].any
 };
 module.exports = exports['default'];

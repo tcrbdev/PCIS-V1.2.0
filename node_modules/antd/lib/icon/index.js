@@ -24,7 +24,7 @@ var _omit = require('omit.js');
 
 var _omit2 = _interopRequireDefault(_omit);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var Icon = function Icon(props) {
     var type = props.type,
@@ -32,11 +32,11 @@ var Icon = function Icon(props) {
         className = _props$className === undefined ? '' : _props$className,
         spin = props.spin;
 
-    var classString = (0, _classnames2["default"])((0, _defineProperty3["default"])({
+    var classString = (0, _classnames2['default'])((0, _defineProperty3['default'])({
         anticon: true,
         'anticon-spin': !!spin || type === 'loading'
     }, 'anticon-' + type, true), className);
-    return _react2["default"].createElement('i', (0, _extends3["default"])({}, (0, _omit2["default"])(props, ['type', 'spin']), { className: classString }));
+    return _react2['default'].createElement('i', (0, _extends3['default'])({}, (0, _omit2['default'])(props, ['type', 'spin']), { className: classString }));
 };
-exports["default"] = Icon;
+exports['default'] = Icon;
 module.exports = exports['default'];

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = triggerEvent;
+exports['default'] = triggerEvent;
 function triggerEvent(el, type) {
     if ('createEvent' in document) {
         // modern browsers, IE9+

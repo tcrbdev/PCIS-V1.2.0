@@ -24,15 +24,15 @@ var _ja_JP7 = require('../calendar/locale/ja_JP');
 
 var _ja_JP8 = _interopRequireDefault(_ja_JP7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('ja');
-exports["default"] = {
+_moment2['default'].locale('ja');
+exports['default'] = {
     locale: 'ja',
-    Pagination: _ja_JP2["default"],
-    DatePicker: _ja_JP4["default"],
-    TimePicker: _ja_JP6["default"],
-    Calendar: _ja_JP8["default"],
+    Pagination: _ja_JP2['default'],
+    DatePicker: _ja_JP4['default'],
+    TimePicker: _ja_JP6['default'],
+    Calendar: _ja_JP8['default'],
     Table: {
         filterTitle: 'メニューをフィルター',
         filterConfirm: 'OK',

@@ -24,15 +24,15 @@ var _zh_TW7 = require('../calendar/locale/zh_TW');
 
 var _zh_TW8 = _interopRequireDefault(_zh_TW7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('zh-tw');
-exports["default"] = {
+_moment2['default'].locale('zh-tw');
+exports['default'] = {
     locale: 'zh-tw',
-    Pagination: _zh_TW2["default"],
-    DatePicker: _zh_TW4["default"],
-    TimePicker: _zh_TW6["default"],
-    Calendar: _zh_TW8["default"],
+    Pagination: _zh_TW2['default'],
+    DatePicker: _zh_TW4['default'],
+    TimePicker: _zh_TW6['default'],
+    Calendar: _zh_TW8['default'],
     Table: {
         filterTitle: '篩選器',
         filterConfirm: '確 定',

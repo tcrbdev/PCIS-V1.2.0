@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = undefined;
 
 var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
@@ -12,6 +11,10 @@ var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
 
@@ -35,15 +38,15 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 var _anchorHelper = require('./anchorHelper');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var AnchorLink = function (_React$Component) {
-    (0, _inherits3["default"])(AnchorLink, _React$Component);
+    (0, _inherits3['default'])(AnchorLink, _React$Component);
 
     function AnchorLink() {
-        (0, _classCallCheck3["default"])(this, AnchorLink);
+        (0, _classCallCheck3['default'])(this, AnchorLink);
 
-        var _this = (0, _possibleConstructorReturn3["default"])(this, _React$Component.apply(this, arguments));
+        var _this = (0, _possibleConstructorReturn3['default'])(this, (AnchorLink.__proto__ || Object.getPrototypeOf(AnchorLink)).apply(this, arguments));
 
         _this.renderAnchorLink = function (child) {
             // Here child is a ReactChild type
@@ -52,7 +55,7 @@ var AnchorLink = function (_React$Component) {
 
                 if (href) {
                     _this.context.anchorHelper.addLink(href);
-                    return _react2["default"].cloneElement(child, {
+                    return _react2['default'].cloneElement(child, {
                         onClick: _this.props.onClick,
                         prefixCls: _this.props.prefixCls,
                         affix: _this.props.affix,
@@ -82,63 +85,68 @@ var AnchorLink = function (_React$Component) {
         return _this;
     }
 
-    AnchorLink.prototype.setActiveAnchor = function setActiveAnchor() {
-        var _props = this.props,
-            bounds = _props.bounds,
-            offsetTop = _props.offsetTop,
-            href = _props.href,
-            affix = _props.affix;
-        var anchorHelper = this.context.anchorHelper;
+    (0, _createClass3['default'])(AnchorLink, [{
+        key: 'setActiveAnchor',
+        value: function setActiveAnchor() {
+            var _props = this.props,
+                bounds = _props.bounds,
+                offsetTop = _props.offsetTop,
+                href = _props.href,
+                affix = _props.affix;
+            var anchorHelper = this.context.anchorHelper;
 
-        var active = affix && anchorHelper && anchorHelper.getCurrentAnchor(offsetTop, bounds) === href;
-        if (active && anchorHelper) {
-            anchorHelper.setActiveAnchor(this._component);
+            var active = affix && anchorHelper && anchorHelper.getCurrentAnchor(offsetTop, bounds) === href;
+            if (active && anchorHelper) {
+                anchorHelper.setActiveAnchor(this._component);
+            }
         }
-    };
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.setActiveAnchor();
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate() {
+            this.setActiveAnchor();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _classNames;
 
-    AnchorLink.prototype.componentDidMount = function componentDidMount() {
-        this.setActiveAnchor();
-    };
+            var _props2 = this.props,
+                prefixCls = _props2.prefixCls,
+                href = _props2.href,
+                children = _props2.children,
+                title = _props2.title,
+                bounds = _props2.bounds,
+                offsetTop = _props2.offsetTop,
+                affix = _props2.affix;
+            var anchorHelper = this.context.anchorHelper;
 
-    AnchorLink.prototype.componentDidUpdate = function componentDidUpdate() {
-        this.setActiveAnchor();
-    };
-
-    AnchorLink.prototype.render = function render() {
-        var _classNames;
-
-        var _props2 = this.props,
-            prefixCls = _props2.prefixCls,
-            href = _props2.href,
-            children = _props2.children,
-            title = _props2.title,
-            bounds = _props2.bounds,
-            offsetTop = _props2.offsetTop,
-            affix = _props2.affix;
-        var anchorHelper = this.context.anchorHelper;
-
-        var active = affix && anchorHelper && anchorHelper.getCurrentAnchor(offsetTop, bounds) === href;
-        var cls = (0, _classnames2["default"])((_classNames = {}, (0, _defineProperty3["default"])(_classNames, prefixCls + '-link', true), (0, _defineProperty3["default"])(_classNames, prefixCls + '-link-active', active), _classNames));
-        return _react2["default"].createElement(
-            'div',
-            { className: cls },
-            _react2["default"].createElement(
-                'a',
-                { ref: this.refsTo, className: prefixCls + '-link-title', onClick: this.scrollTo, href: href, title: typeof title === 'string' ? title : '' },
-                title
-            ),
-            _react2["default"].Children.map(children, this.renderAnchorLink)
-        );
-    };
-
+            var active = affix && anchorHelper && anchorHelper.getCurrentAnchor(offsetTop, bounds) === href;
+            var cls = (0, _classnames2['default'])((_classNames = {}, (0, _defineProperty3['default'])(_classNames, prefixCls + '-link', true), (0, _defineProperty3['default'])(_classNames, prefixCls + '-link-active', active), _classNames));
+            return _react2['default'].createElement(
+                'div',
+                { className: cls },
+                _react2['default'].createElement(
+                    'a',
+                    { ref: this.refsTo, className: prefixCls + '-link-title', onClick: this.scrollTo, href: href, title: typeof title === 'string' ? title : '' },
+                    title
+                ),
+                _react2['default'].Children.map(children, this.renderAnchorLink)
+            );
+        }
+    }]);
     return AnchorLink;
-}(_react2["default"].Component);
+}(_react2['default'].Component);
 
-exports["default"] = AnchorLink;
+exports['default'] = AnchorLink;
 
 AnchorLink.__ANT_ANCHOR_LINK = true;
 AnchorLink.contextTypes = {
-    anchorHelper: _propTypes2["default"].any
+    anchorHelper: _propTypes2['default'].any
 };
 AnchorLink.defaultProps = {
     href: '#',

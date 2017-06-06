@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = getRequestAnimationFrame;
+exports['default'] = getRequestAnimationFrame;
 exports.cancelRequestAnimationFrame = cancelRequestAnimationFrame;
 var availablePrefixs = ['moz', 'ms', 'webkit'];
 function requestAnimationFramePolyfill() {
