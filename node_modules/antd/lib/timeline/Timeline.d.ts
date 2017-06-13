@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import React from 'react';
+import { TimeLineItemProps } from './TimelineItem';
 export interface TimelineProps {
     prefixCls?: string;
     className?: string;
@@ -8,7 +9,7 @@ export interface TimelineProps {
     style?: React.CSSProperties;
 }
 export default class Timeline extends React.Component<TimelineProps, any> {
-    static Item: React.ReactNode;
+    static Item: React.ClassicComponentClass<TimeLineItemProps>;
     static defaultProps: {
         prefixCls: string;
     };

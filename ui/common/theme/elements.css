@@ -13,3 +13,34 @@ body
 {
     height: 100%;
 }
+
+.ant-select-dropdown-menu-item-group-title
+{
+            color: rgba(0, 0, 0, 0.64);
+        font-weight: bold;
+}
+
+.ant-radio-button-wrapper-checked.woman {
+    background: #fff;
+    border-color: #ff3f97;
+    color: #ff3f97;
+    box-shadow: -1px 0 0 0 #ff3f97;
+}
+
+.ant-radio-button-wrapper-focused, .ant-radio-button-wrapper.man:hover {
+    color: #ff3f97;
+    position: relative;
+}
+
+.ant-radio-button-wrapper-checked.man {
+    background: #fff;
+    border-color: #108ee9;
+    color: #108ee9;
+    box-shadow: -1px 0 0 0 #108ee9;
+}
+
+.ant-radio-button-wrapper-focused, .ant-radio-button-wrapper.man:hover {
+    color: #108ee9;
+    position: relative;
+}
+

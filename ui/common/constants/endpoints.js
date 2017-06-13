@@ -16,5 +16,6 @@ export const MASTER_OPPORTUNITY_CUSTOMER = `${apiDevUrl}/master/opportunitycusto
 export const MASTER_PRESENT_PRODUCT_TYPE = `${apiDevUrl}/master/presentproducttype`
 export const MASTER_BUSINESS_PREFIX = `${apiDevUrl}/master/businessprefix`
 export const MASTER_APPOINTMENT_REASON = `${apiDevUrl}/master/appointmentreason`
+export const MASTER_PREFIX = `${apiDevUrl}/master/prefix`
 
 export const API_LOGIN = `${apiDevUri}/authenticate`

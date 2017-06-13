@@ -19,6 +19,6 @@ export default class RangePicker extends React.Component<any, any> {
     handleShowDateChange: (showDate: any) => void;
     handleHoverChange: (hoverValue: any) => void;
     setValue(value: any): void;
-    renderFooter: () => JSX.Element | null;
+    renderFooter: (...args: any[]) => (JSX.Element | null)[] | null;
     render(): JSX.Element;
 }

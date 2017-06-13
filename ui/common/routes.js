@@ -3,7 +3,7 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import { App, Home } from './components'
-import { Login, Auth, CustomerInfo } from './containers'
+import { Login, Auth, CustomerInfo, CustomerProfile } from './containers'
 
 import { CookiesProvider } from 'react-cookie'
 
@@ -16,7 +16,7 @@ export default (store, history) => {
                 <Route component={Auth} >
                     <Route path='/' component={App} >
                         <IndexRoute component={Home} />
-                        <Route path='/customer(/:name)' component={CustomerInfo} />
+                        <Route path='/customer(/:name)' component={CustomerProfile} />
                         <Route path='/home' component={Home} />
                     </Route>
                 </Route>

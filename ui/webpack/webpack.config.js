@@ -12,6 +12,9 @@ module.exports = {
         './ui/common/theme/reset.css',
         './ui/common/theme/antd.min.css',
         './ui/common/theme/smooth-scrollbar.css',
+        './ui/common/theme/quill.core.css',
+        './ui/common/theme/quill.bubble.css',
+        './ui/common/theme/quill.snow.css',
         './ui/common/theme/elements.css',
         './ui/client/index.js'],
     output: {

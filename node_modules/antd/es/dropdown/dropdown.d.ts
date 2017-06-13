@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import React from 'react';
+import DropdownButton from './dropdown-button';
 export interface DropDownProps {
     trigger?: ('click' | 'hover')[];
     overlay: React.ReactNode;
@@ -12,7 +13,7 @@ export interface DropDownProps {
     placement?: 'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight';
 }
 export default class Dropdown extends React.Component<DropDownProps, any> {
-    static Button: React.ReactNode;
+    static Button: typeof DropdownButton;
     static defaultProps: {
         prefixCls: string;
         mouseEnterDelay: number;

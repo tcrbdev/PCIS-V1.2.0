@@ -16,7 +16,8 @@ import {
     MASTER_OPPORTUNITY_CUSTOMER,
     MASTER_PRESENT_PRODUCT_TYPE,
     MASTER_BUSINESS_PREFIX,
-    MASTER_APPOINTMENT_REASON
+    MASTER_APPOINTMENT_REASON,
+    MASTER_PREFIX
 } from '../constants/endpoints'
 
 import { MASTER_ALL_SUCCESS } from '../constants/actionsType'
@@ -41,6 +42,7 @@ export const getMasterAll = (token) => ((dispatch) => {
         fetch(MASTER_PRESENT_PRODUCT_TYPE).then(res => (res.json())),
         fetch(MASTER_BUSINESS_PREFIX).then(res => (res.json())),
         fetch(MASTER_APPOINTMENT_REASON).then(res => (res.json())),
+        fetch(MASTER_PREFIX).then(res => (res.json())),
     ]
 
     bluebird.all(api).spread((
@@ -54,7 +56,8 @@ export const getMasterAll = (token) => ((dispatch) => {
         opportunity_customer,
         present_product_type,
         business_prefix,
-        appointment_reason) => {
+        appointment_reason,
+        prefix) => {
         dispatch({
             type: MASTER_ALL_SUCCESS, payload: {
                 province,
@@ -67,7 +70,8 @@ export const getMasterAll = (token) => ((dispatch) => {
                 opportunity_customer,
                 present_product_type,
                 business_prefix,
-                appointment_reason
+                appointment_reason,
+                prefix
             }
         })
     }).catch(err => {
