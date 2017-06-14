@@ -1,11 +1,50 @@
 import React, { Component } from 'react'
-
+import moment from 'moment'
 import ReactQuill from 'react-quill'
 import FontAwesome from 'react-fontawesome'
 import {
     Row, Col, Button, Select, Table
 } from 'antd';
+import styles from './index.scss'
 const Option = Select.Option;
+
+const CustomToolbar = () => (
+    <div id="toolbar" className={styles['mail-form-toolbar']}>
+        <select className="ql-header">
+            <option value="1"></option>
+            <option value="2"></option>
+            <option value="3"></option>
+            <option value="4"></option>
+            <option selected></option>
+        </select>
+        <button className="ql-bold"></button>
+        <button className="ql-italic"></button>
+        <select className="ql-color">
+            <option value="rgb(117, 123, 128)"></option>
+            <option value="rgb(189, 19, 152)"></option>
+            <option value="rgb(114, 50, 173)"></option>
+            <option value="rgb(0, 111, 201)"></option>
+            <option value="rgb(75, 165, 36)"></option>
+            <option value="rgb(226, 197, 1)"></option>
+            <option value="rgb(208, 92, 18)"></option>
+            <option value="rgb(255, 0, 0)"></option>
+            <option value="rgb(255, 255, 255)"></option>
+            <option selected value="rgb(0, 0, 0)"></option>
+        </select>
+        <select className="ql-background">
+            <option value="rgb(117, 123, 128)"></option>
+            <option value="rgb(189, 19, 152)"></option>
+            <option value="rgb(114, 50, 173)"></option>
+            <option value="rgb(0, 111, 201)"></option>
+            <option value="rgb(75, 165, 36)"></option>
+            <option value="rgb(226, 197, 1)"></option>
+            <option value="rgb(208, 92, 18)"></option>
+            <option value="rgb(255, 0, 0)"></option>
+            <option value="rgb(255, 255, 255)"></option>
+            <option selected value="rgb(0, 0, 0)"></option>
+        </select>
+    </div>
+)
 
 class EmailForm extends Component {
     state = {
@@ -32,36 +71,56 @@ class EmailForm extends Component {
 
     render() {
         const columns = [{
-            title: 'Name',
             dataIndex: 'name',
-            render: text => <a href="#">{text}</a>,
+            width: '90%',
+            render: (text, row, index) => {
+                console.log(row)
+                return (
+                    <div>
+                        <Row>
+                            <Col span={24}><span style={{ fontSize: '18px' }}>{row.to}</span></Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>{row.subject}</Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}><span className={styles['detail-email']}>{row.detail}</span></Col>
+                        </Row>
+                    </div>
+                )
+            },
         }, {
-            title: 'Age',
             dataIndex: 'age',
-        }, {
-            title: 'Address',
-            dataIndex: 'address',
+            width: '10%',
+            render: (text, row, index) => {
+                return (<div>{moment(row.date).format("DD/MM/YYYY")}</div>)
+            }
         }];
+
         const data = [{
             key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
+            to: 'customer1@hotmail.com',
+            subject: "จัดส่ง promotion",
+            detail: 'เรียนคุณลูกค้า ตัวอย่างโปรโมชั่นต่างๆ ที่ทางเราได้จัดส่ง',
+            date: new Date()
         }, {
             key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
+            to: 'customer2@hotmail.com',
+            subject: "ขอเอกสารเพิ่มเติม",
+            detail: 'New York No. 1 Lake Park',
+            date: new Date()
         }, {
             key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
+            to: 'customer3@hotmail.com',
+            subject: "รายละเอียดของ product ต่างๆ",
+            detail: 'New York No. 1 Lake Park',
+            date: new Date()
         }, {
             key: '4',
-            name: 'Disabled User',
-            age: 99,
-            address: 'Sidney No. 1 Lake Park',
+            to: 'customer4@hotmail.com',
+            subject: "สอบถามความคิดเห็นเพิ่มเติม",
+            detail: 'New York No. 1 Lake Park',
+            date: new Date()
         }];
 
         const rowSelection = {
@@ -75,7 +134,8 @@ class EmailForm extends Component {
 
         return (
             <div>
-                <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+                <Button type="primary" icon="plus-circle-o">New</Button>
+                <Table rowSelection={rowSelection} size='small' columns={columns} dataSource={data} />
                 <Row gutter={6}>
                     <Col span={6}>
                         <Select
@@ -103,15 +163,37 @@ class EmailForm extends Component {
                 </Row>
                 <Row>
                     <Col span={24}>
-                        <ReactQuill theme="snow" value={this.state.text} onChange={this.handleChange} />
+                        <div className={styles['mail-form']}>
+                            <div className={styles['mail-from-file']}>
+                            </div>
+                            <div>
+                                <ReactQuill
+                                    className={styles['mail-form-text']}
+                                    theme="snow"
+                                    value={this.state.text}
+                                    onChange={this.handleChange}
+                                    modules={
+                                        {
+                                            toolbar: {
+                                                container: "#toolbar"
+                                            }
+                                        }
+                                    } >
+                                    <div className="my-editing-area" />
+                                </ReactQuill>
+                            </div>
+                            <div>
+                                <CustomToolbar />
+                            </div>
+                        </div>
                     </Col>
                 </Row>
                 <Row gutter={6}>
-                    <Col span={3}>
-                        <Button type="primary"><FontAwesome name="paper-plane" style={{ marginRight: '10px' }} />Send</Button>
+                    <Col span={6}>
+                        <Button type="primary"><FontAwesome name="paper-plane" /> Send</Button>
                     </Col>
-                    <Col span={3}>
-                        <Button><FontAwesome name="paper-plane" style={{ marginRight: '10px' }} />Discard</Button>
+                    <Col span={6}>
+                        <Button type="danger" ghost>Discard</Button>
                     </Col>
                 </Row>
             </div>

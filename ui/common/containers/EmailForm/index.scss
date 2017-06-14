@@ -1,0 +1,69 @@
+.detail-email
+{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+}
+
+.mail-form
+{
+    border: 1px solid #ccc;
+}
+
+.mail-from-file
+{
+    width: 100%;
+    margin: 0 10px;
+    height: 70px;
+    max-height: 300px;
+    border-bottom: 1px solid #ccc;
+}
+
+.mail-form-text
+{
+    height: 300px;
+    & > [class*=ql-container]
+    {
+        border: none !important;
+        margin: 0 10px;
+        & > [class*=ql-editor]{
+            padding: 10px 0;
+        }
+    }
+}
+
+.mail-form-toolbar
+{
+    border-top: 1px solid #ccc !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    padding: 10px 0 !important;
+    margin:0 10px;
+    & > [class*=ql-color][class*=ql-picker] , [class*=ql-header][class*=ql-picker]
+    {
+        & > [class*=ql-picker-options]
+        {
+            bottom: 100%;
+            top: inherit;
+        }
+    }
+    & > [class*=ql-color][class*=ql-picker]
+    {
+        & > [class*=ql-picker-options]
+        {
+            width: 70px;
+            & > [class*=ql-picker-item]
+            {
+               height: 25px;
+               width: 25px;
+            }
+            & > [data-value*="rgb(255, 255, 255)"]
+            {
+                border :1px solid rgb(190, 190, 190);
+            }
+        }
+    }
+}

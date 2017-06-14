@@ -20,7 +20,9 @@ module.exports = {
             'react-router-redux',
             'redux-logger',
             'bluebird',
-            'moment'
+            'moment',
+            'react-quill',
+            'react-fontawesome'
         ],
         antd: ['antd'],
         semantic: 'semantic-ui-react'

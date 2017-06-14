@@ -9,6 +9,7 @@ module.exports = {
         'react-hot-loader/patch',
         'webpack-dev-server/client?http://localhost:8080',
         'webpack/hot/only-dev-server',
+        './ui/common/theme/_general.scss',
         './ui/common/theme/reset.css',
         './ui/common/theme/antd.min.css',
         './ui/common/theme/smooth-scrollbar.css',
