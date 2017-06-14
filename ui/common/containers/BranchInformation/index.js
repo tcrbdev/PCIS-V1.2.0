@@ -17,7 +17,8 @@ class Branch extends Component {
         visible: false,
         view_title: null,
         view_mode: null,
-        bm_handle: false
+        bm_handle: false,
+        source_type: []
     }
 
     handleBMSource = (e) => {
@@ -42,8 +43,13 @@ class Branch extends Component {
         this.setState({ visible: false });
     }
 
-    render() {
+    componentWillReceiveProps(nextProps) {
+        const { master } = nextProps
+        this.setState({ source_type: master })
+    }
 
+    render() {
+        console.log("Branch Information", this.state.source_type)
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {}
 
