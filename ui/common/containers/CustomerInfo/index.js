@@ -272,7 +272,7 @@ class CustomerInfo extends Component {
                                         }
                                     </FormItem>
                                 </Col>
-                                <Col span={4}>
+                                <Col span={5}>
                                     <FormItem label="รหัสไปรษณีย์" >
                                         {
                                             getFieldDecorator('businessZipCode', {})
@@ -282,7 +282,7 @@ class CustomerInfo extends Component {
                                         }
                                     </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={7}>
                                     <FormItem label="เบอร์โทรศัพท์กิจการ">
                                         {getFieldDecorator('businessTel', {
                                             rules: [{ required: true, message: 'กรุณาใส่เบอร์โทรศัพท์' }],
@@ -302,7 +302,7 @@ class CustomerInfo extends Component {
                                             )}
                                     </FormItem>
                                 </Col>
-                                <Col span={4}>
+                                <Col span={5}>
                                     <FormItem label="เพศ">
                                         {getFieldDecorator('customerSex')(
                                             <RadioGroup disabled={!_.isEmpty(getFieldValue("customerPrefix"))} size="large" style={{ width: '100%' }}>
@@ -312,7 +312,7 @@ class CustomerInfo extends Component {
                                         )}
                                     </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={7}>
                                     <FormItem label="เบอร์โทรศัพท์">
                                         {getFieldDecorator('customerTel', {
                                             rules: [{ required: true, message: 'กรุณาใส่เบอร์โทรศัพท์' }],
@@ -332,7 +332,7 @@ class CustomerInfo extends Component {
                                             )}
                                     </FormItem>
                                 </Col>
-                                <Col span={4}>
+                                <Col span={5}>
                                     <FormItem label="เพศ">
                                         {
                                             getFieldDecorator('contractSex')
@@ -345,7 +345,7 @@ class CustomerInfo extends Component {
                                         }
                                     </FormItem>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={7}>
                                     <FormItem label="เบอร์โทรศัพท์">
                                         {getFieldDecorator('contractTel', {
                                             rules: [{ required: true, message: 'กรุณาใส่เบอร์โทรศัพท์' }],
@@ -419,7 +419,7 @@ class CustomerInfo extends Component {
                                 </Col>
                             </Row>
                             <Row gutter={6}>
-                                <Col span={4}>
+                                {/*<Col span={4}>
                                     <FormItem label="ลูกค้า สนใจผลิตภัณฑ์" >
                                         {
                                             getFieldDecorator('customerInterestingProduct', {})
@@ -430,7 +430,7 @@ class CustomerInfo extends Component {
                                                 )
                                         }
                                     </FormItem>
-                                </Col>
+                                </Col>*/}
                                 <Col span={4}>
                                     <FormItem label="รับทราบจากช่องทาง" >
                                         {
@@ -455,7 +455,7 @@ class CustomerInfo extends Component {
                                         }
                                     </FormItem>
                                 </Col>
-                                <Col span={4}>
+                                <Col span={5}>
                                     <FormItem label="โอกาศการเป็นลูกค้า" >
                                         {
                                             getFieldDecorator('customerOpportunity', {})
@@ -467,7 +467,7 @@ class CustomerInfo extends Component {
                                         }
                                     </FormItem>
                                 </Col>
-                                <Col span={4}>
+                                <Col span={5}>
                                     <FormItem label="ผลิตภัณฑ์นำเสนอ" >
                                         {
                                             getFieldDecorator('customerPresentProductType', {})
@@ -507,7 +507,7 @@ class CustomerInfo extends Component {
                                         )}
                                     </FormItem>
                                 </Col>
-                                <Col span={6}>
+                                <Col span={8}>
                                     <FormItem label="สถานภาพการสมรส">
                                         {
                                             getFieldDecorator('customerMaritalStatus')

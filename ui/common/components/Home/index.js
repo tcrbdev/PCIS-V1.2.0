@@ -94,6 +94,10 @@ class Home extends Component {
         this.props.router.push("/customer")
     }
 
+    gotoNanoLocationMarket = () => {
+        this.props.router.push("/assignment")
+    }
+
     render() {
         const columns = [{
             title: 'Region Code',
@@ -123,6 +127,7 @@ class Home extends Component {
                 <Button type="primary" onClick={this.showModal}>Open WTF</Button>
                 <Button type="primary" onClick={signOut}>Sign Out</Button>
                 <Button type="primary" onClick={this.gotoCustomerInfo.bind(this)}>Go to Customer</Button>
+                <Button type="primary" onClick={this.gotoNanoLocationMarket}>Go to Assignment</Button>
                 <DatePicker />
                 <Modal
                     title="Basic Modal"

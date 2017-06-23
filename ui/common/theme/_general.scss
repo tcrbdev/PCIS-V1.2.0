@@ -2,34 +2,42 @@
 
 :global {
 
-    .hide { display: none !important; }
-    .show { display: flex !important; }
+    .hide { display: none; }
+    .show { display: flex; }
     .icon { cursor: pointer; }    
     .bold { font-weight: bold; }
     .inline { display: inline; }
+    .lineHeight_none { line-height: normal; }
+    .absolute { position: absolute; }
     
     /*CLEAR MARGIN & padding */
     .marg_none {margin: $set-none;}
     .marg_l_none {margin-left: $set-none;}
     .marg_r_none {margin-right: $set-none;}
+    .marg_t_none {margin-top: $set-none;}
+    .marg_b_none {margin-bottom: $set-none;}
     .marg_lr_none {margin-left: $set-none; margin-right: $set-none;}
     .marg_tb_none {margin-top: $set-none; margin-bottom: $set-none;}
 
     .pad_none {padding: $set-none;}
     .pad_l_none {padding-left: $set-none;}
-    .pad_r_none {padding-right: $set-none;}    
+    .pad_r_none {padding-right: $set-none;}  
+    .pad_t_none {padding-top: $set-none;}
+    .pad_b_none {padding-bottom: $set-none;}      
     .pad_lr_none {padding-left: $set-none; padding-right: $set-none;}
     .pad_tb_none {padding-top: $set-none; padding-bottom: $set-none;}
 
     /* FONT TRANSFORM */
     .text_upper { text-transform: uppercase; }
     .text_lower { text-transform: lowercase; }
+    .text_capital { text-transform: capitalize }
 
     /* ALIGN & FLOAT */
-    .text-left, .text-left > div[class^="ant-form"] {text-align: left;}
-    .text-right, .text-right > div[class^="ant-form"] {text-align: right;}    
-    .text-center, .text-center > div[class^="ant-form"] {text-align: center;}
-    .text-bottom, .text-bottom  > div[class^="ant-form"] {text-align: bottom;}
+    .text-left, .text-left > div[class^="ant-form"], th.text-left, td.text-left {text-align: left !important;}
+    .text-right, .text-right > div[class^="ant-form"], th.text-right, td.text-right {text-align: right !important;}    
+    .text-center, .text-center > div[class^="ant-form"], th.text-center, td.text-center {text-align: center !important;}
+    .text-bottom, .text-bottom  > div[class^="ant-form"], th.text-bottom, td.text-bottom {text-align: bottom !important;}
+
     .place-right {float: right;}
     .place-left {float: left;}
     
@@ -212,6 +220,63 @@
     .panel_blue {background-color: $blue; border-color: $blue;}
     .panel_thinLightBlue {background: $thinLightBlue; border-color: $thinLightBlue;}
     .panel_thinTeal {background: $thinTeal; border-color: $thinTeal;}
+
+    /* HACK PROGRESS*/
+    .progress_transparent .ant-progress-bg {background-color: $transparent;}
+    .progress_black .ant-progress-bg {background-color: $black;}
+    .progress_white .ant-progress-bg {background-color: $white;}
+    .progress_lime .ant-progress-bg {background-color: $lime;}
+    .progress_green .ant-progress-bg {background-color: $green;}
+    .progress_emerald .ant-progress-bg {background-color: $emerald;}
+    .progress_teal .ant-progress-bg {background-color: $teal;}
+    .progress_cyan .ant-progress-bg {background-color: $cyan;}
+    .progress_cobalt .ant-progress-bg {background-color: $cobalt;}
+    .progress_indigo .ant-progress-bg {background-color: $indigo;}
+    .progress_violet .ant-progress-bg {background-color: $violet;}
+    .progress_pink .ant-progress-bg {background-color: $pink;}
+    .progress_magenta .ant-progress-bg {background-color: $magenta;}
+    .progress_crimson .ant-progress-bg {background-color: $crimson;}
+    .progress_red .ant-progress-bg {background-color: $red;}
+    .progress_orange .ant-progress-bg {background-color: $orange;}
+    .progress_amber .ant-progress-bg {background-color: $amber;}
+    .progress_yellow .ant-progress-bg {background-color: $yellow;}
+    .progress_brown .ant-progress-bg {background-color: $brown;}
+    .progress_olive .ant-progress-bg {background-color: $olive;}
+    .progress_steel .ant-progress-bg {background-color: $steel;}
+    .progress_mauve .ant-progress-bg {background-color: $mauve;}
+    .progress_taupe .ant-progress-bg {background-color: $taupe;}
+    .progress_gray .ant-progress-bg {background-color: $gray;}
+    .progress_dark .ant-progress-bg {background-color: $dark;}
+    .progress_darker .ant-progress-bg {background-color: $darker;}
+    .progress_darkBrown .ant-progress-bg {background-color: $darkBrown;}
+    .progress_darkCrimson .ant-progress-bg {background-color: $darkCrimson;}
+    .progress_darkMagenta .ant-progress-bg {background-color: $darkMagenta;}
+    .progress_darkIndigo .ant-progress-bg {background-color: $darkIndigo;}
+    .progress_darkCyan .ant-progress-bg {background-color: $darkCyan;}
+    .progress_darkCobalt .ant-progress-bg {background-color: $darkCobalt;}
+    .progress_darkTeal .ant-progress-bg {background-color: $darkTeal;}
+    .progress_darkEmerald .ant-progress-bg {background-color: $darkEmerald;}
+    .progress_darkGreen .ant-progress-bg {background-color: $darkGreen;}
+    .progress_darkOrange .ant-progress-bg {background-color: $darkOrange;}
+    .progress_darkRed .ant-progress-bg {background-color: $darkRed;}
+    .progress_darkPink .ant-progress-bg {background-color: $darkPink;}
+    .progress_darkViolet .ant-progress-bg {background-color: $darkViolet;}
+    .progress_darkBlue .ant-progress-bg {background-color: $darkBlue;}
+    .progress_lightBlue .ant-progress-bg {background-color: $lightBlue;}
+    .progress_lightRed .ant-progress-bg {background-color: $lightRed;}
+    .progress_lightGreen .ant-progress-bg {background-color: $lightGreen;}
+    .progress_lighterBlue .ant-progress-bg {background-color: $lighterBlue;}
+    .progress_lightTeal .ant-progress-bg {background-color: $lightTeal;}
+    .progress_lightOlive .ant-progress-bg {background-color: $lightOlive;}
+    .progress_lightOrange .ant-progress-bg {background-color: $lightOrange;}
+    .progress_lightPink .ant-progress-bg {background-color: $lightPink;}
+    .progress_grayDark .ant-progress-bg {background-color: $grayDark;}
+    .progress_grayDarker .ant-progress-bg {background-color: $grayDarker;}
+    .progress_grayLight .ant-progress-bg {background-color: $grayLight;}
+    .progress_grayLighter .ant-progress-bg {background-color: $grayLighter;}
+    .progress_blue .ant-progress-bg {background-color: $blue;}
+    .progress_thinLightBlue .ant-progress-bg {background-color: $thinLightBlue;}
+    .progress_thinTeal .ant-progress-bg {background-color: $thinTeal;}
 
     /* MARGIN & PADDING */        
     .marg_top10 { margin-top: 10px; }

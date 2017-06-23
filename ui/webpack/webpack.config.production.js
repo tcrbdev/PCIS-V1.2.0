@@ -22,7 +22,8 @@ module.exports = {
             'bluebird',
             'moment',
             'react-quill',
-            'react-fontawesome'
+            'react-fontawesome',
+            'react-chartjs-2'
         ],
         antd: ['antd'],
         semantic: 'semantic-ui-react'
@@ -41,6 +42,13 @@ module.exports = {
                     plugins: ['transform-runtime']
                 }
             }
+        }, {
+            test: /\.css$/,
+            exclude: /node_modules/,
+            use: [
+                'style-loader',
+                'css-loader'
+            ]
         }, {
             test: /\.scss$/,
             exclude: /node_modules/,

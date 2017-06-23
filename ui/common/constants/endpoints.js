@@ -19,3 +19,7 @@ export const MASTER_APPOINTMENT_REASON = `${apiDevUrl}/master/appointmentreason`
 export const MASTER_PREFIX = `${apiDevUrl}/master/prefix`
 
 export const API_LOGIN = `${apiDevUri}/authenticate`
+
+const API_ROOT = 'http://localhost:5000/api/v1'
+export const LOAD_ASSIGNMENT_GRID = `${apiDevUrl}/gridAssignment`
+export const LOAD_ASSIGNMENT_CHART = `${apiDevUrl}/assignmentChart`

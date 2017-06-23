@@ -1,0 +1,29 @@
+.assign_report_component {
+    position: relative;
+    left: 0;    
+    width: 100%;    
+    overflow: hidden;
+    box-sizing: border-box;    
+    transition-property: all;
+	transition-duration: .5s;
+	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+
+.assign_report_component.open {
+    padding: 10px 0;
+    border-bottom: 1px solid gray;
+}
+
+.assign_report_component.close {
+    max-height: 0;
+}
+
+#assign_commit i {
+    transform: rotate(-180deg);
+    transition: 300ms ease all;
+}
+
+#assign_commit:hover i {
+    transform: rotate(0deg) !important;
+    transition: 300ms ease all;
+}

@@ -1,0 +1,142 @@
+{
+    "pages": [
+        {
+            "id": 1,
+            "title": "test page#1",
+            "content": "TEST PAGE CONTENT"
+        },
+        {
+            "id": 2,
+            "title": "test page#2",
+            "content": "TEST PAGE CONTENT"
+        },
+        {
+            "id": 3,
+            "title": "test page#3",
+            "content": "TEST PAGE CONTENT"
+        }
+    ],
+    "gridAssignment": [
+        {
+            "key": "1",
+            "campaign_date": "20/06/2017",
+            "campaign_type": "Doctor",
+            "campaign_interest": "2.5%",
+            "campaign_expired": "90",
+            "cust_source": "FV",
+            "cust_loaninterest": "Y",
+            "cust_potential": "H",
+            "cust_name": "ศิริลักษณ์ เรืองเจริญ",
+            "cust_province": "นครศรีธรรมราช",
+            "cust_district": "หัวไทร",
+            "cust_subdistrict": "หัวไทร",
+            "cust_location": "ตลาดหัวไทร",
+            "cust_reqloan": "2,000,000"
+        },
+        {
+            "key": "2",
+            "campaign_date": "17/06/2017",
+            "campaign_type": "Doctor",
+            "campaign_interest": "2.5%",
+            "campaign_expired": "87",
+            "cust_source": "FV",
+            "cust_loaninterest": "Y",
+            "cust_potential": "M",
+            "cust_name": "อุทัยพร สังทรัพย์",
+            "cust_province": "นครศรีธรรมราช",
+            "cust_district": "เมือง",
+            "cust_subdistrict": "ท่าเรือ",
+            "cust_location": "เฉลิมพระเกียรติ",
+            "cust_reqloan": "1,500,000"
+        }
+    ],
+    "assignmentChart": {
+        "CampaignActivity": {
+            "labels": [
+                "DOCTOR",
+                "H4C",
+                "7-11",
+                "HOTEL"
+            ],
+            "actual": [
+                30,
+                50,
+                100,
+                105
+            ]
+        },
+        "CampaignBMSucess": {
+            "labels": [
+                "DOCTOR",
+                "H4C",
+                "7-11",
+                "HOTEL"
+            ],
+            "actual": [
+                {
+                    "name": "Success",
+                    "actual": [
+                        5,
+                        1,
+                        7,
+                        2
+                    ]
+                },
+                {
+                    "name": "Assign Completed",
+                    "actual": [
+                        5,
+                        1,
+                        7,
+                        2
+                    ]
+                }
+            ]
+        },
+        "CampaignRMSucess": {
+            "labels": [
+                "Buppachat",
+                "Walaiporn",
+                "Chayapon"
+            ],
+            "actual": [
+                {
+                    "name": "App Onhand",
+                    "actual": [
+                        10,
+                        8,
+                        10
+                    ]
+                },
+                {
+                    "name": "Sucess",
+                    "actual": [
+                        5,
+                        2,
+                        7
+                    ]
+                }
+            ]
+        },
+        "CampaignAppOnhand": {
+            "labels": [
+                "30D+",
+                "60D+",
+                "90D+",
+                "120D+"
+            ],
+            "actual": [
+                {
+                    "name": "App Onhand",
+                    "actual": [
+                        10,
+                        8,
+                        10,
+                        4,
+                        5
+                    ]
+                }
+            ]
+        }
+    }
+}

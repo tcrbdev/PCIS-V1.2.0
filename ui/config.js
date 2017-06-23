@@ -6,7 +6,7 @@ module.exports = {
     webPackDevServPort: 8080,
     apiHost: '172.17.9.94',
     apiPort: 60001,
-    apiDevHost: 'localhost',
+    apiDevHost: '172.17.9.94',
     apiDevPort: 60001,
     tokenName: 'c_user',
     tokenPath: '/',

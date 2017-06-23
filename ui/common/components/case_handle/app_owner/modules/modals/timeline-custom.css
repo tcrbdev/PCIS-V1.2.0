@@ -1,0 +1,15 @@
+#timeline_info_component ul.ant-timeline { 
+    max-width: 50px; 
+    margin: 0px auto;
+}
+
+#timeline_info_component .ant-timeline-item-content { 
+    min-width: 300px; 
+    font-size: 1.1em;
+}
+
+.ant-timeline-item.ant-timeline-item-opposit { min-width: 200px; }
+#timeline_info_component .ant-timeline-item.ant-timeline-item-opposit .ant-timeline-item-content { 
+    right: 310px;
+    text-align: right;
+}

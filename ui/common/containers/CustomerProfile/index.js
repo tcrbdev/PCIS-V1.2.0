@@ -2,8 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CustomerInfo from '../CustomerInfo'
 import CustomerTab from '../CustomerTab'
+import CallScript from '../CallScript'
 import BranchInformation from '../BranchInformation'
 import { getMasterAll } from '../../actions/master'
+
+import { AppOwnerContainer } from '../case_handle'
 
 import FontAwesome from 'react-fontawesome'
 import {
@@ -27,14 +30,19 @@ class CustomerProfile extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{ padding: '10px' }}>
                 <Row gutter={12}>
-                    <Col span={12}>
-                        <BranchInformation master={this.state.source_type} />
+                    <Col span={10}>
+                        <div style={{ marginBottom: '10px' }}>
+                            <AppOwnerContainer master={this.state.source_type} />
+                        </div>
                         <CustomerInfo />
                     </Col>
-                    <Col span={12}>
+                    <Col span={10}>
                         <CustomerTab />
+                    </Col>
+                    <Col span={4}>
+                        <CallScript />
                     </Col>
                 </Row>
             </div>

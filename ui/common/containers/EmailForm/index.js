@@ -1,59 +1,89 @@
 import React, { Component } from 'react'
 import moment from 'moment'
-import ReactQuill from 'react-quill'
+import TextEditor from './texteditor'
 import FontAwesome from 'react-fontawesome'
 import {
-    Row, Col, Button, Select, Table
+    Row, Col, Button, Select, Table, Input
 } from 'antd';
 import styles from './index.scss'
+
 const Option = Select.Option;
 
-const CustomToolbar = () => (
-    <div id="toolbar" className={styles['mail-form-toolbar']}>
-        <select className="ql-header">
-            <option value="1"></option>
-            <option value="2"></option>
-            <option value="3"></option>
-            <option value="4"></option>
-            <option selected></option>
-        </select>
-        <button className="ql-bold"></button>
-        <button className="ql-italic"></button>
-        <select className="ql-color">
-            <option value="rgb(117, 123, 128)"></option>
-            <option value="rgb(189, 19, 152)"></option>
-            <option value="rgb(114, 50, 173)"></option>
-            <option value="rgb(0, 111, 201)"></option>
-            <option value="rgb(75, 165, 36)"></option>
-            <option value="rgb(226, 197, 1)"></option>
-            <option value="rgb(208, 92, 18)"></option>
-            <option value="rgb(255, 0, 0)"></option>
-            <option value="rgb(255, 255, 255)"></option>
-            <option selected value="rgb(0, 0, 0)"></option>
-        </select>
-        <select className="ql-background">
-            <option value="rgb(117, 123, 128)"></option>
-            <option value="rgb(189, 19, 152)"></option>
-            <option value="rgb(114, 50, 173)"></option>
-            <option value="rgb(0, 111, 201)"></option>
-            <option value="rgb(75, 165, 36)"></option>
-            <option value="rgb(226, 197, 1)"></option>
-            <option value="rgb(208, 92, 18)"></option>
-            <option value="rgb(255, 0, 0)"></option>
-            <option value="rgb(255, 255, 255)"></option>
-            <option selected value="rgb(0, 0, 0)"></option>
-        </select>
-    </div>
-)
+const columns = [{
+    dataIndex: 'name',
+    width: '90%',
+    render: (text, row, index) => {
+        console.log(row)
+        return (
+            <div>
+                <Row>
+                    <Col span={24}><span style={{ fontSize: '18px' }}>{row.to}</span></Col>
+                </Row>
+                <Row>
+                    <Col span={24}>{row.subject}</Col>
+                </Row>
+                <Row>
+                    <Col span={24}><span className={styles['detail-email']}>{row.detail}</span></Col>
+                </Row>
+            </div>
+        )
+    },
+}, {
+    dataIndex: 'age',
+    width: '10%',
+    render: (text, row, index) => {
+        return (<div>{moment(row.date).format("DD/MM/YYYY")}</div>)
+    }
+}];
+
+const data = [{
+    key: '1',
+    to: 'customer1@hotmail.com',
+    subject: "จัดส่ง promotion",
+    detail: 'เรียนคุณลูกค้า ตัวอย่างโปรโมชั่นต่างๆ ที่ทางเราได้จัดส่ง',
+    date: new Date()
+}, {
+    key: '2',
+    to: 'customer2@hotmail.com',
+    subject: "ขอเอกสารเพิ่มเติม",
+    detail: 'New York No. 1 Lake Park',
+    date: new Date()
+}, {
+    key: '3',
+    to: 'customer3@hotmail.com',
+    subject: "รายละเอียดของ product ต่างๆ",
+    detail: 'New York No. 2 Lake Park',
+    date: new Date()
+}, {
+    key: '4',
+    to: 'customer4@hotmail.com',
+    subject: "สอบถามความคิดเห็นเพิ่มเติม",
+    detail: 'New York No. 3 Lake Park',
+    date: new Date()
+}];
+
+const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+    },
+    getCheckboxProps: record => ({
+        disabled: record.name === 'Disabled User',    // Column configuration not to be checked
+    })
+};
 
 class EmailForm extends Component {
     state = {
         text: '',
         options: [],
+        showEmailForm: false,
+        selectRecord: {
+            to: null,
+            subject: null,
+            detail: null
+        }
     }
 
     handleChange = (text) => {
-        this.setState({ text })
+        this.setState({ selectRecord: { detail: text } })
     }
 
     handleChanges = (value) => {
@@ -69,135 +99,70 @@ class EmailForm extends Component {
         this.setState({ options });
     }
 
+    onRowClick = (record, index) => {
+        this.setShowEmailForm(record)
+    }
+
+    setShowEmailForm = (selectRecord) => {
+        this.setState({ showEmailForm: !this.state.showEmailForm, selectRecord })
+    }
+
+    renderForm = () => {
+        console.log("render", this.state.selectRecord)
+        if (!this.state.showEmailForm) {
+            console.log(this)
+            return (
+                <div>
+                    <Button type="primary" icon="plus-circle-o" style={{ marginBottom: '10px' }} onClick={this.setShowEmailForm}>New</Button>
+                    <Table rowSelection={rowSelection} onRowClick={this.onRowClick} size='small' columns={columns} dataSource={data} />
+                </div>
+            )
+        }
+        else {
+            return (
+                <div>
+                    <Row gutter={6} className={styles['mail-form-row']}>
+                        <Col span={1}>
+                            To
+                    </Col>
+                        <Col span={23}>
+                            <Input value={this.state.selectRecord.to} />
+                        </Col>
+                    </Row>
+                    <Row gutter={6} className={styles['mail-form-row']}>
+                        <Col span={1}>
+                            Cc
+                    </Col>
+                        <Col span={23}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row gutter={6} style={{ padding: '10px' }}>
+                        <Col span={24}>
+                            <Input placeholder="Add a subject" value={this.state.selectRecord.subject} />
+                        </Col>
+                    </Row>
+                    <Row style={{ marginBottom: '10px' }}>
+                        <Col span={24}>
+                            <TextEditor
+                                detail={this.state.selectRecord.detail}
+                                handleChange={this.handleChange}
+                            />
+                        </Col>
+                    </Row>
+                    <Row gutter={6}>
+                        <Col span={8}>
+                            <Button type="primary"><FontAwesome name="paper-plane" /> Send</Button>
+                            <Button type="danger" ghost onClick={this.setShowEmailForm} style={{ marginLeft: '8px' }}>Discard</Button>
+                        </Col>
+                    </Row>
+                </div>
+            )
+        }
+    }
+
     render() {
-        const columns = [{
-            dataIndex: 'name',
-            width: '90%',
-            render: (text, row, index) => {
-                console.log(row)
-                return (
-                    <div>
-                        <Row>
-                            <Col span={24}><span style={{ fontSize: '18px' }}>{row.to}</span></Col>
-                        </Row>
-                        <Row>
-                            <Col span={24}>{row.subject}</Col>
-                        </Row>
-                        <Row>
-                            <Col span={24}><span className={styles['detail-email']}>{row.detail}</span></Col>
-                        </Row>
-                    </div>
-                )
-            },
-        }, {
-            dataIndex: 'age',
-            width: '10%',
-            render: (text, row, index) => {
-                return (<div>{moment(row.date).format("DD/MM/YYYY")}</div>)
-            }
-        }];
-
-        const data = [{
-            key: '1',
-            to: 'customer1@hotmail.com',
-            subject: "จัดส่ง promotion",
-            detail: 'เรียนคุณลูกค้า ตัวอย่างโปรโมชั่นต่างๆ ที่ทางเราได้จัดส่ง',
-            date: new Date()
-        }, {
-            key: '2',
-            to: 'customer2@hotmail.com',
-            subject: "ขอเอกสารเพิ่มเติม",
-            detail: 'New York No. 1 Lake Park',
-            date: new Date()
-        }, {
-            key: '3',
-            to: 'customer3@hotmail.com',
-            subject: "รายละเอียดของ product ต่างๆ",
-            detail: 'New York No. 1 Lake Park',
-            date: new Date()
-        }, {
-            key: '4',
-            to: 'customer4@hotmail.com',
-            subject: "สอบถามความคิดเห็นเพิ่มเติม",
-            detail: 'New York No. 1 Lake Park',
-            date: new Date()
-        }];
-
-        const rowSelection = {
-            onChange: (selectedRowKeys, selectedRows) => {
-                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-            getCheckboxProps: record => ({
-                disabled: record.name === 'Disabled User',    // Column configuration not to be checked
-            }),
-        };
-
-        return (
-            <div>
-                <Button type="primary" icon="plus-circle-o">New</Button>
-                <Table rowSelection={rowSelection} size='small' columns={columns} dataSource={data} />
-                <Row gutter={6}>
-                    <Col span={6}>
-                        <Select
-                            mode="multiple"
-                            style={{ width: 200 }}
-                            onChange={this.handleChanges}
-                            filterOption={false}
-                            placeholder="Enter the account name">
-                            {this.state.options}
-                        </Select>
-                    </Col>
-                </Row>
-                <Row gutter={6}>
-                    <Col span={6}>
-                        <Select
-                            mode="multiple"
-                            style={{ width: 200 }}
-                            onChange={this.handleChanges}
-                            filterOption={false}
-                            placeholder="Enter the account name"
-                        >
-                            {this.state.options}
-                        </Select>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={24}>
-                        <div className={styles['mail-form']}>
-                            <div className={styles['mail-from-file']}>
-                            </div>
-                            <div>
-                                <ReactQuill
-                                    className={styles['mail-form-text']}
-                                    theme="snow"
-                                    value={this.state.text}
-                                    onChange={this.handleChange}
-                                    modules={
-                                        {
-                                            toolbar: {
-                                                container: "#toolbar"
-                                            }
-                                        }
-                                    } >
-                                    <div className="my-editing-area" />
-                                </ReactQuill>
-                            </div>
-                            <div>
-                                <CustomToolbar />
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
-                <Row gutter={6}>
-                    <Col span={6}>
-                        <Button type="primary"><FontAwesome name="paper-plane" /> Send</Button>
-                    </Col>
-                    <Col span={6}>
-                        <Button type="danger" ghost>Discard</Button>
-                    </Col>
-                </Row>
-            </div>
-        )
+        return this.renderForm()
     }
 }
 
