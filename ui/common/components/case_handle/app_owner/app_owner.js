@@ -35,7 +35,7 @@ class AppOwnerForm extends Component {
                 <Row>
                     <Col>
                         <Collapse bordered={true} defaultActiveKey={['1']}>
-                            <Panel className="panel_darkCyan" header={<h4 className="text_upper fg_white">Information</h4>} key="1">
+                            <Panel className="panel_darkCyan" header={<div className="text_upper fg_white">Information</div>} key="1">
                                 <AppOwnerFormItem
                                     visible={visible}
                                     multiField={multiField}

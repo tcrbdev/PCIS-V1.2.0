@@ -47,7 +47,7 @@ class FilesManagement extends Component {
             name: 'file',
             multiple: true,
             showUploadList: true,
-            action: '//jsonplaceholder.typicode.com/posts/',
+            action: 'http://TC001PCIS1P:60001/upload',
             onChange: (info) => {
 
                 const status = info.file.status;
