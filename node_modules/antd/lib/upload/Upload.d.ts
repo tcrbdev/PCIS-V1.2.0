@@ -36,7 +36,12 @@ export default class Upload extends React.Component<UploadProps, any> {
     };
     constructor(props: any);
     componentWillUnmount(): void;
-    getLocale(): any;
+    getLocale(): {
+        uploading?: string | undefined;
+        removeFile?: string | undefined;
+        uploadError?: string | undefined;
+        previewFile?: string | undefined;
+    };
     onStart: (file: any) => void;
     autoUpdateProgress(_: any, file: any): void;
     onSuccess: (response: any, file: any) => void;

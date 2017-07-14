@@ -1,19 +1,12 @@
 /// <reference types="react" />
 import React from 'react';
-export interface DropdownButtonProps {
-    prefixCls?: string;
-    className?: string;
+import { ButtonGroupProps } from '../button/button-group';
+import { DropDownProps } from './dropdown';
+export interface DropdownButtonProps extends ButtonGroupProps, DropDownProps {
     type?: 'primary' | 'ghost' | 'dashed';
-    onClick?: React.MouseEventHandler<any>;
-    trigger?: ('click' | 'hover')[];
-    align?: any;
-    overlay: React.ReactNode;
-    visible?: boolean;
     disabled?: boolean;
-    onVisibleChange?: (visible: boolean) => void;
-    style?: React.CSSProperties;
+    onClick?: React.MouseEventHandler<any>;
     children?: any;
-    placement?: 'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight';
 }
 export default class DropdownButton extends React.Component<DropdownButtonProps, any> {
     static defaultProps: {

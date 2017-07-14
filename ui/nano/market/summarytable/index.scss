@@ -1,0 +1,75 @@
+.header-select
+{
+    text-align: right !important;
+    padding: 5px 10px !important;
+}
+.header-hide
+{
+    padding: 0 !important;
+}
+
+.div-center
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.align-right
+{
+    text-align: right !important;
+}
+
+.align-left
+{
+    text-align: left !important;
+}
+
+.sm-paddings
+{
+    padding: 3px !important;
+}
+
+.vertical-bottom
+{
+    vertical-align: bottom !important;
+}
+
+.vertical-middle
+{
+    vertical-align: middle;
+}
+
+.summary-table
+{
+    margin-bottom: 10px;
+
+    &  table tbody tr
+    {
+        cursor: pointer;
+    }
+    
+    & table thead tr > [class*=header-hide]
+    {
+        border-top: 0px !important;
+        border-bottom: 0px !important;
+    }
+
+    & table tbody tr:nth-child(odd)
+    {
+        background: #FFF;
+    }
+
+    & table tbody tr:nth-child(even)
+    {
+        background: #f7f7f7;
+    }
+}
+
+.red-font
+{
+    color: #F44336;
+}
+
+/*.ant-table-bordered .ant-table-tbody>tr>td, .ant-table-bordered .ant-table-thead>tr>th*/

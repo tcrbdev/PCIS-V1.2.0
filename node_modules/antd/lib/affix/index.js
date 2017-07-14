@@ -4,13 +4,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = require("babel-runtime/helpers/extends");
-
-var _extends3 = _interopRequireDefault(_extends2);
-
 var _defineProperty2 = require("babel-runtime/helpers/defineProperty");
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _extends2 = require("babel-runtime/helpers/extends");
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
 
@@ -215,7 +215,7 @@ var Affix = function (_React$Component) {
                 var affixStyle = this.state.affixStyle;
 
                 if (e.type === 'resize' && affixStyle && affixStyle.position === 'fixed' && affixNode.offsetWidth) {
-                    this.setAffixStyle(e, Object.assign({}, affixStyle, { width: affixNode.offsetWidth }));
+                    this.setAffixStyle(e, (0, _extends3["default"])({}, affixStyle, { width: affixNode.offsetWidth }));
                 } else {
                     this.setAffixStyle(e, null);
                 }
@@ -277,7 +277,7 @@ var Affix = function (_React$Component) {
         value: function render() {
             var className = (0, _classnames2["default"])((0, _defineProperty3["default"])({}, this.props.prefixCls || 'ant-affix', this.state.affixStyle));
             var props = (0, _omit2["default"])(this.props, ['prefixCls', 'offsetTop', 'offsetBottom', 'target', 'onChange']);
-            var placeholderStyle = Object.assign({}, this.state.placeholderStyle, this.props.style);
+            var placeholderStyle = (0, _extends3["default"])({}, this.state.placeholderStyle, this.props.style);
             return _react2["default"].createElement(
                 "div",
                 (0, _extends3["default"])({}, props, { style: placeholderStyle }),

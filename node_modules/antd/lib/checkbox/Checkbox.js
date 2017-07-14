@@ -4,13 +4,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
 var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -89,7 +89,7 @@ var Checkbox = function (_React$Component) {
 
             var checkboxGroup = context.checkboxGroup;
 
-            var checkboxProps = Object.assign({}, restProps);
+            var checkboxProps = (0, _extends3['default'])({}, restProps);
             if (checkboxGroup) {
                 checkboxProps.onChange = function () {
                     return checkboxGroup.toggleOption({ label: children, value: props.value });

@@ -1,0 +1,58 @@
+.panel-header
+{
+    display: flex;
+    align-items : center;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.62);
+    & i
+    {
+        font-size:20px;
+        color: #00BCD4;
+        margin-right: 10px;
+    }
+}
+
+.check-box
+{
+    display: flex;
+    align-items: center;
+}
+
+.row-label
+{
+    margin-bottom: 10px;
+
+    & > [class*=ant-form-item-label]
+    {
+        text-align: left;
+    }
+}
+
+[class*=ant-select-tree]
+{
+    max-height: 250px;
+
+    & li:first-child > span:first-child
+    {
+        // display: none;
+    }
+
+    & > li:first-child > ul
+    {
+        // padding: 0;
+    }
+}
+
+[class*=ant-select-selection--multiple]
+{
+    max-height: 55px;
+    overflow: auto;
+}
+
+.no-margin-right
+{
+    & > label
+    {
+        margin-right: 0px !important;
+    }
+}

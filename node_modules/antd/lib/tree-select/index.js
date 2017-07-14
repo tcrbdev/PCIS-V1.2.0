@@ -82,7 +82,7 @@ var TreeSelect = function (_React$Component) {
             if (checkable) {
                 checkable = _react2['default'].createElement('span', { className: prefixCls + '-tree-checkbox-inner' });
             }
-            return _react2['default'].createElement(_rcTreeSelect2['default'], (0, _extends3['default'])({}, restProps, { prefixCls: prefixCls, className: cls, dropdownStyle: Object.assign({ maxHeight: '100vh', overflow: 'auto' }, dropdownStyle), treeCheckable: checkable, notFoundContent: notFoundContent }));
+            return _react2['default'].createElement(_rcTreeSelect2['default'], (0, _extends3['default'])({}, restProps, { prefixCls: prefixCls, className: cls, dropdownStyle: (0, _extends3['default'])({ maxHeight: '100vh', overflow: 'auto' }, dropdownStyle), treeCheckable: checkable, notFoundContent: notFoundContent }));
         }
     }]);
     return TreeSelect;

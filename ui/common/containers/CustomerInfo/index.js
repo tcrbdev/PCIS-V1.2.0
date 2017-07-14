@@ -549,7 +549,7 @@ class CustomerInfo extends Component {
                             </Row>
                         </Panel>
                     </Collapse>
-                    <Button type="primary" htmlType="submit">Save</Button>
+                    <Button type="primary" icon="save" size="large" htmlType="submit">Save</Button>
                 </Form>
             </Spin>
         )

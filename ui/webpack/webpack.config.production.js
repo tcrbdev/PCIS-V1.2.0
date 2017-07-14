@@ -64,6 +64,15 @@ module.exports = {
                     'sass-loader',
                     'postcss-loader']
             })
+        }, {
+            test: /\.(png|jpg|)$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'url-loader',
+                options: {
+                    limit: 200000
+                }
+            }]
         }]
     },
     plugins: [

@@ -1,3 +1,4 @@
+import _extends from 'babel-runtime/helpers/extends';
 import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
 import _createClass from 'babel-runtime/helpers/createClass';
 import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
@@ -27,7 +28,7 @@ var InputElement = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            return React.cloneElement(this.props.children, Object.assign({}, this.props, { ref: function ref(ele) {
+            return React.cloneElement(this.props.children, _extends({}, this.props, { ref: function ref(ele) {
                     return _this2.ele = ele;
                 } }), null);
         }

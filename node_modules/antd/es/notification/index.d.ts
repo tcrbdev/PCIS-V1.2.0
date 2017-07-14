@@ -20,15 +20,16 @@ export interface ConfigProps {
     placement?: notificationPlacement;
     getContainer?: () => HTMLElement;
 }
-declare const api: {
-    success?(args: ArgsProps): void;
-    error?(args: ArgsProps): void;
-    info?(args: ArgsProps): void;
-    warn?(args: ArgsProps): void;
-    warning?(args: ArgsProps): void;
+export interface NotificationApi {
+    success(args: ArgsProps): void;
+    error(args: ArgsProps): void;
+    info(args: ArgsProps): void;
+    warn(args: ArgsProps): void;
+    warning(args: ArgsProps): void;
     open(args: ArgsProps): void;
     close(key: string): void;
     config(options: ConfigProps): void;
     destroy(): void;
-};
-export default api;
+}
+declare const _default: NotificationApi;
+export default _default;

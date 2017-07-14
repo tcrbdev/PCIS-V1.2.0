@@ -6,14 +6,16 @@
   "scripts": {
     "start": "npm-run-all --parallel json-server web-dev",
     "json-server": "json-server --watch api/db.json --routes api/routes.json --port 5000",
+    "web-nano": "webpack-dev-server --config ui/webpack/webpack.config.nano.js",
     "web-dev": "webpack-dev-server --config ui/webpack/webpack.config.js",
     "build": "webpack --config ui/webpack/webpack.config.production.js",
+    "build-nano": "webpack --config ui/webpack/webpack.config.nano.production.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "antd": "^2.11.0",
+    "antd": "^2.12.0",
     "autoprefixer": "^7.1.1",
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",
@@ -26,6 +28,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.23.0",
     "bluebird": "^3.5.0",
+    "casual": "^1.5.14",
     "chart.js": "^2.6.0",
     "css-loader": "^0.28.2",
     "es6-promise": "^4.1.0",
@@ -45,6 +48,7 @@
     "react-cookie": "^2.0.7",
     "react-dom": "^15.5.4",
     "react-fontawesome": "^1.6.1",
+    "react-google-maps": "^6.3.0",
     "react-highcharts": "^12.0.0",
     "react-hot-loader": "^3.0.0-beta.7",
     "react-quill": "^1.0.0-rc.2",

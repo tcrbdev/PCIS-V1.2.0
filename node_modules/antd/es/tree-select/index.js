@@ -45,7 +45,7 @@ var TreeSelect = function (_React$Component) {
             if (checkable) {
                 checkable = React.createElement('span', { className: prefixCls + '-tree-checkbox-inner' });
             }
-            return React.createElement(RcTreeSelect, _extends({}, restProps, { prefixCls: prefixCls, className: cls, dropdownStyle: Object.assign({ maxHeight: '100vh', overflow: 'auto' }, dropdownStyle), treeCheckable: checkable, notFoundContent: notFoundContent }));
+            return React.createElement(RcTreeSelect, _extends({}, restProps, { prefixCls: prefixCls, className: cls, dropdownStyle: _extends({ maxHeight: '100vh', overflow: 'auto' }, dropdownStyle), treeCheckable: checkable, notFoundContent: notFoundContent }));
         }
     }]);
 

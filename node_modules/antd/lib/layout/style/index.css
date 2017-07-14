@@ -39,7 +39,6 @@
   -webkit-box-flex: 1;
       -ms-flex: auto;
           flex: auto;
-  overflow: auto;
 }
 .ant-layout-sider {
   transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);

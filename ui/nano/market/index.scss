@@ -1,0 +1,318 @@
+.map-container
+{
+    height: 100%;
+    width: 100%;
+    transition: .4s all;
+    position: relative;
+}
+
+.container
+{    
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.loading-container
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.62);
+}
+
+.float-button
+{
+    position: absolute;
+    right: 10px;
+    top:10px;
+    & > button
+    {
+        font-size: 30px !important;
+        width: 45px !important;
+        height: 45px !important;
+        font-weight: bold;
+        transition: .4s all;
+        background-color: rgba(113, 113, 113, 0.4);
+        border: none;
+    }
+
+    & > button:hover{
+        background-color:#FFF;
+    }
+
+    & > button.rotate
+    {
+        transform: rotate(-180deg)
+    }
+}
+.show-sm
+{
+    background: #FFF;
+}
+
+.coll-show
+{
+    max-height: 100%;
+}
+
+.coll-hide
+{
+    max-height: 378px;
+}
+
+.side-menu
+{
+    background-color: #FFF;
+    flex: 0 0 40% !important;
+    width: 40% !important;
+    height: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+
+    & > [class*=ant-layout-sider-children]
+    {
+        height: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        & > [class*=ant-collapse]
+        {
+            position: absolute;
+            width: 100%;
+            z-index: 2;
+            border-radius: 0px !important;
+            box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);
+        }
+    }
+
+    & > [class*=ant-layout-sider-children] > [class*=info-container]
+    {
+        margin-top: 40px;
+        margin-bottom: 10px;
+        flex:1;
+        display: flex;
+        flex-direction: column;
+
+        & > div[class*=show-sm]
+        {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            transition: .5s all;
+
+            & > div:first-child
+            {
+                margin-bottom: 10px;
+            }
+
+            & > div:nth-child(2)
+            {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                width:100%;
+                height: 100%;
+
+                & > div:first-child
+                {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+
+                    & > div[class*=ant-collapse-content-active]
+                    {
+                        display: flex;
+                        flex-direction: column;
+                        flex: 1;
+                        width:100%;
+                        height: 100%;
+                        max-height: 600px;
+                        
+                        & > div:first-child
+                        {
+                            display: flex;
+                            flex-direction: column;
+                            flex: 1;
+                            height: 100%;
+                            & > section
+                            {
+                                flex: 1;
+                                width: 100%;
+                                height: 100%;
+
+                                & [class*=rotate-total]
+                                {
+                                    margin-bottom: 10px;
+                                    display: flex;
+                                    height: 100%;
+
+                                    & > div:first-child
+                                    {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        width: 20px;
+                                        background-color: #656565;
+                                        color: #FFF;
+
+                                        & > span
+                                        {
+                                            font-size: 16px;
+                                            letter-spacing: 3px;
+                                            transform: rotate(-90deg)
+                                        }
+                                    }
+
+                                    & > div:nth-child(2)
+                                    {
+                                        flex: 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        & > :nth-child(2)
+        {
+            flex: 1;
+            height: 100%;
+        }
+    }
+}
+
+.side-menu-close
+{
+    background-color: #FFF;
+    flex: 0 0 0% !important;
+    width: 0px !important;
+}
+
+.panel-header
+{
+    display: flex;
+    align-items : center;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.62);
+    & i
+    {
+        font-size:20px;
+        color: #00BCD4;
+        margin-right: 10px;
+    }
+}
+
+.check-box
+{
+    display: flex;
+    align-items: center;
+}
+
+.header-hide
+{
+    padding: 0 !important;
+}
+
+.div-center
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.align-right
+{
+    text-align: right !important;
+}
+
+.align-left
+{
+    text-align: left !important;
+}
+
+.sm-padding
+{
+    padding: 3px !important;
+}
+
+.vertical-bottom
+{
+    vertical-align: bottom !important;
+}
+
+.vertical-middle
+{
+    vertical-align: middle;
+}
+
+.summary-table-not-odd
+{
+    &  table tbody tr
+    {
+        cursor: pointer;
+    }
+    
+    & table thead tr > [class*=header-hide]
+    {
+        border-top: 0px !important;
+        border-bottom: 0px !important;
+    }
+}
+
+.summary-table-hilight
+{
+    &  table tbody tr
+    {
+        cursor: pointer;
+    }
+
+    &  table tbody tr:nth-child(2) , table tbody tr:nth-child(3)
+    {
+         background: #f7f7f7 !important;
+    }
+    
+    & table thead tr > [class*=header-hide]
+    {
+        border-top: 0px !important;
+        border-bottom: 0px !important;
+    }
+}
+
+.column-hilight
+{
+    background: #f7f7f7 !important;
+}
+
+
+
+
+
+
+
+
+
+.no-padding-lef-right
+{
+    & > div > div:nth-child(2)
+    {
+        padding: 0 0;
+        & > div
+        {
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+    }
+}

@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -50,7 +54,7 @@ var InputElement = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            return _react2['default'].cloneElement(this.props.children, Object.assign({}, this.props, { ref: function ref(ele) {
+            return _react2['default'].cloneElement(this.props.children, (0, _extends3['default'])({}, this.props, { ref: function ref(ele) {
                     return _this2.ele = ele;
                 } }), null);
         }

@@ -8,31 +8,31 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _en_US = require('rc-pagination/lib/locale/en_US');
-
-var _en_US2 = _interopRequireDefault(_en_US);
-
-var _vi_VN = require('../date-picker/locale/vi_VN');
+var _vi_VN = require('rc-pagination/lib/locale/vi_VN');
 
 var _vi_VN2 = _interopRequireDefault(_vi_VN);
 
-var _vi_VN3 = require('../time-picker/locale/vi_VN');
+var _vi_VN3 = require('../date-picker/locale/vi_VN');
 
 var _vi_VN4 = _interopRequireDefault(_vi_VN3);
 
-var _vi_VN5 = require('../calendar/locale/vi_VN');
+var _vi_VN5 = require('../time-picker/locale/vi_VN');
 
 var _vi_VN6 = _interopRequireDefault(_vi_VN5);
+
+var _vi_VN7 = require('../calendar/locale/vi_VN');
+
+var _vi_VN8 = _interopRequireDefault(_vi_VN7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 _moment2['default'].locale('vi');
 exports['default'] = {
     locale: 'vi',
-    Pagination: _en_US2['default'],
-    DatePicker: _vi_VN2['default'],
-    TimePicker: _vi_VN4['default'],
-    Calendar: _vi_VN6['default'],
+    Pagination: _vi_VN2['default'],
+    DatePicker: _vi_VN4['default'],
+    TimePicker: _vi_VN6['default'],
+    Calendar: _vi_VN8['default'],
     Table: {
         filterTitle: 'Bộ ',
         filterConfirm: 'OK',

@@ -1,5 +1,5 @@
-import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
+import _extends from 'babel-runtime/helpers/extends';
 import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
 import _createClass from 'babel-runtime/helpers/createClass';
 import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
@@ -49,7 +49,7 @@ var Checkbox = function (_React$Component) {
 
             var checkboxGroup = context.checkboxGroup;
 
-            var checkboxProps = Object.assign({}, restProps);
+            var checkboxProps = _extends({}, restProps);
             if (checkboxGroup) {
                 checkboxProps.onChange = function () {
                     return checkboxGroup.toggleOption({ label: children, value: props.value });

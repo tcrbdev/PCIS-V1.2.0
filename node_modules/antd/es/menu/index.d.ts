@@ -34,6 +34,7 @@ export interface MenuProps {
     prefixCls?: string;
     multiple?: boolean;
     inlineIndent?: number;
+    inlineCollapsed?: boolean;
 }
 export default class Menu extends React.Component<MenuProps, any> {
     static Divider: any;
@@ -45,11 +46,24 @@ export default class Menu extends React.Component<MenuProps, any> {
         className: string;
         theme: string;
     };
+    static childContextTypes: {
+        inlineCollapsed: any;
+    };
+    static contextTypes: {
+        siderCollapsed: any;
+    };
     switchModeFromInline: boolean;
+    inlineOpenKeys: never[];
     constructor(props: any);
-    componentWillReceiveProps(nextProps: any): void;
+    getChildContext(): {
+        inlineCollapsed: any;
+    };
+    componentWillReceiveProps(nextProps: any, nextContext: any): void;
     handleClick: (e: any) => void;
     handleOpenChange: (openKeys: string[]) => void;
     setOpenKeys(openKeys: any): void;
+    getRealMenuMode(): "vertical" | "horizontal" | "inline" | undefined;
+    getInlineCollapsed(): any;
+    getMenuOpenAnimation(): string | Object | undefined;
     render(): JSX.Element;
 }
