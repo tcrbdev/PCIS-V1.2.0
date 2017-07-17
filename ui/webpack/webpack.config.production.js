@@ -8,7 +8,7 @@ const extractSass = new ExtractTextPlugin('./css/[name].min.css')
 module.exports = {
     devtool: 'cheap-module-source-map',
     entry: {
-        index: './ui/client/index_pro.js',
+        index: './ui/client/index.js',
         vendors: [
             'react',
             'react-dom',

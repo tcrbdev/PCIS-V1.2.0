@@ -270,6 +270,12 @@
         border-top: 0px !important;
         border-bottom: 0px !important;
     }
+
+    & table thead tr > [class*=current-month]
+    {
+        background-color: #2196F3;
+        color:#FFF;
+    }
 }
 
 .summary-table-hilight
@@ -282,6 +288,11 @@
     &  table tbody tr:nth-child(2) , table tbody tr:nth-child(3)
     {
          background: #f7f7f7 !important;
+         & td[class*=portfolio-quality]
+        {
+            background-color: #ff4484;
+            color:#FFF;
+        }
     }
     
     & table thead tr > [class*=header-hide]
@@ -289,18 +300,19 @@
         border-top: 0px !important;
         border-bottom: 0px !important;
     }
+
+    & table thead tr > [class*=portfolio-quality]
+    {
+        background-color: #ff4484;
+        color:#FFF;
+    }
+    
 }
 
 .column-hilight
 {
     background: #f7f7f7 !important;
 }
-
-
-
-
-
-
 
 
 

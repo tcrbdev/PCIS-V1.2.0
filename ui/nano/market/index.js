@@ -83,31 +83,31 @@ const columnsBranchPerformance = [{
         render: (text, record, index) => (`${parseFloat(text).toFixed(1)}%`)
     }]
 }, {
-    title: (<div className={styles['div-center']}><span>Current Month</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} `,
+    title: (<div className={`${styles['div-center']} `}><span>Current Month</span></div>),
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} current-month`,
     children: [{
         title: (<div className={styles['div-center']}><span>Vol.</span></div>),
         dataIndex: 'CUR_Vol',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} `,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
         render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>Unit</span></div>),
         dataIndex: 'CUR_Unit',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} `,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
         render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseInt(text))
     }, {
         title: (<div className={styles['div-center']}><span>Ticket</span></div>),
         dataIndex: 'CUR_Ticket',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} `,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
         render: (text, record, index) => (`${parseInt(text)}K`)
     }, {
         title: (<div className={styles['div-center']}><span>Apv.</span></div>),
         dataIndex: 'CUR_Apv',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} `,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
         render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseInt(text))
     }]
 }]
@@ -164,42 +164,42 @@ const columnsTotalSummary = [{
     }]
 }, {
     title: (<div className={styles['div-center']}><span>Portfolio Quality</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} portfolio-quality`,
     children: [{
         title: (<div className={styles['div-center']}><span>W0</span></div>),
         dataIndex: "MTD",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
         render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>W1-2</span></div>),
         dataIndex: "W1",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
         render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>W3-4</span></div>),
         dataIndex: "W2",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
         render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>XDay</span></div>),
         dataIndex: "X_Day",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
         render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>M1-2</span></div>),
         dataIndex: "M",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
         render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>NPL</span></div>),
         dataIndex: "NPL",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
         render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
     }]
 }]
@@ -224,7 +224,10 @@ export default class Index extends Component {
         onSearching: false,
         isRowClick: false,
         isBounds: true,
-        collapsedSummary: false
+        collapsedSummary: false,
+        criteria: {
+            MarkerOptions: []
+        }
     }
 
     componentWillMount() {
@@ -297,7 +300,8 @@ export default class Index extends Component {
                     REPORT_TOTAL_KPI_SUMMARY: res[4],
                     onSearching: false,
                     isBounds: true,
-                    BranchCode: criteria.BranchCode
+                    BranchCode: criteria.BranchCode,
+                    criteria: criteria
                 })
             })
     }
@@ -350,7 +354,6 @@ export default class Index extends Component {
     }
 
     onBranchMarkerClick = (targetMarker, flag) => {
-        console.log(flag)
         let tempState = this.state.SEARCH_BRANCH_MARKER;
         let indexChange = this.state.SEARCH_BRANCH_MARKER.indexOf(_.find(this.state.SEARCH_BRANCH_MARKER, {
             BranchCode: targetMarker.BranchCode
@@ -361,7 +364,6 @@ export default class Index extends Component {
             fetch(SEARCH_MARKET_INFO)
                 .then(res => (res.json()))
                 .then(res => {
-                    console.log(flag)
                     if (flag) {
                         tempState[indexChange].showInfo = flag
                     }
@@ -411,6 +413,7 @@ export default class Index extends Component {
                         exitingMarket={this.state.SEARCH_EXITING_MARKET}
                         branch={this.state.SEARCH_BRANCH_MARKER}
                         MARKET_INFORMATION={this.state.MARKET_INFORMATION}
+                        criteria={this.state.criteria}
                     />
                     <div className={styles['float-button']}>
                         <Button

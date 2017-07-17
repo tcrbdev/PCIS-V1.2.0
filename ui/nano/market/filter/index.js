@@ -32,6 +32,12 @@ const tProps = {
     }
 };
 
+const ShowMarkerOptions = [
+    { label: 'Marker', value: 'MR' },
+    { label: 'Radius', value: 'RA' }
+];
+const defaultShowMarkerOptions = ['MR', 'RA'];
+
 const BranchTypeOptions = [
     { label: 'LB', value: 'L' },
     { label: 'Pure', value: 'P' },
@@ -258,6 +264,7 @@ class Filter extends Component {
                     IncludeKioskMarket: values.IncludeKioskMarket,
                     IncludePotentialMarket: values.IncludePotentialMarket,
                     Province: !_.isEmpty(values.Province) ? values.Province.join(",") : null,
+                    MarkerOptions: !_.isEmpty(values.MarkerOptions) ? values.MarkerOptions : []
                 }
                 this.props.searchHandle(criteria)
             }
@@ -323,6 +330,10 @@ class Filter extends Component {
         this.setState({
             ...this.getStateBranch(this.props, getFieldValue('RegionID'), getFieldValue('AreaID'), value)
         })
+    }
+
+    show_marker_options_change = (value) => {
+
     }
 
     target_market_change = (value) => {
@@ -443,8 +454,60 @@ class Filter extends Component {
                         <Row gutter={8}>
                             <Col span={12}>
                                 <FormItem
+                                    label="CA Name"
                                     colon={true}
-                                    className={styles['row-label']}>
+                                    className={styles['row-label']}
+                                    {...formItemLayout}>
+                                    {
+                                        getFieldDecorator('CAName')
+                                            (
+                                            <TreeSelect
+                                                {...tProps}
+                                                treeData={this.state.AREA_ITEM}
+                                                onChange={this.area_change}
+                                                searchPlaceholder="Search ca name" />
+                                            )
+                                    }
+                                </FormItem>
+                            </Col>
+                            <Col span={12}>
+                                <FormItem
+                                    label='Options'
+                                    colon={true}
+                                    className={styles['row-label']}
+                                    {...formItemLayout}>
+                                    {
+                                        getFieldDecorator('MarkerOptions', {
+                                            initialValue: defaultShowMarkerOptions
+                                        })
+                                            (
+                                            <CheckboxGroup options={ShowMarkerOptions} onChange={this.show_marker_options_change} />
+                                            )
+                                    }
+                                </FormItem>
+                            </Col>
+                        </Row>
+                        <Row gutter={8}>
+                            <Col span={12}>
+                                <FormItem
+                                    label="Market Name"
+                                    colon={true}
+                                    className={styles['row-label']}
+                                    {...formItemLayout}>
+                                    {
+                                        getFieldDecorator('MarketName')
+                                            (
+                                            <Input />
+                                            )
+                                    }
+                                </FormItem>
+                            </Col>
+                            <Col span={12}>
+                                <FormItem
+                                    label={(<span></span>)}
+                                    colon={false}
+                                    className={styles['row-label']}
+                                    {...formItemLayout}>
                                     {
                                         getFieldDecorator('IncludeExitingMarket', {
                                             valuePropName: 'checked',
@@ -461,66 +524,17 @@ class Filter extends Component {
                                     }
                                 </FormItem>
                             </Col>
-                            <Col span={12}>
-                                <FormItem
-                                    label="CA Name"
-                                    colon={true}
-                                    className={styles['row-label']}
-                                    {...formItemLayout}>
-                                    {
-                                        getFieldDecorator('CAName')
-                                            (
-                                            <TreeSelect
-                                                {...tProps}
-                                                treeData={this.state.AREA_ITEM}
-                                                onChange={this.area_change}
-                                                searchPlaceholder="Search ca name" />
-                                            )
-                                    }
-                                </FormItem>
+                        </Row>
+                        <Row gutter={8}>
 
-                            </Col>
                         </Row>
                         <Row gutter={8}>
                             <Col span={12}>
                                 <FormItem
-                                    colon={true}
-                                    className={styles['row-label']}>
-                                    {
-                                        getFieldDecorator('IncludeKioskMarket', {
-                                            valuePropName: 'checked',
-                                            initialValue: true,
-                                        })
-                                            (
-                                            <Checkbox
-                                                className={styles['check-box']}
-                                                onChange={this.onCheckBoxChange}>
-                                                Include Kiosk Market ({this.props.countKioskMarket})
-                                            </Checkbox>
-                                            )
-                                    }
-                                </FormItem>
-                            </Col>
-                            <Col span={12}>
-                                <FormItem
-                                    label="Market Name"
-                                    colon={true}
+                                    label={(<span></span>)}
+                                    colon={false}
                                     className={styles['row-label']}
                                     {...formItemLayout}>
-                                    {
-                                        getFieldDecorator('MarketName')
-                                            (
-                                            <Input />
-                                            )
-                                    }
-                                </FormItem>
-                            </Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={12}>
-                                <FormItem
-                                    colon={true}
-                                    className={styles['row-label']}>
                                     {
                                         getFieldDecorator('IncludePotentialMarket', {
                                             valuePropName: 'checked',
@@ -536,6 +550,29 @@ class Filter extends Component {
                                     }
                                 </FormItem>
                             </Col>
+                            <Col span={12}>
+                                <FormItem
+                                    label={(<span></span>)}
+                                    colon={false}
+                                    className={styles['row-label']}
+                                    {...formItemLayout}>
+                                    {
+                                        getFieldDecorator('IncludeKioskMarket', {
+                                            valuePropName: 'checked',
+                                            initialValue: true,
+                                        })
+                                            (
+                                            <Checkbox
+                                                className={styles['check-box']}
+                                                onChange={this.onCheckBoxChange}>
+                                                Include Kiosk Market ({this.props.countKioskMarket})
+                                            </Checkbox>
+                                            )
+                                    }
+                                </FormItem>
+                            </Col>
+                        </Row>
+                        <Row gutter={8}>
                             <Col span={12}>
                                 {
                                     this.state.potentialMarket &&
@@ -558,23 +595,25 @@ class Filter extends Component {
                                     </FormItem>
                                 }
                             </Col>
-                        </Row>
-                        <Row type="flex" align="middle" gutter={8}>
-                            <Col span={5}>
-                                <Button
-                                    style={{ width: '100%' }}
-                                    type="primary"
-                                    icon="search"
-                                    size='large'
-                                    htmlType="submit">Search</Button>
-                            </Col>
-                            <Col span={5}>
-                                <Button
-                                    style={{ backgroundColor: '#f04134', color: '#FFF', width: '100%' }}
-                                    icon="close"
-                                    size='large'
-                                    type="danger"
-                                    onClick={this.ClearField}>Clear</Button>
+                            <Col>
+                                <Row type="flex" align="middle" gutter={8}>
+                                    <Col span={12}>
+                                        <Button
+                                            style={{ width: '100%' }}
+                                            type="primary"
+                                            icon="search"
+                                            size='large'
+                                            htmlType="submit">Search</Button>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Button
+                                            style={{ backgroundColor: '#f04134', color: '#FFF', width: '100%' }}
+                                            icon="close"
+                                            size='large'
+                                            type="danger"
+                                            onClick={this.ClearField}>Clear</Button>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
                     </Form>
