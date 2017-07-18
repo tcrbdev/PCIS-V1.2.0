@@ -162,6 +162,29 @@ class Filter extends Component {
                 !_.isEmpty(_.find(branch_type, (s) => (s == o.BranchType)))
         }), ['RegionID', 'AreaID', 'ZoneValue', 'BranchType'])
 
+        let group = [];
+        console.log(branch_type)
+        console.log(filter)
+
+        _.mapKeys(_.groupBy(filter, "OriginBranchCode"), (value, key) => {
+            let obj = {
+                label: _.find(value, o => o.BranchType != "K").BranchName,
+                value: value.map(m => m.BranchCode).join(','),
+                key: value.map(m => m.BranchCode).join(',')
+            }
+
+            if (value.length > 1) {
+                obj.children = value.map((item, index) => ({
+                    label: item.BranchName,
+                    value: item.BranchCode,
+                    key: item.BranchCode
+                }))
+            }
+
+            group.push(obj)
+        })
+
+
         return {
             MASTER_BRANCH_DATA,
             Expand_Branch: filter.map(item => item.BranchCode).join(','),
@@ -169,13 +192,7 @@ class Filter extends Component {
                 label: 'Select All',
                 value: filter.map(item => item.BranchCode).join(','),
                 key: 'all',
-                children: filter.map((item, index) => {
-                    return ({
-                        label: item.BranchName,
-                        value: item.BranchCode,
-                        key: item.BranchCode
-                    })
-                })
+                children: group
             }]
         }
     }
@@ -544,7 +561,7 @@ class Filter extends Component {
                                             <Checkbox
                                                 className={styles['check-box']}
                                                 onChange={this.potentialMarket_change}>
-                                                Include Potential market ({this.props.countPotentialMarket})
+                                                Include Potential Market ({this.props.countPotentialMarket})
                                             </Checkbox>
                                             )
                                     }

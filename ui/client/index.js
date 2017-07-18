@@ -1,13 +1,12 @@
 import React from 'react'
 import { render } from 'react-dom'
 import Root from '../common/containers/Root'
+import 'react-hot-loader/patch'
+import { AppContainer } from 'react-hot-loader'
 
 const rootEl = document.getElementById('app')
 
 if (process.env.NODE_ENV === 'dev') {
-    import 'react-hot-loader/patch'
-    import { AppContainer } from 'react-hot-loader'
-
     render(
         <AppContainer>
             <Root />

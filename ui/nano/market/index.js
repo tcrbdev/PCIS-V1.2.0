@@ -34,53 +34,53 @@ const columnsBranchPerformance = [{
     render: (text, record, index) => (text == 'Share' ? '%Micro' : text)
 }, {
     title: (<div className={styles['div-center']}><span>OS Bal.</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} `,
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} ${styles['column-hilight']}`,
     children: [{
         title: (<div className={styles['div-center']}><span>Vol.</span></div>),
         dataIndex: 'OS_Vol',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} `,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : `${parseFloat(text).toFixed(1)}`)
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseFloat(text).toFixed(1)}`)
     }, {
         title: (<div className={styles['div-center']}><span>Unit</span></div>),
         dataIndex: 'OS_Unit',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} `,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseInt(text))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
     }]
 }, {
     title: (<div className={styles['div-center']}><span>Financial Volume 2017</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} financial-volume`,
     children: [{
         title: (<div className={styles['div-center']}><span>Avg.</span></div>),
         dataIndex: 'TOTAL_Avg',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>Vol.</span></div>),
         dataIndex: 'TOTAL_Vol',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>Unit</span></div>),
         dataIndex: 'TOTAL_Unit',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseInt(text))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
     }, {
         title: (<div className={styles['div-center']}><span>Ticket</span></div>),
         dataIndex: 'AVG_Ticket',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
         render: (text, record, index) => (`${parseInt(text)}K`)
     }, {
         title: (<div className={styles['div-center']}><span>Apv.</span></div>),
         dataIndex: 'TOTAL_Apv',
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (`${parseFloat(text).toFixed(1)}%`)
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (`${parseFloat(text).toFixed(0)}%`)
     }]
 }, {
     title: (<div className={`${styles['div-center']} `}><span>Current Month</span></div>),
@@ -90,13 +90,13 @@ const columnsBranchPerformance = [{
         dataIndex: 'CUR_Vol',
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>Unit</span></div>),
         dataIndex: 'CUR_Unit',
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseInt(text))
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
     }, {
         title: (<div className={styles['div-center']}><span>Ticket</span></div>),
         dataIndex: 'CUR_Ticket',
@@ -108,7 +108,7 @@ const columnsBranchPerformance = [{
         dataIndex: 'CUR_Apv',
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(1)}%` : parseInt(text))
+        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseInt(text)}%`)
     }]
 }]
 
@@ -125,82 +125,82 @@ const dataTotalSummary = [{
 const columnsTotalSummary = [{
     title: (<div className={styles['div-center']}><span>KPI</span></div>),
     dataIndex: "Kpi",
-    width: '10%',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+    width: '9%',
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} os-balance`,
     render: (text, record, index) => (text == 'Ach' ? '%Ach.' : text)
 }, {
     title: (<div className={styles['div-center']}><span>OS</span><span>Bal.</span></div>),
     dataIndex: "OS",
     width: '8%',
-    className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-    render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+    className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
+    render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
 }, {
     title: (<div className={styles['div-center']}><span>Financial Volume</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} financial-volume`,
     children: [{
         title: (<div className={styles['div-center']}><span>AVG</span></div>),
         dataIndex: "AVG",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>YTD</span></div>),
         dataIndex: "YTD",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>LM</span></div>),
         dataIndex: "LM",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>MTD</span></div>),
         dataIndex: "MTD",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }]
 }, {
     title: (<div className={styles['div-center']}><span>Portfolio Quality</span></div>),
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} portfolio-quality`,
     children: [{
         title: (<div className={styles['div-center']}><span>W0</span></div>),
-        dataIndex: "MTD",
+        dataIndex: "W0",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>W1-2</span></div>),
-        dataIndex: "W1",
+        dataIndex: "W1-2",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>W3-4</span></div>),
-        dataIndex: "W2",
+        dataIndex: "W3-4",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>XDay</span></div>),
-        dataIndex: "X_Day",
+        dataIndex: "XDay",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>M1-2</span></div>),
-        dataIndex: "M",
+        dataIndex: "M1-2",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }, {
         title: (<div className={styles['div-center']}><span>NPL</span></div>),
         dataIndex: "NPL",
         width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : parseFloat(text).toFixed(1))
+        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality `,
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
     }]
 }]
 

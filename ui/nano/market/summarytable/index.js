@@ -82,7 +82,7 @@ export default class SummaryTable extends Component {
     }, {
         title: (<div className={styles['div-center']}><span>#</span><span>Shop</span></div>),
         dataIndex: 'MarketShop',
-        kety: 'MarketShop',
+        key: 'MarketShop',
         className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
         width: '7%',
     }, {
@@ -129,7 +129,7 @@ export default class SummaryTable extends Component {
                 }
             }]
         }, {
-            title: (<div className={styles['div-center']}><span>Top Contribute</span></div>),
+            title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
             children: [{
                 dataIndex: 'TopContributeName',
