@@ -59,7 +59,6 @@
 {
     background: #FFF;
 }
-
 .coll-show
 {
     max-height: 100%;
@@ -166,10 +165,11 @@
                                         background-color: #656565;
                                         color: #FFF;
 
-                                        & > span
+                                        & > div:first-child
                                         {
-                                            font-size: 16px;
-                                            letter-spacing: 3px;
+                                            font-size: 13px;
+                                            letter-spacing: 1px;
+                                            position: absolute;
                                             transform: rotate(-90deg)
                                         }
                                     }
@@ -395,6 +395,7 @@
     {
         background-color: #ffd5e3;
         color: #545353;
+        cursor: pointer;
     }
 
     & table thead tr > [class*=financial-volume]

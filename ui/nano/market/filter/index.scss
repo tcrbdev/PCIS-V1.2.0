@@ -28,9 +28,9 @@
     }
 }
 
-[class*=ant-select-tree]
+[class*=ant-select-tree-dropdown]
 {
-    max-height: 250px;
+    max-height: 250px !important;
 
     & li:first-child > span:first-child
     {
@@ -55,4 +55,24 @@
     {
         margin-right: 0px !important;
     }
+}
+
+.complititorBrand
+{
+    width: 55px;
+    height: 55px;
+    cursor: pointer;
+}
+
+.complititorBrand-modal
+{
+    width: 55px;
+    height: 55px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.select-maxheight
+{
+    max-height: 270px;
 }

@@ -64,6 +64,7 @@
     & thead > tr > th {
         border-right: 1px solid #b1b1b1 !important;
         border-bottom: 1px solid #b1b1b1 !important;
+        background-color: #dcdcdc;
     }
 
     & thead > tr > th:last-child {
@@ -97,13 +98,103 @@
 
     & table tbody tr:nth-child(even)
     {
-        background: #f7f7f7;
+        background: #dcdcdc;
     }
 }
 
 .red-font
 {
     color: #F44336;
+}
+.ca-checkbox-all
+{
+    display: flex;
+    margin-right: 0px;
+    justify-content: center;
+    align-items: center;
+}
+.ca-icon-list
+{
+    display: flex;
+    align-items: center;
+     & div:nth-child(2)
+     {
+         flex: 1;
+         display: flex;
+         margin-left: 10px;
+
+         & span
+         {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 15px;
+            &:hover
+            {
+                color: #FFF !important;
+            }
+         }
+
+         & span:before
+         {
+            z-index: 2;
+         }
+
+         & span:after
+         {
+             content: '';
+             position: absolute;
+             width: 30px;
+             height: 30px;
+             transform: scale(0);
+             border-radius: 50%;
+            transition: .2s all;
+             z-index: 1;
+         }
+
+         & span:hover:after
+         {
+            transform: scale(1);
+         }
+
+        & span:nth-child(1)
+         {
+             color: #03A9F4;
+         }
+
+        & span:nth-child(2)
+         {
+             color: #E91E63;
+         }
+
+        & span:nth-child(3)
+         {
+             color: #64a717;
+         }
+
+         & span:nth-child(1):after
+         {
+             background-color: #03A9F4;
+         }
+
+        & span:nth-child(2):after
+         {
+             background-color: #E91E63;
+         }
+
+        & span:nth-child(3):after
+         {
+             background-color: #64a717;
+         }
+     }
+}
+
+.header-vertical-middle
+{
+    vertical-align: middle;
 }
 
 /*.ant-table-bordered .ant-table-tbody>tr>td, .ant-table-bordered .ant-table-thead>tr>th*/

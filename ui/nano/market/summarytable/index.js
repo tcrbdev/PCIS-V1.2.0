@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import styles from './index.scss'
-import { Table, Icon, Select } from 'antd';
+import { Table, Icon, Select, Button, Checkbox, Tooltip } from 'antd';
 import _ from 'lodash'
+import FontAwesome from 'react-fontawesome'
 
 const { Option, OptGroup } = Select;
 
@@ -45,19 +46,86 @@ export default class SummaryTable extends Component {
         )
     }
 
+    selectca = () => {
+
+        let groupItem = []
+        _.mapKeys(_.groupBy(this.props.data, "BranchName"), (value, key) => {
+            let branch = {}
+            branch.BranchName = key
+
+            const cacode = _.filter(_.filter(_.uniq(_.uniq(value.map(o => o.CAHandleMarket).join(',').split(',')).map(o => {
+                if (!_.isEmpty(o))
+                    return o.substring(o.indexOf('T'), o.length)
+                else
+                    return null
+            })), f => !_.isEmpty(f)), f => !_.isEmpty(_.find(this.props.criteria.CAName.split(','), o => f.indexOf(o) >= 0)))
+
+            branch.CAItem = cacode
+            groupItem.push(branch)
+
+        })
+
+        return (
+            <div className={styles['ca-icon-list']}>
+                <Select
+                    defaultValue={this.props.criteria.CAName.split(',')[0]}
+                    onChange={this.onCANameChange}
+                    dropdownMatchSelectWidth={false}
+                    style={{ width: '80%' }}>
+                    {
+                        groupItem.map((item, index) => {
+                            return (
+                                <OptGroup label={item.BranchName}>
+                                    {
+                                        item.CAItem.map((ca, i) => {
+                                            return <Option value={ca.split(':')[0]}>{ca.split(':')[1]}</Option>
+                                        })
+                                    }
+                                </OptGroup>
+                            )
+
+                        })
+                    }
+                </Select>
+                <div>
+                    <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
+                    <Tooltip title="Market Penatation"><FontAwesome name="table" /></Tooltip>
+                    <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
+                </div>
+            </div>
+        )
+    }
+
     onBranchChange = (value) => {
         this.setState({ data: this.filterData(value), isRowClick: false })
     }
 
-    columnsSelect = () => [{
-        title: 'Branch Market List :',
-        className: styles['header-select'],
-        children: null
-    }, {
-        title: this.select(),
-        className: styles['header-select'],
-        children: null
-    }]
+    onCANameChange = (value) => {
+        this.setState({ data: this.filterDataByCa(value), isRowClick: false })
+    }
+
+    columnsSelect = () => {
+        if (this.props.criteria.CAName)
+            return [{
+                title: (<div className={styles['ca-icon-list']}><Checkbox className={styles['ca-checkbox-all']}>All</Checkbox><span>CA Market List</span></div>),
+                className: `${styles['header-select']} ${styles['header-vertical-middle']}`,
+                children: null
+            }, {
+                title: this.selectca(),
+                className: styles['header-select'],
+                children: null
+            }]
+        else
+            return [{
+                title: 'Branch Market List :',
+                className: styles['header-select'],
+                children: null
+            }, {
+                title: this.select(),
+                className: styles['header-select'],
+                children: null
+            }]
+    }
 
     columnsBodyLeft = () => [{
         className: styles['align-left'],
@@ -165,6 +233,10 @@ export default class SummaryTable extends Component {
 
     filterData(value) {
         return _.orderBy(_.filter(this.props.data, { BranchCode: value }), ['Radius'], ['asc'])
+    }
+
+    filterDataByCa(value) {
+        return _.orderBy(_.filter(this.props.data, o => o.CAHandleMarket.indexOf(value) >= 0), ['Radius'], ['asc'])
     }
 
     shouldComponentUpdate(nextProps, nextState) {

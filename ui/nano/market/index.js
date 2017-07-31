@@ -1,19 +1,28 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { withCookies } from 'react-cookie';
 
 import Scrollbar from 'react-smooth-scrollbar';
 import enUS from 'antd/lib/locale-provider/en_US';
-import { Icon, Button, Timeline, Row, Col, Collapse, Layout, Checkbox, Input, AutoComplete, Select, Table } from 'antd';
+import { Icon, Button, Timeline, Row, Col, Collapse, Layout, Checkbox, Input, AutoComplete, Select, Table, Tooltip } from 'antd';
 import { LocaleProvider } from 'antd';
 import SummaryTable from './summarytable'
 import Filter from './filter'
 import Perfomance from './performance'
 import GMap from '../map'
 
+
 import fetch from 'isomorphic-fetch'
 import bluebird from 'bluebird'
 
 import FontAwesome from 'react-fontawesome'
 
+// import {
+//     getNanoMasterData,
+//     searchNanoData
+// } from '../actions/nanomaster'
+
+import config from '../../config'
 import styles from './index.scss'
 
 const { Header, Sider, Content } = Layout
@@ -27,90 +36,98 @@ if (process.env.NODE_ENV === 'dev')
 else
     url = `http://TC001PCIS1P:60001`
 
-const columnsBranchPerformance = [{
-    title: (<div className={styles['div-center']}><span>Product</span></div>),
-    dataIndex: "Product",
-    className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']} ${styles['column-hilight']}`,
-    render: (text, record, index) => (text == 'Share' ? '%Micro' : text)
-}, {
-    title: (<div className={styles['div-center']}><span>OS Bal.</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} ${styles['column-hilight']}`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>Vol.</span></div>),
-        dataIndex: 'OS_Vol',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseFloat(text).toFixed(1)}`)
+const columnsBranchPerformance = [
+    {
+        title: (<div className={styles['div-center']}><span>Product</span></div>),
+        dataIndex: "Product",
+        className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']} ${styles['column-hilight']}`,
+        render: (text, record, index) => (text == 'Share' ? '%Micro' : text)
+    },
+    {
+        title: (<div className={styles['div-center']}><span>OS Bal.</span></div>),
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} ${styles['column-hilight']}`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>Vol.</span></div>),
+            dataIndex: 'OS_Vol',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseFloat(text).toFixed(1)}`)
+        }, {
+            title: (<div className={styles['div-center']}><span>Unit</span></div>),
+            dataIndex: 'OS_Unit',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
+        }
+        ]
+    },
+    {
+        title: (<div className={styles['div-center']}><span>Financial Volume 2017</span></div>),
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} financial-volume`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>Avg.</span></div>),
+            dataIndex: 'TOTAL_Avg',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        },
+        {
+            title: (<div className={styles['div-center']}><span>Vol.</span></div>),
+            dataIndex: 'TOTAL_Vol',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        },
+        {
+            title: (<div className={styles['div-center']}><span>Unit</span></div>),
+            dataIndex: 'TOTAL_Unit',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
+        },
+        {
+            title: (<div className={styles['div-center']}><span>Ticket</span></div>),
+            dataIndex: 'AVG_Ticket',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+            render: (text, record, index) => (`${parseInt(text)}K`)
+        },
+        {
+            title: (<div className={styles['div-center']}><span>Apv.</span></div>),
+            dataIndex: 'TOTAL_Apv',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
+            render: (text, record, index) => (`${parseFloat(text).toFixed(0)}%`)
+        }]
     }, {
-        title: (<div className={styles['div-center']}><span>Unit</span></div>),
-        dataIndex: 'OS_Unit',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
+        title: (<div className={`${styles['div-center']} `}><span>Current Month</span></div>),
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} current-month`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>Vol.</span></div>),
+            dataIndex: 'CUR_Vol',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        }, {
+            title: (<div className={styles['div-center']}><span>Unit</span></div>),
+            dataIndex: 'CUR_Unit',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
+        }, {
+            title: (<div className={styles['div-center']}><span>Ticket</span></div>),
+            dataIndex: 'CUR_Ticket',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
+            render: (text, record, index) => (`${parseInt(text)}K`)
+        }, {
+            title: (<div className={styles['div-center']}><span>Apv.</span></div>),
+            dataIndex: 'CUR_Apv',
+            width: '8%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseInt(text)}%`)
+        }]
     }]
-}, {
-    title: (<div className={styles['div-center']}><span>Financial Volume 2017</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} financial-volume`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>Avg.</span></div>),
-        dataIndex: 'TOTAL_Avg',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
-    }, {
-        title: (<div className={styles['div-center']}><span>Vol.</span></div>),
-        dataIndex: 'TOTAL_Vol',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
-    }, {
-        title: (<div className={styles['div-center']}><span>Unit</span></div>),
-        dataIndex: 'TOTAL_Unit',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
-    }, {
-        title: (<div className={styles['div-center']}><span>Ticket</span></div>),
-        dataIndex: 'AVG_Ticket',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (`${parseInt(text)}K`)
-    }, {
-        title: (<div className={styles['div-center']}><span>Apv.</span></div>),
-        dataIndex: 'TOTAL_Apv',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (`${parseFloat(text).toFixed(0)}%`)
-    }]
-}, {
-    title: (<div className={`${styles['div-center']} `}><span>Current Month</span></div>),
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} current-month`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>Vol.</span></div>),
-        dataIndex: 'CUR_Vol',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
-    }, {
-        title: (<div className={styles['div-center']}><span>Unit</span></div>),
-        dataIndex: 'CUR_Unit',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseInt(text))
-    }, {
-        title: (<div className={styles['div-center']}><span>Ticket</span></div>),
-        dataIndex: 'CUR_Ticket',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-        render: (text, record, index) => (`${parseInt(text)}K`)
-    }, {
-        title: (<div className={styles['div-center']}><span>Apv.</span></div>),
-        dataIndex: 'CUR_Apv',
-        width: '8%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-        render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseInt(text)}%`)
-    }]
-}]
 
 const dataTotalSummary = [{
     kpi: "Target"
@@ -166,41 +183,41 @@ const columnsTotalSummary = [{
     title: (<div className={styles['div-center']}><span>Portfolio Quality</span></div>),
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} portfolio-quality`,
     children: [{
-        title: (<div className={styles['div-center']}><span>W0</span></div>),
+        title: (<div className={styles['div-center']}><Tooltip title="> 87%"><span>W0</span></Tooltip></div>),
         dataIndex: "W0",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
     }, {
-        title: (<div className={styles['div-center']}><span>W1-2</span></div>),
+        title: (<div className={styles['div-center']}><Tooltip title="< 2%"><span>W1-2</span></Tooltip></div>),
         dataIndex: "W1-2",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
     }, {
-        title: (<div className={styles['div-center']}><span>W3-4</span></div>),
+        title: (<div className={styles['div-center']}><Tooltip title="< 1%"><span>W3-4</span></Tooltip></div>),
         dataIndex: "W3-4",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
     }, {
-        title: (<div className={styles['div-center']}><span>XDay</span></div>),
+        title: (<div className={styles['div-center']}><Tooltip title="< 3%"><span>XDay</span></Tooltip></div>),
         dataIndex: "XDay",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
     }, {
-        title: (<div className={styles['div-center']}><span>M1-2</span></div>),
+        title: (<div className={styles['div-center']}><Tooltip title="< 2%"><span>M1-2</span></Tooltip></div>),
         dataIndex: "M1-2",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
     }, {
-        title: (<div className={styles['div-center']}><span>NPL</span></div>),
+        title: (<div className={styles['div-center']}><Tooltip title="< 4%"><span>NPL</span></Tooltip></div>),
         dataIndex: "NPL",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality `,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? text : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
     }]
 }]
 
@@ -212,6 +229,8 @@ export default class Index extends Component {
         MASTER_REGION_DATA: [],
         MASTER_AREA_DATA: [],
         MASTER_BRANCH_DATA: [],
+        MASTER_CALIST_DATA: [],
+        MASTER_COMPLITITOR_PROVINCE_DATA: [],
         MASTER_TARGET_MARKET_PROVINCE_DATA: [],
         SEARCH_DATA: [],
         SEARCH_TARGET_MARKET: [],
@@ -219,13 +238,17 @@ export default class Index extends Component {
         SEARCH_BRANCH_MARKER: [],
         SEARCH_KIOSK_BRANCH: [],
         MARKET_INFORMATION: [],
+        SEARCH_COMPLITITOR_MARKER: [],
         REPORT_BRANCH_PRODUCT_SUMMARY: [],
         REPORT_TOTAL_KPI_SUMMARY: [],
+        REPORT_TOTAL_KPI_SUMMARY_BY_AREA: [],
+        REPORT_TOTAL_KPI_SUMMARY_BY_AREA_KIOSK: [],
         onSearching: false,
         isRowClick: false,
         isBounds: true,
         collapsedSummary: false,
         criteria: {
+            CAName: null,
             MarkerOptions: []
         }
     }
@@ -239,29 +262,39 @@ export default class Index extends Component {
         const MASTER_AREA = `${url}/master/area`
         const MASTER_BRANCH = `${url}/master/branch`
         const MASTER_TARGET_MARKET_PROVINCE = `${url}/master/target/market/province`
+        const MASTER_CALIST = `${url}/master/calist`
+        const MASTER_COMPLITITOR_PROVINCE = `${url}/master/complititor/province`
 
         let api = [
             fetch(MASTER_REGION).then(res => (res.json())),
             fetch(MASTER_AREA).then(res => (res.json())),
             fetch(MASTER_BRANCH).then(res => (res.json())),
             fetch(MASTER_TARGET_MARKET_PROVINCE).then(res => (res.json())),
+            fetch(MASTER_CALIST).then(res => (res.json())),
+            fetch(MASTER_COMPLITITOR_PROVINCE).then(res => (res.json())),
         ]
 
-        bluebird.all(api).spread((
-            MASTER_REGION_DATA,
-            MASTER_AREA_DATA,
-            MASTER_BRANCH_DATA,
-            MASTER_TARGET_MARKET_PROVINCE_DATA) => {
-            this.setState({
-                initData: false,
+        bluebird.all(api).spread(
+            (
                 MASTER_REGION_DATA,
                 MASTER_AREA_DATA,
                 MASTER_BRANCH_DATA,
-                MASTER_TARGET_MARKET_PROVINCE_DATA
-            })
-        }).catch(err => {
-            console.error(`Error : ${err}`)
-        })
+                MASTER_TARGET_MARKET_PROVINCE_DATA,
+                MASTER_CALIST_DATA,
+                MASTER_COMPLITITOR_PROVINCE_DATA
+            ) => {
+                this.setState({
+                    initData: false,
+                    MASTER_REGION_DATA,
+                    MASTER_AREA_DATA,
+                    MASTER_BRANCH_DATA,
+                    MASTER_TARGET_MARKET_PROVINCE_DATA,
+                    MASTER_CALIST_DATA,
+                    MASTER_COMPLITITOR_PROVINCE_DATA
+                })
+
+            }).catch(err => { /*console.error(`Error : ${err}`)*/ })
+
     }
 
     handlePanel = () => {
@@ -278,31 +311,72 @@ export default class Index extends Component {
     }
 
     searchHandle = (criteria) => {
+        // const { searchNanoData } = this.props
+        // searchNanoData(criteria)
+
         this.setState({ onSearching: true })
 
         const SEARCH_REPORTS = `${url}/nano/marker`
+        const GET_COMPLITITOR_MARKER = `${url}/master/complititor`
 
-        fetch(SEARCH_REPORTS, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(criteria)
-        })
-            .then(res => (res.json()))
-            .then(res => {
+        let api = [
+            fetch(SEARCH_REPORTS, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(criteria),
+                timeout: 1500000
+            }).then(res => (res.json())),
+            fetch(GET_COMPLITITOR_MARKER, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(criteria),
+                timeout: 1500000
+            }).then(res => (res.json()))
+        ]
+
+        bluebird.all(api)
+            .spread((res1, res2) => {
+                const res = res1
+
                 this.setState({
                     SEARCH_BRANCH_MARKER: res[0].map((item, index) => ({ showInfo: false, ...item })),
                     SEARCH_EXITING_MARKET: res[1].map((item, index) => ({ showInfo: false, ...item })),
                     SEARCH_TARGET_MARKET: res[2].map((item, index) => ({ showInfo: false, ...item })),
                     REPORT_BRANCH_PRODUCT_SUMMARY: res[3],
                     REPORT_TOTAL_KPI_SUMMARY: res[4],
+                    REPORT_TOTAL_KPI_SUMMARY_BY_AREA: res[5],
+                    REPORT_TOTAL_KPI_SUMMARY_BY_AREA_KIOSK: res[6],
                     onSearching: false,
                     isBounds: true,
                     BranchCode: criteria.BranchCode,
-                    criteria: criteria
+                    criteria: criteria,
+                    SEARCH_COMPLITITOR_MARKER: res2[0]
                 })
+
+            })
+            .catch(e => {
+                if (!e.response) {
+                    this.setState({
+                        SEARCH_BRANCH_MARKER: [],
+                        SEARCH_EXITING_MARKET: [],
+                        SEARCH_TARGET_MARKET: [],
+                        REPORT_BRANCH_PRODUCT_SUMMARY: [],
+                        REPORT_TOTAL_KPI_SUMMARY: [],
+                        REPORT_TOTAL_KPI_SUMMARY_BY_AREA: [],
+                        REPORT_TOTAL_KPI_SUMMARY_BY_AREA_KIOSK: [],
+                        onSearching: false,
+                        isBounds: true,
+                        BranchCode: criteria.BranchCode,
+                        criteria: criteria
+                    })
+                    alert("Something went wrong please try again.")
+                }
             })
     }
 
@@ -414,6 +488,7 @@ export default class Index extends Component {
                         branch={this.state.SEARCH_BRANCH_MARKER}
                         MARKET_INFORMATION={this.state.MARKET_INFORMATION}
                         criteria={this.state.criteria}
+                        SEARCH_COMPLITITOR_MARKER={this.state.SEARCH_COMPLITITOR_MARKER}
                     />
                     <div className={styles['float-button']}>
                         <Button
@@ -433,6 +508,91 @@ export default class Index extends Component {
 
     onCollapsedChange = (key) => {
         this.setState({ collapsedSummary: false })
+    }
+
+    getBranchKPISummaryByArea() {
+        let individualMode = false
+        let cName = ''
+
+        if (this.state.criteria.BranchCode) {
+            const branchCode = _.find(this.state.criteria.BranchCode.split(','), o => o.length == 3)
+            individualMode = _.filter(this.state.criteria.BranchCode.split(','), o => o.indexOf(branchCode) >= 0).length == this.state.criteria.BranchCode.split(',').length
+            const cBranch = _.find(this.state.SEARCH_BRANCH_MARKER, { BranchCode: branchCode })
+            if (cBranch)
+                cName = cBranch.BranchName
+        }
+
+        let obj = []
+        _.mapKeys(_.groupBy(this.state.REPORT_TOTAL_KPI_SUMMARY_BY_AREA, "AreaID"), (value, key) => {
+            if (_.sumBy(value, "OS") > 0 && _.sumBy(value, "YTD") > 0) {
+                obj.push({
+                    AreaID: key,
+                    Data: value
+                })
+            }
+        })
+        if (obj.length > 0) {
+            return obj.map((item, index) => {
+                return (
+                    <div className="rotate-total">
+                        <div style={{ backgroundColor: '#0099ff' }}>
+                            <div>{individualMode ? cName : `${item.AreaID}`}</div>
+                        </div>
+                        <div>
+                            <Table
+                                className={styles['summary-table-hilight']}
+                                dataSource={item.Data}
+                                columns={columnsTotalSummary}
+                                pagination={false}
+                                bordered />
+                        </div>
+                    </div>
+                )
+            })
+        }
+    }
+
+    getBranchKPISummaryKioskByArea() {
+        let individualMode = false
+        let kioskName = ''
+
+        if (this.state.criteria.BranchCode) {
+            const branchCode = _.find(this.state.criteria.BranchCode.split(','), o => o.length == 3)
+            individualMode = _.filter(this.state.criteria.BranchCode.split(','), o => o.indexOf(branchCode) >= 0).length == this.state.criteria.BranchCode.split(',').length
+            const kioskBranch = _.find(this.state.SEARCH_BRANCH_MARKER, { OriginBranchCode: branchCode, BranchType: 'K' })
+            if (kioskBranch)
+                kioskName = kioskBranch.BranchName.substring(0, kioskBranch.BranchName.indexOf('('))
+        }
+
+        let obj = []
+        _.mapKeys(_.groupBy(this.state.REPORT_TOTAL_KPI_SUMMARY_BY_AREA_KIOSK, "AreaID"), (value, key) => {
+            if (_.sumBy(value, "OS") > 0 && _.sumBy(value, "YTD") > 0) {
+                obj.push({
+                    AreaID: key,
+                    Data: value
+                })
+            }
+        })
+
+        if (obj.length > 0) {
+            return obj.map((item, index) => {
+                return (
+                    <div className="rotate-total">
+                        <div style={{ backgroundColor: '#ff6500' }}>
+                            <div>{individualMode ? kioskName.toLowerCase().replace('kiosk', '') : `${item.AreaID}`}</div>
+                        </div>
+                        <div>
+                            <Table
+                                className={styles['summary-table-hilight']}
+                                dataSource={item.Data}
+                                columns={columnsTotalSummary}
+                                pagination={false}
+                                bordered />
+                        </div>
+                    </div>
+                )
+            })
+        }
     }
 
     getViewItem() {
@@ -464,19 +624,40 @@ export default class Index extends Component {
                             >
                                 <Scrollbar overscrollEffect="bounce">
                                     {
-                                        <div className="rotate-total">
-                                            <div>
-                                                <span>TOTAL</span>
+                                        (_.sumBy(this.state.REPORT_TOTAL_KPI_SUMMARY, "YTD") > 0 && _.sumBy(this.state.REPORT_TOTAL_KPI_SUMMARY, "OS") > 0) ?
+                                            <div className="rotate-total">
+                                                <div>
+                                                    <div>TOTAL</div>
+                                                </div>
+                                                <div>
+                                                    <Table
+                                                        className={styles['summary-table-hilight']}
+                                                        dataSource={this.state.REPORT_TOTAL_KPI_SUMMARY}
+                                                        columns={columnsTotalSummary}
+                                                        pagination={false}
+                                                        bordered />
+                                                </div>
                                             </div>
-                                            <div>
-                                                <Table
-                                                    className={styles['summary-table-hilight']}
-                                                    dataSource={this.state.REPORT_TOTAL_KPI_SUMMARY}
-                                                    columns={columnsTotalSummary}
-                                                    pagination={false}
-                                                    bordered />
+                                            :
+                                            <div className="rotate-total">
+                                                <div>
+                                                    <div>TOTAL</div>
+                                                </div>
+                                                <div>
+                                                    <Table
+                                                        className={styles['summary-table-hilight']}
+                                                        dataSource={[]}
+                                                        columns={columnsTotalSummary}
+                                                        pagination={false}
+                                                        bordered />
+                                                </div>
                                             </div>
-                                        </div>
+                                    }
+                                    {
+                                        this.getBranchKPISummaryByArea()
+                                    }
+                                    {
+                                        this.getBranchKPISummaryKioskByArea()
                                     }
                                 </Scrollbar>
                                 <span onClick={this.collapsedSummaryClick} style={{ marginTop: '5px' }}>
@@ -493,7 +674,8 @@ export default class Index extends Component {
                                 branch={this.state.SEARCH_BRANCH_MARKER}
                                 data={this.state.SEARCH_EXITING_MARKET}
                                 onRowClick={this.onRowClick}
-                                isRowClick={this.state.isRowClick} />
+                                isRowClick={this.state.isRowClick}
+                                criteria={this.state.criteria} />
                         }
                     </Scrollbar>
                 </div>
@@ -521,28 +703,33 @@ export default class Index extends Component {
                     className={side_menu}
                     trigger={null}
                     collapsible
-                    collapsed={this.state.collapsed}
-                >
-                    <Filter searchHandle={this.searchHandle}
+                    collapsed={this.state.collapsed}>
+
+                    <Filter
+                        searchHandle={this.searchHandle}
                         MASTER_REGION_DATA={this.state.MASTER_REGION_DATA}
                         MASTER_AREA_DATA={this.state.MASTER_AREA_DATA}
                         MASTER_BRANCH_DATA={this.state.MASTER_BRANCH_DATA}
+                        MASTER_CALIST_DATA={this.state.MASTER_CALIST_DATA}
+                        MASTER_COMPLITITOR_PROVINCE_DATA={this.state.MASTER_COMPLITITOR_PROVINCE_DATA}
                         MASTER_TARGET_MARKET_PROVINCE_DATA={this.state.MASTER_TARGET_MARKET_PROVINCE_DATA}
                         onBranchSelect={this.onBranchSelect}
-                        countExitingMarket={this.state.SEARCH_EXITING_MARKET.length}
+                        countExitingMarket={_.filter(this.state.SEARCH_EXITING_MARKET, o => o.BranchType != 'K').length}
                         countKioskMarket={_.filter(this.state.SEARCH_EXITING_MARKET, { BranchType: 'K' }).length}
                         countPotentialMarket={this.state.SEARCH_TARGET_MARKET.length}
+                        SEARCH_COMPLITITOR_MARKER={this.state.SEARCH_COMPLITITOR_MARKER}
                     />
+
                     {
                         this.getViewItem()
                     }
+
                 </Sider>
             </Layout>
         )
     }
 
     render() {
-
         return (
             <LocaleProvider locale={enUS}>
                 <div className={styles['container']}>
@@ -554,3 +741,17 @@ export default class Index extends Component {
         )
     }
 }
+
+// export default Index
+
+// const CookiesHomeForm = withCookies(Index)
+
+// export default connect(
+//     (state) => ({
+//         NANO_INIT_DATA: state.NANO_INIT_DATA,
+//         ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA
+//     }),
+//     {
+//         getNanoMasterData: getNanoMasterData,
+//         searchNanoData: searchNanoData
+//     })(CookiesHomeForm)

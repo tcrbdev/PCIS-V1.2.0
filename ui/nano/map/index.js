@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline } from "react-google-maps"
 import { MAP } from 'react-google-maps/lib/constants';
 
@@ -13,6 +14,11 @@ import icon_Keyos from '../../../image/icon_Keyos.png'
 import icon_Market from '../../../image/icon_Market.png'
 import icon_Target from '../../../image/icon_Target.png'
 import icon_Nano from '../../../image/icon_Nano.png'
+import icon_Srisawat from '../../../image/icon_Srisawat.png'
+import icon_SrisawatPower from '../../../image/icon_SrisawatPower.png'
+import icon_Mtls from '../../../image/icon_Mtls.png'
+
+// import { setOpenBranchMarker } from '../actions/nanomaster'
 
 import styles from './index.scss'
 
@@ -178,6 +184,15 @@ const handleBounds = (props, map) => {
                 bounds.extend(marker.position)
             })
 
+        props.SEARCH_COMPLITITOR_MARKER &&
+            props.SEARCH_COMPLITITOR_MARKER.map((item, index) => {
+                let marker = new google.maps.Marker({
+                    position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
+                })
+                hasMarker = true
+                bounds.extend(marker.position)
+            })
+
         if (hasMarker && props.isBounds)
             map.fitBounds(bounds)
     }
@@ -211,7 +226,7 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     }, {
-        title: (<div className={styles['div-center']}><span>{color[0].status}</span></div>),
+        title: (<div className={styles['div-center']}><span>{color[0].status} Bal.</span></div>),
         dataIndex: 'OS',
         width: '16%',
         className: `${styles['align-right-hightlight']} ${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
@@ -312,23 +327,29 @@ const getColumnCA = [{
     title: (<div className={styles['div-center']}><span>Name</span></div>),
     dataIndex: 'Name',
     key: 'Name',
-    width: '13%',
+    width: '16%',
     className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     render: (text, record, index) => {
         return <span>{text}</span>
     }
 }, {
     title: (<div className={styles['div-center']}><span>Status</span></div>),
-    width: '7%',
+    width: '6%',
     className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
 }, {
-    title: (<span className={styles['align-center']}>OS</span>),
+    title: (<div className={styles['div-center']}>WkCycle<br />Due</div>),
+    dataIndex: 'BillingDate',
+    key: 'BillingDate',
+    width: '6%',
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+}, {
+    title: (<span className={styles['align-center']}>OS Bal.</span>),
     className: `${styles['hight-light']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     children: [{
         title: (<div className={styles['div-center']}><span>App</span></div>),
         dataIndex: 'OS_App',
         key: 'OS_App',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return <span className={text < 0 && styles['red-font']}>{text}</span>
@@ -337,10 +358,10 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>%</span></div>),
         dataIndex: 'OS_Ach',
         key: 'OS_Ach',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(1)}%</span>
+            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
         }
     }]
 }, {
@@ -350,7 +371,7 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>App</span></div>),
         dataIndex: 'Setup_App',
         key: 'Setup_App',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return <span className={text < 0 && styles['red-font']}>{text}</span>
@@ -359,10 +380,10 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>%</span></div>),
         dataIndex: 'Setup_Ach',
         key: 'Setup_Ach',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(1)}%</span>
+            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
         }
     }]
 }, {
@@ -372,7 +393,7 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>App</span></div>),
         dataIndex: 'Reject_App',
         key: 'Reject_App',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return <span className={text < 0 && styles['red-font']}>{text}</span>
@@ -381,10 +402,10 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>%</span></div>),
         dataIndex: 'Reject_Ach',
         key: 'Reject_Ach',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(1)}%</span>
+            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
         }
     }]
 }, {
@@ -394,7 +415,7 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>App</span></div>),
         dataIndex: 'Cancel_App',
         key: 'Cancel_App',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return <span className={text < 0 && styles['red-font']}>{text}</span>
@@ -403,10 +424,10 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>%</span></div>),
         dataIndex: 'Cancel_Ach',
         key: 'Cancel_Ach',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(1)}%</span>
+            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
         }
     }]
 }, {
@@ -416,7 +437,7 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>App</span></div>),
         dataIndex: 'Total_App',
         key: 'Total_App',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return <span className={text < 0 && styles['red-font']}>{text}</span>
@@ -425,18 +446,12 @@ const getColumnCA = [{
         title: (<div className={styles['div-center']}><span>%</span></div>),
         dataIndex: 'Total_Ach',
         key: 'Total_Ach',
-        width: '5%',
+        width: '4.5%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(1)}%</span>
+            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
         }
     }]
-}, {
-    title: (<div className={styles['div-center']}><span>Due</span><span>Pmt.</span></div>),
-    dataIndex: 'BillingDate',
-    key: 'BillingDate',
-    width: '5%',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
 }]
 
 const getLinkDetail = (obj, props) => {
@@ -473,71 +488,32 @@ const getBranchMarkerMenu = (props) => {
 
             return (
                 <OverlayView
-                    key={index}
+                    key={item.BranchCode}
                     position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
                     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                     getPixelPositionOffset={getPixelPositionOffset}>
                     <div className={styles['overlayView']}>
 
-                        <button class="cn-button" id="cn-button">Menu</button>
-
                         <div className={styles['circle-menu']}>
-                            <input type="checkbox" href="#" className={styles["menu-open"]} id={`menu-open_${index}`} />
-                            <label className={styles["menu-open-button"]} htmlFor={`menu-open_${index}`}>
-                                <img src={icon} />
-                                <div class="cn-wrapper" id="cn-wrapper">
-                                    <ul>
-                                        <li><a href="#"><span>About</span></a></li>
-                                        <li><a href="#"><span>Tutorials</span></a></li>
-                                        <li><a href="#"><span>Articles</span></a></li>
-                                        <li><a href="#"><span>Snippets</span></a></li>
-                                        <li><a href="#"><span>Plugins</span></a></li>
-                                        <li><a href="#"><span>Contact</span></a></li>
-                                        <li><a href="#"><span>Follow</span></a></li>
-                                    </ul>
-                                </div>
-                            </label>
+                            <input type="checkbox" className={styles["cn-button"]} id={`cn-button_${index}`} />
+                            <Tooltip title={item.BranchName}>
+                                <label className={styles["cn-button-open"]} htmlFor={`cn-button_${index}`}>
+                                    <img className={styles['menu-marker']} src={icon} />
+                                    <div className={styles['menu-close-button']}>
+                                        <FontAwesome name="close" />
+                                    </div>
+                                </label>
+                            </Tooltip>
+                            <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
+                                <ul>
+                                    <li><Tooltip title="Market Picture"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
+                                    <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
+                                    <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
+                                    <li onClick={() => props.onBranchMarkerClick(item)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
+                                    <li><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
+                                </ul>
+                            </div>
                         </div>
-
-
-                        <nav className={styles["menu"]}>
-                            <input type="checkbox" href="#" className={styles["menu-open"]} id={`menu-open_${index}`} />
-                            <label className={styles["menu-open-button"]} htmlFor={`menu-open_${index}`}>
-                                <img src={icon} />
-                                <div className={styles['menu-close-button']}>
-                                    <span className={`${styles["lines"]} ${styles["line-1"]}`}></span>
-                                    <span className={`${styles["lines"]} ${styles["line-2"]}`}></span>
-                                    <span className={`${styles["lines"]} ${styles["line-3"]}`}></span>
-                                </div>
-                            </label>
-
-                            <label htmlFor={`menu-open_${index}`} className={`${styles["menu-item"]} ${styles['blue']}`} onClick={() => props.onBranchMarkerClick(item)}>
-                                <Tooltip placement="topLeft" title="Chart Summary">
-                                    <FontAwesome name="line-chart" />
-                                </Tooltip>
-                            </label>
-                            <label htmlFor={`menu-open_${index}`} className={`${styles["menu-item"]} ${styles['green']}`}>
-                                <Tooltip placement="topLeft" title="Market Picture">
-                                    <FontAwesome name="picture-o" />
-                                </Tooltip>
-                            </label>
-                            <label htmlFor={`menu-open_${index}`} className={`${styles["menu-item"]} ${styles['red']}`}>
-                                <Tooltip placement="topLeft" title="Market Plan">
-                                    <FontAwesome name="list" />
-                                </Tooltip>
-                            </label>
-                            <label htmlFor={`menu-open_${index}`} className={`${styles["menu-item"]} ${styles['purple']}`}>
-                                <Tooltip placement="topLeft" title="Collection">
-                                    <FontAwesome name="money" />
-                                </Tooltip>
-                            </label>
-                            <label htmlFor={`menu-open_${index}`} className={`${styles["menu-item"]} ${styles['purple']}`}>
-                                <Tooltip placement="topLeft" title="Collection">
-                                    <FontAwesome name="money" />
-                                </Tooltip>
-                            </label>
-                            <div className={`${styles['bg-menu-open']}`}></div>
-                        </nav>
                     </div>
                 </OverlayView>
             )
@@ -545,111 +521,169 @@ const getBranchMarkerMenu = (props) => {
     }
 }
 
+
+const getCAExitingMarker = (props) => {
+
+    return props.exitingMarket.map((item, index) => {
+        return (
+            <OverlayView
+                key={index}
+                position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                getPixelPositionOffset={getPixelPositionOffset}>
+                <img className={styles['ca-marker-img']} src={'http://172.17.9.94/newservices/LBServices.svc/employee/image/56367'} />
+            </OverlayView>
+        )
+    })
+}
+
+const getExitingMarkerMenu = props => {
+
+    return props.exitingMarket.map((item, index) => {
+        return (
+            <OverlayView
+                key={index}
+                position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                getPixelPositionOffset={getPixelPositionOffset}>
+                <div className={styles['overlayView']}>
+
+                    <div className={styles['circle-menu']}>
+                        <input type="checkbox" className={styles["cn-button"]} id={`cn-button-exiting_${index}`} />
+                        <label className={styles["cn-button-open"]} htmlFor={`cn-button-exiting_${index}`}>
+                            <img className={styles['menu-marker']} src={icon_Market} />
+                            <div className={styles['menu-close-button']}>
+                                <FontAwesome name="close" />
+                            </div>
+                        </label>
+                        <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
+                            <ul>
+                                <li><Tooltip title="Market Picture"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
+                                <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
+                                <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
+                                <li onClick={() => props.onMarkerClick(item)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
+                                <li><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </OverlayView>
+        )
+    })
+}
+
 const getBranchMarker = (props) => {
+
     if (_.filter(props.criteria.MarkerOptions, o => o == 'MR').length > 0) {
+
         return _.filter(props.branch, { showInfo: true }).map((item, index) => {
 
-            let icon = '_blank'
+            let icon = icon_full_branch
             let related_branch = [], current_branch
             current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
 
             switch (item.BranchType) {
                 case 'K':
                     related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
+                    icon = icon_Keyos
                     break;
                 case 'P':
+                case 'L':
                     related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
+                    icon = icon_Nano
                     break;
             }
 
             return (
                 <Marker
                     key={index}
+                    title={item.BranchName}
+                    onClick={() => props.onBranchMarkerClick(item)}
                     position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
                     icon={{
                         url: icon
                     }}>
                     {
-                        /*item.showInfo &&
-                        (*/
-                        <InfoWindow onDomReady={onDomReady}>
-                            <Layout>
-                                <div className={styles['header']}>
-                                    <Icon
-                                        className="trigger"
-                                        type='pie-chart' />
-                                    <span>
-                                        {`${item.BranchName}`}
-                                    </span>
-                                    <Icon
-                                        onClick={() => props.onBranchMarkerClick(item)}
-                                        className="trigger"
-                                        type='close' />
-                                </div>
-                                <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                    <div className={styles['detail-container']}>
-                                        <div className={styles['detail-chart']}>
-                                            <div style={{ width: '160px', height: '160px' }}>
-                                                <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
-                                                <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
-                                            </div>
-                                            <div>
-                                                <div className={styles['text-descrition']}>
-                                                    <div>
-                                                        <span>{`${current_branch.MarketShop} Shop `}</span>
-                                                        <span>{`from ${current_branch.Market} Market (Open on ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM YYYY") : 'unknow'})`}</span>
-                                                    </div>
-                                                    <span>
-                                                        {
-                                                            current_branch.BranchType == 'K' ?
-                                                                `Base on `
-                                                                :
-                                                                `${related_branch.length} kiosk `
-                                                        }
-                                                        {
-                                                            getLinkDetail(related_branch, props)
-                                                        }
-                                                    </span>
-                                                </div>
-                                                <div className={styles['box-shadow']}>
-                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                        <Icon
-                                                            className="trigger"
-                                                            type='bars' />
-                                                        <span>Market Penetration</span>
-                                                    </div>
-                                                    <Layout style={{ backgroundColor: '#FFF' }}>
-                                                        <Table
-                                                            className={styles['summary-table-not-odd']}
-                                                            dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
-                                                            columns={getMarketSummaryColumns()}
-                                                            pagination={false}
-                                                            bordered />
-                                                    </Layout>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={styles['box-shadow']}>
-                                            <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                <Icon
-                                                    className="trigger"
-                                                    type='bars' />
-                                                <span>CA Contribution</span>
-                                            </div>
-                                            <Layout style={{ backgroundColor: '#FFF' }}>
-                                                <Table
-                                                    className={styles['summary-table']}
-                                                    dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
-                                                    columns={getColumnCA}
-                                                    pagination={false}
-                                                    bordered />
-                                            </Layout>
-                                        </div>
+                        item.showInfo &&
+                        (
+                            <InfoWindow onDomReady={onDomReady}>
+                                <Layout>
+                                    <div className={styles['header']}>
+                                        <Icon
+                                            className="trigger"
+                                            type='pie-chart' />
+                                        <span>
+                                            {`${item.BranchName}`}
+                                        </span>
+                                        <Icon
+                                            onClick={() => props.onBranchMarkerClick(item)}
+                                            className="trigger"
+                                            type='close' />
                                     </div>
+                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                        <div className={styles['detail-container']}>
+                                            <div className={styles['detail-chart']}>
+                                                <div style={{ width: '160px', height: '160px' }}>
+                                                    <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
+                                                    <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
+                                                </div>
+                                                <div>
+                                                    <div className={styles['text-descrition']}>
+                                                        <div>
+                                                            <span>{`${current_branch.MarketShop} Shop `}</span>
+                                                            <span>{`from ${current_branch.Market} Market (Open on ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM YYYY") : 'unknow'})`}</span>
+                                                        </div>
+                                                        <span>
+                                                            {
+                                                                current_branch.BranchType == 'K' ?
+                                                                    `Base on `
+                                                                    :
+                                                                    `${related_branch.length} kiosk `
+                                                            }
+                                                            {
+                                                                getLinkDetail(related_branch, props)
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                    <div className={styles['box-shadow']}>
+                                                        <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                            <Icon
+                                                                className="trigger"
+                                                                type='bars' />
+                                                            <span>Market Penetration</span>
+                                                        </div>
+                                                        <Layout style={{ backgroundColor: '#FFF' }}>
+                                                            <Table
+                                                                className={styles['summary-table-not-odd']}
+                                                                dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
+                                                                columns={getMarketSummaryColumns()}
+                                                                pagination={false}
+                                                                bordered />
+                                                        </Layout>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={styles['box-shadow']}>
+                                                <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                    <Icon
+                                                        className="trigger"
+                                                        type='bars' />
+                                                    <span>CA Contribution</span>
+                                                </div>
+                                                <Layout style={{ backgroundColor: '#FFF' }}>
+                                                    <Table
+                                                        className={styles['summary-table']}
+                                                        dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
+                                                        columns={getColumnCA}
+                                                        pagination={false}
+                                                        bordered />
+                                                </Layout>
+                                            </div>
+                                        </div>
+                                    </Layout>
                                 </Layout>
-                            </Layout>
-                        </InfoWindow>
-                        /*)*/
+                            </InfoWindow>
+                        )
                     }
                 </Marker>
             )
@@ -699,6 +733,317 @@ const getBranchMarkerCircle = (props) => {
     }
 }
 
+const getExitingMarker = props => {
+    return props.exitingMarket.map((item, index) => {
+        return (
+            <Marker
+                key={index}
+                title={item.MarketName}
+                onClick={() => props.onMarkerClick(item)}
+                position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                icon={{
+                    url: icon_Market
+                }}>
+                {
+                    item.showInfo &&
+                    (
+                        <InfoWindow
+                            title="Blabla"
+                            onDomReady={onDomReady}>
+                            <Layout>
+                                <div className={styles['header']}>
+                                    <Icon
+                                        className="trigger"
+                                        type='pie-chart' />
+                                    <span>
+                                        {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                                    </span>
+                                    <Icon
+                                        onClick={() => props.onMarkerClick(item)}
+                                        className="trigger"
+                                        type='close' />
+                                </div>
+                                <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                    <div className={styles['detail-container']}>
+                                        <div className={styles['detail-chart']}>
+                                            <div style={{ width: '160px', height: '160px' }}>
+                                                <Doughnut {...chartData(item.MARKET_INFORMATION) } />
+                                                <span>{`${parseFloat(!_.isEmpty(item.MARKET_INFORMATION) && getMarketSummaryData(item.MARKET_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
+                                            </div>
+                                            <div>
+                                                <div className={styles['text-descrition']}>
+                                                    <div>
+                                                        <span>{`${item.MarketShop} Shop `}</span>
+                                                        <span>{`Distance from ${item.BranchName} ${parseFloat(item.Radius).toFixed(2)}Km.`}</span>
+                                                    </div>
+                                                    <span>
+                                                        {`Type B working hour 07:00 - 19:00 (Mon - Wed - Fri) `}
+                                                    </span>
+                                                </div>
+                                                <div className={styles['box-shadow']}>
+                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                        <Icon
+                                                            className="trigger"
+                                                            type='bars' />
+                                                        <span>Market Penetration</span>
+                                                    </div>
+                                                    <Layout style={{ backgroundColor: '#FFF' }}>
+                                                        <Table
+                                                            className={styles['summary-table-not-odd']}
+                                                            dataSource={getMarketSummaryData(item.MARKET_INFORMATION)}
+                                                            columns={getMarketSummaryColumns()}
+                                                            pagination={false}
+                                                            bordered />
+                                                    </Layout>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={styles['box-shadow']}>
+                                            <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                <Icon
+                                                    className="trigger"
+                                                    type='bars' />
+                                                <span>CA Contribution</span>
+                                            </div>
+                                            <Layout style={{ backgroundColor: '#FFF' }}>
+                                                <Table
+                                                    className={styles['summary-table']}
+                                                    dataSource={getCAData(item.CA_INFORMATION)}
+                                                    columns={getColumnCA}
+                                                    pagination={false}
+                                                    bordered />
+                                            </Layout>
+                                        </div>
+                                    </div>
+                                </Layout>
+                            </Layout>
+                        </InfoWindow>
+                    )
+                }
+            </Marker>
+        )
+    })
+}
+
+const getComplititorMarker = props => {
+    return props.SEARCH_COMPLITITOR_MARKER.map((item, index) => {
+        let icon = icon_full_branch
+        switch (item.TypeCode) {
+            case '1':
+                icon = icon_SrisawatPower
+                break;
+            case '2':
+                icon = icon_Srisawat
+                break;
+            case '3':
+                icon = icon_Mtls
+                break;
+        }
+
+        return (
+            <Marker
+                key={index}
+                title={item.Place}
+                position={{ lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }}
+                icon={{
+                    url: icon
+                }}>
+            </Marker>
+        )
+    })
+}
+
+// class GMap extends Component {
+
+//     onBranchMarkerClick = (targetItem) => {
+//         this.props.setOpenBranchMarker(targetItem, this.props.RELATED_BRANCH_DATA)
+//     }
+
+//     getBranchMarker = () => {
+//         const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = this.props
+
+//         if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
+
+//             return RELATED_BRANCH_DATA.map((item, index) => {
+
+//                 let icon = icon_full_branch
+//                 // let related_branch = [], current_branch
+//                 // current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
+
+//                 switch (item.BranchType) {
+//                     case 'K':
+//                         // related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
+//                         icon = icon_Keyos
+//                         break;
+//                     case 'P':
+//                     case 'L':
+//                         // related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
+//                         icon = icon_Nano
+//                         break;
+//                 }
+
+//                 return (
+//                     <Marker
+//                         key={index}
+//                         position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
+//                         onClick={() => this.onBranchMarkerClick(item)}
+//                         icon={{
+//                             url: icon
+//                         }}>
+//                         {
+//                             item.showInfo &&
+//                             (
+//                                 <InfoWindow onDomReady={onDomReady}>
+//                                     <Layout>
+//                                         <div className={styles['header']}>
+//                                             <Icon
+//                                                 className="trigger"
+//                                                 type='pie-chart' />
+//                                             <span>
+//                                                 {`${item.BranchName}`}
+//                                             </span>
+//                                             <Icon
+//                                                 onClick={() => this.onBranchMarkerClick(item)}
+//                                                 className="trigger"
+//                                                 type='close' />
+//                                         </div>
+//                                         <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+//                                             <div className={styles['detail-container']}>
+//                                                 <div className={styles['detail-chart']}>
+//                                                     <div style={{ width: '160px', height: '160px' }}>
+//                                                         <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
+//                                                         <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
+//                                                     </div>
+//                                                     <div>
+//                                                         <div className={styles['text-descrition']}>
+//                                                             <div>
+//                                                                 <span>{`${current_branch.MarketShop} Shop `}</span>
+//                                                                 <span>{`from ${current_branch.Market} Market (Open on ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM YYYY") : 'unknow'})`}</span>
+//                                                             </div>
+//                                                             <span>
+//                                                                 {
+//                                                                     current_branch.BranchType == 'K' ?
+//                                                                         `Base on `
+//                                                                         :
+//                                                                         `${related_branch.length} kiosk `
+//                                                                 }
+//                                                                 {
+//                                                                     getLinkDetail(related_branch, props)
+//                                                                 }
+//                                                             </span>
+//                                                         </div>
+//                                                         <div className={styles['box-shadow']}>
+//                                                             <div className={`${styles['header']} ${styles['header-border']}`}>
+//                                                                 <Icon
+//                                                                     className="trigger"
+//                                                                     type='bars' />
+//                                                                 <span>Market Penetration</span>
+//                                                             </div>
+//                                                             <Layout style={{ backgroundColor: '#FFF' }}>
+//                                                                 <Table
+//                                                                     className={styles['summary-table-not-odd']}
+//                                                                     dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
+//                                                                     columns={getMarketSummaryColumns()}
+//                                                                     pagination={false}
+//                                                                     bordered />
+//                                                             </Layout>
+//                                                         </div>
+//                                                     </div>
+//                                                 </div>
+//                                                 <div className={styles['box-shadow']}>
+//                                                     <div className={`${styles['header']} ${styles['header-border']}`}>
+//                                                         <Icon
+//                                                             className="trigger"
+//                                                             type='bars' />
+//                                                         <span>CA Contribution</span>
+//                                                     </div>
+//                                                     <Layout style={{ backgroundColor: '#FFF' }}>
+//                                                         <Table
+//                                                             className={styles['summary-table']}
+//                                                             dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
+//                                                             columns={getColumnCA}
+//                                                             pagination={false}
+//                                                             bordered />
+//                                                     </Layout>
+//                                                 </div>
+//                                             </div>
+//                                         </Layout>
+//                                     </Layout>
+//                                 </InfoWindow>
+//                             )
+//                         }
+//                     </Marker>
+//                 )
+//             })
+//         }
+//     }
+
+//     handleBounds = (map) => {
+//         if (map) {
+//             const { RELATED_BRANCH_DATA } = this.props
+//             const mapInstance = map || map.context[MAP];
+//             setTimeout(() => { google.maps.event.trigger(mapInstance, "resize") }, 200)
+
+//             let bounds = new google.maps.LatLngBounds()
+//             let hasMarker = false
+
+//             RELATED_BRANCH_DATA.map((item, index) => {
+//                 let marker = new google.maps.Marker({
+//                     position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
+//                 })
+//                 hasMarker = true
+//                 bounds.extend(marker.position)
+//             })
+
+//             // props.exitingMarket &&
+//             //     props.exitingMarket.map((item, index) => {
+//             //         let marker = new google.maps.Marker({
+//             //             position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+//             //         })
+//             //         hasMarker = true
+//             //         bounds.extend(marker.position)
+//             //     })
+
+//             // props.targetMarket &&
+//             //     props.targetMarket.map((item, index) => {
+//             //         let marker = new google.maps.Marker({
+//             //             position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+//             //         })
+//             //         hasMarker = true
+//             //         bounds.extend(marker.position)
+//             //     })
+
+//             if (hasMarker && this.props.isBounds)
+//                 map.fitBounds(bounds)
+//         }
+
+//     }
+
+//     render() {
+//         return (
+//             <GoogleMap
+//                 defaultZoom={8}
+//                 defaultCenter={options.center}
+//                 ref={(map) => (this.handleBounds(map))}>
+//                 {
+//                     this.getBranchMarker()
+//                 }
+//             </GoogleMap >
+//         )
+//     }
+
+// }
+
+// const Map = withGoogleMap(GMap)
+
+// export default connect(
+//     (state) => ({
+//         NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
+//         RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA
+//     }), {
+//         setOpenBranchMarker: setOpenBranchMarker
+//     })(Map)
+
 const map = withGoogleMap(props => (
     <GoogleMap
         defaultZoom={8}
@@ -714,93 +1059,16 @@ const map = withGoogleMap(props => (
             getBranchMarkerCircle(props)
         }
         {
-            props.exitingMarket &&
-            props.exitingMarket.map((item, index) => {
-                return (
-                    <Marker
-                        key={index}
-                        onClick={() => props.onMarkerClick(item)}
-                        position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                        icon={{
-                            url: icon_Market
-                        }}>
-                        {
-                            item.showInfo &&
-                            (
-                                <InfoWindow onDomReady={onDomReady}>
-                                    <Layout>
-                                        <div className={styles['header']}>
-                                            <Icon
-                                                className="trigger"
-                                                type='pie-chart' />
-                                            <span>
-                                                {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
-                                            </span>
-                                            <Icon
-                                                onClick={() => props.onMarkerClick(item)}
-                                                className="trigger"
-                                                type='close' />
-                                        </div>
-                                        <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                            <div className={styles['detail-container']}>
-                                                <div className={styles['detail-chart']}>
-                                                    <div style={{ width: '160px', height: '160px' }}>
-                                                        <Doughnut {...chartData(item.MARKET_INFORMATION) } />
-                                                        <span>{`${parseFloat(!_.isEmpty(item.MARKET_INFORMATION) && getMarketSummaryData(item.MARKET_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
-                                                    </div>
-                                                    <div>
-                                                        <div className={styles['text-descrition']}>
-                                                            <div>
-                                                                <span>{`${item.MarketShop} Shop `}</span>
-                                                                <span>{`Distance from ${item.BranchName} ${parseFloat(item.Radius).toFixed(2)}Km.`}</span>
-                                                            </div>
-                                                            <span>
-                                                                {`Type B working hour 07:00 - 19:00 (Mon - Wed - Fri) `}
-                                                            </span>
-                                                        </div>
-                                                        <div className={styles['box-shadow']}>
-                                                            <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                                <Icon
-                                                                    className="trigger"
-                                                                    type='bars' />
-                                                                <span>Market Penetration</span>
-                                                            </div>
-                                                            <Layout style={{ backgroundColor: '#FFF' }}>
-                                                                <Table
-                                                                    className={styles['summary-table-not-odd']}
-                                                                    dataSource={getMarketSummaryData(item.MARKET_INFORMATION)}
-                                                                    columns={getMarketSummaryColumns()}
-                                                                    pagination={false}
-                                                                    bordered />
-                                                            </Layout>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={styles['box-shadow']}>
-                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                        <Icon
-                                                            className="trigger"
-                                                            type='bars' />
-                                                        <span>CA Contribution</span>
-                                                    </div>
-                                                    <Layout style={{ backgroundColor: '#FFF' }}>
-                                                        <Table
-                                                            className={styles['summary-table']}
-                                                            dataSource={getCAData(item.CA_INFORMATION)}
-                                                            columns={getColumnCA}
-                                                            pagination={false}
-                                                            bordered />
-                                                    </Layout>
-                                                </div>
-                                            </div>
-                                        </Layout>
-                                    </Layout>
-                                </InfoWindow>
-                            )
-                        }
-                    </Marker>
-                )
-            })
+            /*getExitingMarkerMenu(props)*/
+        }
+        {
+            getExitingMarker(props)
+        }
+        {
+            getCAExitingMarker(props)
+        }
+        {
+            getComplititorMarker(props)
         }
         {
             props.targetMarket &&
