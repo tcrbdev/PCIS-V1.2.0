@@ -44,6 +44,10 @@ var _injectLocale = require('../locale-provider/injectLocale');
 
 var _injectLocale2 = _interopRequireDefault(_injectLocale);
 
+var _warning = require('../_util/warning');
+
+var _warning2 = _interopRequireDefault(_warning);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var __rest = undefined && undefined.__rest || function (s, e) {
@@ -58,9 +62,13 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 var TreeSelect = function (_React$Component) {
     (0, _inherits3['default'])(TreeSelect, _React$Component);
 
-    function TreeSelect() {
+    function TreeSelect(props) {
         (0, _classCallCheck3['default'])(this, TreeSelect);
-        return (0, _possibleConstructorReturn3['default'])(this, (TreeSelect.__proto__ || Object.getPrototypeOf(TreeSelect)).apply(this, arguments));
+
+        var _this = (0, _possibleConstructorReturn3['default'])(this, (TreeSelect.__proto__ || Object.getPrototypeOf(TreeSelect)).call(this, props));
+
+        (0, _warning2['default'])(props.multiple !== false || !props.treeCheckable, '`multiple` will alway be `true` when `treeCheckable` is true');
+        return _this;
     }
 
     (0, _createClass3['default'])(TreeSelect, [{

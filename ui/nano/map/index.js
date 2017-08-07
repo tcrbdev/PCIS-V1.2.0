@@ -5,7 +5,6 @@ import { MAP } from 'react-google-maps/lib/constants';
 
 import { Layout, Icon, Button, Table, Tooltip } from 'antd';
 import FontAwesome from 'react-fontawesome'
-import SummaryTable from '../market/summarytable'
 import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
 
@@ -17,8 +16,13 @@ import icon_Nano from '../../../image/icon_Nano.png'
 import icon_Srisawat from '../../../image/icon_Srisawat.png'
 import icon_SrisawatPower from '../../../image/icon_SrisawatPower.png'
 import icon_Mtls from '../../../image/icon_Mtls.png'
+import pinpao from '../../../image/pinpao.png'
 
-// import { setOpenBranchMarker } from '../actions/nanomaster'
+import {
+    setOpenBranchMarker,
+    setOpenExitingMarketMarker,
+    setOpenTargetMarketMarker
+} from '../actions/nanomaster'
 
 import styles from './index.scss'
 
@@ -157,43 +161,46 @@ const handleBounds = (props, map) => {
         let hasMarker = false
         // // props.branch
 
-        props.branch &&
-            props.branch.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
-            })
+        const {
+            RELATED_BRANCH_DATA,
+            RELATED_EXITING_MARKET_DATA,
+            RELATED_TARGET_MARKET_DATA,
+            RELATED_COMPLITITOR_DATA
+        } = props
 
-        props.exitingMarket &&
-            props.exitingMarket.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
+        RELATED_BRANCH_DATA.map((item, index) => {
+            let marker = new google.maps.Marker({
+                position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
             })
+            hasMarker = true
+            bounds.extend(marker.position)
+        })
 
-        props.targetMarket &&
-            props.targetMarket.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
+        RELATED_EXITING_MARKET_DATA.map((item, index) => {
+            let marker = new google.maps.Marker({
+                position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
             })
+            hasMarker = true
+            bounds.extend(marker.position)
+        })
 
-        props.SEARCH_COMPLITITOR_MARKER &&
-            props.SEARCH_COMPLITITOR_MARKER.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
+        RELATED_TARGET_MARKET_DATA.map((item, index) => {
+            let marker = new google.maps.Marker({
+                position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
             })
+            hasMarker = true
+            bounds.extend(marker.position)
+        })
 
-        if (hasMarker && props.isBounds)
+        RELATED_COMPLITITOR_DATA.map((item, index) => {
+            let marker = new google.maps.Marker({
+                position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
+            })
+            hasMarker = true
+            bounds.extend(marker.position)
+        })
+
+        if (hasMarker)
             map.fitBounds(bounds)
     }
 }
@@ -201,6 +208,7 @@ const handleBounds = (props, map) => {
 const getMarketSummaryData = (item) => {
 
     if (!_.isEmpty(item)) {
+        const Amt = _.find(item, { Status: 'OS' }) || { Total: 0, Ach: 0 }
         const os = _.find(item, { Status: 'OS' }) || { Total: 0, Ach: 0 }
         const setup = _.find(item, { Status: 'APPROVED' }) || { Total: 0, Ach: 0 }
         const reject = _.find(item, { Status: 'REJECTED' }) || { Total: 0, Ach: 0 }
@@ -209,7 +217,7 @@ const getMarketSummaryData = (item) => {
         const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
 
         return [
-            { Detail: 'Total App', OS: os.Total, SETUP: setup.Total, REJECT: reject.Total, CANCEL: cancel.Total, POTENTIAL: potential.Total, sum_penatation: sum_penatation },
+            { Detail: 'Total App', Amt: Amt.Amt ? Amt.Amt : '', OS: os.Total, SETUP: setup.Total, REJECT: reject.Total, CANCEL: cancel.Total, POTENTIAL: potential.Total, sum_penatation: sum_penatation },
             { Detail: 'Achive', OS: os.Ach, SETUP: setup.Ach, REJECT: reject.Ach, CANCEL: cancel.Ach, POTENTIAL: potential.Ach, sum_penatation: sum_penatation },
         ]
     }
@@ -223,16 +231,26 @@ const getMarketSummaryColumns = () => {
         title: (<div className={styles['div-center']}><span>Detail</span></div>),
         dataIndex: 'Detail',
         key: 'Detail',
-        width: '16%',
+        width: '15%',
         className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     }, {
         title: (<div className={styles['div-center']}><span>{color[0].status} Bal.</span></div>),
-        dataIndex: 'OS',
-        width: '16%',
         className: `${styles['align-right-hightlight']} ${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
-        }
+        children: [{
+            dataIndex: 'Amt',
+            width: '8%',
+            className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `` : `${text}`}</span>
+            }
+        }, {
+            dataIndex: 'OS',
+            width: '8%',
+            className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            }
+        }],
     }, {
         title: (
             <div className={`${styles['div-point']} `}>
@@ -292,6 +310,23 @@ const getMarketSummaryColumns = () => {
     }]
 }
 
+const getFormatShortDay = (value) => {
+
+    if (_.isEmpty(value)) {
+        return ''
+    }
+    else {
+        const day = value.split(',')
+        const dayArray = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa']
+        let result = ""
+        day.map((item, index) => {
+            result = `${result}${index != 0 ? ',' : ''}${dayArray[item]}`
+        })
+        return result
+    }
+
+}
+
 const getCAData = (item) => {
     if (!_.isEmpty(item)) {
         let data = []
@@ -315,10 +350,11 @@ const getCAData = (item) => {
                 Cancel_Ach: !_.isEmpty(cancel) ? cancel.Ach : 0,
                 Total_App: !_.isEmpty(total) ? total.Total : 0,
                 Total_Ach: !_.isEmpty(total) ? total.Ach : 0,
-                BillingDate: ''
+                BillingDate: getFormatShortDay(item[0].CycleDue),
+                StatusDate: _.isEmpty(item[0].StartWork) ? '' : moment(item[0].StartWork).format('DD-MM-YYYY')
             })
         })
-        return _.orderBy(data, ['OS_Ach', 'Setup_Ach'], ['desc', 'desc'])
+        return _.orderBy(data, ['OS_Ach', 'Setup_Ach', 'CAID'], ['desc', 'desc', 'asc'])
     }
     return []
 }
@@ -334,6 +370,8 @@ const getColumnCA = [{
     }
 }, {
     title: (<div className={styles['div-center']}><span>Status</span></div>),
+    dataIndex: 'StatusDate',
+    key: 'StatusDate',
     width: '6%',
     className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
 }, {
@@ -454,10 +492,12 @@ const getColumnCA = [{
     }]
 }]
 
-const getLinkDetail = (obj, props) => {
+const getLinkDetail = (obj, props, branch_radius) => {
     return obj.map((m, i) => {
-        const item = _.find(props.branch, { BranchCode: m.BranchCode })
-        return (<span><a onClick={() => props.onBranchMarkerClick(item, true)}>{m.BranchName}</a>{(i + 1) < obj.length && ' / '}</span>)
+        const item = _.find(props.RELATED_BRANCH_DATA, { BranchCode: m.BranchCode })
+        console.log(m.BranchCode)
+        const radius = parseFloat(_.find(branch_radius, { BranchCode: m.BranchCode }).Radius).toFixed(1)
+        return (<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{m.BranchName}</a> {radius}Km. {(i + 1) < obj.length && ' / '} </span>)
     })
 }
 
@@ -472,8 +512,10 @@ const getPixelPositionOffset = (width, height) => {
 }
 
 const getBranchMarkerMenu = (props) => {
-    if (_.filter(props.criteria.MarkerOptions, o => o == 'MR').length > 0) {
-        return props.branch.map((item, index) => {
+    const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
+
+    if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
+        return RELATED_BRANCH_DATA.map((item, index) => {
 
             let icon = icon_full_branch
 
@@ -509,7 +551,7 @@ const getBranchMarkerMenu = (props) => {
                                     <li><Tooltip title="Market Picture"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
                                     <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
                                     <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
-                                    <li onClick={() => props.onBranchMarkerClick(item)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
+                                    <li onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
                                     <li><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
                                 </ul>
                             </div>
@@ -521,17 +563,185 @@ const getBranchMarkerMenu = (props) => {
     }
 }
 
+const getBranchMarker = (props) => {
+
+    const { RELATED_BRANCH_DATA } = props
+
+    return _.filter(RELATED_BRANCH_DATA, { showInfo: true }).map((item, index) => {
+
+        let related_branch = [], current_branch
+        current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
+
+        switch (item.BranchType) {
+            case 'K':
+                related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
+                break;
+            case 'P':
+            case 'L':
+                related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
+                break;
+        }
+
+        return (
+            <Marker
+                key={index}
+                title={item.BranchName}
+                position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
+                icon={{
+                    url: '_blanks'
+                }}>
+                {
+                    item.showInfo &&
+                    (
+                        <InfoWindow onDomReady={onDomReady}>
+                            <Layout>
+                                <div className={styles['headers']}>
+                                    <Icon
+                                        className="trigger"
+                                        type='pie-chart' />
+                                    <span>
+                                        {`${item.BranchName}`}
+                                    </span>
+                                    <Icon
+                                        onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, false)}
+                                        className="trigger"
+                                        type='close' />
+                                </div>
+                                <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                    <div className={styles['detail-container']}>
+                                        <div className={styles['detail-chart']}>
+                                            <div style={{ width: '160px', height: '160px' }}>
+                                                <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
+                                                <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
+                                            </div>
+                                            <div>
+                                                <div className={styles['text-descrition']}>
+                                                    <div>
+                                                        <span>{`${current_branch.MarketShop} Shop `}</span>
+                                                        <span>{`from ${current_branch.Market} Market (Open on ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM YYYY") : 'unknow'})`}</span>
+                                                    </div>
+                                                    <span>
+                                                        {
+                                                            current_branch.BranchType == 'K' ?
+                                                                `Distance from `
+                                                                :
+                                                                `${related_branch.length} kiosk`
+                                                        }
+                                                        {
+                                                            getLinkDetail(related_branch, props, item.BRANCH_RADIUS)
+                                                        }
+                                                    </span>
+                                                    <div className={styles['note-icon']}>
+                                                        <Tooltip title='Add Comment'>
+                                                            <FontAwesome name='comments' />
+                                                        </Tooltip>
+                                                    </div>
+                                                </div>
+                                                <div className={styles['box-shadow']}>
+                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                        <Icon
+                                                            className="trigger"
+                                                            type='bars' />
+                                                        <span>Market Penetration</span>
+                                                    </div>
+                                                    <Layout style={{ backgroundColor: '#FFF' }}>
+                                                        <Table
+                                                            className={styles['summary-table-not-odd']}
+                                                            dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
+                                                            columns={getMarketSummaryColumns()}
+                                                            pagination={false}
+                                                            bordered />
+                                                    </Layout>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={styles['box-shadow']}>
+                                            <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                <Icon
+                                                    className="trigger"
+                                                    type='bars' />
+                                                <span>CA Contribution</span>
+                                            </div>
+                                            <Layout style={{ backgroundColor: '#FFF' }}>
+                                                <Table
+                                                    className={styles['summary-table']}
+                                                    dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
+                                                    columns={getColumnCA}
+                                                    pagination={false}
+                                                    bordered />
+                                            </Layout>
+                                        </div>
+                                    </div>
+                                </Layout>
+                            </Layout>
+                        </InfoWindow>
+                    )
+                }
+            </Marker>
+        )
+    })
+}
+
+const getLineKioskToBranch = (props) => {
+    if (_.filter(props.criteria.MarkerOptions, o => o == 'MR').length > 0) {
+        return props.branch.map((item, index) => {
+            if (item.BranchType == 'K') {
+                const BranchLocation = _.find(props.branch, { BranchCode: item.BranchCode.substring(0, 3) })
+                if (BranchLocation)
+                    return (
+                        <Polyline
+                            path={[
+                                { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) },
+                                { lat: parseFloat(BranchLocation.BranchLatitude), lng: parseFloat(BranchLocation.BranchLongitude) }
+                            ]}
+                            options={{ strokeColor: '#d80049' }} />
+                    )
+            }
+        })
+    }
+}
+
+const getBranchMarkerCircle = (props) => {
+    const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
+
+    if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0) {
+        return RELATED_BRANCH_DATA.map((item, index) => {
+            const radius = circle.map(c => (
+                <Circle
+                    center={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
+                    radius={c.radius}
+                    options={{ ...c.options }}
+                />
+            ))
+
+            if (item.BranchType == "K") {
+                if (_.isEmpty(_.find(props.RELATED_BRANCH_DATA, { BranchCode: item.OriginBranchCode }))) {
+                    return radius
+                }
+            }
+            else {
+                return radius
+            }
+        })
+    }
+}
 
 const getCAExitingMarker = (props) => {
 
-    return props.exitingMarket.map((item, index) => {
+    const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
+
+    return RELATED_EXITING_MARKET_DATA.map((item, index) => {
         return (
             <OverlayView
                 key={index}
                 position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                 getPixelPositionOffset={getPixelPositionOffset}>
-                <img className={styles['ca-marker-img']} src={'http://172.17.9.94/newservices/LBServices.svc/employee/image/56367'} />
+                <div className={styles['ca-marker-img-container']}>
+                    <img src={pinpao} />
+                    <img className={styles['ca-marker-img']} src={'http://172.17.9.94/newservices/LBServices.svc/employee/image/57345'} />
+
+                </div>
             </OverlayView>
         )
     })
@@ -539,7 +749,7 @@ const getCAExitingMarker = (props) => {
 
 const getExitingMarkerMenu = props => {
 
-    return props.exitingMarket.map((item, index) => {
+    return props.RELATED_EXITING_MARKET_DATA.map((item, index) => {
         return (
             <OverlayView
                 key={index}
@@ -572,174 +782,15 @@ const getExitingMarkerMenu = props => {
     })
 }
 
-const getBranchMarker = (props) => {
-
-    if (_.filter(props.criteria.MarkerOptions, o => o == 'MR').length > 0) {
-
-        return _.filter(props.branch, { showInfo: true }).map((item, index) => {
-
-            let icon = icon_full_branch
-            let related_branch = [], current_branch
-            current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
-
-            switch (item.BranchType) {
-                case 'K':
-                    related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
-                    icon = icon_Keyos
-                    break;
-                case 'P':
-                case 'L':
-                    related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
-                    icon = icon_Nano
-                    break;
-            }
-
-            return (
-                <Marker
-                    key={index}
-                    title={item.BranchName}
-                    onClick={() => props.onBranchMarkerClick(item)}
-                    position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
-                    icon={{
-                        url: icon
-                    }}>
-                    {
-                        item.showInfo &&
-                        (
-                            <InfoWindow onDomReady={onDomReady}>
-                                <Layout>
-                                    <div className={styles['header']}>
-                                        <Icon
-                                            className="trigger"
-                                            type='pie-chart' />
-                                        <span>
-                                            {`${item.BranchName}`}
-                                        </span>
-                                        <Icon
-                                            onClick={() => props.onBranchMarkerClick(item)}
-                                            className="trigger"
-                                            type='close' />
-                                    </div>
-                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                        <div className={styles['detail-container']}>
-                                            <div className={styles['detail-chart']}>
-                                                <div style={{ width: '160px', height: '160px' }}>
-                                                    <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
-                                                    <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
-                                                </div>
-                                                <div>
-                                                    <div className={styles['text-descrition']}>
-                                                        <div>
-                                                            <span>{`${current_branch.MarketShop} Shop `}</span>
-                                                            <span>{`from ${current_branch.Market} Market (Open on ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM YYYY") : 'unknow'})`}</span>
-                                                        </div>
-                                                        <span>
-                                                            {
-                                                                current_branch.BranchType == 'K' ?
-                                                                    `Base on `
-                                                                    :
-                                                                    `${related_branch.length} kiosk `
-                                                            }
-                                                            {
-                                                                getLinkDetail(related_branch, props)
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                    <div className={styles['box-shadow']}>
-                                                        <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                            <Icon
-                                                                className="trigger"
-                                                                type='bars' />
-                                                            <span>Market Penetration</span>
-                                                        </div>
-                                                        <Layout style={{ backgroundColor: '#FFF' }}>
-                                                            <Table
-                                                                className={styles['summary-table-not-odd']}
-                                                                dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
-                                                                columns={getMarketSummaryColumns()}
-                                                                pagination={false}
-                                                                bordered />
-                                                        </Layout>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={styles['box-shadow']}>
-                                                <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                    <Icon
-                                                        className="trigger"
-                                                        type='bars' />
-                                                    <span>CA Contribution</span>
-                                                </div>
-                                                <Layout style={{ backgroundColor: '#FFF' }}>
-                                                    <Table
-                                                        className={styles['summary-table']}
-                                                        dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
-                                                        columns={getColumnCA}
-                                                        pagination={false}
-                                                        bordered />
-                                                </Layout>
-                                            </div>
-                                        </div>
-                                    </Layout>
-                                </Layout>
-                            </InfoWindow>
-                        )
-                    }
-                </Marker>
-            )
-        })
-    }
-}
-
-const getLineKioskToBranch = (props) => {
-    if (_.filter(props.criteria.MarkerOptions, o => o == 'MR').length > 0) {
-        return props.branch.map((item, index) => {
-            if (item.BranchType == 'K') {
-                const BranchLocation = _.find(props.branch, { BranchCode: item.BranchCode.substring(0, 3) })
-                if (BranchLocation)
-                    return (
-                        <Polyline
-                            path={[
-                                { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) },
-                                { lat: parseFloat(BranchLocation.BranchLatitude), lng: parseFloat(BranchLocation.BranchLongitude) }
-                            ]}
-                            options={{ strokeColor: '#d80049' }} />
-                    )
-            }
-        })
-    }
-}
-
-const getBranchMarkerCircle = (props) => {
-    if (_.filter(props.criteria.MarkerOptions, o => o == 'RA').length > 0) {
-        return props.branch.map((item, index) => {
-            const radius = circle.map(c => (
-                <Circle
-                    center={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
-                    radius={c.radius}
-                    options={{ ...c.options }}
-                />
-            ))
-
-            if (item.BranchType == "K") {
-                if (_.isEmpty(_.find(props.branch, { BranchCode: item.OriginBranchCode }))) {
-                    return radius
-                }
-            }
-            else {
-                return radius
-            }
-        })
-    }
-}
-
 const getExitingMarker = props => {
-    return props.exitingMarket.map((item, index) => {
+    const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
+
+    return RELATED_EXITING_MARKET_DATA.map((item, index) => {
         return (
             <Marker
                 key={index}
                 title={item.MarketName}
-                onClick={() => props.onMarkerClick(item)}
+                onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, true)}
                 position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
                 icon={{
                     url: icon_Market
@@ -751,7 +802,7 @@ const getExitingMarker = props => {
                             title="Blabla"
                             onDomReady={onDomReady}>
                             <Layout>
-                                <div className={styles['header']}>
+                                <div className={styles['headers']}>
                                     <Icon
                                         className="trigger"
                                         type='pie-chart' />
@@ -759,7 +810,7 @@ const getExitingMarker = props => {
                                         {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
                                     </span>
                                     <Icon
-                                        onClick={() => props.onMarkerClick(item)}
+                                        onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
                                         className="trigger"
                                         type='close' />
                                 </div>
@@ -774,7 +825,7 @@ const getExitingMarker = props => {
                                                 <div className={styles['text-descrition']}>
                                                     <div>
                                                         <span>{`${item.MarketShop} Shop `}</span>
-                                                        <span>{`Distance from ${item.BranchName} ${parseFloat(item.Radius).toFixed(2)}Km.`}</span>
+                                                        <span>{`Distance from ${item.BranchName} ${parseFloat(item.Radius).toFixed(1)}Km.`}</span>
                                                     </div>
                                                     <span>
                                                         {`Type B working hour 07:00 - 19:00 (Mon - Wed - Fri) `}
@@ -823,10 +874,12 @@ const getExitingMarker = props => {
             </Marker>
         )
     })
+
 }
 
 const getComplititorMarker = props => {
-    return props.SEARCH_COMPLITITOR_MARKER.map((item, index) => {
+    const { RELATED_COMPLITITOR_DATA } = props
+    return RELATED_COMPLITITOR_DATA.map((item, index) => {
         let icon = icon_full_branch
         switch (item.TypeCode) {
             case '1':
@@ -853,197 +906,6 @@ const getComplititorMarker = props => {
     })
 }
 
-// class GMap extends Component {
-
-//     onBranchMarkerClick = (targetItem) => {
-//         this.props.setOpenBranchMarker(targetItem, this.props.RELATED_BRANCH_DATA)
-//     }
-
-//     getBranchMarker = () => {
-//         const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = this.props
-
-//         if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
-
-//             return RELATED_BRANCH_DATA.map((item, index) => {
-
-//                 let icon = icon_full_branch
-//                 // let related_branch = [], current_branch
-//                 // current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
-
-//                 switch (item.BranchType) {
-//                     case 'K':
-//                         // related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
-//                         icon = icon_Keyos
-//                         break;
-//                     case 'P':
-//                     case 'L':
-//                         // related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
-//                         icon = icon_Nano
-//                         break;
-//                 }
-
-//                 return (
-//                     <Marker
-//                         key={index}
-//                         position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
-//                         onClick={() => this.onBranchMarkerClick(item)}
-//                         icon={{
-//                             url: icon
-//                         }}>
-//                         {
-//                             item.showInfo &&
-//                             (
-//                                 <InfoWindow onDomReady={onDomReady}>
-//                                     <Layout>
-//                                         <div className={styles['header']}>
-//                                             <Icon
-//                                                 className="trigger"
-//                                                 type='pie-chart' />
-//                                             <span>
-//                                                 {`${item.BranchName}`}
-//                                             </span>
-//                                             <Icon
-//                                                 onClick={() => this.onBranchMarkerClick(item)}
-//                                                 className="trigger"
-//                                                 type='close' />
-//                                         </div>
-//                                         <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-//                                             <div className={styles['detail-container']}>
-//                                                 <div className={styles['detail-chart']}>
-//                                                     <div style={{ width: '160px', height: '160px' }}>
-//                                                         <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
-//                                                         <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
-//                                                     </div>
-//                                                     <div>
-//                                                         <div className={styles['text-descrition']}>
-//                                                             <div>
-//                                                                 <span>{`${current_branch.MarketShop} Shop `}</span>
-//                                                                 <span>{`from ${current_branch.Market} Market (Open on ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM YYYY") : 'unknow'})`}</span>
-//                                                             </div>
-//                                                             <span>
-//                                                                 {
-//                                                                     current_branch.BranchType == 'K' ?
-//                                                                         `Base on `
-//                                                                         :
-//                                                                         `${related_branch.length} kiosk `
-//                                                                 }
-//                                                                 {
-//                                                                     getLinkDetail(related_branch, props)
-//                                                                 }
-//                                                             </span>
-//                                                         </div>
-//                                                         <div className={styles['box-shadow']}>
-//                                                             <div className={`${styles['header']} ${styles['header-border']}`}>
-//                                                                 <Icon
-//                                                                     className="trigger"
-//                                                                     type='bars' />
-//                                                                 <span>Market Penetration</span>
-//                                                             </div>
-//                                                             <Layout style={{ backgroundColor: '#FFF' }}>
-//                                                                 <Table
-//                                                                     className={styles['summary-table-not-odd']}
-//                                                                     dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
-//                                                                     columns={getMarketSummaryColumns()}
-//                                                                     pagination={false}
-//                                                                     bordered />
-//                                                             </Layout>
-//                                                         </div>
-//                                                     </div>
-//                                                 </div>
-//                                                 <div className={styles['box-shadow']}>
-//                                                     <div className={`${styles['header']} ${styles['header-border']}`}>
-//                                                         <Icon
-//                                                             className="trigger"
-//                                                             type='bars' />
-//                                                         <span>CA Contribution</span>
-//                                                     </div>
-//                                                     <Layout style={{ backgroundColor: '#FFF' }}>
-//                                                         <Table
-//                                                             className={styles['summary-table']}
-//                                                             dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
-//                                                             columns={getColumnCA}
-//                                                             pagination={false}
-//                                                             bordered />
-//                                                     </Layout>
-//                                                 </div>
-//                                             </div>
-//                                         </Layout>
-//                                     </Layout>
-//                                 </InfoWindow>
-//                             )
-//                         }
-//                     </Marker>
-//                 )
-//             })
-//         }
-//     }
-
-//     handleBounds = (map) => {
-//         if (map) {
-//             const { RELATED_BRANCH_DATA } = this.props
-//             const mapInstance = map || map.context[MAP];
-//             setTimeout(() => { google.maps.event.trigger(mapInstance, "resize") }, 200)
-
-//             let bounds = new google.maps.LatLngBounds()
-//             let hasMarker = false
-
-//             RELATED_BRANCH_DATA.map((item, index) => {
-//                 let marker = new google.maps.Marker({
-//                     position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
-//                 })
-//                 hasMarker = true
-//                 bounds.extend(marker.position)
-//             })
-
-//             // props.exitingMarket &&
-//             //     props.exitingMarket.map((item, index) => {
-//             //         let marker = new google.maps.Marker({
-//             //             position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-//             //         })
-//             //         hasMarker = true
-//             //         bounds.extend(marker.position)
-//             //     })
-
-//             // props.targetMarket &&
-//             //     props.targetMarket.map((item, index) => {
-//             //         let marker = new google.maps.Marker({
-//             //             position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-//             //         })
-//             //         hasMarker = true
-//             //         bounds.extend(marker.position)
-//             //     })
-
-//             if (hasMarker && this.props.isBounds)
-//                 map.fitBounds(bounds)
-//         }
-
-//     }
-
-//     render() {
-//         return (
-//             <GoogleMap
-//                 defaultZoom={8}
-//                 defaultCenter={options.center}
-//                 ref={(map) => (this.handleBounds(map))}>
-//                 {
-//                     this.getBranchMarker()
-//                 }
-//             </GoogleMap >
-//         )
-//     }
-
-// }
-
-// const Map = withGoogleMap(GMap)
-
-// export default connect(
-//     (state) => ({
-//         NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
-//         RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA
-//     }), {
-//         setOpenBranchMarker: setOpenBranchMarker
-//     })(Map)
-
 const map = withGoogleMap(props => (
     <GoogleMap
         defaultZoom={8}
@@ -1065,19 +927,20 @@ const map = withGoogleMap(props => (
             getExitingMarker(props)
         }
         {
-            getCAExitingMarker(props)
+            /*getCAExitingMarker(props)*/
         }
         {
             getComplititorMarker(props)
         }
         {
-            props.targetMarket &&
-            props.targetMarket.map((item, index) => {
+            props.RELATED_TARGET_MARKET_DATA &&
+            props.RELATED_TARGET_MARKET_DATA.map((item, index) => {
                 return (
                     <Marker
                         key={index}
-                        onClick={() => props.onTargetMarketClick(item)}
+                        onClick={() => props.setOpenTargetMarketMarker(item, props.RELATED_TARGET_MARKET_DATA, true)}
                         position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                        title={item.MarketName}
                         icon={{
                             url: icon_Target
                         }}>
@@ -1086,7 +949,7 @@ const map = withGoogleMap(props => (
                             (
                                 <InfoWindow onDomReady={onDomReady}>
                                     <Layout>
-                                        <div className={styles['header']}>
+                                        <div className={styles['headers']}>
                                             <Icon
                                                 className="trigger"
                                                 type='pie-chart' />
@@ -1094,7 +957,7 @@ const map = withGoogleMap(props => (
                                                 {`${item.MarketName}`}
                                             </span>
                                             <Icon
-                                                onClick={() => props.onTargetMarketClick(item)}
+                                                onClick={() => props.setOpenTargetMarketMarker(item, props.RELATED_TARGET_MARKET_DATA, false)}
                                                 className="trigger"
                                                 type='close' />
                                         </div>
@@ -1119,4 +982,15 @@ const map = withGoogleMap(props => (
     </GoogleMap >
 ))
 
-export default map
+export default connect(
+    (state) => ({
+        NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
+        RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
+        RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
+        RELATED_TARGET_MARKET_DATA: state.RELATED_TARGET_MARKET_DATA,
+        RELATED_COMPLITITOR_DATA: state.RELATED_COMPLITITOR_DATA
+    }), {
+        setOpenBranchMarker: setOpenBranchMarker,
+        setOpenExitingMarketMarker: setOpenExitingMarketMarker,
+        setOpenTargetMarketMarker: setOpenTargetMarketMarker
+    })(map)

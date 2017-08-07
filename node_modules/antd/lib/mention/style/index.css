@@ -23,14 +23,14 @@
   display: block;
 }
 .ant-mention-wrapper .ant-mention-editor::-moz-placeholder {
-  color: #ccc;
+  color: rgba(0, 0, 0, 0.25);
   opacity: 1;
 }
 .ant-mention-wrapper .ant-mention-editor:-ms-input-placeholder {
-  color: #ccc;
+  color: rgba(0, 0, 0, 0.25);
 }
 .ant-mention-wrapper .ant-mention-editor::-webkit-input-placeholder {
-  color: #ccc;
+  color: rgba(0, 0, 0, 0.25);
 }
 .ant-mention-wrapper .ant-mention-editor:hover {
   border-color: #49a9ee;
@@ -40,13 +40,13 @@
   outline: 0;
   box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
 }
-.ant-mention-wrapper .ant-mention-editor[disabled] {
+.ant-mention-wrapper .ant-mention-editor-disabled {
   background-color: #f7f7f7;
   opacity: 1;
   cursor: not-allowed;
   color: rgba(0, 0, 0, 0.25);
 }
-.ant-mention-wrapper .ant-mention-editor[disabled]:hover {
+.ant-mention-wrapper .ant-mention-editor-disabled:hover {
   border-color: #e2e2e2;
 }
 textarea.ant-mention-wrapper .ant-mention-editor {
@@ -84,7 +84,7 @@ textarea.ant-mention-wrapper .ant-mention-editor {
   position: absolute;
 }
 .ant-mention-wrapper .public-DraftEditorPlaceholder-root .public-DraftEditorPlaceholder-inner {
-  color: #ccc;
+  color: rgba(0, 0, 0, 0.25);
   opacity: 1;
   outline: none;
   white-space: pre-wrap;

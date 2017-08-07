@@ -1,0 +1,597 @@
+.map-container
+{
+    height: 100%;
+    width: 100%;
+    transition: .4s all;
+    position: relative;
+}
+
+.container
+{    
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.loading-container
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.62);
+}
+
+.float-button
+{
+    position: absolute;
+    right: 10px;
+    top:10px;
+    & > button
+    {
+        font-size: 30px !important;
+        width: 45px !important;
+        height: 45px !important;
+        font-weight: bold;
+        transition: .4s all;
+        background-color: rgba(113, 113, 113, 0.4);
+        border: none;
+    }
+
+    & > button:hover{
+        background-color:#FFF;
+    }
+
+    & > button.rotate
+    {
+        transform: rotate(-180deg)
+    }
+}
+.show-sm
+{
+    background: #FFF;
+}
+.coll-show
+{
+    max-height: 100%;
+}
+
+.coll-hide
+{
+    max-height: 390px;
+}
+
+.side-menu
+{
+    background-color: #FFF;
+    flex: 0 0 40% !important;
+    width: 40% !important;
+    height: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+
+    & > [class*=ant-layout-sider-children]
+    {
+        height: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        & > [class*=ant-collapse]
+        {
+            position: absolute;
+            width: 100%;
+            z-index: 2;
+            border-radius: 0px !important;
+            box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);
+        }
+    }
+
+    & > [class*=ant-layout-sider-children] > [class*=info-container]
+    {
+        margin-top: 40px;
+        margin-bottom: 10px;
+        flex:1;
+        display: flex;
+        flex-direction: column;
+
+        & > div[class*=show-sm]
+        {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            transition: .5s all;
+
+            & > div:first-child
+            {
+                margin-bottom: 10px;
+            }
+
+            & > div:nth-child(2)
+            {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                width:100%;
+                height: 100%;
+
+                & > div:first-child
+                {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+
+                    & > div[class*=ant-collapse-content-active]
+                    {
+                        display: flex;
+                        flex-direction: column;
+                        flex: 1;
+                        width:100%;
+                        height: 100%;
+                        max-height: 600px;
+                        
+                        & > div:first-child
+                        {
+                            display: flex;
+                            flex-direction: column;
+                            flex: 1;
+                            height: 100%;
+                            & > section
+                            {
+                                flex: 1;
+                                width: 100%;
+                                height: 100%;
+
+                                & [class*=rotate-total]
+                                {
+                                    margin-top: 5px;
+                                    margin-bottom: 10px;
+                                    display: flex;
+                                    height: 100%;
+
+                                    & > div:first-child
+                                    {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        width: 20px;
+                                        background-color: #656565;
+                                        color: #FFF;
+
+                                        & > div:first-child
+                                        {
+                                            font-size: 12px;
+                                            letter-spacing: 1px;
+                                            position: absolute;
+                                            transform: rotate(-90deg)
+                                        }
+                                    }
+
+                                    & > div:nth-child(2)
+                                    {
+                                        flex: 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        & > :nth-child(2)
+        {
+            flex: 1;
+            height: 100%;
+        }
+    }
+}
+
+.side-menu-close
+{
+    background-color: #FFF;
+    flex: 0 0 0% !important;
+    width: 0px !important;
+}
+
+.panel-header
+{
+    display: flex;
+    align-items : center;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.62);
+    & i
+    {
+        font-size:20px;
+        color: #00BCD4;
+        margin-right: 10px;
+    }
+}
+
+.check-box
+{
+    display: flex;
+    align-items: center;
+}
+
+.header-hide
+{
+    padding: 0 !important;
+}
+
+.div-center
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.align-right
+{
+    text-align: right !important;
+}
+
+.align-left
+{
+    text-align: left !important;
+}
+
+.sm-padding
+{
+    padding: 3px !important;
+}
+
+.vertical-bottom
+{
+    vertical-align: bottom !important;
+}
+
+.vertical-middle
+{
+    vertical-align: middle;
+}
+
+.summary-table-not-odd
+{
+    &  table tbody tr
+    {
+        cursor: pointer;
+    }
+
+    & > div > div > div
+    {
+        border-radius: 0px;
+    }
+
+    & table
+    {
+        border-radius: 0 0 0 0;
+        border: 1px solid #b1b1b1 !important;
+    }
+
+    & thead > tr > th{
+        border-right: 1px solid #b1b1b1 !important;
+        border-bottom: 1px solid #b1b1b1 !important;
+    }
+
+    & thead > tr > th:last-child {
+        border-right: 0px solid transparent !important;
+    }
+
+    & tbody > tr > td {
+        border-right: 1px solid #b1b1b1 !important;
+        border-bottom: 1px solid #b1b1b1;
+    }
+
+    & tbody > tr > td:last-child {
+        border-right: 0px solid transparent !important;
+    }
+
+    & table tbody tr:last-child td
+    {
+        border-bottom: 1px solid transparent;
+    }
+    
+    & table thead tr > [class*=header-hide]
+    {
+        border-top: 0px !important;
+        border-bottom: 0px !important;
+    }
+
+    & table thead tr > [class*=current-month]
+    {
+        background-color: #a3d6ff;
+        color: #545353;
+    }
+
+    & table thead tr > [class*=financial-volume]
+    {
+        background-color: #e6f183;
+        color: #545353;
+    }
+
+    & table thead tr > [class*=os-balance]
+    {
+        background-color: #dcdcdc;
+    }
+    
+}
+
+.summary-table-hilight
+{
+    &  table tbody tr
+    {
+        cursor: pointer;
+    }
+
+    & > div > div > div
+    {
+        border-radius: 0px;
+    }
+
+    & table
+    {
+        border-radius: 0 0 0 0;
+        border: 1px solid #b1b1b1 !important;
+    }
+
+    & thead > tr > th{
+        border-right: 1px solid #b1b1b1 !important;
+        border-bottom: 1px solid #b1b1b1 !important;
+    }
+
+    & thead > tr > th:last-child {
+        border-right: 0px solid transparent !important;
+    }
+
+    & tbody > tr > td {
+        border-right: 1px solid #b1b1b1 !important;
+        border-bottom: 1px solid #b1b1b1;
+    }
+
+    & tbody > tr > td:last-child {
+        border-right: 0px solid transparent !important;
+    }
+
+    & table tbody tr:last-child td
+    {
+        border-bottom: 1px solid transparent;
+    }
+
+    &  table tbody tr:nth-child(2) , table tbody tr:nth-child(3)
+    {
+         background: #f7f7f7 !important;
+        & td[class*=portfolio-quality]
+        {
+            background-color: #ffd5e3;
+            color: #545353;
+        }
+        & td[class*=os-balance]
+        {
+            background-color: #dcdcdc;
+        }
+        & td[class*=financial-volume]
+        {
+            background-color: #e6f183;
+            color: #545353;
+        }
+    }
+    
+    & table thead tr > [class*=header-hide]
+    {
+        border-top: 0px !important;
+        border-bottom: 0px !important;
+    }
+
+    & table thead tr > [class*=portfolio-quality]
+    {
+        background-color: #ffd5e3;
+        color: #545353;
+        cursor: pointer;
+    }
+
+    & table thead tr > [class*=financial-volume]
+    {
+        background-color: #e6f183;
+        color: #545353;
+    }
+    
+    & table thead tr > [class*=os-balance]
+    {
+        background-color: #dcdcdc;
+    }
+}
+
+.column-hilight
+{
+    background: #dcdcdc !important;
+}
+
+
+
+.no-padding-lef-right
+{
+    & > div > div:nth-child(2)
+    {
+        padding: 0 0;
+        & > div
+        {
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+    }
+}
+
+.icon-header-container
+{
+display: flex;
+flex-direction: row;
+justify-content: flex-end;
+align-items: center;
+flex: 1;
+margin: 0 10px;
+    & div:first-child
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.icon-split
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 17px;
+    height: 17px;
+    margin-right: -2px;
+
+    &:hover i{
+        color: white;
+    }
+
+    & > i
+    {
+        color: #6b6b6b;
+        font-size: 10px;
+        margin-right: 0px;
+        z-index: 2;
+    }
+    & > i:nth-child(2)
+    {
+        margin-top: -3px;
+    }
+
+    &:after
+    {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        transform: scale(0);
+        border-radius: 50%;
+        transition: .2s all;
+        z-index: 1;
+    }
+
+    &:hover:after
+    {
+        background-color: #FF5722;
+        transform: scale(1);
+    }
+
+}
+
+.ca-icon-lists
+{
+    display: flex;
+    align-items: center;
+
+         flex: 1;
+         display: flex;
+         margin-left: 10px;
+
+         & span
+         {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 15px;
+            &:hover
+            {
+                color: #FFF !important;
+            }
+         }
+
+         & span:before
+         {
+            z-index: 2;
+         }
+
+         & span:after
+         {
+             content: '';
+             position: absolute;
+             width: 30px;
+             height: 30px;
+             transform: scale(0);
+             border-radius: 50%;
+            transition: .2s all;
+             z-index: 1;
+         }
+
+         & span:hover:after
+         {
+            transform: scale(1);
+         }
+
+        & span:nth-child(1)
+         {
+             color: #03A9F4;
+         }
+
+        & span:nth-child(2)
+         {
+             color: #E91E63;
+         }
+
+        & span:nth-child(3)
+         {
+             color: #64a717;
+         }
+
+         & span:nth-child(1):after
+         {
+             background-color: #03A9F4;
+         }
+
+        & span:nth-child(2):after
+         {
+             background-color: #E91E63;
+         }
+
+        & span:nth-child(3):after
+         {
+             background-color: #64a717;
+         }
+
+}
+
+.icon-groupby{
+        margin-right: 5px;
+    font-size: 14px;
+    color: #03A9F4;
+}
+
+.view-change
+{
+    position: absolute;
+    background: rgba(255, 255, 255, 0.7);
+    width: 100%;
+    height: 100%;
+    top:0;
+}
+
+.loading-containers
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin-top: 20px;
+}

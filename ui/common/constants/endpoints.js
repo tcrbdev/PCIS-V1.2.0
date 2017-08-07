@@ -23,3 +23,31 @@ export const API_LOGIN = `${apiDevUri}/authenticate`
 const API_ROOT = 'http://localhost:5000/api/v1'
 export const LOAD_ASSIGNMENT_GRID = `${apiDevUrl}/gridAssignment`
 export const LOAD_ASSIGNMENT_CHART = `${apiDevUrl}/assignmentChart`
+
+
+//-------------------- FOR NANO MAP
+let url = "";
+if (process.env.NODE_ENV === 'dev')
+    url = `http://localhost:60001`
+else
+    url = `http://TC001PCIS1P:60001`
+
+export const MASTER_REGION_URL = `${url}/master/region`
+export const MASTER_AREA_URL = `${url}/master/area`
+export const MASTER_BRANCH_URL = `${url}/master/branch`
+export const MASTER_TARGET_MARKET_PROVINCE_URL = `${url}/master/target/market/province`
+export const MASTER_CALIST_URL = `${url}/master/calist`
+export const MASTER_COMPLITITOR_PROVINCE_URL = `${url}/master/complititor/province`
+
+export const SEARCH_NANO_MARKER_URL = `${url}/nano/marker`
+export const SEARCH_COMPLITITOR_MARKER_URL = `${url}/master/complititor`
+//--------------------------------------- Nano Summary Report
+export const SEARCH_PRODUCT_PERFORMANCE_URL = `${url}/nano/product/performance`
+export const SEARCH_TOTAL_SUMMARY_URL = `${url}/nano/total/summary`
+export const SEARCH_GROUP_BY_SUMMARY_URL = `${url}/nano/groupby/summary`
+
+
+export const GET_BRANCH_MARKER_DATA_URL = `${url}/nano/branch/`
+export const GET_EXITING_MARKET_MARKER_DATA_URL = `${url}/nano/market/`
+
+        

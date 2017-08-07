@@ -113,6 +113,9 @@ var Tag = function (_React$Component) {
     (0, _createClass3['default'])(Tag, [{
         key: 'isPresetColor',
         value: function isPresetColor(color) {
+            if (!color) {
+                return false;
+            }
             return (/^(pink|red|yellow|orange|cyan|green|blue|purple)(-inverse)?$/.test(color)
             );
         }

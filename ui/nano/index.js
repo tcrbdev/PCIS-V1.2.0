@@ -2,20 +2,20 @@ import 'react-hot-loader/patch'
 import React from 'react'
 import { render } from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
-import Nano from './market'
+import Root from './Root'
 
 const rootEl = document.getElementById('app')
 
 render(
     <AppContainer>
-        <Nano />
+        <Root />
     </AppContainer>,
     rootEl
 )
 
 if (module.hot) {
-    module.hot.accept('./market', () => {
-        const NextRootApp = require('./market').default
+    module.hot.accept('./Root', () => {
+        const NextRootApp = require('./Root').default
         render(
             <AppContainer>
                 <NextRootApp />

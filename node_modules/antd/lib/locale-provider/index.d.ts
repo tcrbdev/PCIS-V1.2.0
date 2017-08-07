@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import React from 'react';
+import { ModalLocale } from '../modal/locale';
 export interface LocaleProviderProps {
     locale: {
         Pagination?: Object;
@@ -7,7 +8,7 @@ export interface LocaleProviderProps {
         TimePicker?: Object;
         Calendar?: Object;
         Table?: Object;
-        Modal?: Object;
+        Modal?: ModalLocale;
         Popconfirm?: Object;
         Transfer?: Object;
         Select?: Object;
@@ -29,7 +30,7 @@ export default class LocaleProvider extends React.Component<LocaleProviderProps,
             TimePicker?: Object | undefined;
             Calendar?: Object | undefined;
             Table?: Object | undefined;
-            Modal?: Object | undefined;
+            Modal?: ModalLocale | undefined;
             Popconfirm?: Object | undefined;
             Transfer?: Object | undefined;
             Select?: Object | undefined;

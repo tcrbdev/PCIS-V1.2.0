@@ -31,11 +31,46 @@
     }
 }
 
-.header
+.headers
 {
     background: #03a9f4;
     padding: 0 10px;
     height: 35px;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+    width: 100%;
+    & > i:nth-child(1)
+    {
+        color: #505050;
+        margin-right: 10px;
+    }
+
+    & > span
+    {
+        flex: 1;
+    }
+
+    & > i:last-child
+    {
+        cursor: pointer;
+        right: 0;
+        transition: .5s all;
+        &:hover
+        {
+            transform: rotate(180deg)
+        }
+    }
+}
+
+.header
+{
+    background: #03a9f4;
+    padding: 0 10px;
+    height: 25px;
     color: #FFF;
     font-size: 16px;
     font-weight: bold;
@@ -77,7 +112,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        height: 180px;
+        height: 160px;
         position: relative;
 
         & > div:first-child
@@ -109,7 +144,7 @@
 
             & > div:nth-child(2)
             {
-                flex: 1;
+                // flex: 1;
             }
         }
     }
@@ -149,7 +184,7 @@
 {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-size: 12px;
     color: rgba(0, 0, 0, 0.75);
 
@@ -169,7 +204,7 @@
 
     & > span
     {
-        margin-top: 5px;
+        // margin-top: 5px;
     }
 }
 
@@ -253,11 +288,6 @@
     text-align: left !important;
 }
 
-.sm-padding
-{
-    padding: 3px 3px !important;
-}
-
 .vertical-bottom
 {
     vertical-align: bottom !important;
@@ -270,7 +300,7 @@
 
 .summary-table-not-odd
 {
-    margin-bottom: 10px;
+    // margin-bottom: 10px;
 
     &  table tbody tr
     {
@@ -292,6 +322,11 @@
         border-right: 1px solid #b1b1b1 !important;
         border-bottom: 1px solid #b1b1b1 !important;
         background-color: #dcdcdc !important;
+    }
+
+    & table tbody tr > [class*=sm-padding]
+    {
+        padding: 3px 3px !important;
     }
 
     & thead > tr > th:last-child {
@@ -321,7 +356,7 @@
 
 .summary-table
 {
-    margin-bottom: 10px;
+    margin-bottom: 0px;
 
     &  table tbody tr
     {
@@ -362,6 +397,11 @@
     {
         border-bottom: 1px solid transparent;
     }
+
+    & table tbody tr > [class*=sm-padding]
+    {
+        padding: 3px 3px !important;
+    }
     
     & table thead tr > [class*=header-hide]
     {
@@ -376,10 +416,14 @@
 
     & table tbody tr:nth-child(even)
     {
-        background: #dcdcdc;
+        background: #FFF;
     }
 }
 
+.sm-padding
+    {
+        padding: 3px 3px !important;
+    }
 
 /*------------------------------ New Style*/
 .overlayView
@@ -665,11 +709,30 @@
 	transform: rotate(147deg) skew(60deg);
 }
 
+.ca-marker-img-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .ca-marker-img
 {
-    width: 40px;
-    height: 40px;
+    position: absolute;
+    top: .47em;
+    width: 37px;
+    height: 37px;
+    border: 3px solid #002255;
     border-radius: 50%;
     cursor: pointer;
-    border:3px solid #FFF;
+}
+
+.note-icon
+{
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    & span:first-child
+    {
+        color: #03a9f4 !important;
+    }
 }

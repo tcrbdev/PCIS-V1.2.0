@@ -8,18 +8,28 @@ const extractSass = new ExtractTextPlugin('./css/[name].min.css')
 module.exports = {
     devtool: 'cheap-module-source-map',
     entry: {
-        index: './ui/nano/index_pro.js',
+        index: './ui/nano/index.js',
         vendors: [
             'react',
             'react-dom',
+            'react-redux',
+            'react-cookie',
+            'react-router-redux',
             'react-smooth-scrollbar',
+
+            'redux',
+            'redux-api-middleware',
+            'redux-thunk',
+            'redux-logger',
+
             'isomorphic-fetch',
             'react-google-maps',
             'react-fontawesome',
             'lodash',
+            'moment',
             'react-chartjs-2'
         ],
-        antd: ['antd'],
+        antd: ['antd']
     },
     output: {
         path: path.join(__dirname, 'nano_asset'),
