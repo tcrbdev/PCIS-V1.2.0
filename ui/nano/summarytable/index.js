@@ -262,7 +262,8 @@ class SummaryTable extends Component {
 
     onRowClick = (record, index, event) => {
         const { setOpenExitingMarketMarker, RELATED_EXITING_MARKET_DATA } = this.props
-        setOpenExitingMarketMarker(record, RELATED_EXITING_MARKET_DATA, true)
+
+        setOpenExitingMarketMarker(record, RELATED_EXITING_MARKET_DATA, !_.find(RELATED_EXITING_MARKET_DATA, { MarketCode: record.MarketCode }).showInfo)
     }
 
     render() {

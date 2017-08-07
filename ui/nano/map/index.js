@@ -157,51 +157,52 @@ const handleBounds = (props, map) => {
         const mapInstance = map && map.context[MAP];
         setTimeout(() => { google.maps.event.trigger(mapInstance, "resize") }, 200)
 
-        let bounds = new google.maps.LatLngBounds()
-        let hasMarker = false
-        // // props.branch
+        if (props.DO_BOUNDS_MAP) {
+            let bounds = new google.maps.LatLngBounds()
+            let hasMarker = false
 
-        const {
+            const {
             RELATED_BRANCH_DATA,
-            RELATED_EXITING_MARKET_DATA,
-            RELATED_TARGET_MARKET_DATA,
-            RELATED_COMPLITITOR_DATA
-        } = props
+                RELATED_EXITING_MARKET_DATA,
+                RELATED_TARGET_MARKET_DATA,
+                RELATED_COMPLITITOR_DATA
+            } = props
 
-        RELATED_BRANCH_DATA.map((item, index) => {
-            let marker = new google.maps.Marker({
-                position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
+            RELATED_BRANCH_DATA.map((item, index) => {
+                let marker = new google.maps.Marker({
+                    position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
+                })
+                hasMarker = true
+                bounds.extend(marker.position)
             })
-            hasMarker = true
-            bounds.extend(marker.position)
-        })
 
-        RELATED_EXITING_MARKET_DATA.map((item, index) => {
-            let marker = new google.maps.Marker({
-                position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+            RELATED_EXITING_MARKET_DATA.map((item, index) => {
+                let marker = new google.maps.Marker({
+                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+                })
+                hasMarker = true
+                bounds.extend(marker.position)
             })
-            hasMarker = true
-            bounds.extend(marker.position)
-        })
 
-        RELATED_TARGET_MARKET_DATA.map((item, index) => {
-            let marker = new google.maps.Marker({
-                position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+            RELATED_TARGET_MARKET_DATA.map((item, index) => {
+                let marker = new google.maps.Marker({
+                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+                })
+                hasMarker = true
+                bounds.extend(marker.position)
             })
-            hasMarker = true
-            bounds.extend(marker.position)
-        })
 
-        RELATED_COMPLITITOR_DATA.map((item, index) => {
-            let marker = new google.maps.Marker({
-                position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
+            RELATED_COMPLITITOR_DATA.map((item, index) => {
+                let marker = new google.maps.Marker({
+                    position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
+                })
+                hasMarker = true
+                bounds.extend(marker.position)
             })
-            hasMarker = true
-            bounds.extend(marker.position)
-        })
 
-        if (hasMarker)
-            map.fitBounds(bounds)
+            if (hasMarker)
+                map.fitBounds(bounds)
+        }
     }
 }
 
@@ -217,8 +218,25 @@ const getMarketSummaryData = (item) => {
         const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
 
         return [
-            { Detail: 'Total App', Amt: Amt.Amt ? Amt.Amt : '', OS: os.Total, SETUP: setup.Total, REJECT: reject.Total, CANCEL: cancel.Total, POTENTIAL: potential.Total, sum_penatation: sum_penatation },
-            { Detail: 'Achive', OS: os.Ach, SETUP: setup.Ach, REJECT: reject.Ach, CANCEL: cancel.Ach, POTENTIAL: potential.Ach, sum_penatation: sum_penatation },
+            {
+                Detail: 'Total App',
+                Amt: Amt.Amt ? Amt.Amt : '',
+                OS: os.Total,
+                SETUP: setup.Total,
+                REJECT: reject.Total,
+                CANCEL: cancel.Total,
+                POTENTIAL: potential.Total,
+                sum_penatation: sum_penatation
+            },
+            {
+                Detail: 'Achive',
+                OS: os.Ach,
+                SETUP: setup.Ach,
+                REJECT: reject.Ach,
+                CANCEL: cancel.Ach,
+                POTENTIAL: potential.Ach,
+                sum_penatation: sum_penatation
+            },
         ]
     }
     else {
@@ -320,7 +338,7 @@ const getFormatShortDay = (value) => {
         const dayArray = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa']
         let result = ""
         day.map((item, index) => {
-            result = `${result}${index != 0 ? ',' : ''}${dayArray[item]}`
+            result = `${result}${index != 0 ? '/' : ''}${dayArray[item]}`
         })
         return result
     }
@@ -351,7 +369,7 @@ const getCAData = (item) => {
                 Total_App: !_.isEmpty(total) ? total.Total : 0,
                 Total_Ach: !_.isEmpty(total) ? total.Ach : 0,
                 BillingDate: getFormatShortDay(item[0].CycleDue),
-                StatusDate: _.isEmpty(item[0].StartWork) ? '' : moment(item[0].StartWork).format('DD-MM-YYYY')
+                StatusDate: _.isEmpty(item[0].StartWork) ? '' : moment(item[0].StartWork).format('MMM-YY')
             })
         })
         return _.orderBy(data, ['OS_Ach', 'Setup_Ach', 'CAID'], ['desc', 'desc', 'asc'])
@@ -373,7 +391,7 @@ const getColumnCA = [{
     dataIndex: 'StatusDate',
     key: 'StatusDate',
     width: '6%',
-    className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
 }, {
     title: (<div className={styles['div-center']}>WkCycle<br />Due</div>),
     dataIndex: 'BillingDate',
@@ -524,6 +542,7 @@ const getBranchMarkerMenu = (props) => {
                     icon = icon_Keyos
                     break;
                 case 'P':
+                case 'L':
                     icon = icon_Nano
                     break;
             }
@@ -567,17 +586,20 @@ const getBranchMarker = (props) => {
 
     const { RELATED_BRANCH_DATA } = props
 
-    return _.filter(RELATED_BRANCH_DATA, { showInfo: true }).map((item, index) => {
+    // return _.filter(RELATED_BRANCH_DATA, { showInfo: true }).map((item, index) => {
+    return RELATED_BRANCH_DATA.map((item, index) => {
 
+        let icon = icon_full_branch
         let related_branch = [], current_branch
         current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
 
         switch (item.BranchType) {
             case 'K':
+                icon = icon_Keyos
                 related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
                 break;
             case 'P':
-            case 'L':
+                icon = icon_Nano
                 related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
                 break;
         }
@@ -586,9 +608,10 @@ const getBranchMarker = (props) => {
             <Marker
                 key={index}
                 title={item.BranchName}
+                onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}
                 position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
                 icon={{
-                    url: '_blanks'
+                    url: icon
                 }}>
                 {
                     item.showInfo &&
@@ -979,12 +1002,13 @@ const map = withGoogleMap(props => (
 
             })
         }
-    </GoogleMap >
+    </GoogleMap>
 ))
 
 export default connect(
     (state) => ({
         NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
+        DO_BOUNDS_MAP: state.DO_BOUNDS_MAP,
         RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
         RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
         RELATED_TARGET_MARKET_DATA: state.RELATED_TARGET_MARKET_DATA,

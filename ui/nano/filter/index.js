@@ -209,31 +209,8 @@ class Filter extends Component {
 
             const branch_select = getFieldValue("BranchCode") && getFieldValue("BranchCode").join(',').split(',')
 
-            // let CALIST_DATA = _.filter(MASTER_CALIST_DATA, o => {
-            //     console.log("Master : ", o.BranchCode)
-            //     const brn_code = o.BranchCode
-            //     return !_.isEmpty(_.find(branch_select, s => {
-            //         console.log("S => ", s)
-            //         console.log("Branch Code => ", o.BranchCode, brn_code, s == o.BranchCode)
-            //         return s == o.BranchCode
-            //     }))
-            // })
-            // let CALIST_DATA = MASTER_CALIST_DATA
             let CALIST_DATA = _.filter(MASTER_CALIST_DATA, o => !_.isEmpty(_.find(branch_select, s => s == o.BranchCode)))
 
-            // let CALIST_DATA = _.filter(MASTER_CALIST_DATA, o => {
-            //     let result = false;
-
-            //     _.find(branch_select, s => (s == o.BranchCode).bind(o))
-
-            //     return result
-            //     !_.isEmpty()
-            // })
-
-            // console.log(getFieldValue("BranchCode"))
-            // console.log(MASTER_CALIST_DATA)
-            // console.log(branch_select)
-            // console.log(CALIST_DATA)
             let group = []
             _.mapKeys(_.groupBy(CALIST_DATA, "OriginBranchCode"), (values, key) => {
 
@@ -249,12 +226,9 @@ class Filter extends Component {
                     key: item.CA_Code
                 }))
 
-                // console.log(obj)
-
                 group.push(obj)
             })
 
-            console.log(group)
             return [{
                 label: 'Select All',
                 value: CALIST_DATA.map(item => item.CA_Code).join(','),

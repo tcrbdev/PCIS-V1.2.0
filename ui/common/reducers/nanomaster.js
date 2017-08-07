@@ -91,6 +91,23 @@ export const NANO_FILTER_CRITERIA = (state = initialStateObj, action) => {
     }
 }
 
+export const DO_BOUNDS_MAP = (state = initialStateBoolean, action) => {
+    switch (action.type) {
+        case SET_OPEN_BRANCH_MARKER_REQUEST:
+        case SET_OPEN_EXITING_MARKET_MARKER_REQUEST:
+        case SET_OPEN_TARGET_MARKET_MARKER_REQUEST:
+            return false
+            break;
+        case SEARCH_NANO_DATA_REQUEST:
+            return true
+            break;
+        default:
+            return state
+            break;
+
+    }
+}
+
 export const RELATED_BRANCH_DATA = (state = initialStateArray, action) => {
     switch (action.type) {
         case SET_OPEN_BRANCH_MARKER_REQUEST:
