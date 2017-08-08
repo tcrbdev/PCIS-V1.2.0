@@ -13,7 +13,9 @@ import {
 
     SEARCH_NANO_CHANGE_VIEW_DATA_REQUEST,
     SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS,
-    SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE
+    SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE,
+
+    CHANGE_MAP_MARKER_BY_CA
 } from '../constants/actionsType'
 
 const initialStateObj = {}
@@ -98,6 +100,7 @@ export const DO_BOUNDS_MAP = (state = initialStateBoolean, action) => {
         case SET_OPEN_TARGET_MARKET_MARKER_REQUEST:
             return false
             break;
+        case CHANGE_MAP_MARKER_BY_CA:
         case SEARCH_NANO_DATA_REQUEST:
             return true
             break;
@@ -128,8 +131,23 @@ export const RELATED_BRANCH_DATA = (state = initialStateArray, action) => {
 export const RELATED_EXITING_MARKET_DATA = (state = initialStateArray, action) => {
     switch (action.type) {
         case SET_OPEN_EXITING_MARKET_MARKER_REQUEST:
+        case CHANGE_MAP_MARKER_BY_CA:
             return action.payload
             break;
+        case SEARCH_NANO_DATA_SUCCESS:
+            return action.payload.nanoMarker[1]
+            break;
+        case SEARCH_NANO_DATA_FAILURE:
+            return [action.payload]
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const RELATED_EXITING_MARKET_DATA_BACKUP = (state = initialStateArray, action) => {
+    switch (action.type) {
         case SEARCH_NANO_DATA_SUCCESS:
             return action.payload.nanoMarker[1]
             break;

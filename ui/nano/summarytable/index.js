@@ -6,7 +6,8 @@ import _ from 'lodash'
 import FontAwesome from 'react-fontawesome'
 
 import {
-    setOpenExitingMarketMarker
+    setOpenExitingMarketMarker,
+    selectMarkerByCA
 } from '../actions/nanomaster'
 
 const { Option, OptGroup } = Select;
@@ -53,7 +54,7 @@ class SummaryTable extends Component {
     selectca = () => {
         let groupItem = []
 
-        _.mapKeys(_.groupBy(this.props.RELATED_EXITING_MARKET_DATA, "OriginBranchCode"), (value, key) => {
+        _.mapKeys(_.groupBy(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, "OriginBranchCode"), (value, key) => {
 
             let marketCode = [];
             _.mapKeys(_.groupBy(value, "MarketCode"), (mValue, mKey) => {
@@ -247,7 +248,11 @@ class SummaryTable extends Component {
 
     filterDataByCa(value) {
         const marketCACode = _.map(_.filter(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: value }), item => item.MarketCode)
-        return _.orderBy(_.filter(this.props.RELATED_EXITING_MARKET_DATA, o => !_.isEmpty(_.find(marketCACode, f => o.MarketCode == f))), ['Radius'], ['asc'])
+        const filter = _.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, o => !_.isEmpty(_.find(marketCACode, f => o.MarketCode == f)))
+
+        this.props.selectMarkerByCA(filter)
+
+        return _.orderBy(filter, ['Radius'], ['asc'])
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -269,6 +274,7 @@ class SummaryTable extends Component {
     render() {
         return (
             <Table
+                style={{ marginBottom: '20px' }}
                 className={styles['summary-table']}
                 dataSource={this.state.data}
                 columns={this.getTableColumns()}
@@ -285,7 +291,9 @@ export default connect(
         NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
         RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
         RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
+        RELATED_EXITING_MARKET_DATA_BACKUP: state.RELATED_EXITING_MARKET_DATA_BACKUP,
         RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA
     }), {
-        setOpenExitingMarketMarker: setOpenExitingMarketMarker
+        setOpenExitingMarketMarker: setOpenExitingMarketMarker,
+        selectMarkerByCA: selectMarkerByCA
     })(SummaryTable)

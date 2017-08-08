@@ -36,7 +36,9 @@ import {
 
     SEARCH_NANO_CHANGE_VIEW_DATA_REQUEST,
     SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS,
-    SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE
+    SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE,
+
+    CHANGE_MAP_MARKER_BY_CA
 } from '../../common/constants/actionsType'
 
 export const setOpenBranchMarker = (targetMarker, currentState, isOpen) => dispatch => {
@@ -91,6 +93,14 @@ export const setOpenTargetMarketMarker = (targetMarker, currentState, isOpen) =>
 
     dispatch({
         type: SET_OPEN_TARGET_MARKET_MARKER_REQUEST,
+        payload: newState
+    })
+}
+
+
+export const selectMarkerByCA = (newState) => dispatch => {
+    dispatch({
+        type: CHANGE_MAP_MARKER_BY_CA,
         payload: newState
     })
 }
@@ -264,4 +274,5 @@ export const searchNanoData = criteria => (
     }
 
 )
+
 

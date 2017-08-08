@@ -513,7 +513,6 @@ const getColumnCA = [{
 const getLinkDetail = (obj, props, branch_radius) => {
     return obj.map((m, i) => {
         const item = _.find(props.RELATED_BRANCH_DATA, { BranchCode: m.BranchCode })
-        console.log(m.BranchCode)
         const radius = parseFloat(_.find(branch_radius, { BranchCode: m.BranchCode }).Radius).toFixed(1)
         return (<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{m.BranchName}</a> {radius}Km. {(i + 1) < obj.length && ' / '} </span>)
     })
@@ -611,7 +610,7 @@ const getBranchMarker = (props) => {
                 onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}
                 position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
                 icon={{
-                    url: icon
+                    url: '_blanks'
                 }}>
                 {
                     item.showInfo &&
