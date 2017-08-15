@@ -1,0 +1,22 @@
+.cell-container
+{
+    display: inline-block;
+    width: 195px;
+    border: 1px solid red;
+}
+
+.cell
+{
+    display: inline-block;
+    position: relative;
+    width: 15px;
+    height: 15px;
+    margin: 2px;
+    border:1px solid;
+    cursor: pointer;
+}
+
+.cell-selected
+    {
+        border-color: blue;
+    }

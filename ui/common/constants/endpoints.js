@@ -50,4 +50,6 @@ export const SEARCH_GROUP_BY_SUMMARY_URL = `${url}/nano/groupby/summary`
 export const GET_BRANCH_MARKER_DATA_URL = `${url}/nano/branch/`
 export const GET_EXITING_MARKET_MARKER_DATA_URL = `${url}/nano/market/`
 
+export const INSERT_UPDATE_MARKER_NOTE_URL = `${url}/nano/marker/note`
+
         

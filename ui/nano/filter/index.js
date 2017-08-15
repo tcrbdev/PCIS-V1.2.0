@@ -314,8 +314,8 @@ class Filter extends Component {
 
             return [{
                 label: 'Select All',
-                value: MASTER_COMPLITITOR_PROVINCE_DATA.map(item => item.District).join(','),
-                key: MASTER_COMPLITITOR_PROVINCE_DATA.map(item => item.District).join(','),
+                value: PROVINCE_DATA.map(item => item.District).join(','),
+                key: PROVINCE_DATA.map(item => item.District).join(','),
                 children: group
             }]
         }
@@ -369,22 +369,22 @@ class Filter extends Component {
         const CAName = _.isEmpty(values.CAName) ? '' : values.CAName.join(',')
 
         let result = "";
-        if (Area.split(',').length == 0 || (Area.split(',').length > 1 && Area.indexOf('Zone') <= 0) && Branch.split(',').length == 0) {
-            result = constantQueryType.area
-        }
-        else if (Area.split(',').length == 1 && (Area.split(',')[0].indexOf('Zone') <= 0)) {
-            result = constantQueryType.zone
-        }
-        else if (Branch.split(',').length == 0 || (Branch.split(',').length >= 0 && _.filter(Branch.split(','), o => o.length > 3).length <= 0) || _.filter(Branch.split(','), o => o.length == 3).length > 1) {
-            result = constantQueryType.branch
-        }
-        else if (Branch.split(',').length > 0 && _.filter(Branch.split(','), o => o.length > 3).length > 0) {
-            result = constantQueryType.branch_kiosk
-        }
-        else if (CAName.length == 0 || _.filter(Branch.split(','), o => o.length == 3) == 1) {
+        if (CAName.length > 0) {
             result = constantQueryType.ca
         }
-        // console.log(Area, Branch, CAName, result)
+        else if (Branch.split(',').length > 1 && _.filter(Branch.split(','), o => o.length > 3).length > 0 && _.filter(Branch.split(','), o => o.length == 3).length == 1) {
+            result = constantQueryType.branch_kiosk
+        }
+        else if (Branch.split(',').length >= 2 && Branch.split(',').length <= 4) {
+            result = constantQueryType.branch
+        }
+        else if (Area.split(',').length == 1 && (Area.split(',')[0].indexOf('Zone') > 0)) {
+            result = constantQueryType.zone
+        }
+        else {
+            result = constantQueryType.area
+        }
+
         return result
     }
 
@@ -598,7 +598,7 @@ class Filter extends Component {
                             <Col span={12}>
 
                                 <Modal className={styles['modalComplititor']}
-                                    title="Complititor Location PIN"
+                                    title="Competitor Location PIN"
                                     visible={this.state.visible}
                                     onOk={false}
                                     onCancel={this.handleCancel}

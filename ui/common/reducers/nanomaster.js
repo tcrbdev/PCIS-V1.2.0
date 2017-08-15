@@ -15,7 +15,11 @@ import {
     SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS,
     SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE,
 
-    CHANGE_MAP_MARKER_BY_CA
+    CHANGE_MAP_MARKER_BY_CA,
+
+    INSERT_MARKER_NOTE_REQUEST,
+    INSERT_MARKER_NOTE_SUCCESS,
+    INSERT_MARKER_NOTE_FAILURE
 } from '../constants/actionsType'
 
 const initialStateObj = {}
@@ -236,10 +240,10 @@ export const RELATED_GROUP_BY_SUMMARY_DATA = (state = initialStateArray, action)
     }
 }
 
-export const RELATED_KIOSK_SUMMARY_DATA = (state = initialStateArray, action) => {
+export const RELATED_COMPLITITOR_DATA = (state = initialStateArray, action) => {
     switch (action.type) {
         case SEARCH_NANO_DATA_SUCCESS:
-            return []
+            return action.payload.complititorMarker[0]
             break;
         case SEARCH_NANO_DATA_FAILURE:
             return [action.payload]
@@ -250,13 +254,13 @@ export const RELATED_KIOSK_SUMMARY_DATA = (state = initialStateArray, action) =>
     }
 }
 
-export const RELATED_COMPLITITOR_DATA = (state = initialStateArray, action) => {
+export const INSERT_MARKER_NOTE_DATA = (state = initialStateObj, action) => {
     switch (action.type) {
-        case SEARCH_NANO_DATA_SUCCESS:
-            return action.payload.complititorMarker[0]
+        case INSERT_MARKER_NOTE_SUCCESS:
+            return action.payload
             break;
-        case SEARCH_NANO_DATA_FAILURE:
-            return [action.payload]
+        case INSERT_MARKER_NOTE_FAILURE:
+            return action.payload
             break;
         default:
             return state

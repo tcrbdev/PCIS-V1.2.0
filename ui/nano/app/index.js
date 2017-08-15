@@ -276,7 +276,7 @@ class Index extends Component {
 
     getGroupBySummary() {
         let obj = []
-        _.mapKeys(_.groupBy(this.props.RELATED_GROUP_BY_SUMMARY_DATA, "Group"), (value, key) => {
+        _.mapKeys(_.groupBy(_.orderBy(this.props.RELATED_GROUP_BY_SUMMARY_DATA, 'BranchCode', 'asc'), "Group"), (value, key) => {
             obj.push({
                 GroupName: key,
                 Data: value

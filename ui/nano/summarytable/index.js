@@ -1,21 +1,25 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styles from './index.scss'
-import { Table, Icon, Select, Button, Checkbox, Tooltip } from 'antd';
+import { Table, Icon, Select, Button, Checkbox, Tooltip, Form } from 'antd';
 import _ from 'lodash'
 import FontAwesome from 'react-fontawesome'
+
+import ModalSaleSummary from '../modal_sale_summary'
 
 import {
     setOpenExitingMarketMarker,
     selectMarkerByCA
 } from '../actions/nanomaster'
 
+const FormItem = Form.Item
 const { Option, OptGroup } = Select;
 
 class SummaryTable extends Component {
 
     state = {
-        data: []
+        data: [],
+        disabledCA: false
     }
 
     select = () => {
@@ -76,34 +80,44 @@ class SummaryTable extends Component {
             groupItem.push(branch)
         })
 
+
+        const { getFieldDecorator } = this.props.form
         return (
             <div className={styles['ca-icon-list']}>
-                <Select
-                    defaultValue={this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]}
-                    onChange={this.onCANameChange}
-                    dropdownMatchSelectWidth={false}
-                    style={{ width: '80%' }}>
-                    {
-                        groupItem.map((item, index) => {
-                            return (
-                                <OptGroup label={item.BranchName}>
-                                    {
-                                        item.CAItem.map((ca, i) => {
-                                            return <Option value={ca.CACode}>{ca.CAName}</Option>
-                                        })
-                                    }
-                                </OptGroup>
-                            )
+                {
+                    getFieldDecorator('select_ca', {
+                        initialValue: this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]
+                    })
+                        (
+                        <Select
+                            disabled={this.state.disabledCA}
+                            onChange={this.onCANameChange}
+                            dropdownMatchSelectWidth={false}
+                            style={{ width: '80%' }}>
+                            {
+                                groupItem.map((item, index) => {
+                                    return (
+                                        <OptGroup key={item.BranchName} label={item.BranchName}>
+                                            {
+                                                item.CAItem.map((ca, i) => {
+                                                    return <Option key={ca.CACode} value={ca.CACode}>{ca.CAName}</Option>
+                                                })
+                                            }
+                                        </OptGroup>
+                                    )
 
-                        })
-                    }
-                </Select>
+                                })
+                            }
+                        </Select>
+                        )
+
+                }
                 <div>
-                    <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
+                    <Tooltip title="Sale Summary"><ModalSaleSummary /></Tooltip>
                     <Tooltip title="Market Penatation"><FontAwesome name="table" /></Tooltip>
                     <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
                 </div>
-            </div>
+            </div >
         )
     }
 
@@ -118,7 +132,7 @@ class SummaryTable extends Component {
     columnsSelect = () => {
         if (this.props.NANO_FILTER_CRITERIA.CAName)
             return [{
-                title: (<div className={styles['ca-icon-list']}><Checkbox className={styles['ca-checkbox-all']}>All</Checkbox><span>CA Market List</span></div>),
+                title: (<div className={styles['ca-icon-list']}><Checkbox className={styles['ca-checkbox-all']} onChange={this.checkboxSelectAllCAChange}>All</Checkbox><span>CA Market List</span></div>),
                 className: `${styles['header-select']} ${styles['header-vertical-middle']}`,
                 children: null
             }, {
@@ -248,11 +262,29 @@ class SummaryTable extends Component {
 
     filterDataByCa(value) {
         const marketCACode = _.map(_.filter(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: value }), item => item.MarketCode)
-        const filter = _.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, o => !_.isEmpty(_.find(marketCACode, f => o.MarketCode == f)))
+        let filter
+        if (value) {
+            filter = _.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, o => !_.isEmpty(_.find(marketCACode, f => o.MarketCode == f)))
+        }
+        else {
+            filter = this.props.RELATED_EXITING_MARKET_DATA_BACKUP
+        }
 
         this.props.selectMarkerByCA(filter)
 
         return _.orderBy(filter, ['Radius'], ['asc'])
+    }
+
+    checkboxSelectAllCAChange = (e) => {
+        const { setFieldsValue } = this.props.form
+
+        if (e.target.checked) {
+            this.setState({ data: this.filterDataByCa(null), disabledCA: true })
+        }
+        else {
+            setFieldsValue({ select_ca: this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0] })
+            this.setState({ data: this.filterDataByCa(this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]), disabledCA: false })
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -261,8 +293,13 @@ class SummaryTable extends Component {
 
     componentWillMount() {
         const { RELATED_BRANCH_DATA, RELATED_EXITING_MARKET_DATA } = this.props
-        RELATED_BRANCH_DATA.length > 0 &&
-            this.setState({ data: this.filterData(RELATED_BRANCH_DATA[0].BranchCode) })
+        if (RELATED_BRANCH_DATA.length > 0)
+            if (this.props.NANO_FILTER_CRITERIA.CAName) {
+                this.setState({ data: this.filterDataByCa(this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]) })
+            }
+            else {
+                this.setState({ data: this.filterData(RELATED_BRANCH_DATA[0].BranchCode) })
+            }
     }
 
     onRowClick = (record, index, event) => {
@@ -286,6 +323,8 @@ class SummaryTable extends Component {
     }
 }
 
+const SummaryTableForm = Form.create()(SummaryTable)
+
 export default connect(
     (state) => ({
         NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
@@ -296,4 +335,4 @@ export default connect(
     }), {
         setOpenExitingMarketMarker: setOpenExitingMarketMarker,
         selectMarkerByCA: selectMarkerByCA
-    })(SummaryTable)
+    })(SummaryTableForm)
