@@ -818,9 +818,15 @@ const getCAExitingMarker = (props) => {
 
 const getCAPicture = (props, marketCode) => {
     let ca = []
-    _.mapKeys(_.groupBy(_.filter(props.RELATED_CA_IN_MARKET_DATA, { MarketCode: marketCode }), 'CA_Code'), (value, key) => {
-        ca.push(key)
-    })
+    if (_.isEmpty(props.SELECTED_CA_MAP)) {
+        _.mapKeys(_.groupBy(_.filter(props.RELATED_CA_IN_MARKET_DATA, { MarketCode: marketCode }), 'CA_Code'), (value, key) => {
+            ca.push(key)
+        })
+    }
+    else {
+        ca.push(props.SELECTED_CA_MAP)
+    }
+
     return ca
 }
 
@@ -874,13 +880,15 @@ const getExitingMarker = (props, handleShowModal) => {
                     position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
                     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                     getPixelPositionOffset={getPixelPositionOffset}>
-                    <div className={styles['ca-marker-img-container']} onClick={() => props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)}>
-                        {
-                            getCAPicture(props, item.MarketCode).map(ca => {
-                                return (<img className={styles['ca-marker-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca}`} />)
-                            })
-                        }
-                    </div>
+                    <Tooltip title={item.MarketName}>
+                        <div className={styles['ca-marker-img-container']} onClick={() => props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)}>
+                            {
+                                getCAPicture(props, item.MarketCode).map(ca => {
+                                    return (<img className={styles['ca-marker-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca}`} />)
+                                })
+                            }
+                        </div>
+                    </Tooltip>
                 </OverlayView>
             )
         }
@@ -898,7 +906,7 @@ const getExitingMarker = (props, handleShowModal) => {
                         item.showInfo &&
                         (
                             <InfoWindow
-                                title="Blabla"
+                                title={item.MarketName}
                                 onDomReady={onDomReady}>
                                 <Layout>
                                     <div className={styles['headers']}>
@@ -1137,6 +1145,7 @@ const wrapMap = withGoogleMap(Map)
 export default connect(
     (state) => ({
         NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
+        SELECTED_CA_MAP: state.SELECTED_CA_MAP,
         DO_BOUNDS_MAP: state.DO_BOUNDS_MAP,
         RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
         RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,

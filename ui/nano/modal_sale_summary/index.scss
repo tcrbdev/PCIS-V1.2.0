@@ -33,6 +33,41 @@
     }
 }
 
+.header
+{
+    background: #03a9f4;
+    padding: 0 10px;
+    height: 25px;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+    width: 100%;
+    & > i:nth-child(1)
+    {
+        color: #505050;
+        margin-right: 10px;
+    }
+
+    & > span
+    {
+        flex: 1;
+    }
+
+    & > i:last-child
+    {
+        cursor: pointer;
+        right: 0;
+        transition: .5s all;
+        &:hover
+        {
+            transform: rotate(180deg)
+        }
+    }
+}
+
 .detail-container
 {
     display: flex;
@@ -360,4 +395,26 @@
     .modalSaleSummary
     {
         width: 700px !important;
+    }
+
+    .ca-img
+    {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+    }
+
+    .header-container
+    {
+        display:  flex;
+        flex-direction: row;
+        align-items: center;
+        
+        & > div
+        {
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
     }

@@ -2,13 +2,15 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withCookies } from 'react-cookie';
 
-import { Icon, Button, Collapse, Layout, Table, Tooltip, Menu, Dropdown } from 'antd';
+import { Icon, Button, Collapse, Layout, Table, Tooltip, Popover, Menu, Dropdown } from 'antd';
 import Scrollbar from 'react-smooth-scrollbar';
 
 import SummaryTable from '../summarytable'
 import Filter from '../filter'
 import GMap from '../map'
 import FontAwesome from 'react-fontawesome'
+
+import moment from 'moment'
 
 import {
     getNanoMasterData,
@@ -277,20 +279,56 @@ class Index extends Component {
     getGroupBySummary() {
         let obj = []
         _.mapKeys(_.groupBy(_.orderBy(this.props.RELATED_GROUP_BY_SUMMARY_DATA, 'BranchCode', 'asc'), "Group"), (value, key) => {
-            obj.push({
-                GroupName: key,
-                Data: value
-            })
+            let temp = {}
+            if (this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.ca) {
+
+                const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: `${value[0].CAID}` })
+                const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
+                const work_date_format = `Start work period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+
+                temp = {
+                    CAID: value[0].CAID,
+                    Period: work_date_format,
+                    GroupName: key,
+                    Data: value
+                }
+            }
+            else {
+                temp = {
+                    GroupName: key,
+                    Data: value
+                }
+            }
+            obj.push(temp)
         })
 
         if (obj.length > 0) {
             return obj.map((item, index) => {
                 return (
                     <div className="rotate-total">
-                        <div style={{ backgroundColor: (item.GroupName.indexOf('osk') <= 0 ? '#0099ff' : '#ff6500') }}>
-                            <Tooltip placement="topLeft" title={`${item.GroupName}`}>
-                                <div>{`${this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.ca ? `${item.GroupName.split(' ')[0]}` : item.GroupName}`}</div>
-                            </Tooltip>
+                        <div style={{ backgroundColor: (item.GroupName.indexOf('osk') <= 0 ? '#0099ff' : '#ff6500'), cursor: 'pointer' }}>
+                            {
+                                this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.ca ?
+                                    <Popover
+                                        placement="topLeft"
+                                        content={
+                                            <div className={styles['ca-img-container']}>
+                                                <img className={styles['ca-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.CAID}`} />
+                                                <div>
+                                                    <span>{item.GroupName}</span>
+                                                    <span>{item.Period}</span>
+                                                </div>
+                                            </div>
+                                        }
+                                        trigger="hover"
+                                    >
+                                        <div>{item.GroupName.split(' ')[0]}</div>
+                                    </Popover>
+                                    :
+                                    <Tooltip placement="topLeft" title={`${item.GroupName}`}>
+                                        <div>{item.GroupName}</div>
+                                    </Tooltip>
+                            }
                         </div>
                         <div>
                             <Table
@@ -316,17 +354,56 @@ class Index extends Component {
         }
     }
 
+    checkDisableArea = () => {
+        console.log(_.filter(this.props.NANO_FILTER_CRITERIA.AreaID.split(','), o => o.indexOf('Zone') <= 0))
+        if (!_.isEmpty(this.props.NANO_FILTER_CRITERIA)) {
+            return true
+        }
+        else {
+            if (_.isEmpty(this.props.NANO_FILTER_CRITERIA.AreaID) || _.filter(this.props.NANO_FILTER_CRITERIA.AreaID.split(','), o => o.indexOf('Zone') <= 0).length <= 1) {
+                return false
+            }
+            else {
+                return true
+            }
+        }
+    }
+
     getMenuGroupBy() {
         const MenuItem = Menu.Item
         return (
             <Menu>
-                <MenuItem key={constantQueryType.area} >
+                <MenuItem key={constantQueryType.region} disabled={!_.isEmpty(this.props.NANO_FILTER_CRITERIA) ? this.props.NANO_FILTER_CRITERIA.RegionID.split(',').length <= 1 ? true : false : true}>
+                    <span onClick={() => this.changeViewSummary(constantQueryType.region)}>
+                        <Icon type="home" className={styles['icon-groupby']} />
+                        <span>View By Region</span>
+                    </span>
+                </MenuItem>
+                <MenuItem key={constantQueryType.area} disabled={
+                    !_.isEmpty(this.props.NANO_FILTER_CRITERIA) ?
+                        _.isEmpty(this.props.NANO_FILTER_CRITERIA.Zone) || this.props.NANO_FILTER_CRITERIA.Zone.split(',').length > 1 ?
+                            false
+                            :
+                            true
+                        :
+                        true
+                }>
                     <span onClick={() => this.changeViewSummary(constantQueryType.area)}>
                         <Icon type="global" className={styles['icon-groupby']} />
                         <span>View By Area</span>
                     </span>
                 </MenuItem>
-                <MenuItem key={constantQueryType.zone}>
+                <MenuItem key={constantQueryType.zone} disabled={
+                    !_.isEmpty(this.props.NANO_FILTER_CRITERIA) ?
+                        _.isEmpty(this.props.NANO_FILTER_CRITERIA.Zone)
+                            || _.filter(this.props.NANO_FILTER_CRITERIA.Zone.split(','), o => o.indexOf('Zone') <= 0).length >= 1
+                            || _.filter(this.props.NANO_FILTER_CRITERIA.Zone.split(','), o => o.indexOf('Zone') > 0).length > 1 ?
+                            false
+                            :
+                            true
+                        :
+                        true
+                }>
                     <span onClick={() => this.changeViewSummary(constantQueryType.zone)}>
                         <FontAwesome name="share-alt" className={styles['icon-groupby']} />
                         <span>View By Zone</span>
@@ -521,7 +598,8 @@ export default connect(
         RELATED_PERFORMANCE_SUMMARY_DATA: state.RELATED_PERFORMANCE_SUMMARY_DATA,
         RELATED_OVERALL_SUMMARY_DATA: state.RELATED_OVERALL_SUMMARY_DATA,
         RELATED_GROUP_BY_SUMMARY_DATA: state.RELATED_GROUP_BY_SUMMARY_DATA,
-        RELATED_KIOSK_SUMMARY_DATA: state.RELATED_KIOSK_SUMMARY_DATA
+        RELATED_KIOSK_SUMMARY_DATA: state.RELATED_KIOSK_SUMMARY_DATA,
+        RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA
     }),
     {
         getNanoMasterData: getNanoMasterData,

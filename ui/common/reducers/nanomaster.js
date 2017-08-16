@@ -97,6 +97,18 @@ export const NANO_FILTER_CRITERIA = (state = initialStateObj, action) => {
     }
 }
 
+export const SELECTED_CA_MAP = (state = "", action) => {
+    switch (action.type) {
+        case CHANGE_MAP_MARKER_BY_CA:
+            return action.selectedCA
+            break;
+        default:
+            return state
+            break;
+
+    }
+}
+
 export const DO_BOUNDS_MAP = (state = initialStateBoolean, action) => {
     switch (action.type) {
         case SET_OPEN_BRANCH_MARKER_REQUEST:

@@ -1,4 +1,5 @@
 export const constantQueryType = {
+    region: 'region',
     area: 'area',
     zone: 'zone',
     branch: 'branch',

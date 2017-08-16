@@ -595,3 +595,24 @@ margin: 0 10px;
     height: 100%;
     margin-top: 20px;
 }
+
+.ca-img-container
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    & > div
+    {
+        margin-left: 10px;
+        display:  flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+    .ca-img
+    {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+    }

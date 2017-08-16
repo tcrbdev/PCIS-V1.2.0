@@ -252,10 +252,25 @@ class ModalSaleSummary extends Component {
     }
 
     render() {
+        const { getFieldValue } = this.props.form
+        const ca_code = getFieldValue("select_ca")
+        const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: ca_code })
+        const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
+        const work_date_format = `Start work period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+        const ca_name = !_.isEmpty(find) ? find.CA_Name : ''
+
         return (
             <div>
                 <Modal className={styles['modalSaleSummary']}
-                    title={'Sale Summary'}
+                    title={
+                        <div className={styles['header-container']}>
+                            <img className={styles['ca-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                            <div>
+                                <span>{ca_name}</span>
+                                <span>{work_date_format}</span>
+                            </div>
+                        </div>
+                    }
                     visible={this.state.modalOpen}
                     onOk={false}
                     onCancel={this.handleCancel}
@@ -266,7 +281,7 @@ class ModalSaleSummary extends Component {
                             <div className={styles['detail-container']}>
                                 <div className={styles['detail-chart']}>
                                     <div style={{ width: '160px', height: '160px' }}>
-                                        <Doughnut  />
+                                        <Doughnut />
                                         <span></span>
                                     </div>
                                     <div>
@@ -324,6 +339,6 @@ class ModalSaleSummary extends Component {
 
 export default connect(
     (state) => ({
+        RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA
     }),
-    {
-    })(ModalSaleSummary)
+    {})(ModalSaleSummary)

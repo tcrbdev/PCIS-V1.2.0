@@ -140,10 +140,11 @@ export const setOpenTargetMarketMarker = (targetMarker, currentState, isOpen) =>
 }
 
 
-export const selectMarkerByCA = (newState) => dispatch => {
+export const selectMarkerByCA = (newState, value) => dispatch => {
     dispatch({
         type: CHANGE_MAP_MARKER_BY_CA,
-        payload: newState
+        payload: newState,
+        selectedCA: value
     })
 }
 

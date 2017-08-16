@@ -113,7 +113,7 @@ class SummaryTable extends Component {
 
                 }
                 <div>
-                    <Tooltip title="Sale Summary"><ModalSaleSummary /></Tooltip>
+                    <Tooltip title="Sale Summary"><ModalSaleSummary form={this.props.form} /></Tooltip>
                     <Tooltip title="Market Penatation"><FontAwesome name="table" /></Tooltip>
                     <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
                 </div>
@@ -122,7 +122,7 @@ class SummaryTable extends Component {
     }
 
     onBranchChange = (value) => {
-        this.setState({ data: this.filterData(value) })
+        this.setState({ data: this.filterData(value), })
     }
 
     onCANameChange = (value) => {
@@ -270,7 +270,7 @@ class SummaryTable extends Component {
             filter = this.props.RELATED_EXITING_MARKET_DATA_BACKUP
         }
 
-        this.props.selectMarkerByCA(filter)
+        this.props.selectMarkerByCA(filter, value)
 
         return _.orderBy(filter, ['Radius'], ['asc'])
     }
@@ -283,7 +283,10 @@ class SummaryTable extends Component {
         }
         else {
             setFieldsValue({ select_ca: this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0] })
-            this.setState({ data: this.filterDataByCa(this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]), disabledCA: false })
+            this.setState({
+                data: this.filterDataByCa(this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]),
+                disabledCA: false
+            })
         }
     }
 
