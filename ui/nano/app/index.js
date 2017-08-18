@@ -39,7 +39,7 @@ const columnsBranchPerformance = [
             dataIndex: 'OS_Vol',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
-            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseFloat(text).toFixed(1)}`)
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}`)
         }, {
             title: (<div className={styles['div-center']}><span>Unit</span></div>),
             dataIndex: 'OS_Unit',
@@ -57,14 +57,14 @@ const columnsBranchPerformance = [
             dataIndex: 'TOTAL_Avg',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
         },
         {
             title: (<div className={styles['div-center']}><span>Vol.</span></div>),
             dataIndex: 'TOTAL_Vol',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
         },
         {
             title: (<div className={styles['div-center']}><span>Unit</span></div>),
@@ -95,7 +95,7 @@ const columnsBranchPerformance = [
             dataIndex: 'CUR_Vol',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
-            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+            render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
         }, {
             title: (<div className={styles['div-center']}><span>Unit</span></div>),
             dataIndex: 'CUR_Unit',
@@ -138,7 +138,7 @@ const columnsTotalSummary = [{
     dataIndex: "OS",
     width: '8%',
     className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
-    render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+    render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
 }, {
     title: (<div className={styles['div-center']}><span>Financial Volume</span></div>),
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} financial-volume`,
@@ -147,25 +147,25 @@ const columnsTotalSummary = [{
         dataIndex: "AVG",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><span>YTD</span></div>),
         dataIndex: "YTD",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><span>LM</span></div>),
         dataIndex: "LM",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><span>MTD</span></div>),
         dataIndex: "MTD",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }]
 }, {
     title: (<div className={styles['div-center']}><span>Portfolio Quality</span></div>),
@@ -175,37 +175,37 @@ const columnsTotalSummary = [{
         dataIndex: "W0",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><Tooltip title="< 2%"><span>W1-2</span></Tooltip></div>),
         dataIndex: "W1-2",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><Tooltip title="< 1%"><span>W3-4</span></Tooltip></div>),
         dataIndex: "W3-4",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><Tooltip title="< 3%"><span>XDay</span></Tooltip></div>),
         dataIndex: "XDay",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><Tooltip title="< 2%"><span>M1-2</span></Tooltip></div>),
         dataIndex: "M1-2",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality`,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><Tooltip title="< 4%"><span>NPL</span></Tooltip></div>),
         dataIndex: "NPL",
         width: '8%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} portfolio-quality `,
-        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(1))
+        render: (text, record, index) => (record.Kpi == 'Unit' ? `${parseFloat(text).toFixed(0)}` : record.Kpi == 'Ach' ? `${parseFloat(text).toFixed(1)}%` : parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1))
     }]
 }]
 
@@ -284,7 +284,7 @@ class Index extends Component {
 
                 const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: `${value[0].CAID}` })
                 const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
-                const work_date_format = `Start work period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+                const work_date_format = `Working period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
 
                 temp = {
                     CAID: value[0].CAID,
@@ -351,21 +351,8 @@ class Index extends Component {
             const criteria = _.cloneDeep(NANO_FILTER_CRITERIA)
             criteria.QueryType = view
             searchNanoChangeViewByData(criteria)
-        }
-    }
 
-    checkDisableArea = () => {
-        console.log(_.filter(this.props.NANO_FILTER_CRITERIA.AreaID.split(','), o => o.indexOf('Zone') <= 0))
-        if (!_.isEmpty(this.props.NANO_FILTER_CRITERIA)) {
-            return true
-        }
-        else {
-            if (_.isEmpty(this.props.NANO_FILTER_CRITERIA.AreaID) || _.filter(this.props.NANO_FILTER_CRITERIA.AreaID.split(','), o => o.indexOf('Zone') <= 0).length <= 1) {
-                return false
-            }
-            else {
-                return true
-            }
+            this.setState({ collapsedSummary: true, openFilterCollapsed: "1" })
         }
     }
 
@@ -459,7 +446,7 @@ class Index extends Component {
                                 header={
                                     <div className={styles['panel-header']}>
                                         <Icon type="area-chart" />
-                                        Branch Summary
+                                        <span>Branch Summary</span>
                                         <div className={styles['icon-header-container']}>
                                             <div>
                                                 <Tooltip title="View">

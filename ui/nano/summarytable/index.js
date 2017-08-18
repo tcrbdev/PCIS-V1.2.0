@@ -19,7 +19,7 @@ class SummaryTable extends Component {
 
     state = {
         data: [],
-        disabledCA: false
+        disabledCA: true
     }
 
     select = () => {
@@ -68,7 +68,12 @@ class SummaryTable extends Component {
             const caInMarket = _.filter(this.props.RELATED_CA_IN_MARKET_DATA, o => !_.isEmpty(_.find(marketCode, f => f == o.MarketCode)))
 
             let branch = {}
-            branch.BranchName = !_.isEmpty(_.find(value, o => o.BranchType != 'K')) ? _.find(value, o => o.BranchType != 'K').BranchName : 'N/A'
+            if (_.filter(value, { BranchType: 'K' }).length == value.length && _.filter(value, o => o.BranchType != 'K').length <= 0) {
+                branch.BranchName = !_.isEmpty(_.find(value, { BranchType: 'K' })) ? _.find(value, { BranchType: 'K' }).BranchName : 'N/A'
+            }
+            else {
+                branch.BranchName = !_.isEmpty(_.find(value, o => o.BranchType != 'K')) ? _.find(value, o => o.BranchType != 'K').BranchName : 'N/A'
+            }
             branch.CAItem = []
             _.mapKeys(_.groupBy(caInMarket, "CAHandle"), (caValue, caKey) => {
                 branch.CAItem.push({
@@ -112,11 +117,14 @@ class SummaryTable extends Component {
                         )
 
                 }
-                <div>
-                    <Tooltip title="Sale Summary"><ModalSaleSummary form={this.props.form} /></Tooltip>
-                    <Tooltip title="Market Penatation"><FontAwesome name="table" /></Tooltip>
-                    <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
-                </div>
+                {
+                    !this.state.disabledCA &&
+                    <div>
+                        <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
+                        <ModalSaleSummary form={this.props.form} />
+                        <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
+                    </div>
+                }
             </div >
         )
     }
@@ -130,9 +138,22 @@ class SummaryTable extends Component {
     }
 
     columnsSelect = () => {
+        const { getFieldDecorator } = this.props.form
+
         if (this.props.NANO_FILTER_CRITERIA.CAName)
             return [{
-                title: (<div className={styles['ca-icon-list']}><Checkbox className={styles['ca-checkbox-all']} onChange={this.checkboxSelectAllCAChange}>All</Checkbox><span>CA Market List</span></div>),
+                title: (
+                    <div className={styles['ca-icon-list']}>
+                        {
+                            this.props.NANO_FILTER_CRITERIA.CAName.split(',').length > 1 &&
+                            getFieldDecorator('checked_all', {
+                                valuePropName: 'checked',
+                                initialValue: this.props.NANO_FILTER_CRITERIA.CAName.split(',').length > 1
+                            })(<Checkbox className={styles['ca-checkbox-all']} onChange={this.checkboxSelectAllCAChange}>All</Checkbox>)
+                        }
+                        <span>CA Market List</span>
+                    </div>
+                ),
                 className: `${styles['header-select']} ${styles['header-vertical-middle']}`,
                 children: null
             }, {
@@ -171,7 +192,7 @@ class SummaryTable extends Component {
         key: 'Radius',
         className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
         width: '5%',
-        render: (text, record, index) => (parseFloat(record.Radius).toFixed(1))
+        render: (text, record, index) => (parseFloat(record.Radius).toFixed(parseInt(text) > 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><span>#</span><span>Shop</span></div>),
         dataIndex: 'MarketShop',
@@ -262,6 +283,7 @@ class SummaryTable extends Component {
 
     filterDataByCa(value) {
         const marketCACode = _.map(_.filter(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: value }), item => item.MarketCode)
+
         let filter
         if (value) {
             filter = _.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, o => !_.isEmpty(_.find(marketCACode, f => o.MarketCode == f)))
@@ -298,7 +320,10 @@ class SummaryTable extends Component {
         const { RELATED_BRANCH_DATA, RELATED_EXITING_MARKET_DATA } = this.props
         if (RELATED_BRANCH_DATA.length > 0)
             if (this.props.NANO_FILTER_CRITERIA.CAName) {
-                this.setState({ data: this.filterDataByCa(this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]) })
+                if (this.props.NANO_FILTER_CRITERIA.CAName.split(',').length > 1)
+                    this.setState({ data: this.filterDataByCa(null), disabledCA: true })
+                else
+                    this.setState({ data: this.filterDataByCa(this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]), disabledCA: false })
             }
             else {
                 this.setState({ data: this.filterData(RELATED_BRANCH_DATA[0].BranchCode) })

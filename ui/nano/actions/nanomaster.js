@@ -16,6 +16,7 @@ import {
     SEARCH_PRODUCT_PERFORMANCE_URL,
     SEARCH_TOTAL_SUMMARY_URL,
     SEARCH_GROUP_BY_SUMMARY_URL,
+    GET_CA_SUMMARY_ONLY_URL,
 
     GET_BRANCH_MARKER_DATA_URL,
     GET_EXITING_MARKET_MARKER_DATA_URL,
@@ -52,7 +53,11 @@ import {
 
     SET_MARKER_NOTE_DEFAULT_REQUEST,
     SET_MARKER_NOTE_DEFAULT_SUCCESS,
-    SET_MARKER_NOTE_DEFAULT_FAILURE
+    SET_MARKER_NOTE_DEFAULT_FAILURE,
+
+    GET_CA_SUMMARY_ONLY_REQUEST,
+    GET_CA_SUMMARY_ONLY_SUCCESS,
+    GET_CA_SUMMARY_ONLY_FAILURE
 } from '../../common/constants/actionsType'
 
 export const setOpenBranchMarkerMenu = (targetMarker, currentState, isOpen) => dispatch => {
@@ -388,6 +393,16 @@ export const insertUpdateMarkerNote = (criteria, type, loading, success, targetM
 
             success(load)
         })
+}
+
+export const getCASummaryOnlyData = CAID => dispatch => {
+    dispatch({
+        [CALL_API]: {
+            endpoint: `${GET_CA_SUMMARY_ONLY_URL}${CAID}`,
+            method: 'GET',
+            types: [GET_CA_SUMMARY_ONLY_REQUEST, GET_CA_SUMMARY_ONLY_SUCCESS, GET_CA_SUMMARY_ONLY_FAILURE]
+        }
+    })
 }
 
 

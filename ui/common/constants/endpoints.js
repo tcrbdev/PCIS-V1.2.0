@@ -45,6 +45,7 @@ export const SEARCH_COMPLITITOR_MARKER_URL = `${url}/master/complititor`
 export const SEARCH_PRODUCT_PERFORMANCE_URL = `${url}/nano/product/performance`
 export const SEARCH_TOTAL_SUMMARY_URL = `${url}/nano/total/summary`
 export const SEARCH_GROUP_BY_SUMMARY_URL = `${url}/nano/groupby/summary`
+export const GET_CA_SUMMARY_ONLY_URL = `${url}/nano/ca/summary/`
 
 
 export const GET_BRANCH_MARKER_DATA_URL = `${url}/nano/branch/`

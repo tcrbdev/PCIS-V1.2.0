@@ -10,6 +10,8 @@ import FontAwesome from 'react-fontawesome'
 import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
 
+import { getCASummaryOnlyData } from '../actions/nanomaster'
+
 import styles from './index.scss'
 
 const color = [
@@ -41,14 +43,13 @@ const getMarketSummaryColumns = () => {
             width: '8%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
             }
         }],
     }, {
         title: (
             <div className={`${styles['div-point']} `}>
-                <span className={styles['color-point']} style={{ backgroundColor: color[1].color }}>
-                </span><span>Setup</span>
+                <span>Setup</span>
             </div>
         ),
         dataIndex: 'SETUP',
@@ -56,13 +57,12 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
             <div className={styles['div-point']}>
-                <span className={styles['color-point']} style={{ backgroundColor: color[2].color }}>
-                </span><span>Reject</span>
+                <span>Reject</span>
             </div>
         ),
         dataIndex: 'REJECT',
@@ -70,13 +70,12 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
             <div className={styles['div-point']}>
-                <span className={styles['color-point']} style={{ backgroundColor: color[3].color }}>
-                </span><span>Cancel</span>
+                <span>Cancel</span>
             </div>
         ),
         dataIndex: 'CANCEL',
@@ -84,13 +83,12 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
             <div className={styles['div-point']}>
-                <span className={styles['color-point']} style={{ backgroundColor: color[4].color }}>
-                </span><span>Potential</span>
+                <span>Potential</span>
             </div>
         ),
         dataIndex: 'POTENTIAL',
@@ -98,15 +96,15 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
         }
     }]
 }
 
 const getColumnCA = [{
     title: (<div className={styles['div-center']}><span>Name</span></div>),
-    dataIndex: 'Name',
-    key: 'Name',
+    dataIndex: 'MarketName',
+    key: 'MarketName',
     width: '16%',
     className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     render: (text, record, index) => {
@@ -236,6 +234,46 @@ const getColumnCA = [{
     }]
 }]
 
+const getFormatShortDay = (value) => {
+
+    if (_.isEmpty(value)) {
+        return ''
+    }
+    else {
+        let day = value.split(',').sort()
+        const dayArray = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa']
+
+        let result = ""
+        let lastValue = ''
+
+        day.map((item, index) => {
+            const nextIndex = index + 1 > day.length ? day.length : index + 1
+            if ((item - 1) == lastValue) {
+                result = `${result}${index != 0 ? '-' : ''}${dayArray[item]}`
+            }
+            else {
+                result = `${result}${index != 0 ? '/' : ''}${dayArray[item]}`
+            }
+            lastValue = item
+        })
+
+        let valueNotContinue = result.split('/')
+        if (valueNotContinue.length > 1 || valueNotContinue[0].indexOf('-') > 0) {
+            let obj = valueNotContinue.map((item, index) => {
+                let value = item.split('-')
+                if (value.length > 1) {
+                    return `${value[0]}-${value[value.length - 1]}`
+                }
+                else {
+                    return value[0]
+                }
+            })
+            result = obj.join('/')
+        }
+
+        return result
+    }
+}
 
 class ModalSaleSummary extends Component {
 
@@ -243,7 +281,17 @@ class ModalSaleSummary extends Component {
         modalOpen: false
     }
 
+    componentWillReceiveProps(nextsProps) {
+        this.getCAContribution(nextsProps)
+    }
+
+    componentDidMount() {
+        this.getCAContribution(this.props)
+    }
+
     handleModal = () => {
+        const { getFieldValue } = this.props.form
+        this.props.getCASummaryOnlyData(getFieldValue("select_ca"))
         this.setState({ modalOpen: !this.state.modalOpen })
     }
 
@@ -251,16 +299,123 @@ class ModalSaleSummary extends Component {
         this.setState({ modalOpen: !this.state.modalOpen })
     }
 
+    chartData = () => {
+
+        const { CA_SUMMARY_ONLY_MARKET_CONTRIBUTION } = this.props
+
+        let data = [], labels = []
+        _.mapKeys(_.groupBy(CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode'), (value, key) => {
+            const os = _.find(value, { Status: 'OS' })
+            data.push(os.Ach)
+            labels.push(value[0].MarketName)
+        })
+
+        return {
+            data: {
+                datasets: [{
+                    data: data,
+                    backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"]
+                }],
+                labels: labels,
+                borderWidth: 0
+            },
+            options: {
+                segmentStrokeWidth: 20,
+                segmentStrokeColor: "rgba(255, 255, 255, 0.4)",
+                legend: { display: false },
+                maintainAspectRatio: false,
+                fullWidth: true,
+                tooltipFontSize: 10
+            }
+        }
+    }
+
+    getCAPenetation = () => {
+
+        const { CA_SUMMARY_ONLY_MARKET_PENETRATION } = this.props
+
+        if (!_.isEmpty(CA_SUMMARY_ONLY_MARKET_PENETRATION)) {
+            const Amt = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
+            const os = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
+            const setup = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'APPROVED' }) || { Total: 0, Ach: 0 }
+            const reject = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'REJECTED' }) || { Total: 0, Ach: 0 }
+            const cancel = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'CANCELLED' }) || { Total: 0, Ach: 0 }
+            const potential = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'POTENTIAL' }) || { Total: 0, Ach: 0 }
+            const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
+
+            return [
+                {
+                    Detail: 'Total App',
+                    Amt: Amt.Amt ? Amt.Amt : '',
+                    OS: os.Total,
+                    SETUP: setup.Total,
+                    REJECT: reject.Total,
+                    CANCEL: cancel.Total,
+                    POTENTIAL: potential.Total,
+                    sum_penatation: sum_penatation
+                },
+                {
+                    Detail: 'Achive',
+                    OS: os.Ach,
+                    SETUP: setup.Ach,
+                    REJECT: reject.Ach,
+                    CANCEL: cancel.Ach,
+                    POTENTIAL: potential.Ach,
+                    sum_penatation: sum_penatation
+                },
+            ]
+        }
+        else {
+            return []
+        }
+    }
+
+    getCAContribution = () => {
+        const { CA_SUMMARY_ONLY_MARKET_CONTRIBUTION } = this.props
+
+        let result = []
+        _.mapKeys(_.groupBy(CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode'), (value, key) => {
+
+            const os = _.find(value, { Status: 'OS' })
+            const approved = _.find(value, { Status: 'APPROVED' })
+            const reject = _.find(value, { Status: 'REJECTED' })
+            const cancel = _.find(value, { Status: 'CANCELLED' })
+            const total = _.find(value, { Status: 'TOTAL' })
+
+            const obj = {
+                MarketCode: key,
+                MarketName: value[0].MarketName,
+                OS_App: !_.isEmpty(os) ? os.Total : 0,
+                OS_Ach: !_.isEmpty(os) ? os.Ach : 0,
+                Setup_App: !_.isEmpty(approved) ? approved.Total : 0,
+                Setup_Ach: !_.isEmpty(approved) ? approved.Ach : 0,
+                Reject_App: !_.isEmpty(reject) ? reject.Total : 0,
+                Reject_Ach: !_.isEmpty(reject) ? reject.Ach : 0,
+                Cancel_App: !_.isEmpty(cancel) ? cancel.Total : 0,
+                Cancel_Ach: !_.isEmpty(cancel) ? cancel.Ach : 0,
+                Total_App: !_.isEmpty(total) ? total.Total : 0,
+                Total_Ach: !_.isEmpty(total) ? total.Ach : 0,
+                BillingDate: getFormatShortDay(value[0].CycleDue),
+                StatusDate: _.isEmpty(value[0].StartWork) ? '' : moment(value[0].StartWork).format('MMM-YY')
+            }
+            result.push(obj)
+        })
+
+        return _.orderBy(result, ['OS_Ach', 'Setup_Ach', 'CAID'], ['desc', 'desc', 'asc'])
+    }
+
     render() {
         const { getFieldValue } = this.props.form
         const ca_code = getFieldValue("select_ca")
         const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: ca_code })
         const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
-        const work_date_format = `Start work period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+        const work_date_format = `Working period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
         const ca_name = !_.isEmpty(find) ? find.CA_Name : ''
+        const count_market = Object.keys(_.groupBy(this.props.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode')).length
+        const os = _.find(this.props.CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
 
         return (
-            <div>
+            <div style={{ marginLeft: '0px' }}>
                 <Modal className={styles['modalSaleSummary']}
                     title={
                         <div className={styles['header-container']}>
@@ -281,14 +436,13 @@ class ModalSaleSummary extends Component {
                             <div className={styles['detail-container']}>
                                 <div className={styles['detail-chart']}>
                                     <div style={{ width: '160px', height: '160px' }}>
-                                        <Doughnut />
-                                        <span></span>
+                                        <Doughnut {...this.chartData() } />
+                                        <span>{os.Ach}%</span>
                                     </div>
                                     <div>
                                         <div className={styles['text-descrition']}>
                                             <div>
-                                                <span>{`${'current_branch.MarketShop'} Shop `}</span>
-                                                <span>{`from ${'current_branch.Market'} Market (Open on )`}</span>
+                                                <span>{`${count_market} Market `}</span>
                                             </div>
                                             <span>
                                             </span>
@@ -303,7 +457,7 @@ class ModalSaleSummary extends Component {
                                             <Layout style={{ backgroundColor: '#FFF' }}>
                                                 <Table
                                                     className={styles['summary-table-not-odd']}
-                                                    dataSource={[]}
+                                                    dataSource={this.getCAPenetation()}
                                                     columns={getMarketSummaryColumns()}
                                                     pagination={false}
                                                     bordered />
@@ -321,7 +475,7 @@ class ModalSaleSummary extends Component {
                                     <Layout style={{ backgroundColor: '#FFF' }}>
                                         <Table
                                             className={styles['summary-table']}
-                                            dataSource={[]}
+                                            dataSource={this.getCAContribution()}
                                             columns={getColumnCA}
                                             pagination={false}
                                             bordered />
@@ -331,7 +485,7 @@ class ModalSaleSummary extends Component {
                         </Layout>
                     </Layout>
                 </Modal>
-                <FontAwesome name="line-chart" onClick={this.handleModal} />
+                <Tooltip title="Market Penatation"><FontAwesome style={{ color: '#E91E63' }} name="table" onClick={this.handleModal} /></Tooltip>
             </div>
         )
     }
@@ -339,6 +493,10 @@ class ModalSaleSummary extends Component {
 
 export default connect(
     (state) => ({
-        RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA
+        RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA,
+        CA_SUMMARY_ONLY_MARKET_PENETRATION: state.CA_SUMMARY_ONLY_MARKET_PENETRATION,
+        CA_SUMMARY_ONLY_MARKET_CONTRIBUTION: state.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION
     }),
-    {})(ModalSaleSummary)
+    {
+        getCASummaryOnlyData: getCASummaryOnlyData
+    })(ModalSaleSummary)

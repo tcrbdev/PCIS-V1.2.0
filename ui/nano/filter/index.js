@@ -481,7 +481,7 @@ class Filter extends Component {
                         <Row gutter={8}>
                             <Col span={12}>
                                 <FormItem
-                                    label={`Branch`}
+                                    label={`Branch (${this.props.RELATED_BRANCH_DATA.length})`}
                                     colon={true}
                                     className={styles['row-label']}
                                     {...formItemLayout}>
@@ -781,6 +781,7 @@ export default connect(
     (state) => ({
         NANO_MASTER_ALL: state.NANO_MASTER_ALL,
         ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA,
+        RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
         RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
         RELATED_TARGET_MARKET_DATA: state.RELATED_TARGET_MARKET_DATA,
         RELATED_COMPLITITOR_DATA: state.RELATED_COMPLITITOR_DATA

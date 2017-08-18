@@ -19,7 +19,11 @@ import {
 
     INSERT_MARKER_NOTE_REQUEST,
     INSERT_MARKER_NOTE_SUCCESS,
-    INSERT_MARKER_NOTE_FAILURE
+    INSERT_MARKER_NOTE_FAILURE,
+
+    GET_CA_SUMMARY_ONLY_REQUEST,
+    GET_CA_SUMMARY_ONLY_SUCCESS,
+    GET_CA_SUMMARY_ONLY_FAILURE
 } from '../constants/actionsType'
 
 const initialStateObj = {}
@@ -273,6 +277,28 @@ export const INSERT_MARKER_NOTE_DATA = (state = initialStateObj, action) => {
             break;
         case INSERT_MARKER_NOTE_FAILURE:
             return action.payload
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const CA_SUMMARY_ONLY_MARKET_PENETRATION = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case GET_CA_SUMMARY_ONLY_SUCCESS:
+            return action.payload[0]
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const CA_SUMMARY_ONLY_MARKET_CONTRIBUTION = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case GET_CA_SUMMARY_ONLY_SUCCESS:
+            return action.payload[1]
             break;
         default:
             return state
