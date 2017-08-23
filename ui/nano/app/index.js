@@ -290,20 +290,24 @@ class Index extends Component {
                     CAID: value[0].CAID,
                     Period: work_date_format,
                     GroupName: key,
-                    Data: value
+                    Data: value,
+                    OrderByOS: _.find(value, { Kpi: 'Unit' }).OS
                 }
             }
             else {
                 temp = {
                     GroupName: key,
-                    Data: value
+                    Data: value,
+                    OrderByOS: _.find(value, { Kpi: 'Unit' }).OS
                 }
             }
+
+            console.log()
             obj.push(temp)
         })
 
         if (obj.length > 0) {
-            return obj.map((item, index) => {
+            return _.orderBy(obj, ['OrderByOS'], ['desc']).map((item, index) => {
                 return (
                     <div className="rotate-total">
                         <div style={{ backgroundColor: (item.GroupName.indexOf('osk') <= 0 ? '#0099ff' : '#ff6500'), cursor: 'pointer' }}>

@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline } from "react-google-maps"
+import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama } from "react-google-maps"
 import { MAP } from 'react-google-maps/lib/constants';
 
-import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover } from 'antd';
+import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel } from 'antd';
 import FontAwesome from 'react-fontawesome'
 import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
 
 import InsertNote from './insertnote'
+import StreetViewMap from './streetview'
 // import NewNote from './newnote'
 // import NoteTable from './notetable'
 
@@ -696,7 +697,7 @@ const getBranchMarker = (props, handleShowModal) => {
                                                         }
                                                     </span>
                                                     <div className={styles['note-icon']}>
-                                                        <Tooltip title='Note'>
+                                                        <Tooltip title='Note' placement="bottom">
                                                             <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
                                                         </Tooltip>
                                                     </div>
@@ -941,7 +942,7 @@ const getExitingMarker = (props, handleShowModal) => {
                                                             {` Type B working hour 07:00 - 19:00 (Mon - Wed - Fri) `}
                                                         </span>
                                                         <div className={styles['note-icon']}>
-                                                            <Tooltip title='Note'>
+                                                            <Tooltip title='Note' placement="bottom">
                                                                 <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
                                                             </Tooltip>
                                                         </div>
@@ -1001,8 +1002,56 @@ const getExitingMarker = (props, handleShowModal) => {
 
 }
 
-const getPictureMarker = props => {
+const getMarketPictureMarker = props => {
+    const { RELATED_EXITING_MARKET_DATA } = props
 
+    if (RELATED_EXITING_MARKET_DATA.length > 0) {
+        return [RELATED_EXITING_MARKET_DATA[0]].map((item, index) => {
+            return (
+                <Marker
+                    key={index}
+                    title={item.MarketName}
+                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                    icon={{
+                        url: ''
+                    }}>
+                    <InfoWindow
+                        title={item.MarketName}
+                        onDomReady={onDomReady}>
+                        <Layout>
+                            <div className={styles['headers']}>
+                                <Icon
+                                    className="trigger"
+                                    type='pie-chart' />
+                                <span>
+                                    {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                                </span>
+                                <Icon
+                                    onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
+                                    className="trigger"
+                                    type='close' />
+                            </div>
+                            <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                <div className={styles['detail-container-picture']}>
+                                    <div>
+                                        <h1>Hello</h1>
+                                    </div>
+                                    <div>
+                                        <StreetViewMap
+                                            key={index}
+                                            item={item}
+                                            containerElement={<div style={{ height: `100%` }} />}
+                                            mapElement={<div style={{ height: `100%` }} />}
+                                        />
+                                    </div>
+                                </div>
+                            </Layout>
+                        </Layout>
+                    </InfoWindow>
+                </Marker>
+            )
+        })
+    }
 }
 
 const getComplititorMarker = props => {
@@ -1093,6 +1142,9 @@ class Map extends Component {
                     }
                     {
                         getComplititorMarker(props)
+                    }
+                    {
+                        //getMarketPictureMarker(props)
                     }
                     {
                         props.RELATED_TARGET_MARKET_DATA &&

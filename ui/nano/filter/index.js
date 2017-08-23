@@ -211,9 +211,6 @@ class Filter extends Component {
 
             let CALIST_DATA = _.filter(MASTER_CALIST_DATA, o => !_.isEmpty(_.find(branch_select, s => s == o.BranchCode)))
 
-            console.log(branch_select)
-            console.log(CALIST_DATA)
-
             let group = []
             _.mapKeys(_.groupBy(CALIST_DATA, "OriginBranchCode"), (values, key) => {
 

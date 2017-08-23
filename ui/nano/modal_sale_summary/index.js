@@ -114,7 +114,9 @@ const getColumnCA = (data) => {
             return (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span className={styles['color-point']} style={{ backgroundColor: record.color }}></span>
-                    <span>{text}</span>
+                    <Tooltip title={text} placement="left" >
+                        <span className={styles['text-ellipsis']}>{text}</span>
+                    </Tooltip>
                 </div>
             )
         }

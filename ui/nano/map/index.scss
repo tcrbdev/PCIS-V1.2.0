@@ -806,3 +806,32 @@
     }
 }
 
+.detail-container-picture
+{
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+
+    & > div:first-child
+    {
+        flex: 1;
+    }
+
+    & > div:nth-child(2)
+    {
+        height: 200px;
+        width: 100%;
+    }
+}
+.picture-slide
+{
+    & [class=slick-slide]
+    {
+         text-align: center;
+  height: 160px;
+  line-height: 160px;
+  background: #364d79;
+  overflow: hidden;
+    }
+}
+
