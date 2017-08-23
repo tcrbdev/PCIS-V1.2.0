@@ -211,6 +211,9 @@ class Filter extends Component {
 
             let CALIST_DATA = _.filter(MASTER_CALIST_DATA, o => !_.isEmpty(_.find(branch_select, s => s == o.BranchCode)))
 
+            console.log(branch_select)
+            console.log(CALIST_DATA)
+
             let group = []
             _.mapKeys(_.groupBy(CALIST_DATA, "OriginBranchCode"), (values, key) => {
 
@@ -364,21 +367,63 @@ class Filter extends Component {
 
     getQueryTypeReportSummary(values) {
         const { getFieldValue } = this.props.form
-        const Area = _.isEmpty(values.AreaID) ? '' : values.AreaID.join(',')
-        const Branch = _.isEmpty(values.BranchCode) ? '' : values.BranchCode.join(',')
-        const CAName = _.isEmpty(values.CAName) ? '' : values.CAName.join(',')
+
+        const { MASTER_REGION_DATA, MASTER_AREA_DATA, MASTER_BRANCH_DATA, MASTER_CALIST_DATA } = this.props.NANO_MASTER_ALL
+
+        const Region = _.isEmpty(values.RegionID) ? [] : values.RegionID.join(',').split(',')
+        const Area = _.isEmpty(values.AreaID) ? [] : _.filter(values.AreaID.join(',').split(','), o => o.indexOf('Zone') <= 0)
+        const Zone = _.isEmpty(values.AreaID) ? [] : _.filter(values.AreaID.join(',').split(','), o => o.indexOf('Zone') > 0)
+        const Branch = _.isEmpty(values.BranchCode) ? [] : _.filter(values.BranchCode.join(',').split(','), o => o.length == 3)
+        const KioskBranch = _.isEmpty(values.BranchCode) ? [] : _.filter(values.BranchCode.join(',').split(','), o => o.length > 3)
+        const CAName = _.isEmpty(values.CAName) ? [] : values.CAName.join(',').split(',')
+
+        // console.log(Region, Area, Zone, Branch, KioskBranch, CAName)
+
+        // let result = "";
+
+        // if (CAName.length > 0) {
+        //     if (CAName.length == 1) {
+        //         result = constantQueryType.ca
+        //     }
+        //     else {
+        //         const ca_branch = _.filter(MASTER_CALIST_DATA, o => !_.isEmpty(_.find(CAName, f => f == o.CA_Code)))
+        //         const branch = _.filter(MASTER_BRANCH_DATA, o => !_.isEmpty(_.find(ca_branch, { BranchCode: o.OriginBranchCode })))
+        //         console.log(branch, ca_branch)
+        //         if (Object.keys(_.groupBy(branch, 'OriginBranchCode')).length > 1) {
+        //             result = constantQueryType.branch
+        //         }
+        //         else {
+        //             result = constantQueryType.ca
+        //         }
+        //     }
+        // }
+        // else if (KioskBranch.length > 0) {
+        //     result = constantQueryType.branch_kiosk
+        // }
+        // else if (Branch.length > 0) {
+        //     result = constantQueryType.branch
+        // }
+        // else if (Zone.length > 0) {
+        //     result = constantQueryType.zone
+        // }
+        // else if (Area.length > 0) {
+        //     result = constantQueryType.area
+        // }
+        // else {
+        //     result = constantQueryType.region
+        // }
 
         let result = "";
         if (CAName.length > 0) {
             result = constantQueryType.ca
         }
-        else if (Branch.split(',').length > 1 && _.filter(Branch.split(','), o => o.length > 3).length > 0 && _.filter(Branch.split(','), o => o.length == 3).length == 1) {
+        else if (Branch.length > 1 && KioskBranch.length > 1) {
             result = constantQueryType.branch_kiosk
         }
-        else if (Branch.split(',').length >= 2 && Branch.split(',').length <= 4) {
+        else if (Branch.length >= 2 && Branch.length <= 4) {
             result = constantQueryType.branch
         }
-        else if (Area.split(',').length == 1 && (Area.split(',')[0].indexOf('Zone') > 0)) {
+        else if (Area.length == 1 && (Zone.length > 0)) {
             result = constantQueryType.zone
         }
         else {
@@ -469,6 +514,7 @@ class Filter extends Component {
                                             (
                                             <TreeSelect
                                                 {...tProps}
+                                                disabled={_.isEmpty(getFieldValue("RegionID"))}
                                                 className={styles['select-maxheight']}
                                                 treeDefaultExpandAll={true}
                                                 treeData={this.getAreaSelectItem()}
@@ -490,6 +536,7 @@ class Filter extends Component {
                                             (
                                             <TreeSelect
                                                 {...tProps}
+                                                disabled={_.isEmpty(getFieldValue("AreaID"))}
                                                 treeDefaultExpandAll={true}
                                                 treeData={this.getBranchSelectItem()}
                                                 dropdownMatchSelectWidth={false}
@@ -528,6 +575,7 @@ class Filter extends Component {
                                             (
                                             <TreeSelect
                                                 {...tProps}
+                                                disabled={_.isEmpty(getFieldValue("BranchCode"))}
                                                 treeDefaultExpandAll={true}
                                                 treeData={this.getCANameSelect()}
                                                 dropdownMatchSelectWidth={false}
@@ -563,7 +611,7 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('MarketName')
                                             (
-                                            <Input />
+                                            <Input disabled={true} />
                                             )
                                     }
                                 </FormItem>
@@ -663,7 +711,7 @@ class Filter extends Component {
                                                         (
                                                         <TreeSelect
                                                             {...tProps}
-                                                            treeDefaultExpandAll={true}
+                                                            treeDefaultExpandAll={false}
                                                             dropdownMatchSelectWidth={false}
                                                             treeData={this.getComplititorSelect()}
                                                             searchPlaceholder="กรุณาเลือกจังหวัด"

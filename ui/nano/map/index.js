@@ -273,7 +273,7 @@ const getMarketSummaryColumns = () => {
             width: '8%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
             }
         }],
     }, {
@@ -288,7 +288,7 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
@@ -302,7 +302,7 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
@@ -316,7 +316,7 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
@@ -330,7 +330,7 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }]
 }
@@ -381,6 +381,7 @@ const getCAData = (item) => {
         let data = []
         _.mapKeys(_.groupBy(item, "CAName"), (value, key) => {
 
+            const caid = value[0].CAID
             const os = _.find(value, { CAName: key, Status: 'OS' })
             const approved = _.find(value, { CAName: key, Status: 'APPROVED' })
             const reject = _.find(value, { CAName: key, Status: 'REJECTED' })
@@ -389,6 +390,7 @@ const getCAData = (item) => {
 
             data.push({
                 Name: key,
+                CAID: caid == 99999 ? 1 : 0,
                 OS_App: !_.isEmpty(os) ? os.Total : 0,
                 OS_Ach: !_.isEmpty(os) ? os.Ach : 0,
                 Setup_App: !_.isEmpty(approved) ? approved.Total : 0,
@@ -403,7 +405,8 @@ const getCAData = (item) => {
                 StatusDate: _.isEmpty(value[0].StartWork) ? '' : moment(value[0].StartWork).format('MMM-YY')
             })
         })
-        return _.orderBy(data, ['OS_Ach', 'Setup_Ach', 'CAID'], ['desc', 'desc', 'asc'])
+
+        return _.orderBy(data, ['CAID', 'OS_Ach', 'Setup_Ach'], ['asc', 'desc', 'desc'])
     }
     return []
 }
@@ -418,7 +421,7 @@ const getColumnCA = [{
         return <span>{text}</span>
     }
 }, {
-    title: (<div className={styles['div-center']}><span>Status</span></div>),
+    title: (<div className={styles['div-center']}>Start<br />Month</div>),
     dataIndex: 'StatusDate',
     key: 'StatusDate',
     width: '6%',
@@ -995,6 +998,10 @@ const getExitingMarker = (props, handleShowModal) => {
             )
         }
     })
+
+}
+
+const getPictureMarker = props => {
 
 }
 

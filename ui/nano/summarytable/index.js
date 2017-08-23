@@ -192,7 +192,7 @@ class SummaryTable extends Component {
         key: 'Radius',
         className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
         width: '5%',
-        render: (text, record, index) => (parseFloat(record.Radius).toFixed(parseInt(text) > 100 ? 0 : 1))
+        render: (text, record, index) => (parseFloat(record.Radius).toFixed(parseInt(text) >= 100 ? 0 : 1))
     }, {
         title: (<div className={styles['div-center']}><span>#</span><span>Shop</span></div>),
         dataIndex: 'MarketShop',

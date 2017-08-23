@@ -14,12 +14,13 @@ import { getCASummaryOnlyData } from '../actions/nanomaster'
 
 import styles from './index.scss'
 
-const color = [
-    { status: 'OS', color: '#00BCD4' },
-    { status: 'SETUP', color: '#8bc34a' },
-    { status: 'REJECT', color: '#e91e63' },
-    { status: 'CANCEL', color: '#ff5722' },
-    { status: 'POTENTIAL', color: '#9e9e9e' }];
+const color = ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA", "#EEE"]
+// const color = [
+//     { status: 'OS', color: '#00BCD4' },
+//     { status: 'SETUP', color: '#8bc34a' },
+//     { status: 'REJECT', color: '#e91e63' },
+//     { status: 'CANCEL', color: '#ff5722' },
+//     { status: 'POTENTIAL', color: '#9e9e9e' }];
 
 const getMarketSummaryColumns = () => {
     return [{
@@ -29,21 +30,21 @@ const getMarketSummaryColumns = () => {
         width: '15%',
         className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     }, {
-        title: (<div className={styles['div-center']}><span>{color[0].status} Bal.</span></div>),
+        title: (<div className={styles['div-center']}><span>OS Bal.</span></div>),
         className: `${styles['align-right-hightlight']} ${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             dataIndex: 'Amt',
             width: '8%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `` : `${text}`}</span>
+                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `` : `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}`}</span>
             }
         }, {
             dataIndex: 'OS',
             width: '8%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
+                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
             }
         }],
     }, {
@@ -57,7 +58,7 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
@@ -70,7 +71,7 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
@@ -83,12 +84,12 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }, {
         title: (
             <div className={styles['div-point']}>
-                <span>Potential</span>
+                <span>Total</span>
             </div>
         ),
         dataIndex: 'POTENTIAL',
@@ -96,143 +97,151 @@ const getMarketSummaryColumns = () => {
         width: '16%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) > 100 ? 0 : 1)}%` : text}</span>
+            return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
         }
     }]
 }
 
-const getColumnCA = [{
-    title: (<div className={styles['div-center']}><span>Name</span></div>),
-    dataIndex: 'MarketName',
-    key: 'MarketName',
-    width: '16%',
-    className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-    render: (text, record, index) => {
-        return <span>{text}</span>
-    }
-}, {
-    title: (<div className={styles['div-center']}><span>Status</span></div>),
-    dataIndex: 'StatusDate',
-    key: 'StatusDate',
-    width: '6%',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-}, {
-    title: (<div className={styles['div-center']}>WkCycle<br />Due</div>),
-    dataIndex: 'BillingDate',
-    key: 'BillingDate',
-    width: '6%',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-}, {
-    title: (<span className={styles['align-center']}>OS Bal.</span>),
-    className: `${styles['hight-light']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
-        dataIndex: 'OS_App',
-        key: 'OS_App',
-        width: '4.5%',
-        className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+const getColumnCA = (data) => {
+    return [{
+        title: (<div className={styles['div-center']}><span>Name</span></div>),
+        dataIndex: 'MarketName',
+        key: 'MarketName',
+        width: '16%',
+        className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{text}</span>
+            // const bg = _.find(data.offset, { name: text }).color
+            return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span className={styles['color-point']} style={{ backgroundColor: record.color }}></span>
+                    <span>{text}</span>
+                </div>
+            )
         }
     }, {
-        title: (<div className={styles['div-center']}><span>%</span></div>),
-        dataIndex: 'OS_Ach',
-        key: 'OS_Ach',
-        width: '4.5%',
-        className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
-        }
-    }]
-}, {
-    title: 'Setup',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
-        dataIndex: 'Setup_App',
-        key: 'Setup_App',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{text}</span>
-        }
+        title: (<div className={styles['div-center']}>Start<br />Month</div>),
+        dataIndex: 'StatusDate',
+        key: 'StatusDate',
+        width: '6%',
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     }, {
-        title: (<div className={styles['div-center']}><span>%</span></div>),
-        dataIndex: 'Setup_Ach',
-        key: 'Setup_Ach',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
-        }
-    }]
-}, {
-    title: 'Reject',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
-        dataIndex: 'Reject_App',
-        key: 'Reject_App',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{text}</span>
-        }
+        title: (<div className={styles['div-center']}>WkCycle<br />Due</div>),
+        dataIndex: 'BillingDate',
+        key: 'BillingDate',
+        width: '6%',
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     }, {
-        title: (<div className={styles['div-center']}><span>%</span></div>),
-        dataIndex: 'Reject_Ach',
-        key: 'Reject_Ach',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
-        }
-    }]
-}, {
-    title: 'Cancel',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
-        dataIndex: 'Cancel_App',
-        key: 'Cancel_App',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{text}</span>
-        }
+        title: (<span className={styles['align-center']}>OS Bal.</span>),
+        className: `${styles['hight-light']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>App</span></div>),
+            dataIndex: 'OS_App',
+            key: 'OS_App',
+            width: '4.5%',
+            className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{text}</span>
+            }
+        }, {
+            title: (<div className={styles['div-center']}><span>%</span></div>),
+            dataIndex: 'OS_Ach',
+            key: 'OS_Ach',
+            width: '4.5%',
+            className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
+            }
+        }]
     }, {
-        title: (<div className={styles['div-center']}><span>%</span></div>),
-        dataIndex: 'Cancel_Ach',
-        key: 'Cancel_Ach',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
-        }
-    }]
-}, {
-    title: 'Total',
-    className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-    children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
-        dataIndex: 'Total_App',
-        key: 'Total_App',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{text}</span>
-        }
+        title: 'Setup',
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>App</span></div>),
+            dataIndex: 'Setup_App',
+            key: 'Setup_App',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{text}</span>
+            }
+        }, {
+            title: (<div className={styles['div-center']}><span>%</span></div>),
+            dataIndex: 'Setup_Ach',
+            key: 'Setup_Ach',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
+            }
+        }]
     }, {
-        title: (<div className={styles['div-center']}><span>%</span></div>),
-        dataIndex: 'Total_Ach',
-        key: 'Total_Ach',
-        width: '4.5%',
-        className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
-        }
+        title: 'Reject',
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>App</span></div>),
+            dataIndex: 'Reject_App',
+            key: 'Reject_App',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{text}</span>
+            }
+        }, {
+            title: (<div className={styles['div-center']}><span>%</span></div>),
+            dataIndex: 'Reject_Ach',
+            key: 'Reject_Ach',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
+            }
+        }]
+    }, {
+        title: 'Cancel',
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>App</span></div>),
+            dataIndex: 'Cancel_App',
+            key: 'Cancel_App',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{text}</span>
+            }
+        }, {
+            title: (<div className={styles['div-center']}><span>%</span></div>),
+            dataIndex: 'Cancel_Ach',
+            key: 'Cancel_Ach',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
+            }
+        }]
+    }, {
+        title: 'Total',
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        children: [{
+            title: (<div className={styles['div-center']}><span>App</span></div>),
+            dataIndex: 'Total_App',
+            key: 'Total_App',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{text}</span>
+            }
+        }, {
+            title: (<div className={styles['div-center']}><span>%</span></div>),
+            dataIndex: 'Total_Ach',
+            key: 'Total_Ach',
+            width: '4.5%',
+            className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{parseFloat(text).toFixed(0)}%</span>
+            }
+        }]
     }]
-}]
+}
 
 const getFormatShortDay = (value) => {
 
@@ -300,21 +309,27 @@ class ModalSaleSummary extends Component {
     }
 
     chartData = () => {
+        const ca_con = this.getCAContribution()
 
-        const { CA_SUMMARY_ONLY_MARKET_CONTRIBUTION } = this.props
-
-        let data = [], labels = []
-        _.mapKeys(_.groupBy(CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode'), (value, key) => {
-            const os = _.find(value, { Status: 'OS' })
-            data.push(os.Ach)
-            labels.push(value[0].MarketName)
+        let data = [], labels = [], bg = [], top = 5
+        ca_con.map((item, index) => {
+            if (index < top) {
+                data.push(item.OS_App)
+                labels.push(item.label)
+                bg.push(item.color)
+            }
+            else if (index == top) {
+                data.push(_.sumBy(_.filter(ca_con, { label: 'Other' }), 'OS_App'))
+                labels.push('Other')
+                bg.push(item.color)
+            }
         })
 
         return {
             data: {
                 datasets: [{
                     data: data,
-                    backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"]
+                    backgroundColor: bg
                 }],
                 labels: labels,
                 borderWidth: 0
@@ -325,7 +340,16 @@ class ModalSaleSummary extends Component {
                 legend: { display: false },
                 maintainAspectRatio: false,
                 fullWidth: true,
-                tooltipFontSize: 10
+                tooltipFontSize: 10,
+                tooltips: {
+                    callbacks: {
+                        label: (tooltipItem, cdata) => {
+                            const sum = _.sum(data)
+                            const avg = (data[tooltipItem.index] / sum) * 100
+                            return `${parseFloat(avg).toFixed(0)}% ${labels[tooltipItem.index]}`
+                        }
+                    }
+                }
             }
         }
     }
@@ -340,7 +364,7 @@ class ModalSaleSummary extends Component {
             const setup = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'APPROVED' }) || { Total: 0, Ach: 0 }
             const reject = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'REJECTED' }) || { Total: 0, Ach: 0 }
             const cancel = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'CANCELLED' }) || { Total: 0, Ach: 0 }
-            const potential = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'POTENTIAL' }) || { Total: 0, Ach: 0 }
+            const potential = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'TOTAL' }) || { Total: 0, Ach: 0 }
             const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
 
             return [
@@ -373,7 +397,7 @@ class ModalSaleSummary extends Component {
     getCAContribution = () => {
         const { CA_SUMMARY_ONLY_MARKET_CONTRIBUTION } = this.props
 
-        let result = []
+        let result = [], top = 5
         _.mapKeys(_.groupBy(CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode'), (value, key) => {
 
             const os = _.find(value, { Status: 'OS' })
@@ -401,7 +425,20 @@ class ModalSaleSummary extends Component {
             result.push(obj)
         })
 
-        return _.orderBy(result, ['OS_Ach', 'Setup_Ach', 'CAID'], ['desc', 'desc', 'asc'])
+        let objResult = _.orderBy(result, ['OS_Ach', 'Setup_Ach', 'CAID'], ['desc', 'desc', 'asc'])
+
+        objResult.map((item, index) => {
+            if (index < top) {
+                item.label = item.MarketName
+                item.color = color[index]
+            }
+            else {
+                item.label = 'Other'
+                item.color = '#b1b1b1'
+            }
+        })
+
+        return objResult
     }
 
     render() {
@@ -436,8 +473,8 @@ class ModalSaleSummary extends Component {
                             <div className={styles['detail-container']}>
                                 <div className={styles['detail-chart']}>
                                     <div style={{ width: '160px', height: '160px' }}>
-                                        <Doughnut {...this.chartData() } />
-                                        <span>{os.Ach}%</span>
+                                        <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
+                                        <span>{parseFloat(os.Ach).toFixed(0)}%</span>
                                     </div>
                                     <div>
                                         <div className={styles['text-descrition']}>
@@ -476,7 +513,7 @@ class ModalSaleSummary extends Component {
                                         <Table
                                             className={styles['summary-table']}
                                             dataSource={this.getCAContribution()}
-                                            columns={getColumnCA}
+                                            columns={getColumnCA(this.chartData())}
                                             pagination={false}
                                             bordered />
                                     </Layout>
