@@ -54,6 +54,7 @@ import {
     SET_MARKER_NOTE_DEFAULT_REQUEST,
     SET_MARKER_NOTE_DEFAULT_SUCCESS,
     SET_MARKER_NOTE_DEFAULT_FAILURE,
+    EDIT_NOTE_CA_SUCCESS,
 
     GET_CA_SUMMARY_ONLY_REQUEST,
     GET_CA_SUMMARY_ONLY_SUCCESS,
@@ -387,6 +388,48 @@ export const insertUpdateMarkerNote = (criteria, type, loading, success, targetM
 
                 dispatch({
                     type: SET_OPEN_BRANCH_MARKER_REQUEST,
+                    payload: newState
+                })
+            }
+
+            success(load)
+        })
+}
+
+export const insertUpdateMarkerNoteCA = (criteria, type, loading, success, currentState) => dispatch => {
+    const load = loading()
+
+    fetch(INSERT_UPDATE_MARKER_NOTE_URL, {
+        method: type.toUpperCase(),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(criteria),
+        timeout: 1500000
+    })
+        .then(res => (res.json()))
+        .then(res => {
+
+            if (type == 'post') {
+                currentState.push(res[0])
+
+                let newState = _.cloneDeep(currentState)
+
+                dispatch({
+                    type: EDIT_NOTE_CA_SUCCESS,
+                    payload: newState
+                })
+            }
+            else {
+                let item = _.find(currentState, { SysNO: criteria.SysNO })
+
+                currentState[0] = res[0]
+
+                let newState = _.cloneDeep(currentState)
+
+                dispatch({
+                    type: EDIT_NOTE_CA_SUCCESS,
                     payload: newState
                 })
             }

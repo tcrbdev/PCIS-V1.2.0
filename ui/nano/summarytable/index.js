@@ -184,6 +184,15 @@ class SummaryTable extends Component {
         key: 'MarketName',
         width: '25%',
         className: `${styles['align-left']} ${styles['sm-paddings']} ${styles['vertical-middle']}`,
+        render: (text, record, index) => {
+            return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Tooltip title={text} placement="left" >
+                        <span className={styles['text-ellipsis']}>{text}</span>
+                    </Tooltip>
+                </div>
+            )
+        }
     }]
 
     columnsBodyRight = () => [{

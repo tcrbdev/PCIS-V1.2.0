@@ -10,9 +10,12 @@ import FontAwesome from 'react-fontawesome'
 import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
 
+import InsertNote from './insertnote'
+
 import { getCASummaryOnlyData } from '../actions/nanomaster'
 
 import styles from './index.scss'
+// import antstyle from './modal_hack.css'
 
 const color = ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA", "#EEE"]
 // const color = [
@@ -37,7 +40,7 @@ const getMarketSummaryColumns = () => {
             width: '8%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `` : `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}`}</span>
+                return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `` : `${text}`}</span>
             }
         }, {
             dataIndex: 'OS',
@@ -107,7 +110,7 @@ const getColumnCA = (data) => {
         title: (<div className={styles['div-center']}><span>Name</span></div>),
         dataIndex: 'MarketName',
         key: 'MarketName',
-        width: '16%',
+        width: '15%',
         className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             // const bg = _.find(data.offset, { name: text }).color
@@ -289,7 +292,9 @@ const getFormatShortDay = (value) => {
 class ModalSaleSummary extends Component {
 
     state = {
-        modalOpen: false
+        modalOpen: false,
+        showAddNoteModal: false,
+        modalSelectData: null
     }
 
     componentWillReceiveProps(nextsProps) {
@@ -348,7 +353,7 @@ class ModalSaleSummary extends Component {
                         label: (tooltipItem, cdata) => {
                             const sum = _.sum(data)
                             const avg = (data[tooltipItem.index] / sum) * 100
-                            return `${parseFloat(avg).toFixed(0)}% ${labels[tooltipItem.index]}`
+                            return `${parseFloat(avg).toFixed(0)}%`
                         }
                     }
                 }
@@ -368,7 +373,7 @@ class ModalSaleSummary extends Component {
             const cancel = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'CANCELLED' }) || { Total: 0, Ach: 0 }
             const potential = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'TOTAL' }) || { Total: 0, Ach: 0 }
             const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
-
+console.log(Amt)
             return [
                 {
                     Detail: 'Total App',
@@ -443,25 +448,51 @@ class ModalSaleSummary extends Component {
         return objResult
     }
 
+    handleShowModal = () => {
+        this.setState({ showAddNoteModal: true })
+    }
+
+    handleCancelNote = () => {
+        this.setState({ showAddNoteModal: false })
+    }
+
     render() {
         const { getFieldValue } = this.props.form
+        const { modalSelectData } = this.state
         const ca_code = getFieldValue("select_ca")
         const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: ca_code })
+        const canote = _.find(this.props.RELATED_CA_NOTE_DATA, { BranchCode: ca_code })
         const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
-        const work_date_format = `Working period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+        const work_date_format = `Working Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
         const ca_name = !_.isEmpty(find) ? find.CA_Name : ''
         const count_market = Object.keys(_.groupBy(this.props.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode')).length
         const os = _.find(this.props.CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
+        const branch = _.find(this.props.RELATED_EXITING_MARKET_DATA, { MarketCode: find.MarketCode })
 
         return (
             <div style={{ marginLeft: '0px' }}>
+                {
+                    this.state.showAddNoteModal &&
+                    <Modal className={styles['modalComplititor']}
+                        title={(<div className={styles['modal-note-header']}><Icon type="edit" /><span>{`Edit Note (${ca_name})`}</span></div>)}
+                        visible={this.state.showAddNoteModal}
+                        onOk={false}
+                        onCancel={this.handleCancelNote}
+                        footer={null}
+                    >
+                        {
+                            <InsertNote caData={find} />
+                        }
+                    </Modal>
+                }
                 <Modal className={styles['modalSaleSummary']}
                     title={
                         <div className={styles['header-container']}>
-                            <img className={styles['ca-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
-                            <div>
-                                <span>{ca_name}</span>
-                                <span>{work_date_format}</span>
+                            <div className={styles['ca-imgs']}>
+                                <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                            </div>
+                            <div className={styles['title-img']}>
+                                <span>{ca_name} ({work_date_format})</span>
                             </div>
                         </div>
                     }
@@ -471,7 +502,7 @@ class ModalSaleSummary extends Component {
                     footer={null}
                 >
                     <Layout>
-                        <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                        <Layout style={{ backgroundColor: '#FFF' }}>
                             <div className={styles['detail-container']}>
                                 <div className={styles['detail-chart']}>
                                     <div style={{ width: '160px', height: '160px' }}>
@@ -481,17 +512,24 @@ class ModalSaleSummary extends Component {
                                     <div>
                                         <div className={styles['text-descrition']}>
                                             <div>
-                                                <span>{`${count_market} Market `}</span>
+                                                <span>{`${count_market} Market`}</span>
+                                                <span>{` Out of ${_.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, { BranchCode: branch.BranchCode }).length} markets from ${branch.BranchName}`}</span>
                                             </div>
                                             <span>
+                                                {`Temp Information`}
                                             </span>
+                                            <div className={styles['note-icon']}>
+                                                <Tooltip title='Note' placement="bottom">
+                                                    <FontAwesome name='comments' onClick={() => this.handleShowModal()} />
+                                                </Tooltip>
+                                            </div>
                                         </div>
                                         <div className={styles['box-shadow']}>
                                             <div className={`${styles['header']} ${styles['header-border']}`}>
                                                 <Icon
                                                     className="trigger"
                                                     type='bars' />
-                                                <span>Market Penetration</span>
+                                                <span>CA O/S Contribution</span>
                                             </div>
                                             <Layout style={{ backgroundColor: '#FFF' }}>
                                                 <Table
@@ -509,7 +547,7 @@ class ModalSaleSummary extends Component {
                                         <Icon
                                             className="trigger"
                                             type='bars' />
-                                        <span>CA Contribution</span>
+                                        <span>CA Market Lists</span>
                                     </div>
                                     <Layout style={{ backgroundColor: '#FFF' }}>
                                         <Table
@@ -520,6 +558,14 @@ class ModalSaleSummary extends Component {
                                             bordered />
                                     </Layout>
                                 </div>
+                                {
+                                    !_.isEmpty(canote) &&
+                                    canote.IsDefault &&
+                                    <div className={styles['note-container']}>
+                                        <span>Note *</span>
+                                        <span>{canote.Note}</span>
+                                    </div>
+                                }
                             </div>
                         </Layout>
                     </Layout>
@@ -533,6 +579,10 @@ class ModalSaleSummary extends Component {
 export default connect(
     (state) => ({
         RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA,
+        RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
+        RELATED_EXITING_MARKET_DATA_BACKUP: state.RELATED_EXITING_MARKET_DATA_BACKUP,
+        RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
+        RELATED_CA_NOTE_DATA: state.RELATED_CA_NOTE_DATA,
         CA_SUMMARY_ONLY_MARKET_PENETRATION: state.CA_SUMMARY_ONLY_MARKET_PENETRATION,
         CA_SUMMARY_ONLY_MARKET_CONTRIBUTION: state.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION
     }),

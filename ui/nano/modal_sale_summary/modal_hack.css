@@ -1,0 +1,19 @@
+.ant-modal-header {
+    padding: 0px !important;
+    height: 36px;
+    background: #03a9f4;
+    border: 3px;
+}
+
+.ant-modal-header > div {
+    color: #FFF;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.ant-modal-close-x {
+    width: 35px !important;
+    height: 35px !important;
+    line-height: 34px !important;
+}
+    

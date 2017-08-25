@@ -197,4 +197,13 @@
     vertical-align: middle;
 }
 
+.text-ellipsis
+{
+    width: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+        flex: 1;
+}
 /*.ant-table-bordered .ant-table-tbody>tr>td, .ant-table-bordered .ant-table-thead>tr>th*/

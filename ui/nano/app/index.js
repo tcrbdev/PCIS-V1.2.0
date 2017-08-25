@@ -298,16 +298,23 @@ class Index extends Component {
                 temp = {
                     GroupName: key,
                     Data: value,
-                    OrderByOS: _.find(value, { Kpi: 'Unit' }).OS
+                    OrderByOS: _.find(value, { Kpi: 'Unit' }).OS,
+                    BranchCode: value[0].BranchCode
                 }
             }
 
-            console.log()
             obj.push(temp)
         })
 
+        if (this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.ca) {
+            obj = _.orderBy(obj, ['OrderByOS'], ['desc'])
+        }
+        else {
+            obj = _.orderBy(obj, ['BranchCode', 'OrderByOS'], ['asc', 'desc'])
+        }
+
         if (obj.length > 0) {
-            return _.orderBy(obj, ['OrderByOS'], ['desc']).map((item, index) => {
+            return obj.map((item, index) => {
                 return (
                     <div className="rotate-total">
                         <div style={{ backgroundColor: (item.GroupName.indexOf('osk') <= 0 ? '#0099ff' : '#ff6500'), cursor: 'pointer' }}>
@@ -326,11 +333,11 @@ class Index extends Component {
                                         }
                                         trigger="hover"
                                     >
-                                        <div>{item.GroupName.split(' ')[0]}</div>
+                                        <div>{item.GroupName.indexOf('osk') <= 0 ? item.GroupName.split(' ')[0] : item.GroupName.split(' ')[1]}</div>
                                     </Popover>
                                     :
                                     <Tooltip placement="topLeft" title={`${item.GroupName}`}>
-                                        <div>{item.GroupName.split(' ')[0]}</div>
+                                        <div>{item.GroupName.indexOf('osk') <= 0 ? item.GroupName.split(' ')[0] : item.GroupName.split(' ')[1]}</div>
                                     </Tooltip>
                             }
                         </div>
@@ -444,88 +451,90 @@ class Index extends Component {
                                 pagination={false}
                                 bordered />
                         </div>
-                        <Collapse bordered={false} onChange={this.onCollapsedChange} className={styles['no-padding-lef-right']} activeKey={this.state.openFilterCollapsed}>
-                            <Panel
-                                key={"1"}
-                                header={
-                                    <div className={styles['panel-header']}>
-                                        <Icon type="area-chart" />
-                                        <span>Branch Summary</span>
-                                        <div className={styles['icon-header-container']}>
-                                            <div>
-                                                <Tooltip title="View">
-                                                    <Dropdown overlay={this.getMenuGroupBy()} placement="bottomCenter">
-                                                        <div className={styles['icon-split']} onClick={() => this.setState({ openFilterCollapsed: null })}>
-                                                            <Icon type="caret-up" />
-                                                            <Icon type="caret-down" />
-                                                        </div>
-                                                    </Dropdown>
-                                                </Tooltip>
-                                                <div className={styles['ca-icon-lists']}>
-                                                    <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
-                                                    <Tooltip title="Market Penatation"><FontAwesome name="table" /></Tooltip>
-                                                    <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
-                                                </div>
+                        <div>
+                            <div className={styles['icon-header-container']}>
+                                <div>
+                                    <Tooltip title="View">
+                                        <Dropdown overlay={this.getMenuGroupBy()} placement="bottomCenter">
+                                            <div className={styles['icon-split']}>
+                                                <Icon type="caret-up" />
+                                                <Icon type="caret-down" />
                                             </div>
-                                        </div>
+                                        </Dropdown>
+                                    </Tooltip>
+                                    <div className={styles['ca-icon-lists']}>
+                                        <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
+                                        <Tooltip title="Market Penatation" placement="topRight"><FontAwesome name="table" /></Tooltip>
+                                        <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
                                     </div>
-                                }
-                            >
-                                <Scrollbar overscrollEffect="bounce">
-                                    <div>
-                                        {
-                                            (_.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "YTD") > 0 && _.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "OS") > 0) ?
-                                                <div className="rotate-total">
-                                                    <div>
-                                                        <div>TOTAL</div>
-                                                    </div>
-                                                    <div>
-                                                        <Table
-                                                            className={styles['summary-table-hilight']}
-                                                            dataSource={this.props.RELATED_OVERALL_SUMMARY_DATA}
-                                                            columns={columnsTotalSummary}
-                                                            pagination={false}
-                                                            bordered />
-                                                    </div>
-                                                </div>
-                                                :
-                                                <div className="rotate-total">
-                                                    <div>
-                                                        <div>TOTAL</div>
-                                                    </div>
-                                                    <div>
-                                                        <Table
-                                                            className={styles['summary-table-hilight']}
-                                                            dataSource={[]}
-                                                            columns={columnsTotalSummary}
-                                                            pagination={false}
-                                                            bordered />
-                                                    </div>
-                                                </div>
-                                        }
-                                        {
-                                            this.getGroupBySummary()
-                                        }
-                                        {
-                                            this.props.ON_NANO_CHANGE_VIEW_SEARCHING_DATA &&
-                                            (
-                                                <div className={styles['view-change']}>
-                                                    <div className={styles['loading-containers']} >
-                                                        <FontAwesome name="circle-o-notch" size='5x' spin />
-                                                        <span className={styles['loading-text']}>Loading...</span>
-                                                    </div>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-                                </Scrollbar>
-                                <span onClick={this.collapsedSummaryClick} style={{ marginTop: '5px' }}>
-                                    <Icon type="double-right" style={{ transition: '.4s all', transform: `rotate(${this.state.collapsedSummary ? '-' : ''}90deg)`, marginRight: '5px' }} />
-                                    <a>Show all</a>
-                                </span>
-                            </Panel>
-                        </Collapse>
+                                </div>
+                            </div>
+                            <Collapse bordered={false} onChange={this.onCollapsedChange} className={styles['no-padding-lef-right']} activeKey={this.state.openFilterCollapsed}>
+                                <Panel
+                                    key={"1"}
+                                    header={
+                                        <div className={styles['panel-header']}>
+                                            <Icon type="area-chart" />
+                                            <span>Branch Summary</span>
 
+                                        </div>
+                                    }
+                                >
+                                    <Scrollbar overscrollEffect="bounce">
+                                        <div>
+                                            {
+                                                (_.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "YTD") > 0 && _.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "OS") > 0) ?
+                                                    <div className="rotate-total">
+                                                        <div>
+                                                            <div>TOTAL</div>
+                                                        </div>
+                                                        <div>
+                                                            <Table
+                                                                className={styles['summary-table-hilight']}
+                                                                dataSource={this.props.RELATED_OVERALL_SUMMARY_DATA}
+                                                                columns={columnsTotalSummary}
+                                                                pagination={false}
+                                                                bordered />
+                                                        </div>
+                                                    </div>
+                                                    :
+                                                    <div className="rotate-total">
+                                                        <div>
+                                                            <div>TOTAL</div>
+                                                        </div>
+                                                        <div>
+                                                            <Table
+                                                                className={styles['summary-table-hilight']}
+                                                                dataSource={[]}
+                                                                columns={columnsTotalSummary}
+                                                                pagination={false}
+                                                                bordered />
+                                                        </div>
+                                                    </div>
+                                            }
+                                            {
+                                                this.getGroupBySummary()
+                                            }
+                                            {
+                                                this.props.ON_NANO_CHANGE_VIEW_SEARCHING_DATA &&
+                                                (
+                                                    <div className={styles['view-change']}>
+                                                        <div className={styles['loading-containers']} >
+                                                            <FontAwesome name="circle-o-notch" size='5x' spin />
+                                                            <span className={styles['loading-text']}>Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
+                                    </Scrollbar>
+                                    <span onClick={this.collapsedSummaryClick} style={{ marginTop: '5px' }}>
+                                        <Icon type="double-right" style={{ transition: '.4s all', transform: `rotate(${this.state.collapsedSummary ? '-' : ''}90deg)`, marginRight: '5px' }} />
+                                        <a>Show all</a>
+                                    </span>
+                                </Panel>
+                            </Collapse>
+                        </div>
                     </div>
                     <Scrollbar overscrollEffect="bounce" style={{ padding: '10px' }}>
                         {

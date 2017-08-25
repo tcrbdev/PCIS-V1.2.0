@@ -20,6 +20,7 @@ import {
     INSERT_MARKER_NOTE_REQUEST,
     INSERT_MARKER_NOTE_SUCCESS,
     INSERT_MARKER_NOTE_FAILURE,
+    EDIT_NOTE_CA_SUCCESS,
 
     GET_CA_SUMMARY_ONLY_REQUEST,
     GET_CA_SUMMARY_ONLY_SUCCESS,
@@ -201,6 +202,23 @@ export const RELATED_CA_IN_MARKET_DATA = (state = initialStateArray, action) => 
     switch (action.type) {
         case SEARCH_NANO_DATA_SUCCESS:
             return action.payload.nanoMarker[3]
+            break;
+        case SEARCH_NANO_DATA_FAILURE:
+            return [action.payload]
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const RELATED_CA_NOTE_DATA = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case EDIT_NOTE_CA_SUCCESS:
+            return action.payload
+            break;
+        case SEARCH_NANO_DATA_SUCCESS:
+            return action.payload.nanoMarker[4]
             break;
         case SEARCH_NANO_DATA_FAILURE:
             return [action.payload]

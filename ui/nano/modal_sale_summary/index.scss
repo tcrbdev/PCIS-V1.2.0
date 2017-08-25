@@ -399,13 +399,67 @@
     .modalSaleSummary
     {
         width: 700px !important;
+
+        & [class*=ant-modal-body]
+        {
+            padding: 10px;
+        }
+
+        & [class*=ant-modal-header]
+        {
+            padding: 0;
+                background: #03a9f4;
+                color: #FFF;
+                height: 35px;
+        }
+
+        & [class*=ant-modal-close-x]
+        {
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            color: #FFF;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all .3s;
+
+            &:hover
+            {
+                transform: scale(1.1);
+            }
+        }
     }
 
-    .ca-img
+    .ca-imgs
     {
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        position: absolute;
+        left: 0;
+        margin-left: 0 !important;
+        top:0;
+        width: 35px;
+        height: 34px;
+        overflow: hidden;
+
+        & img
+        {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            top: -5px;
+            left: -1px;
+        }
+    }
+
+    .title-img
+    {
+        margin-top: 7px;
+        & > span
+        {
+            margin-left: 35px;
+            color: #FFF;
+            font-size: 16px;
+            font-weight: bold;
+        }
     }
 
     .header-container
@@ -419,7 +473,6 @@
             margin-left: 10px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
         }
     }
 
@@ -433,10 +486,40 @@
 
 .text-ellipsis
 {
-    width: 90px;
+    width: 40px;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: block;
     overflow: hidden;
         flex: 1;
+}
+
+.note-icon
+{
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    & span:first-child
+    {
+        color: #03a9f4 !important;
+    }
+}
+
+.note-container
+{
+    display: flex;
+    flex-direction: row;
+    margin-top: 7px;
+
+    & > span:first-child
+    {
+        color: red;
+        margin-right: 7px;
+        width: 45px;
+    }
+
+    & > span:nth-child(2)
+    {
+        width: 100%;
+    }
 }
