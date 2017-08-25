@@ -5,6 +5,7 @@ import { withCookies } from 'react-cookie';
 import { Icon, Button, Collapse, Layout, Table, Tooltip, Popover, Menu, Dropdown } from 'antd';
 import Scrollbar from 'react-smooth-scrollbar';
 
+import ModalAreaSummary from '../modal_area_summary'
 import SummaryTable from '../summarytable'
 import Filter from '../filter'
 import GMap from '../map'
@@ -464,7 +465,7 @@ class Index extends Component {
                                     </Tooltip>
                                     <div className={styles['ca-icon-lists']}>
                                         <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
-                                        <Tooltip title="Market Penatation" placement="topRight"><FontAwesome name="table" /></Tooltip>
+                                        <ModalAreaSummary />
                                         <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
                                     </div>
                                 </div>
