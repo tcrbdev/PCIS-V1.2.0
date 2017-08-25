@@ -646,6 +646,9 @@ const getBranchMarker = (props, handleShowModal) => {
             icon = '_blanks'
         }
 
+        const start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
+        const work_date_format = `Working Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+
         return (
             <Marker
                 key={index}
@@ -661,10 +664,21 @@ const getBranchMarker = (props, handleShowModal) => {
                         <InfoWindow onDomReady={onDomReady}>
                             <Layout>
                                 <div className={styles['headers']}>
-                                    <Icon
-                                        className="trigger"
-                                        type='pie-chart' />
-                                    <span>
+                                    {
+                                        <div className={styles['ca-imgs']}>
+                                            <Popover placement="left" content={
+                                                <div className={styles['marker-tm-picture']}>
+                                                    <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                                    <span>{`${item.TM_Name}`}</span>
+                                                    <span>{`${work_date_format}`}</span>
+                                                    <span>{`${item.TM_Tel}`}</span>
+                                                </div>
+                                            } >
+                                                <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                            </Popover>
+                                        </div>
+                                    }
+                                    <span className={styles['title-img']}>
                                         {`${item.BranchName}`}
                                     </span>
                                     <Icon
@@ -683,12 +697,14 @@ const getBranchMarker = (props, handleShowModal) => {
                                                 <div className={styles['text-descrition']}>
                                                     <div>
                                                         <span>{`${current_branch.MarketShop} Shop `}</span>
-                                                        <span>{`from ${current_branch.Market} Market (Open on ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM YYYY") : 'unknow'})`}</span>
+                                                        <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
                                                     </div>
                                                     <span>
+                                                        <Icon type="phone" style={{ marginRight: '5px' }} />
+                                                        <span>{`${item.BranchTel}`} </span>
                                                         {
                                                             current_branch.BranchType == 'K' ?
-                                                                `Distance from `
+                                                                `Distances From `
                                                                 :
                                                                 `${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
                                                         }
@@ -936,10 +952,10 @@ const getExitingMarker = (props, handleShowModal) => {
                                                     <div className={styles['text-descrition']}>
                                                         <div>
                                                             <span>{`${item.MarketShop} Shop `}</span>
-                                                            <span>{`Distance from `}{<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}{` ${parseFloat(item.Radius).toFixed(1)}Km.`}</span>
+                                                            <span>{`Distance From `}{<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}{` ${parseFloat(item.Radius).toFixed(1)}Km.`}</span>
                                                         </div>
                                                         <span>
-                                                            {` Type B working hour 07:00 - 19:00 (Mon - Wed - Fri) `}
+                                                            {` ${'Market Category'} working hour 07:00 - 19:00 (${getFormatShortDay('1,3,4,5')}) `}
                                                         </span>
                                                         <div className={styles['note-icon']}>
                                                             <Tooltip title='Note' placement="bottom">

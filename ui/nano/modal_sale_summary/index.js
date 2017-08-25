@@ -488,12 +488,12 @@ class ModalSaleSummary extends Component {
                 <Modal className={styles['modalSaleSummary']}
                     title={
                         <div className={styles['header-container']}>
-                            <div className={styles['ca-imgs']}>
+                            <div className={styles['ca-imgss']}>
                                 <Popover placement="left" content={<img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />} >
                                     <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
                                 </Popover>
                             </div>
-                            <div className={styles['title-img']}>
+                            <div className={styles['title-imgs']}>
                                 <span>{ca_name} ({work_date_format})</span>
                             </div>
                         </div>
@@ -518,7 +518,16 @@ class ModalSaleSummary extends Component {
                                                 <span>{` Out of ${_.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, { BranchCode: branch.BranchCode }).length} markets from ${branch.BranchName}`}</span>
                                             </div>
                                             <span>
-                                                {`Temp Information`}
+                                                <Icon type="phone" style={{ marginRight: '5px' }} />
+                                                <span>{`${find.CA_Tel}`}</span>
+                                                {
+                                                    find.CA_Transfer &&
+                                                    <span> Transfer From {find.CA_Transfer} ({_.isEmpty(find.CA_TransferDate) ? '' : moment(find.CA_TransferDate).format('MMM-YY')})</span>
+                                                }
+                                                {
+                                                    _.isEmpty(find.CA_Transfer) &&
+                                                    <span> Original Branch</span>
+                                                }
                                             </span>
                                             <div className={styles['note-icon']}>
                                                 <Tooltip title='Note' placement="bottom">

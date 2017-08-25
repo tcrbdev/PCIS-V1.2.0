@@ -484,6 +484,51 @@
     }
 }
 
+    .ca-imgs
+    {
+        position: absolute;
+        left: 0;
+        margin-left: 0 !important;
+        top:0;
+        width: 35px;
+        height: 35px;
+        overflow: hidden;
+        cursor: zoom-in;
+
+        & img
+        {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            top: -5px;
+            left: -1px;
+        }
+    }
+
+    .ca-big-img
+    {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+    }
+
+        .title-img
+    {
+        margin-top: 0 !important;
+            margin-left: 35px;
+            color: #FFF;
+            font-size: 16px;
+            font-weight: bold;
+    }
+
+    .marker-tm-picture
+    {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
 
 .cn-button-open{
     z-index: 11; 
