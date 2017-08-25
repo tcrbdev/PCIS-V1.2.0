@@ -804,6 +804,7 @@ class Filter extends Component {
                                     </Col>
                                     <Col span={9}>
                                         <Button
+                                            className={styles['searchCriteria']}
                                             loading={this.props.ON_NANO_SEARCHING_DATA}
                                             style={{ width: '100%', 'height': '32px', 'float': 'right', 'marginTop': '2px', 'fontSize': '1.1em' }}
                                             type="primary"

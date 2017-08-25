@@ -165,12 +165,18 @@
         {
             font-size: 22px;
             color:#009688;
-            font-weight: bold;
+            font-weight: bold;            
         }
 
         & > span:nth-child(2)
         {
+            margin-top: -5px;
         }
+    }
+
+     & i.marg_left_none::before {
+        margin-left: 0px !important; 
+        margin-right: 5px;
     }
 
     & > span
@@ -391,6 +397,39 @@
     }
 }
 
+.modalParentSaleSummary {
+    background-color: transparent !important;
+    visibility: visible;
+
+    .wrapper {
+        width: 720px;
+    }
+
+    .header-container
+    {
+        display:  flex;
+        flex-direction: row;
+        align-items: center;
+        background: #03a9f4;
+        height: 35px;
+        min-width: 100%;
+        
+        & > div
+        {
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    & .ant-modal-content {
+        background-color: transparent !important;
+        box-shadow: unset;
+    }
+
+}
+.modalParentSaleSummary:hover { cursor: pointer; }
+
 .sm-padding
     {
         padding: 3px 3px !important;
@@ -467,6 +506,12 @@
             color: #FFF;
             font-size: 16px;
             font-weight: bold;
+            margin-top: -8px;
+        }
+
+        .title-wp {
+            font-weight: normal;
+            font-size: 13px;
         }
     }
 

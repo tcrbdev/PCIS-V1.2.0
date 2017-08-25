@@ -391,6 +391,39 @@
     }
 }
 
+.modalParentSaleSummary {
+    background-color: transparent !important;
+    visibility: visible;
+
+    .wrapper {
+        width: 720px;
+    }
+
+    .header-container
+    {
+        display:  flex;
+        flex-direction: row;
+        align-items: center;
+        background: #03a9f4;
+        height: 35px;
+        min-width: 100%;
+        
+        & > div
+        {
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    & .ant-modal-content {
+        background-color: transparent !important;
+        box-shadow: unset;
+    }
+
+}
+.modalParentSaleSummary:hover { cursor: pointer; }
+
 .sm-padding
     {
         padding: 3px 3px !important;
@@ -449,6 +482,7 @@
             top: -5px;
             left: -1px;
         }
+
     }
 
     .ca-big-img
@@ -468,6 +502,13 @@
             font-size: 16px;
             font-weight: bold;
         }
+
+        .title-wp {
+            font-weight: normal;
+            font-size: 13px;
+        }
+
+
     }
 
     .header-container

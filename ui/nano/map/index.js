@@ -647,7 +647,7 @@ const getBranchMarker = (props, handleShowModal) => {
         }
 
         const start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
-        const work_date_format = `Working Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+        const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
 
         return (
             <Marker
@@ -700,13 +700,14 @@ const getBranchMarker = (props, handleShowModal) => {
                                                         <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
                                                     </div>
                                                     <span>
-                                                        <Icon type="phone" style={{ marginRight: '5px' }} />
+                                                        {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
+                                                        <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
                                                         <span>{`${item.BranchTel}`} </span>
                                                         {
                                                             current_branch.BranchType == 'K' ?
                                                                 `Distances From `
-                                                                :
-                                                                `${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
+                                                                :``
+                                                                //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
                                                         }
                                                         {
                                                             getLinkDetail(related_branch, props, item.BRANCH_RADIUS)

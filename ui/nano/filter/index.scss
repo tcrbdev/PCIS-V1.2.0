@@ -84,3 +84,9 @@
     cursor: pointer;
     z-index: 1;
 }
+
+button.searchCriteria {
+    & i + span {
+        margin-left: 2px !important;
+    }
+}

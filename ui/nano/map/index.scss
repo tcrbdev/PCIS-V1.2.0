@@ -191,8 +191,7 @@
     font-size: 12px;
     color: rgba(0, 0, 0, 0.75);
 
-    & > div 
-    {
+    & > div {
         & > span:first-child
         {
             font-size: 22px;
@@ -205,9 +204,13 @@
         }
     }
 
-    & > span
-    {
+    & > span {
         // margin-top: 5px;
+    }
+
+    & i.marg_left_none::before {
+        margin-left: 0px !important; 
+        margin-right: 5px;
     }
 }
 
@@ -866,6 +869,9 @@
     {
         height: 200px;
         width: 100%;
+    }
+    span {
+
     }
 }
 .picture-slide
