@@ -22,6 +22,7 @@ import {
 } from '../actions/nanomaster'
 
 import { constantQueryType } from '../../common/constants/constants'
+import moment from 'moment'
 
 import pinPicture from '../../../image/target.png'
 import muangthai from '../../../image/muangthai.png'
@@ -85,13 +86,13 @@ class Filter extends Component {
 
     getAreaSelectItem() {
         const { NANO_MASTER_ALL: { MASTER_AREA_DATA }, form: { getFieldValue } } = this.props
-
+      
         if (!_.isEmpty(MASTER_AREA_DATA)) {
 
             const region_select = getFieldValue("RegionID") && getFieldValue("RegionID").join(',').split(',')
 
             const AREA_DATA = _.filter(MASTER_AREA_DATA, (o) => !_.isEmpty(_.find(region_select, (s) => (s == o.RegionID))))
-
+            
             let resultGroupBy = [];
             _.mapKeys(_.groupBy(AREA_DATA, 'AreaID'), (value, key) => {
                 let result = {
@@ -463,8 +464,85 @@ class Filter extends Component {
         setFieldsValue({ Srisawat: !getFieldValue('Srisawat') })
     }
 
+    onRegionExpand = (e) => {
+        _.delay(() => {
+            let cls = (e) ? e:styles['region_field']
+            const elements = $(`.tool_${cls}`)
+  
+            if($(elements).length > 0) {} 
+            else {
+                $(`.${cls}`).click().after(() => {
+                    _.delay(() => {
+                        $('body').find('.ant-select-dropdown').parent().parent().addClass(`tool_${cls}`).after(() => { $(`.${cls}`).click() })
+                    }, 200)
+                })
+    
+            }
+
+        }, 200)
+
+    }
+
+    onExpand = () => {
+        _.delay(() => {  
+            const parent_target = $('body').find('.ant-select-tree')[1]
+            let el_target = $(parent_target).find('span.ant-select-tree-switcher')[0]
+            if($(el_target).hasClass('ant-select-tree-switcher_close')) {
+                $(el_target).click()
+            }
+
+        }, 200, 'later')
+    }
+
+    onBrExpand = () => {
+        _.delay(() => {
+            const parent_target = $('body').find('.ant-select-tree')[2]
+            let el_target = $(parent_target).find('span.ant-select-tree-switcher')[0]
+            if($(el_target).hasClass('ant-select-tree-switcher_close')) {
+                $(el_target).click()
+            }
+        }, 200, 'later')
+    }
+
+    onCAExpand = () => {
+        _.delay(() => {
+            const parent_target = $('body').find('.ant-select-tree')[3]
+            let el_target = $(parent_target).find('span.ant-select-tree-switcher')[0]
+            if($(el_target).hasClass('ant-select-tree-switcher_close')) {
+                $(el_target).click()
+            }
+        }, 200, 'later')
+    }
+
+    in_array = (needle, haystack, argStrict) => {
+        var key = '', strict = !!argStrict;
+        if (strict) {
+            for (key in haystack) {
+                if (haystack[key] === needle) {
+                    return true
+                }
+            }
+        } else {
+            for (key in haystack) {
+                if (haystack[key] == needle) {
+                    return true
+                }
+            }
+        }
+
+        return false
+
+    }
+
+    componentDidMount() {
+        // STACK EVENT
+        $(`span.${styles['region_field']}`).parent().bind('click', (e) => { this.onRegionExpand.bind(this) })
+      
+    }
+
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
+        const { MASTER_ASOF_DATA } = this.props.NANO_MASTER_ALL
         const formItemLayout = {
             labelCol: { span: 7 },
             wrapperCol: { span: 17 },
@@ -474,7 +552,10 @@ class Filter extends Component {
             <Collapse bordered={true} onChange={this.onFilterCollapsedChange} style={{ zIndex: '3' }} activeKey={this.state.openFilterCollapsed}>
                 <Panel
                     key={"1"}
-                    header={<div className={styles['panel-header']}><Icon type="filter" />Filter</div>}
+                    header={
+                        <div className={styles['panel-header']}><Icon type="filter" />Filter
+                            <span className={styles['as-of-date']}>Data as of {!_.isEmpty(MASTER_ASOF_DATA) ? moment(MASTER_ASOF_DATA[0].ImportDate).format('DD-MMM-YY') : ''}</span>
+                        </div>}
                 >
                     <Form layout="horizontal" onSubmit={this.onSearch}>
                         <Row gutter={4}>
@@ -492,33 +573,40 @@ class Filter extends Component {
                                             ],
                                         })
                                             (
-                                            <TreeSelect
-                                                {...tProps}
-                                                treeData={this.getRegionSelectItem()}
-                                                searchPlaceholder="Please select area" />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    className={styles['region_field']}
+                                                    treeData={this.getRegionSelectItem()}
+                                                    searchPlaceholder="Please select area"
+                                                    onClick={this.onRegionExpand(styles['region_field'])}
+                                                />
                                             )
                                     }
                                 </FormItem>
                             </Col>
-                            <Col span={12}>
-                                <FormItem
-                                    label={`Area/Zone`}
-                                    colon={true}
-                                    className={styles['row-label']}
-                                    {...formItemLayout}>
-                                    {
-                                        getFieldDecorator('AreaID')
-                                            (
-                                            <TreeSelect
-                                                {...tProps}
-                                                disabled={_.isEmpty(getFieldValue("RegionID"))}
-                                                className={styles['select-maxheight']}
-                                                treeDefaultExpandAll={true}
-                                                treeData={this.getAreaSelectItem()}
-                                                searchPlaceholder="Please select area" />
-                                            )
-                                    }
-                                </FormItem>
+                            <Col span={12}>     
+                                <article id="area_field">           
+                                    <FormItem
+                                        label={`Area/Zone`}
+                                        colon={true}
+                                        className={styles['row-label']}
+                                        {...formItemLayout}>                              
+                                        {
+                                            getFieldDecorator('AreaID')
+                                                (
+                                                    <TreeSelect
+                                                        {...tProps}
+                                                        disabled={_.isEmpty(getFieldValue("RegionID"))}
+                                                        className={styles['select-maxheight']}
+                                                        treeData={this.getAreaSelectItem()}
+                                                        autoExpandParent={true}                                                   
+                                                        searchPlaceholder="Please select area"
+                                                        onClick={this.onExpand}
+                                                    />
+                                                )
+                                        }
+                                    </FormItem> 
+                                </article>              
                             </Col>
                         </Row>
                         <Row gutter={8}>
@@ -531,13 +619,15 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('BranchCode')
                                             (
-                                            <TreeSelect
-                                                {...tProps}
-                                                disabled={_.isEmpty(getFieldValue("AreaID"))}
-                                                treeDefaultExpandAll={true}
-                                                treeData={this.getBranchSelectItem()}
-                                                dropdownMatchSelectWidth={false}
-                                                searchPlaceholder="Please select branch" />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    disabled={_.isEmpty(getFieldValue("AreaID"))}
+                                                    treeDefaultExpandAll={false}
+                                                    treeData={this.getBranchSelectItem()}
+                                                    dropdownMatchSelectWidth={false}
+                                                    onClick={this.onBrExpand}
+                                                    searchPlaceholder="Please select branch"
+                                                />
                                             )
                                     }
                                 </FormItem>
@@ -553,7 +643,7 @@ class Filter extends Component {
                                             initialValue: defaultBranchType
                                         })
                                             (
-                                            <CheckboxGroup options={BranchTypeOptions} onChange={this.branch_type_change} />
+                                                <CheckboxGroup options={BranchTypeOptions} onChange={this.branch_type_change} />
                                             )
                                     }
                                 </FormItem>
@@ -570,13 +660,15 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('CAName')
                                             (
-                                            <TreeSelect
-                                                {...tProps}
-                                                disabled={_.isEmpty(getFieldValue("BranchCode"))}
-                                                treeDefaultExpandAll={true}
-                                                treeData={this.getCANameSelect()}
-                                                dropdownMatchSelectWidth={false}
-                                                searchPlaceholder="Search ca name" />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    disabled={_.isEmpty(getFieldValue("BranchCode"))}
+                                                    treeDefaultExpandAll={false}
+                                                    treeData={this.getCANameSelect()}
+                                                    dropdownMatchSelectWidth={false}
+                                                    onClick={this.onCAExpand}
+                                                    searchPlaceholder="Search ca name"
+                                                />
                                             )
                                     }
                                 </FormItem>

@@ -9,6 +9,7 @@ module.exports = {
     devtool: 'cheap-module-source-map',
     entry: {
         index: './ui/nano/index.js',
+        login: './ui/nano/index.js',
         vendors: [
             'react',
             'react-dom',

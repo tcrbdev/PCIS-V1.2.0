@@ -180,12 +180,13 @@ export const getNanoMasterData = (token) => ((dispatch) => {
         dispatch({
             type: LOAD_NANO_MASTER_ALL_SUCCESS,
             payload: {
-                MASTER_REGION_DATA,
+                MASTER_REGION_DATA: MASTER_REGION_DATA[0],
                 MASTER_AREA_DATA,
                 MASTER_BRANCH_DATA,
                 MASTER_TARGET_MARKET_PROVINCE_DATA,
                 MASTER_CALIST_DATA,
-                MASTER_COMPLITITOR_PROVINCE_DATA
+                MASTER_COMPLITITOR_PROVINCE_DATA,
+                MASTER_ASOF_DATA: MASTER_REGION_DATA[1],
             }
         })
     }).catch(err => {

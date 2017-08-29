@@ -331,7 +331,7 @@
     }
 }
 
-.summary-table
+.summary-table-aa
 {
     margin-bottom: 0px;
 
@@ -393,7 +393,7 @@
 
     & table tbody tr:nth-child(even)
     {
-        background: #FFF;
+        background: #dcdcdc;
     }
 }
 
@@ -500,6 +500,7 @@
     .title-imgs
     {
         margin-top: 7px;
+        flex: 1;
         & > span
         {
             margin-left: 35px;
@@ -513,6 +514,14 @@
             font-weight: normal;
             font-size: 13px;
         }
+    }
+
+    .trigger-close
+    {
+        font-size: 16px;
+        color: #FFF;
+    text-align: end;
+    margin-right: 10px;
     }
 
     .header-container

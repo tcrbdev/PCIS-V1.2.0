@@ -221,11 +221,25 @@ class Index extends Component {
 
     componentWillMount() {
         this.initData();
+        
+        // Set Title
+        $('title').text('NANO OK')
     }
 
     initData() {
-        const { getNanoMasterData } = this.props
-        getNanoMasterData();
+        const { getNanoMasterData, cookies } = this.props
+        if (process.env.NODE_ENV === 'production') {
+            console.log("Cookie : ", cookies.get('authen_info'))
+            if (!_.isEmpty(cookies.get('authen_info'))) {
+                getNanoMasterData();
+            }
+            else {
+                window.location = 'www.google.co.th'
+            }
+        }
+        else {
+            getNanoMasterData();
+        }
     }
 
     handlePanel = () => {

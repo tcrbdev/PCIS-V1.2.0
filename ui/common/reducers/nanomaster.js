@@ -102,7 +102,7 @@ export const NANO_FILTER_CRITERIA = (state = initialStateObj, action) => {
     }
 }
 
-export const SELECTED_CA_MAP = (state = "", action) => {
+export const SELECTED_CA_MAP = (state = initialStateArray, action) => {
     switch (action.type) {
         case CHANGE_MAP_MARKER_BY_CA:
             return action.selectedCA

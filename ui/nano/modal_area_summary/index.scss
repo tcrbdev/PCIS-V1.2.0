@@ -470,7 +470,7 @@
         margin-left: 0 !important;
         top:0;
         width: 35px;
-        height: 34px;
+        height: 35px;
         overflow: hidden;
         cursor: zoom-in;
 
@@ -495,6 +495,7 @@
     .title-img
     {
         margin-top: 7px;
+        flex: 1;
         & > span
         {
             margin-left: 35px;
@@ -509,6 +510,14 @@
         }
 
 
+    }
+
+        .trigger-close
+    {
+        font-size: 16px;
+        color: #FFF;
+    text-align: end;
+    margin-right: 10px;
     }
 
     .header-container

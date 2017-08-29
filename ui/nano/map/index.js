@@ -622,7 +622,7 @@ const getBranchMarker = (props, handleShowModal) => {
 
     // return _.filter(RELATED_BRANCH_DATA, { showInfo: true }).map((item, index) => {
     return RELATED_BRANCH_DATA.map((item, index) => {
-
+        
         let icon = icon_full_branch
         let related_branch = [], current_branch
         current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
@@ -658,18 +658,19 @@ const getBranchMarker = (props, handleShowModal) => {
                 icon={{
                     url: icon
                 }}>
-                {
+                {   
                     item.showInfo &&
                     (
                         <InfoWindow onDomReady={onDomReady}>
                             <Layout>
                                 <div className={styles['headers']}>
+                                    {console.log(item)}
                                     {
                                         <div className={styles['ca-imgs']}>
                                             <Popover placement="left" content={
                                                 <div className={styles['marker-tm-picture']}>
                                                     <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
-                                                    <span>{`${item.TM_Name}`}</span>
+                                                    <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
                                                     <span>{`${work_date_format}`}</span>
                                                     <span>{`${item.TM_Tel}`}</span>
                                                 </div>
@@ -706,8 +707,8 @@ const getBranchMarker = (props, handleShowModal) => {
                                                         {
                                                             current_branch.BranchType == 'K' ?
                                                                 `Distances From `
-                                                                :``
-                                                                //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
+                                                                : ``
+                                                            //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
                                                         }
                                                         {
                                                             getLinkDetail(related_branch, props, item.BRANCH_RADIUS)
@@ -845,10 +846,37 @@ const getCAPicture = (props, marketCode) => {
         })
     }
     else {
-        ca.push(props.SELECTED_CA_MAP)
+        if (props.SELECTED_CA_MAP.length > 1) {
+            _.mapKeys(_.groupBy(_.filter(props.RELATED_CA_IN_MARKET_DATA, o => o.MarketCode == marketCode && !_.isEmpty(_.find(props.SELECTED_CA_MAP, f => f == o.CA_Code))), 'CA_Code'), (value, key) => {
+                ca.push(key)
+            })
+        }
+        else {
+            ca.push(props.SELECTED_CA_MAP)
+        }
     }
 
     return ca
+}
+
+const in_array = (needle, haystack, argStrict) => {
+    var key = '', strict = !!argStrict;
+    if (strict) {
+        for (key in haystack) {
+            if (haystack[key] === needle) {
+                return true
+            }
+        }
+    } else {
+        for (key in haystack) {
+            if (haystack[key] == needle) {
+                return true
+            }
+        }
+    }
+
+    return false
+
 }
 
 const getExitingMarkerMenu = props => {
@@ -953,7 +981,14 @@ const getExitingMarker = (props, handleShowModal) => {
                                                     <div className={styles['text-descrition']}>
                                                         <div>
                                                             <span>{`${item.MarketShop} Shop `}</span>
-                                                            <span>{`Distance From `}{<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}{` ${parseFloat(item.Radius).toFixed(1)}Km.`}</span>
+                                                            <span>
+                                                                {`Distance From `}
+                                                                {<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}
+                                                                {` ${parseFloat(item.Radius).toFixed(1)}Km.`}
+                                                                {
+                                                                   (!in_array(item.BranchType, ['P', 'L'])) && ` (Br ${parseFloat(item.RadiusToPure).toFixed(1)}Km.)`
+                                                                }
+                                                            </span>
                                                         </div>
                                                         <span>
                                                             {` ${'Market Category'} working hour 07:00 - 19:00 (${getFormatShortDay('1,3,4,5')}) `}

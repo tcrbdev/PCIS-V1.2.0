@@ -466,16 +466,16 @@ class ModalSaleSummary extends Component {
 
         const { getFieldValue } = this.props.form
         const { modalSelectData } = this.state
-        const ca_code = getFieldValue("select_ca")
-        const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: ca_code })
-        const canote = _.find(this.props.RELATED_CA_NOTE_DATA, { BranchCode: ca_code })
+        const ca_code = _.isArray(getFieldValue("select_ca")) ? getFieldValue("select_ca") : [getFieldValue("select_ca")]
+        const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, o => !_.isEmpty(_.find(ca_code, f => f == o.CA_Code)))
+        const canote = _.find(this.props.RELATED_CA_NOTE_DATA, o => !_.isEmpty(_.find(ca_code, f => f == o.BranchCode)))
         const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
         const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
         const ca_name = !_.isEmpty(find) ? find.CA_Name : ''
         const count_market = Object.keys(_.groupBy(this.props.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode')).length
         const os = _.find(this.props.CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
         const branch = _.find(this.props.RELATED_EXITING_MARKET_DATA, { MarketCode: find.MarketCode })
-     
+
         return (
             <div style={{ marginLeft: '0px' }}>
                 {
@@ -492,119 +492,122 @@ class ModalSaleSummary extends Component {
                         }
                     </Modal>
                 }
-                             
-                <Modal 
+
+                <Modal
                     wrapClassName={`parent_salesummary ${styles['modalParentSaleSummary']}`}
-                    className={styles['modalSaleSummary']}                    
+                    className={styles['modalSaleSummary']}
                     visible={this.state.modalOpen}
                     onOk={false}
                     onCancel={this.handleCancel}
                     footer={null}
                     closable={false}
-                    maskClosable={true}        
-            >      
-                  <Draggable onDrag={this.handleDrag}>   
-                    <article className={styles['wrapper']}>
-                        <div className={styles['header-container']}>
-                            <div className={styles['ca-imgss']}>
-                                <Popover placement="left" content={<img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />} >
-                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
-                                </Popover>
-                            </div>
-                            <div className={styles['title-imgs']}>
-                                <span>
-                                    {ca_name}&nbsp;
-                                    <span className={styles['title-wp']}>({work_date_format})</span>
-                                </span>
-                            </div>
-                        </div>
-                        <Layout>                        
-                            <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>
-                                <div className={styles['detail-container']}>
-                                    <div className={styles['detail-chart']}>
-                                        <div style={{ width: '160px', height: '160px' }}>
-                                            <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
-                                            <span>{parseFloat(os.Ach).toFixed(0)}%</span>
-                                        </div>
-                                        <div>
-                                            <div className={styles['text-descrition']}>
-                                                <div>
-                                                    <span>{`${count_market} Market`}</span>
-                                                    <span>{` Out of ${_.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, { BranchCode: branch.BranchCode }).length} Markets From ${branch.BranchName}`}</span>
-                                                </div>
-                                                <span style={{ marginTop: '-5px' }}>
-                                                    {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
-                                                    <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
-                                                    <span>{`${find.CA_Tel}`}</span>
-                                                    {
-                                                        find.CA_Transfer &&
-                                                        <span> Transfer From {find.CA_Transfer} ({_.isEmpty(find.CA_TransferDate) ? '' : moment(find.CA_TransferDate).format('MMM-YY')})</span>
-                                                    }
-                                                    {
-                                                        _.isEmpty(find.CA_Transfer) &&
-                                                        <span> Original Branch</span>
-                                                    }
-                                                </span>
-                                                <div className={styles['note-icon']}>
-                                                    <Tooltip title='Note' placement="bottom">
-                                                        <FontAwesome name='comments' onClick={() => this.handleShowModal()} />
-                                                    </Tooltip>
-                                                </div>
-                                            </div>
-                                            <div className={styles['box-shadow']}>
-                                                <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                    <Icon
-                                                        className="trigger"
-                                                        type='bars' />
-                                                    <span>O/S Contribution</span>
-                                                </div>
-                                                <Layout style={{ backgroundColor: '#FFF' }}>
-                                                    <Table
-                                                        className={styles['summary-table-not-odd']}
-                                                        dataSource={this.getCAPenetation()}
-                                                        columns={getMarketSummaryColumns()}
-                                                        pagination={false}
-                                                        bordered />
-                                                </Layout>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={styles['box-shadow']}>
-                                        <div className={`${styles['header']} ${styles['header-border']}`}>
-                                            <Icon
-                                                className="trigger"
-                                                type='bars' />
-                                            <span>CA Market Lists</span>
-                                        </div>
-                                        <Layout style={{ backgroundColor: '#FFF' }}>
-                                            <Table
-                                                className={styles['summary-table']}
-                                                dataSource={this.getCAContribution()}
-                                                columns={getColumnCA(this.chartData())}
-                                                pagination={false}
-                                                bordered />
-                                        </Layout>
-                                    </div>
-                                    {
-                                        !_.isEmpty(canote) &&
-                                        canote.IsDefault &&
-                                        <div className={styles['note-container']}>
-                                            <span>Note *</span>
-                                            <span>{canote.Note}</span>
-                                        </div>
-                                    }
+                >
+                    <Draggable onDrag={this.handleDrag}>
+                        <article className={styles['wrapper']}>
+                            <div className={styles['header-container']}>
+                                <div className={styles['ca-imgss']}>
+                                    <Popover placement="left" content={<img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />} >
+                                        <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                                    </Popover>
                                 </div>
+                                <div className={styles['title-imgs']}>
+                                    <span>
+                                        {ca_name}&nbsp;
+                                    <span className={styles['title-wp']}>({work_date_format})</span>
+                                    </span>
+                                </div>
+                                <Icon
+                                    onClick={this.handleCancel}
+                                    className={styles["trigger-close"]}
+                                    type='close' />
+                            </div>
+                            <Layout>
+                                <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>
+                                    <div className={styles['detail-container']}>
+                                        <div className={styles['detail-chart']}>
+                                            <div style={{ width: '160px', height: '160px' }}>
+                                                <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
+                                                <span>{parseFloat(os.Ach).toFixed(0)}%</span>
+                                            </div>
+                                            <div>
+                                                <div className={styles['text-descrition']}>
+                                                    <div>
+                                                        <span>{`${count_market} Market`}</span>
+                                                        <span>{` Out of ${_.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, { BranchCode: branch.BranchCode }).length} Markets From ${branch.BranchName}`}</span>
+                                                    </div>
+                                                    <span style={{ marginTop: '-5px' }}>
+                                                        {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
+                                                        <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
+                                                        <span>{`${find.CA_Tel}`}</span>
+                                                        {
+                                                            find.CA_Transfer &&
+                                                            <span> Transfer From {find.CA_Transfer} ({_.isEmpty(find.CA_TransferDate) ? '' : moment(find.CA_TransferDate).format('MMM-YY')})</span>
+                                                        }
+                                                        {
+                                                            _.isEmpty(find.CA_Transfer) &&
+                                                            <span> Original Branch</span>
+                                                        }
+                                                    </span>
+                                                    <div className={styles['note-icon']}>
+                                                        <Tooltip title='Note' placement="bottom">
+                                                            <FontAwesome name='comments' onClick={() => this.handleShowModal()} />
+                                                        </Tooltip>
+                                                    </div>
+                                                </div>
+                                                <div className={styles['box-shadow']}>
+                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                        <Icon
+                                                            className="trigger"
+                                                            type='bars' />
+                                                        <span>O/S Contribution</span>
+                                                    </div>
+                                                    <Layout style={{ backgroundColor: '#FFF' }}>
+                                                        <Table
+                                                            className={styles['summary-table-not-odd']}
+                                                            dataSource={this.getCAPenetation()}
+                                                            columns={getMarketSummaryColumns()}
+                                                            pagination={false}
+                                                            bordered />
+                                                    </Layout>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={styles['box-shadow']}>
+                                            <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                <Icon
+                                                    className="trigger"
+                                                    type='bars' />
+                                                <span>CA Market Lists</span>
+                                            </div>
+                                            <Layout style={{ backgroundColor: '#FFF' }}>
+                                                <Table
+                                                    className={styles['summary-table-aa']}
+                                                    dataSource={this.getCAContribution()}
+                                                    columns={getColumnCA(this.chartData())}
+                                                    pagination={false}
+                                                    bordered />
+                                            </Layout>
+                                        </div>
+                                        {
+                                            !_.isEmpty(canote) &&
+                                            canote.IsDefault &&
+                                            <div className={styles['note-container']}>
+                                                <span>Note *</span>
+                                                <span>{canote.Note}</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </Layout>
                             </Layout>
-                        </Layout>
-                    </article>
-                   </Draggable>
-                </Modal>  
-                
+                        </article>
+                    </Draggable>
+                </Modal>
+
                 <Tooltip title="Market Penatation"><FontAwesome style={{ color: '#E91E63' }} name="table" onClick={this.handleModal} /></Tooltip>
-               
+
             </div>
-    
-                          
+
+
         )
     }
 }

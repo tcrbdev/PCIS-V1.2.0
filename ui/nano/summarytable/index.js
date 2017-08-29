@@ -19,7 +19,8 @@ class SummaryTable extends Component {
 
     state = {
         data: [],
-        disabledCA: true
+        disabledCA: true,
+        disableCAView: false,
     }
 
     select = () => {
@@ -91,10 +92,11 @@ class SummaryTable extends Component {
             <div className={styles['ca-icon-list']}>
                 {
                     getFieldDecorator('select_ca', {
-                        initialValue: this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]
+                        initialValue: [this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]]
                     })
                         (
                         <Select
+                            mode="multiple"
                             disabled={this.state.disabledCA}
                             onChange={this.onCANameChange}
                             dropdownMatchSelectWidth={false}
@@ -118,7 +120,7 @@ class SummaryTable extends Component {
 
                 }
                 {
-                    !this.state.disabledCA &&
+                    this.checkDisable() &&
                     <div>
                         <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
                         <ModalSaleSummary form={this.props.form} />
@@ -129,17 +131,31 @@ class SummaryTable extends Component {
         )
     }
 
+    checkDisable = () => {
+        let result = true
+        if (this.state.disabledCA) {
+            result = false
+        }
+        else {
+            if (this.state.disableCAView) {
+                result = false
+            }
+        }
+        return result
+    }
+
     onBranchChange = (value) => {
         this.setState({ data: this.filterData(value), })
     }
 
     onCANameChange = (value) => {
-        this.setState({ data: this.filterDataByCa(value) })
+        this.setState({ data: this.filterDataByCa(value), disableCAView: value.length > 1 ? true : false })
     }
 
     columnsSelect = () => {
         const { getFieldDecorator } = this.props.form
-
+        const CA_Count = [this.props.NANO_FILTER_CRITERIA.CAName].length
+    
         if (this.props.NANO_FILTER_CRITERIA.CAName)
             return [{
                 title: (
@@ -151,7 +167,7 @@ class SummaryTable extends Component {
                                 initialValue: this.props.NANO_FILTER_CRITERIA.CAName.split(',').length > 1
                             })(<Checkbox className={styles['ca-checkbox-all']} onChange={this.checkboxSelectAllCAChange}>All</Checkbox>)
                         }
-                        <span>CA Market List</span>
+                        <span className={`${ styles['fullWidth']} ${(CA_Count <= 1) && styles['align-right']}` }>CA Market List :</span>
                     </div>
                 ),
                 className: `${styles['header-select']} ${styles['header-vertical-middle']}`,
@@ -163,11 +179,11 @@ class SummaryTable extends Component {
             }]
         else
             return [{
-                title: 'Branch Market List :',
+                title: (<span className={`${ styles['fullWidth']}`}>Branch Market List :</span>),
                 className: styles['header-select'],
                 children: null
             }, {
-                title: this.select(),
+                title: (<span className={`${ styles['fullWidth']}`}>{this.select()}</span>),
                 className: styles['header-select'],
                 children: null
             }]
@@ -177,7 +193,13 @@ class SummaryTable extends Component {
         className: styles['align-left'],
         width: '4%',
         className: `${styles['align-right']} ${styles['sm-paddings']}`,
-        render: (text, record, index) => (index + 1)
+        render: (text, record, index) => {
+            if (record.BranchType != 'K')
+                return index + 1
+            else {
+                return <div className={styles['kiosk-index']}><span>{index + 1}</span></div>
+            }
+        }
     }, {
         title: (<div className={styles['div-center']}><span>MarketName</span></div>),
         dataIndex: 'MarketName',
@@ -195,82 +217,98 @@ class SummaryTable extends Component {
         }
     }]
 
-    columnsBodyRight = () => [{
-        title: (<div className={styles['div-center']}><Icon type="environment" style={{ marginBottom: '5px' }} /><span>Km</span></div>),
-        dataIndex: 'Radius',
-        key: 'Radius',
-        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-        width: '5%',
-        render: (text, record, index) => (parseFloat(record.Radius).toFixed(parseInt(text) >= 100 ? 0 : 1))
-    }, {
-        title: (<div className={styles['div-center']}><span>#</span><span>Shop</span></div>),
-        dataIndex: 'MarketShop',
-        key: 'MarketShop',
-        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-        width: '7%',
-    }, {
-        title: (<div className={styles['div-center']}><span>PMT</span><span>Succ.</span></div>),
-        width: '7%',
-        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-        render: (text, record, index) => {
-            return <span className={text < 0 && styles['red-font']}>{0}%</span>
-        }
-    }, {
-        title: (<div className={styles['div-center']}><span>#</span><span>OS</span></div>),
-        dataIndex: 'OS',
-        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-        width: '5%',
-        render: (text, record, index) => {
-            return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
-        }
-    }, {
-        title: (<div className={styles['div-center']}><span>Market Penetation</span></div>),
-        children: [{
-            title: (<div className={styles['div-center']}><span>Pot.</span></div>),
-            width: '5%',
-            dataIndex: 'Potential',
+    columnsBodyRight = () => [
+        //     {
+        //     title: (<Tooltip title={'Radius to kiosk'} placement="left" ><div className={styles['div-center']}><Icon type="environment" style={{ marginBottom: '5px' }} /><span>Km</span></div></Tooltip>),
+        //     dataIndex: 'Radius',
+        //     key: 'Radius',
+        //     className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+        //     width: '5%',
+        //     render: (text, record, index) => (parseFloat(record.Radius).toFixed(parseInt(text) >= 100 ? 0 : 1))
+        // }, 
+        {
+            title: (<Tooltip title={'Radius to Branch'} placement="left" ><div className={styles['div-center']}><Icon type="environment" style={{ marginBottom: '5px' }} /><span>Km</span></div></Tooltip>),
+            dataIndex: 'RadiusToPure',
+            key: 'RadiusToPure',
             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+            width: '5%',
             render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+                if (this.props.NANO_FILTER_CRITERIA.CAName) {
+                    return parseFloat(record.RadiusToPure).toFixed(parseInt(text) >= 100 ? 0 : 1)
+                }
+                else {
+                    return parseFloat(record.Radius).toFixed(parseInt(text) >= 100 ? 0 : 1)
+                }
             }
         }, {
-            title: (<div className={styles['div-center']}><span>Setup</span></div>),
+            title: (<div className={styles['div-center']}><span>#</span><span>Shop</span></div>),
+            dataIndex: 'MarketShop',
+            key: 'MarketShop',
             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-            children: [{
-                dataIndex: 'SetupTotal',
-                className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                width: '5%',
-                render: (text, record, index) => {
-                    return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
-                }
-            }, {
-                dataIndex: 'SetupAch',
-                className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                width: '5%',
-                render: (text, record, index) => {
-                    return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
-                }
-            }]
+            width: '7%',
         }, {
-            title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
+            title: (<div className={styles['div-center']}><span>PMT</span><span>Succ.</span></div>),
+            width: '7%',
             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+            render: (text, record, index) => {
+                return <span className={text < 0 && styles['red-font']}>{0}%</span>
+            }
+        }, {
+            title: (<div className={styles['div-center']}><span>#</span><span>OS</span></div>),
+            dataIndex: 'OS',
+            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+            width: '5%',
+            render: (text, record, index) => {
+                return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
+            }
+        }, {
+            title: (<div className={styles['div-center']}><span>Market Penetation</span></div>),
             children: [{
-                dataIndex: 'TopContributeName',
-                className: `${styles['header-hide']} ${styles['align-left']} ${styles['vertical-bottom']}`,
-                width: '10%',
+                title: (<div className={styles['div-center']}><span>Pot.</span></div>),
+                width: '5%',
+                dataIndex: 'Potential',
+                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
                 render: (text, record, index) => {
-                    return <span style={{ padding: '3px' }}>{text}</span>
+                    return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
                 }
             }, {
-                dataIndex: 'TopContributeValue',
-                className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                width: '6%',
-                render: (text, record, index) => {
-                    return <span style={{ padding: '3px 5px' }} className={text < 0 && styles['red-font']}>{parseFloat(text ? text : 0).toFixed(0)}%</span>
-                }
+                title: (<div className={styles['div-center']}><span>Setup</span></div>),
+                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                children: [{
+                    dataIndex: 'SetupTotal',
+                    className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                    width: '5%',
+                    render: (text, record, index) => {
+                        return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
+                    }
+                }, {
+                    dataIndex: 'SetupAch',
+                    className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                    width: '5%',
+                    render: (text, record, index) => {
+                        return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+                    }
+                }]
+            }, {
+                title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
+                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                children: [{
+                    dataIndex: 'TopContributeName',
+                    className: `${styles['header-hide']} ${styles['align-left']} ${styles['vertical-bottom']}`,
+                    width: '10%',
+                    render: (text, record, index) => {
+                        return <span style={{ padding: '3px' }}>{text}</span>
+                    }
+                }, {
+                    dataIndex: 'TopContributeValue',
+                    className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                    width: '6%',
+                    render: (text, record, index) => {
+                        return <span style={{ padding: '3px 5px' }} className={text < 0 && styles['red-font']}>{parseFloat(text ? text : 0).toFixed(0)}%</span>
+                    }
+                }]
             }]
         }]
-    }]
 
     getTableColumns() {
         if (this.props.RELATED_BRANCH_DATA.length > 0) {
@@ -287,11 +325,25 @@ class SummaryTable extends Component {
     }
 
     filterData(value) {
-        return _.orderBy(_.filter(this.props.RELATED_EXITING_MARKET_DATA, { BranchCode: value }), ['Radius'], ['asc'])
+        if (this.props.NANO_FILTER_CRITERIA.CAName) {
+            return _.orderBy(_.filter(this.props.RELATED_EXITING_MARKET_DATA, { BranchCode: value }), ['RadiusToPure', 'Radius'], ['asc', 'asc'])
+        }
+        else {
+            return _.orderBy(_.filter(this.props.RELATED_EXITING_MARKET_DATA, { BranchCode: value }), ['Radius'], ['asc'])
+        }
     }
 
     filterDataByCa(value) {
-        const marketCACode = _.map(_.filter(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: value }), item => item.MarketCode)
+        let value_find;
+
+        if (!_.isArray(value) && !_.isEmpty(value)) {
+            value_find = [value]
+        }
+        else {
+            value_find = value
+        }
+
+        const marketCACode = _.map(_.filter(this.props.RELATED_CA_IN_MARKET_DATA, o => !_.isEmpty(_.find(value_find, f => f == o.CA_Code))), item => item.MarketCode)
 
         let filter
         if (value) {
@@ -301,9 +353,9 @@ class SummaryTable extends Component {
             filter = this.props.RELATED_EXITING_MARKET_DATA_BACKUP
         }
 
-        this.props.selectMarkerByCA(filter, value)
+        this.props.selectMarkerByCA(filter, value_find)
 
-        return _.orderBy(filter, ['Radius'], ['asc'])
+        return _.orderBy(filter, ['RadiusToPure', 'Radius'], ['asc', 'asc'])
     }
 
     checkboxSelectAllCAChange = (e) => {
@@ -349,7 +401,7 @@ class SummaryTable extends Component {
         return (
             <Table
                 style={{ marginBottom: '20px' }}
-                className={styles['summary-table']}
+                className={styles['summary-table-a']}
                 dataSource={this.state.data}
                 columns={this.getTableColumns()}
                 pagination={false}

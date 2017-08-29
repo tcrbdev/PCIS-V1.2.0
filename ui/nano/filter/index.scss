@@ -90,3 +90,22 @@ button.searchCriteria {
         margin-left: 2px !important;
     }
 }
+
+.region_field {
+    cursor: pointer;
+}
+
+.area_field {
+    cursor: pointer;
+}
+
+.as-of-date
+{
+    flex: 1;
+    justify-content: flex-end;
+    align-items: flex-end;
+    display: flex;
+    margin-right: 10px;
+    font-size: 0.7em;
+    padding-right: 10px;
+}

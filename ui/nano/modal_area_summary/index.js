@@ -471,7 +471,7 @@ class ModalSaleSummary extends Component {
 
         return (
             <div style={{ marginLeft: '0px' }}>
-                <Modal 
+                <Modal
                     wrapClassName={`parent_salesummary ${styles['modalParentSaleSummary']}`}
                     className={styles['modalSaleSummary']}
                     visible={this.state.modalOpen}
@@ -479,7 +479,6 @@ class ModalSaleSummary extends Component {
                     onCancel={this.handleCancel}
                     footer={null}
                     closable={false}
-                    maskClosable={true}        
                 >
                     <Draggable onDrag={this.handleDrag}>
                         <article className={styles['wrapper']}>
@@ -492,10 +491,13 @@ class ModalSaleSummary extends Component {
                                 <div className={styles['title-img']}>
                                     <span>
                                         {ca_name}&nbsp;
-                                         <span className={styles['title-wp']}>({work_date_format})</span> 
+                                         <span className={styles['title-wp']}>({work_date_format})</span>
                                     </span>
-
                                 </div>
+                                <Icon
+                                    onClick={this.handleCancel}
+                                    className={styles["trigger-close"]}
+                                    type='close' />
                             </div>
                             <Layout>
                                 <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>

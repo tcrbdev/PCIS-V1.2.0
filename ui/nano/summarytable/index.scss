@@ -16,6 +16,15 @@
     align-items: center;
 }
 
+.fullWidth { 
+    width: 100%; 
+    padding-right: 25px;
+} 
+
+.float-right {
+    float: right;
+}
+
 .align-right
 {
     text-align: right !important;
@@ -41,7 +50,7 @@
     vertical-align: middle;
 }
 
-.summary-table
+.summary-table-a
 {
     margin-bottom: 10px;
 
@@ -102,6 +111,17 @@
     }
 }
 
+.kiosk-index
+{
+    padding: 1px;
+    background-color:  #ff6500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 11px;
+     color:rgba(0,0,0,.65);
+}
 .red-font
 {
     color: #F44336;
@@ -132,6 +152,7 @@
             cursor: pointer;
             margin: 0 10px;
             font-size: 15px;
+    
             &:hover
             {
                 color: #FFF !important;
@@ -190,6 +211,8 @@
              background-color: #64a717;
          }
      }
+
+     .ca-checkbox-all + .fullWidth { width: 62%; }
 }
 
 .header-vertical-middle
