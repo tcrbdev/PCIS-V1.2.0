@@ -109,6 +109,9 @@
     {
         background: #dcdcdc;
     }
+
+    table tbody tr:hover { color: red; }
+
 }
 
 .kiosk-index
@@ -129,7 +132,7 @@
 .ca-checkbox-all
 {
     display: flex;
-    margin-right: 0px;
+    margin-right: 0px !important;
     justify-content: center;
     align-items: center;
 }
@@ -212,7 +215,7 @@
          }
      }
 
-     .ca-checkbox-all + .fullWidth { width: 62%; }
+     .ca-checkbox-all + .fullWidth { width: 67%; }
 }
 
 .header-vertical-middle

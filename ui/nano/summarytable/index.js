@@ -167,7 +167,7 @@ class SummaryTable extends Component {
                                 initialValue: this.props.NANO_FILTER_CRITERIA.CAName.split(',').length > 1
                             })(<Checkbox className={styles['ca-checkbox-all']} onChange={this.checkboxSelectAllCAChange}>All</Checkbox>)
                         }
-                        <span className={`${ styles['fullWidth']} ${(CA_Count <= 1) && styles['align-right']}` }>CA Market List :</span>
+                        <span className={`${ styles['fullWidth']} ${(CA_Count <= 1) && styles['align-right']}` }>CA Market List</span>
                     </div>
                 ),
                 className: `${styles['header-select']} ${styles['header-vertical-middle']}`,
@@ -179,7 +179,7 @@ class SummaryTable extends Component {
             }]
         else
             return [{
-                title: (<span className={`${ styles['fullWidth']}`}>Branch Market List :</span>),
+                title: (<span className={`${ styles['fullWidth']}`}>Branch Market List</span>),
                 className: styles['header-select'],
                 children: null
             }, {
@@ -204,7 +204,7 @@ class SummaryTable extends Component {
         title: (<div className={styles['div-center']}><span>MarketName</span></div>),
         dataIndex: 'MarketName',
         key: 'MarketName',
-        width: '25%',
+        width: '24%',
         className: `${styles['align-left']} ${styles['sm-paddings']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return (
@@ -302,7 +302,7 @@ class SummaryTable extends Component {
                 }, {
                     dataIndex: 'TopContributeValue',
                     className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                    width: '6%',
+                    width: '7%',
                     render: (text, record, index) => {
                         return <span style={{ padding: '3px 5px' }} className={text < 0 && styles['red-font']}>{parseFloat(text ? text : 0).toFixed(0)}%</span>
                     }

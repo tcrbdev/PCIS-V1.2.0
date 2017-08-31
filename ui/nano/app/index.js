@@ -221,9 +221,9 @@ class Index extends Component {
 
     componentWillMount() {
         this.initData();
-        
+
         // Set Title
-        $('title').text('NANO OK')
+        $('title').text('Nano OK Menu')
     }
 
     initData() {
@@ -234,7 +234,7 @@ class Index extends Component {
                 getNanoMasterData();
             }
             else {
-                window.location = 'www.google.co.th'
+                window.location.href = 'http://tc001pcis1p/login/'
             }
         }
         else {
@@ -321,12 +321,12 @@ class Index extends Component {
             obj.push(temp)
         })
 
-        if (this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.ca) {
-            obj = _.orderBy(obj, ['OrderByOS'], ['desc'])
-        }
-        else {
-            obj = _.orderBy(obj, ['BranchCode', 'OrderByOS'], ['asc', 'desc'])
-        }
+        // if (this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.ca) {
+        //     obj = _.orderBy(obj, ['GroupName', 'OrderByOS'], ['asc', 'desc'])
+        // }
+        // else {
+        obj = _.orderBy(obj, ['BranchCode', 'GroupName', 'OrderByOS'], ['asc', 'asc', 'desc'])
+        // }
 
         if (obj.length > 0) {
             return obj.map((item, index) => {

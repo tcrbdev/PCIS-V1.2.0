@@ -330,6 +330,8 @@
     {
         background-color: #dcdcdc;
     }
+
+    table tbody tr:hover { color: red !important; }
     
 }
 
@@ -374,6 +376,15 @@
         border-bottom: 1px solid transparent;
     }
 
+    & table tbody tr:hover {
+        & td[class*=portfolio-quality],
+        & td[class*=os-balance],
+        & td[class*=financial-volume] {
+            color: red !important;
+        }
+       
+    }
+
     &  table tbody tr:nth-child(2) , table tbody tr:nth-child(3)
     {
          background: #f7f7f7 !important;
@@ -416,6 +427,9 @@
     {
         background-color: #dcdcdc;
     }
+
+    table tbody tr:hover { color: red !important; }
+
 }
 
 .column-hilight

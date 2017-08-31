@@ -393,6 +393,8 @@ export const insertUpdateMarkerNote = (criteria, type, loading, success, targetM
                 })
             }
 
+            console.log("Save Note : ", res)
+
             success(load)
         })
 }
@@ -434,6 +436,8 @@ export const insertUpdateMarkerNoteCA = (criteria, type, loading, success, curre
                     payload: newState
                 })
             }
+
+            console.log("Save Note : ", res)
 
             success(load)
         })

@@ -565,7 +565,6 @@ const getPixelPositionOffset = (width, height) => {
 
 const getBranchMarkerMenu = (props) => {
     const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
-
     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
         return RELATED_BRANCH_DATA.map((item, index) => {
             if (item.showMenu) {
@@ -618,159 +617,160 @@ const getBranchMarkerMenu = (props) => {
 
 const getBranchMarker = (props, handleShowModal) => {
 
-    const { RELATED_BRANCH_DATA } = props
+    const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
 
     // return _.filter(RELATED_BRANCH_DATA, { showInfo: true }).map((item, index) => {
-    return RELATED_BRANCH_DATA.map((item, index) => {
-        
-        let icon = icon_full_branch
-        let related_branch = [], current_branch
-        current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
+    if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
+        return RELATED_BRANCH_DATA.map((item, index) => {
 
-        switch (item.BranchType) {
-            case 'K':
-                icon = icon_Keyos
-                related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
-                break;
-            case 'P':
-                icon = icon_Nano
-                related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
-                break;
-            case 'L':
-                icon = icon_full_branch
-                related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
-                break;
-        }
+            let icon = icon_full_branch
+            let related_branch = [], current_branch
+            current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
 
-        if (item.showMenu) {
-            icon = '_blanks'
-        }
+            switch (item.BranchType) {
+                case 'K':
+                    icon = icon_Keyos
+                    related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode && o.BranchType != 'K')
+                    break;
+                case 'P':
+                    icon = icon_Nano
+                    related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
+                    break;
+                case 'L':
+                    icon = icon_full_branch
+                    related_branch = _.filter(item.BRANCH_DESCRIPTION, o => o.BranchCode != item.BranchCode)
+                    break;
+            }
 
-        const start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
-        const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+            if (item.showMenu) {
+                icon = '_blanks'
+            }
 
-        return (
-            <Marker
-                key={index}
-                title={item.BranchName}
-                onClick={() => props.setOpenBranchMarkerMenu(item, props.RELATED_BRANCH_DATA, true)}
-                position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
-                icon={{
-                    url: icon
-                }}>
-                {   
-                    item.showInfo &&
-                    (
-                        <InfoWindow onDomReady={onDomReady}>
-                            <Layout>
-                                <div className={styles['headers']}>
-                                    {console.log(item)}
-                                    {
-                                        <div className={styles['ca-imgs']}>
-                                            <Popover placement="left" content={
-                                                <div className={styles['marker-tm-picture']}>
-                                                    <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
-                                                    <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
-                                                    <span>{`${work_date_format}`}</span>
-                                                    <span>{`${item.TM_Tel}`}</span>
-                                                </div>
-                                            } >
-                                                <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
-                                            </Popover>
-                                        </div>
-                                    }
-                                    <span className={styles['title-img']}>
-                                        {`${item.BranchName}`}
-                                    </span>
-                                    <Icon
-                                        onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, false)}
-                                        className="trigger"
-                                        type='close' />
-                                </div>
-                                <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                    <div className={styles['detail-container']}>
-                                        <div className={styles['detail-chart']}>
-                                            <div style={{ width: '160px', height: '160px' }}>
-                                                <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
-                                                <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
-                                            </div>
-                                            <div>
-                                                <div className={styles['text-descrition']}>
-                                                    <div>
-                                                        <span>{`${current_branch.MarketShop} Shop `}</span>
-                                                        <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
-                                                    </div>
-                                                    <span>
-                                                        {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
-                                                        <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
-                                                        <span>{`${item.BranchTel}`} </span>
-                                                        {
-                                                            current_branch.BranchType == 'K' ?
-                                                                `Distances From `
-                                                                : ``
-                                                            //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
-                                                        }
-                                                        {
-                                                            getLinkDetail(related_branch, props, item.BRANCH_RADIUS)
-                                                        }
-                                                    </span>
-                                                    <div className={styles['note-icon']}>
-                                                        <Tooltip title='Note' placement="bottom">
-                                                            <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
-                                                        </Tooltip>
-                                                    </div>
-                                                </div>
-                                                <div className={styles['box-shadow']}>
-                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                        <Icon
-                                                            className="trigger"
-                                                            type='bars' />
-                                                        <span>Market Penetration</span>
-                                                    </div>
-                                                    <Layout style={{ backgroundColor: '#FFF' }}>
-                                                        <Table
-                                                            className={styles['summary-table-not-odd']}
-                                                            dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
-                                                            columns={getMarketSummaryColumns()}
-                                                            pagination={false}
-                                                            bordered />
-                                                    </Layout>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={styles['box-shadow']}>
-                                            <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                <Icon
-                                                    className="trigger"
-                                                    type='bars' />
-                                                <span>CA Contribution</span>
-                                            </div>
-                                            <Layout style={{ backgroundColor: '#FFF' }}>
-                                                <Table
-                                                    className={styles['summary-table']}
-                                                    dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
-                                                    columns={getColumnCA}
-                                                    pagination={false}
-                                                    bordered />
-                                            </Layout>
-                                        </div>
+            const start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
+            const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+
+            return (
+                <Marker
+                    key={index}
+                    title={item.BranchName}
+                    onClick={() => props.setOpenBranchMarkerMenu(item, props.RELATED_BRANCH_DATA, true)}
+                    position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
+                    icon={{
+                        url: icon
+                    }}>
+                    {
+                        item.showInfo &&
+                        (
+                            <InfoWindow onDomReady={onDomReady}>
+                                <Layout>
+                                    <div className={styles['headers']}>
                                         {
-                                            item.NOTE.length > 0 &&
-                                            item.NOTE[0].IsDefault &&
-                                            <div className={styles['note-container']}>
-                                                <span>Note *</span>
-                                                <span>{item.NOTE[0].Note}</span>
+                                            <div className={styles['ca-imgs']}>
+                                                <Popover placement="left" content={
+                                                    <div className={styles['marker-tm-picture']}>
+                                                        <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                                        <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
+                                                        <span>{`${work_date_format}`}</span>
+                                                        <span>{`${item.TM_Tel}`}</span>
+                                                    </div>
+                                                } >
+                                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                                </Popover>
                                             </div>
                                         }
+                                        <span className={styles['title-img']}>
+                                            {`${item.BranchName}`}
+                                        </span>
+                                        <Icon
+                                            onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, false)}
+                                            className="trigger"
+                                            type='close' />
                                     </div>
+                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                        <div className={styles['detail-container']}>
+                                            <div className={styles['detail-chart']}>
+                                                <div style={{ width: '160px', height: '160px' }}>
+                                                    <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
+                                                    <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
+                                                </div>
+                                                <div>
+                                                    <div className={styles['text-descrition']}>
+                                                        <div>
+                                                            <span>{`${current_branch.MarketShop} Shop `}</span>
+                                                            <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
+                                                        </div>
+                                                        <span>
+                                                            {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
+                                                            <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
+                                                            <span>{`${item.BranchTel}`} </span>
+                                                            {
+                                                                current_branch.BranchType == 'K' ?
+                                                                    `Distances From `
+                                                                    : ``
+                                                                //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
+                                                            }
+                                                            {
+                                                                getLinkDetail(related_branch, props, item.BRANCH_RADIUS)
+                                                            }
+                                                        </span>
+                                                        <div className={styles['note-icon']}>
+                                                            <Tooltip title='Note' placement="bottom">
+                                                                <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
+                                                            </Tooltip>
+                                                        </div>
+                                                    </div>
+                                                    <div className={styles['box-shadow']}>
+                                                        <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                            <Icon
+                                                                className="trigger"
+                                                                type='bars' />
+                                                            <span>Market Penetration</span>
+                                                        </div>
+                                                        <Layout style={{ backgroundColor: '#FFF' }}>
+                                                            <Table
+                                                                className={styles['summary-table-not-odd']}
+                                                                dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
+                                                                columns={getMarketSummaryColumns()}
+                                                                pagination={false}
+                                                                bordered />
+                                                        </Layout>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={styles['box-shadow']}>
+                                                <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                    <Icon
+                                                        className="trigger"
+                                                        type='bars' />
+                                                    <span>CA Contribution</span>
+                                                </div>
+                                                <Layout style={{ backgroundColor: '#FFF' }}>
+                                                    <Table
+                                                        className={styles['summary-table']}
+                                                        dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
+                                                        columns={getColumnCA}
+                                                        pagination={false}
+                                                        bordered />
+                                                </Layout>
+                                            </div>
+                                            {
+                                                item.NOTE.length > 0 &&
+                                                item.NOTE[0].IsDefault &&
+                                                <div className={styles['note-container']}>
+                                                    <span>Note *</span>
+                                                    <span>{item.NOTE[0].Note}</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </Layout>
                                 </Layout>
-                            </Layout>
-                        </InfoWindow>
-                    )
-                }
-            </Marker>
-        )
-    })
+                            </InfoWindow>
+                        )
+                    }
+                </Marker>
+            )
+        })
+    }
 }
 
 const getLineKioskToBranch = (props) => {
@@ -880,178 +880,181 @@ const in_array = (needle, haystack, argStrict) => {
 }
 
 const getExitingMarkerMenu = props => {
-    return props.RELATED_EXITING_MARKET_DATA.map((item, index) => {
-        if (item.showMenu) {
-            return (
-                <OverlayView
-                    key={index}
-                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    getPixelPositionOffset={getPixelPositionOffset}>
-                    <div className={styles['overlayView']}>
-                        <div className={styles['circle-menu']}>
-                            <input type="checkbox" className={styles["cn-button"]} id={`cn-button-exiting_${index}`} checked={true} />
-                            <label className={styles["cn-button-open"]} htmlFor={`cn-button-exiting_${index}`} onClick={() => props.setOpenExitingMarketMarkerMenu(item, props.RELATED_EXITING_MARKET_DATA, false)}>
-                                <img className={styles['menu-marker']} src={icon_Market} />
-                                <div className={styles['menu-close-button']}>
-                                    <FontAwesome name="close" />
+    const { NANO_FILTER_CRITERIA } = props
+    if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
+        return props.RELATED_EXITING_MARKET_DATA.map((item, index) => {
+            if (item.showMenu) {
+                return (
+                    <OverlayView
+                        key={index}
+                        position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                        getPixelPositionOffset={getPixelPositionOffset}>
+                        <div className={styles['overlayView']}>
+                            <div className={styles['circle-menu']}>
+                                <input type="checkbox" className={styles["cn-button"]} id={`cn-button-exiting_${index}`} checked={true} />
+                                <label className={styles["cn-button-open"]} htmlFor={`cn-button-exiting_${index}`} onClick={() => props.setOpenExitingMarketMarkerMenu(item, props.RELATED_EXITING_MARKET_DATA, false)}>
+                                    <img className={styles['menu-marker']} src={icon_Market} />
+                                    <div className={styles['menu-close-button']}>
+                                        <FontAwesome name="close" />
+                                    </div>
+                                </label>
+                                <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
+                                    <ul>
+                                        <li><Tooltip title="Market Picture"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
+                                        <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
+                                        <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenExitingMarketMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
+                                        <li><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
+                                    </ul>
                                 </div>
-                            </label>
-                            <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
-                                <ul>
-                                    <li><Tooltip title="Market Picture"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
-                                    <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
-                                    <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
-                                    <li onClick={() => props.setOpenExitingMarketMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
-                                    <li><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
-                                </ul>
                             </div>
                         </div>
-                    </div>
-                </OverlayView>
-            )
-        }
-    })
+                    </OverlayView>
+                )
+            }
+        })
+    }
 }
 
 const getExitingMarker = (props, handleShowModal) => {
     const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
     let icon = icon_Market
-
-    return RELATED_EXITING_MARKET_DATA.map((item, index) => {
-        if (item.showMenu) {
-            icon = '_blanks'
-        }
-        if (NANO_FILTER_CRITERIA.CAName && !item.showMenu && !item.showInfo) {
-            return (
-                <OverlayView
-                    key={index}
-                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    getPixelPositionOffset={getPixelPositionOffset}>
-                    <Tooltip title={item.MarketName}>
-                        <div className={styles['ca-marker-img-container']} onClick={() => props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)}>
-                            {
-                                getCAPicture(props, item.MarketCode).map(ca => {
-                                    return (<img className={styles['ca-marker-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca}`} />)
-                                })
-                            }
-                        </div>
-                    </Tooltip>
-                </OverlayView>
-            )
-        }
-        else {
-            return (
-                <Marker
-                    key={index}
-                    title={item.MarketName}
-                    onClick={() => props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)}
-                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                    icon={{
-                        url: icon
-                    }}>
-                    {
-                        item.showInfo &&
-                        (
-                            <InfoWindow
-                                title={item.MarketName}
-                                onDomReady={onDomReady}>
-                                <Layout>
-                                    <div className={styles['headers']}>
-                                        <Icon
-                                            className="trigger"
-                                            type='pie-chart' />
-                                        <span>
-                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
-                                        </span>
-                                        <Icon
-                                            onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
-                                            className="trigger"
-                                            type='close' />
-                                    </div>
-                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                        <div className={styles['detail-container']}>
-                                            <div className={styles['detail-chart']}>
-                                                <div style={{ width: '160px', height: '160px' }}>
-                                                    <Doughnut {...chartData(item.MARKET_INFORMATION) } />
-                                                    <span>{`${parseFloat(!_.isEmpty(item.MARKET_INFORMATION) && getMarketSummaryData(item.MARKET_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
-                                                </div>
-                                                <div>
-                                                    <div className={styles['text-descrition']}>
-                                                        <div>
-                                                            <span>{`${item.MarketShop} Shop `}</span>
-                                                            <span>
-                                                                {`Distance From `}
-                                                                {<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}
-                                                                {` ${parseFloat(item.Radius).toFixed(1)}Km.`}
-                                                                {
-                                                                   (!in_array(item.BranchType, ['P', 'L'])) && ` (Br ${parseFloat(item.RadiusToPure).toFixed(1)}Km.)`
-                                                                }
-                                                            </span>
-                                                        </div>
-                                                        <span>
-                                                            {` ${'Market Category'} working hour 07:00 - 19:00 (${getFormatShortDay('1,3,4,5')}) `}
-                                                        </span>
-                                                        <div className={styles['note-icon']}>
-                                                            <Tooltip title='Note' placement="bottom">
-                                                                <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
-                                                            </Tooltip>
-                                                        </div>
-                                                    </div>
-                                                    <div className={styles['box-shadow']}>
-                                                        <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                            <Icon
-                                                                className="trigger"
-                                                                type='bars' />
-                                                            <span>Market Penetration</span>
-                                                        </div>
-                                                        <Layout style={{ backgroundColor: '#FFF' }}>
-                                                            <Table
-                                                                className={styles['summary-table-not-odd']}
-                                                                dataSource={getMarketSummaryData(item.MARKET_INFORMATION)}
-                                                                columns={getMarketSummaryColumns()}
-                                                                pagination={false}
-                                                                bordered />
-                                                        </Layout>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={styles['box-shadow']}>
-                                                <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                    <Icon
-                                                        className="trigger"
-                                                        type='bars' />
-                                                    <span>CA Contribution</span>
-                                                </div>
-                                                <Layout style={{ backgroundColor: '#FFF' }}>
-                                                    <Table
-                                                        className={styles['summary-table']}
-                                                        dataSource={getCAData(item.CA_INFORMATION)}
-                                                        columns={getColumnCA}
-                                                        pagination={false}
-                                                        bordered />
-                                                </Layout>
-                                            </div>
-                                            {
-                                                item.NOTE.length > 0 &&
-                                                item.NOTE[0].IsDefault &&
-                                                <div className={styles['note-container']}>
-                                                    <span>Note *</span>
-                                                    <span>{item.NOTE[0].Note}</span>
-                                                </div>
-                                            }
+    if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
+        return RELATED_EXITING_MARKET_DATA.map((item, index) => {
+            if (item.showMenu) {
+                icon = '_blanks'
+            }
+            if (NANO_FILTER_CRITERIA.CAName && !item.showMenu && !item.showInfo) {
+                return (
+                    <OverlayView
+                        key={index}
+                        position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                        getPixelPositionOffset={getPixelPositionOffset}>
+                        <Tooltip title={item.MarketName}>
+                            <div className={styles['ca-marker-img-container']} onClick={() => props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)}>
+                                {
+                                    getCAPicture(props, item.MarketCode).map(ca => {
+                                        return (<img className={styles['ca-marker-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca}`} />)
+                                    })
+                                }
+                            </div>
+                        </Tooltip>
+                    </OverlayView>
+                )
+            }
+            else {
+                return (
+                    <Marker
+                        key={index}
+                        title={item.MarketName}
+                        onClick={() => props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)}
+                        position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                        icon={{
+                            url: icon
+                        }}>
+                        {
+                            item.showInfo &&
+                            (
+                                <InfoWindow
+                                    title={item.MarketName}
+                                    onDomReady={onDomReady}>
+                                    <Layout>
+                                        <div className={styles['headers']}>
+                                            <Icon
+                                                className="trigger"
+                                                type='pie-chart' />
+                                            <span>
+                                                {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                                            </span>
+                                            <Icon
+                                                onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
+                                                className="trigger"
+                                                type='close' />
                                         </div>
+                                        <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                            <div className={styles['detail-container']}>
+                                                <div className={styles['detail-chart']}>
+                                                    <div style={{ width: '160px', height: '160px' }}>
+                                                        <Doughnut {...chartData(item.MARKET_INFORMATION) } />
+                                                        <span>{`${parseFloat(!_.isEmpty(item.MARKET_INFORMATION) && getMarketSummaryData(item.MARKET_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
+                                                    </div>
+                                                    <div>
+                                                        <div className={styles['text-descrition']}>
+                                                            <div>
+                                                                <span>{`${item.MarketShop} Shop `}</span>
+                                                                <span>
+                                                                    {`Distance From `}
+                                                                    {<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}
+                                                                    {` ${parseFloat(item.Radius).toFixed(1)}Km.`}
+                                                                    {
+                                                                        (!in_array(item.BranchType, ['P', 'L'])) && ` (Br ${parseFloat(item.RadiusToPure).toFixed(1)}Km.)`
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                            <span>
+                                                                {` ${item.MarketType} Open Time ${item.OpenTime} (${item.MarketOpenDay}) `}
+                                                            </span>
+                                                            <div className={styles['note-icon']}>
+                                                                <Tooltip title='Note' placement="bottom">
+                                                                    <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
+                                                                </Tooltip>
+                                                            </div>
+                                                        </div>
+                                                        <div className={styles['box-shadow']}>
+                                                            <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                                <Icon
+                                                                    className="trigger"
+                                                                    type='bars' />
+                                                                <span>Market Penetration</span>
+                                                            </div>
+                                                            <Layout style={{ backgroundColor: '#FFF' }}>
+                                                                <Table
+                                                                    className={styles['summary-table-not-odd']}
+                                                                    dataSource={getMarketSummaryData(item.MARKET_INFORMATION)}
+                                                                    columns={getMarketSummaryColumns()}
+                                                                    pagination={false}
+                                                                    bordered />
+                                                            </Layout>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={styles['box-shadow']}>
+                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                        <Icon
+                                                            className="trigger"
+                                                            type='bars' />
+                                                        <span>CA Contribution</span>
+                                                    </div>
+                                                    <Layout style={{ backgroundColor: '#FFF' }}>
+                                                        <Table
+                                                            className={styles['summary-table']}
+                                                            dataSource={getCAData(item.CA_INFORMATION)}
+                                                            columns={getColumnCA}
+                                                            pagination={false}
+                                                            bordered />
+                                                    </Layout>
+                                                </div>
+                                                {
+                                                    item.NOTE.length > 0 &&
+                                                    item.NOTE[0].IsDefault &&
+                                                    <div className={styles['note-container']}>
+                                                        <span>Note *</span>
+                                                        <span>{item.NOTE[0].Note}</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </Layout>
                                     </Layout>
-                                </Layout>
-                            </InfoWindow>
-                        )
-                    }
-                </Marker>
-            )
-        }
-    })
-
+                                </InfoWindow>
+                            )
+                        }
+                    </Marker>
+                )
+            }
+        })
+    }
 }
 
 const getMarketPictureMarker = props => {

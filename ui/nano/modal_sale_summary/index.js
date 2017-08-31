@@ -506,7 +506,12 @@ class ModalSaleSummary extends Component {
                         <article className={styles['wrapper']}>
                             <div className={styles['header-container']}>
                                 <div className={styles['ca-imgss']}>
-                                    <Popover placement="left" content={<img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />} >
+                                    <Popover placement="left" content={
+                                        <div className={styles['marker-tm-picture']}>
+                                            <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                                            <span>{find.CA_NickName}</span>
+                                        </div>
+                                    } >
                                         <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
                                     </Popover>
                                 </div>
