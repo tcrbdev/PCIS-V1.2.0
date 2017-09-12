@@ -858,7 +858,7 @@
 {
     display: flex;
     flex-direction: column;
-    height: 400px;
+    height: 550px;
 
     & > div:first-child
     {
@@ -884,5 +884,77 @@
   background: #364d79;
   overflow: hidden;
     }
+}
+
+.picture-market-view
+{
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    & > section
+    {
+        border:1px solid red;
+        width: 200px;
+        height: 100%;
+    }
+
+    & > div:nth-child(2)
+    {
+        flex: 1;
+        width: 100%;
+        border:1px solid;
+        margin-left: 10px;
+    }
+    
+    & > div
+    {
+        display: flex;
+        flex-direction: row;
+    }
+
+    & > [class*=image-not-found]
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        & > span
+        {
+            color: #f44336;
+            font-size: 2em;
+            font-weight: bold;
+        }
+    }
+
+    margin-bottom: 10px;
+}
+
+.image-preview
+{
+    width: 100%;
+    height: 100%;
+    & > [class*=ant-carousel] 
+    {
+        width: inherit;
+        height: inherit;
+        & > [class*=slick-slide]
+        {
+            text-align: center;
+            height: inherit;
+            background: rgba(56, 56, 56, 0.91);
+            overflow: hidden;
+        }
+    }
+
+    & > [class*=ant-carousel] > [class*=slick-slide] h3 {
+        color: #fff;
+    }
+}
+
+.image-slide
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 

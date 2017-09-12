@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withCookies } from 'react-cookie';
 
 import { Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Input, Popover, Popconfirm, Checkbox } from 'antd';
 
@@ -47,6 +48,12 @@ class AddNote extends Component {
             wrapperCol: { span: 21 },
         }
 
+        let By;
+        if (!_.isEmpty(cookies.get('authen_info'))) {
+            const auth = cookies.get('authen_info')
+            By = auth.Session.sess_engname
+        }
+
         return (
             <div style={{ width: '465px' }}>
                 <span>{this.props.modalSelectData.MarketCode}</span>
@@ -59,7 +66,7 @@ class AddNote extends Component {
                                 {...formItemLayout}>
                                 {
                                     getFieldDecorator('By', {
-                                        initialValue: '',
+                                        initialValue: By,
                                         rules: [
                                             { required: true, message: 'Please input update by' },
                                         ]
@@ -131,7 +138,9 @@ class AddNote extends Component {
 
 const formAddNote = Form.create()(AddNote)
 
+const CookiesAddNote = withCookies(formAddNote)
+
 export default connect(
     (state) => ({}), {
         insertUpdateMarkerNote: insertUpdateMarkerNote
-    })(formAddNote)
+    })(CookiesAddNote)

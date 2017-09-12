@@ -2,13 +2,25 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withGoogleMap, GoogleMap, Marker, StreetViewPanorama } from "react-google-maps"
 import { MAP } from 'react-google-maps/lib/constants';
+import icon_Market from '../../../image/icon_Market.png'
 
 class StreetMap extends Component {
 
-    handleBounds = (map) => {
+    handleBounds = (props, map) => {
         if (map) {
+            const { item } = this.props
+
             const mapInstance = map && map.context[MAP];
             setTimeout(() => { google.maps.event.trigger(mapInstance, "resize") }, 200)
+
+            // let bounds = new google.maps.LatLngBounds()
+            // let marker = new google.maps.Marker({
+            //     position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+            // })
+
+            // bounds.extend(marker.position)
+
+            // map.fitBounds(bounds)
         }
     }
 
@@ -16,13 +28,14 @@ class StreetMap extends Component {
         const { item } = this.props
         return (
             <GoogleMap
-                defaultZoom={8}
+                defaultZoom={18}
                 defaultCenter={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                ref={(map) => (this.handleBounds(map))}
+                ref={(map) => (this.handleBounds(this.props, map))}
             >
                 <Marker
                     title={item.BranchName}
-                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }} />
+                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                    icon={{ url: icon_Market }} />
                 <StreetViewPanorama
                     defaultPosition={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
                     visible

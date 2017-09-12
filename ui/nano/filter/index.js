@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withCookies } from 'react-cookie';
+
 import _ from 'lodash'
 import {
     Icon,
@@ -86,13 +88,13 @@ class Filter extends Component {
 
     getAreaSelectItem() {
         const { NANO_MASTER_ALL: { MASTER_AREA_DATA }, form: { getFieldValue } } = this.props
-      
+
         if (!_.isEmpty(MASTER_AREA_DATA)) {
 
             const region_select = getFieldValue("RegionID") && getFieldValue("RegionID").join(',').split(',')
 
             const AREA_DATA = _.filter(MASTER_AREA_DATA, (o) => !_.isEmpty(_.find(region_select, (s) => (s == o.RegionID))))
-            
+
             let resultGroupBy = [];
             _.mapKeys(_.groupBy(AREA_DATA, 'AreaID'), (value, key) => {
                 let result = {
@@ -329,12 +331,14 @@ class Filter extends Component {
     }
 
     onSearch = (e) => {
-        const { searchNanoData } = this.props
+        const { searchNanoData, cookies } = this.props
 
         e.preventDefault();
 
         this.props.form.validateFields((err, values) => {
             if (!err) {
+
+                const auth = cookies.get('authen_info')
 
                 this.setState({ openFilterCollapsed: null })
 
@@ -355,7 +359,8 @@ class Filter extends Component {
                     Srisawat: values.Srisawat,
                     Muangthai: values.Muangthai,
                     ngerdlor: values.ngerdlor,
-                    QueryType: this.getQueryTypeReportSummary(values)
+                    QueryType: this.getQueryTypeReportSummary(values),
+                    // EmpCode: auth.Session.sess_empcode
                 }
 
                 searchNanoData(criteria)
@@ -464,54 +469,130 @@ class Filter extends Component {
         setFieldsValue({ Srisawat: !getFieldValue('Srisawat') })
     }
 
+    // Dropdown Handle: state refernace
     onRegionExpand = (e) => {
         _.delay(() => {
-            let cls = (e) ? e:styles['region_field']
+            let cls = (e) ? e : styles['region_field']
             const elements = $(`.tool_${cls}`)
-  
-            if($(elements).length > 0) {} 
+
+            if ($(elements).length > 0) { }
             else {
                 $(`.${cls}`).click().after(() => {
                     _.delay(() => {
-                        $('body').find('.ant-select-dropdown').parent().parent().addClass(`tool_${cls}`).after(() => { $(`.${cls}`).click() })
+                        $('body').find('.ant-select-dropdown').first().parent().parent().addClass(`tool_${cls}`).after(() => { $(`.${cls}`).click() })
                     }, 200)
                 })
-    
             }
 
         }, 200)
 
     }
 
-    onExpand = () => {
-        _.delay(() => {  
-            const parent_target = $('body').find('.ant-select-tree')[1]
-            let el_target = $(parent_target).find('span.ant-select-tree-switcher')[0]
-            if($(el_target).hasClass('ant-select-tree-switcher_close')) {
-                $(el_target).click()
-            }
+    onExpand = (e) => {
+        _.delay(() => {
+            const cls_base = styles['area_field']
+            const elements = $(`.tool_${cls_base}`)
+            let cls = (e) ? e : cls_base
 
-        }, 200, 'later')
+            if ($(elements).length > 0) {
+                const parent_target = $('body').find(`.tool_${cls_base}`)
+                let el_target = $(parent_target).find('span.ant-select-tree-switcher')[0]
+                if ($(el_target).hasClass('ant-select-tree-switcher_close')) {
+                    $(el_target).click()
+                }
+
+            } else {
+
+                $(`.${cls}`).click().after(() => {
+                    _.delay(() => {
+                        const el_parent = $('body').find('.ant-select-dropdown').parent().parent()
+                        let el_escape = $(el_parent).not('div[class^="tool_"]')
+                        if (!$(el_escape[0]).attr('class')) {
+                            $(el_escape[0]).addClass(`tool_${cls}`).after(() => { $(`.${cls}`).click() })
+                        }
+                    }, 200)
+
+                    $(`.${cls}`).bind('click', () => { this.onExpand(cls_base) })
+
+                })
+            }
+        }, 200)
     }
 
-    onBrExpand = () => {
+    onBrExpand = (e) => {
         _.delay(() => {
-            const parent_target = $('body').find('.ant-select-tree')[2]
-            let el_target = $(parent_target).find('span.ant-select-tree-switcher')[0]
-            if($(el_target).hasClass('ant-select-tree-switcher_close')) {
-                $(el_target).click()
-            }
-        }, 200, 'later')
+            const cls_base = styles['branch_field']
+            $(`.${cls_base}`).after(() => {
+                const el_parent = $('body').find('.ant-select-dropdown').parent().parent()
+                let el_escape = $(el_parent).not('div[class^="tool_"]')
+                if (!$(el_escape[0]).attr('class')) {
+                    $(el_escape[0]).addClass(`tool_${cls_base}`).after(() => {
+                        const selector = $(el_escape[0]).find('span.ant-select-tree-switcher')
+                        if ($(selector).hasClass('ant-select-tree-switcher_close')) {
+                            $(selector).click()
+                        }
+
+                    })
+                }
+            })
+        }, 200)
     }
 
     onCAExpand = () => {
         _.delay(() => {
-            const parent_target = $('body').find('.ant-select-tree')[3]
-            let el_target = $(parent_target).find('span.ant-select-tree-switcher')[0]
-            if($(el_target).hasClass('ant-select-tree-switcher_close')) {
-                $(el_target).click()
-            }
-        }, 200, 'later')
+            const cls_base = styles['calist_field']
+            $(`.${cls_base}`).after(() => {
+                const el_parent = $('body').find('.ant-select-dropdown').parent().parent()
+                let el_escape = $(el_parent).not('div[class^="tool_"]')
+                if (!$(el_escape[0]).attr('class')) {
+                    $(el_escape[0]).addClass(`tool_${cls_base}`).after(() => {
+                        const selector = $(el_escape[0]).find('span.ant-select-tree-switcher')
+                        if ($(selector).hasClass('ant-select-tree-switcher_close')) {
+                            $(selector).click()
+                        }
+
+                    })
+                }
+            })
+        }, 200)
+    }
+
+    onProvinceExpand = (e) => {
+        _.delay(() => {
+            const cls_base = styles['province_field']
+            $(`.${cls_base}`).after(() => {
+                const el_parent = $('body').find('.ant-select-dropdown').parent().parent()
+                let el_escape = $(el_parent).not('div[class^="tool_"]')
+                if (!$(el_escape[0]).attr('class')) {
+                    $(el_escape[0]).addClass(`tool_${cls_base}`).after(() => {
+                        const selector = $(el_escape[0]).find('span.ant-select-tree-switcher')
+                        if ($(selector).hasClass('ant-select-tree-switcher_close')) {
+                            $(selector).click()
+                        }
+
+                    })
+                }
+            })
+        }, 200)
+    }
+
+    onCompetitorExpand = (e) => {
+        _.delay(() => {
+            const cls_base = styles['competitor_field']
+            $(`.${cls_base}`).after(() => {
+                const el_parent = $('body').find('.ant-select-dropdown').parent().parent()
+                let el_escape = $(el_parent).not('div[class^="tool_"]')
+                if (!$(el_escape[0]).attr('class')) {
+                    $(el_escape[0]).addClass(`tool_${cls_base}`).after(() => {
+                        const selector = $(el_escape[0]).find('span.ant-select-tree-switcher')
+                        if ($(selector).hasClass('ant-select-tree-switcher_close')) {
+                            $(selector).click()
+                        }
+
+                    })
+                }
+            })
+        }, 200)
     }
 
     in_array = (needle, haystack, argStrict) => {
@@ -537,7 +618,7 @@ class Filter extends Component {
     componentDidMount() {
         // STACK EVENT
         $(`span.${styles['region_field']}`).parent().bind('click', (e) => { this.onRegionExpand.bind(this) })
-      
+
     }
 
     render() {
@@ -573,40 +654,40 @@ class Filter extends Component {
                                             ],
                                         })
                                             (
-                                                <TreeSelect
-                                                    {...tProps}
-                                                    className={styles['region_field']}
-                                                    treeData={this.getRegionSelectItem()}
-                                                    searchPlaceholder="Please select area"
-                                                    onClick={this.onRegionExpand(styles['region_field'])}
-                                                />
+                                            <TreeSelect
+                                                {...tProps}
+                                                className={styles['region_field']}
+                                                treeData={this.getRegionSelectItem()}
+                                                searchPlaceholder="Please select area"
+                                                onClick={this.onRegionExpand(styles['region_field'])}
+                                            />
                                             )
                                     }
                                 </FormItem>
                             </Col>
-                            <Col span={12}>     
-                                <article id="area_field">           
+                            <Col span={12}>
+                                <article id="area_field">
                                     <FormItem
                                         label={`Area/Zone`}
                                         colon={true}
                                         className={styles['row-label']}
-                                        {...formItemLayout}>                              
+                                        {...formItemLayout}>
                                         {
                                             getFieldDecorator('AreaID')
                                                 (
-                                                    <TreeSelect
-                                                        {...tProps}
-                                                        disabled={_.isEmpty(getFieldValue("RegionID"))}
-                                                        className={styles['select-maxheight']}
-                                                        treeData={this.getAreaSelectItem()}
-                                                        autoExpandParent={true}                                                   
-                                                        searchPlaceholder="Please select area"
-                                                        onClick={this.onExpand}
-                                                    />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    disabled={_.isEmpty(getFieldValue("RegionID"))}
+                                                    className={`${styles['area_field']} ${styles['select-maxheight']}`}
+                                                    treeData={this.getAreaSelectItem()}
+                                                    autoExpandParent={true}
+                                                    searchPlaceholder="Please select area"
+                                                    onClick={this.onExpand(styles['area_field'])}
+                                                />
                                                 )
                                         }
-                                    </FormItem> 
-                                </article>              
+                                    </FormItem>
+                                </article>
                             </Col>
                         </Row>
                         <Row gutter={8}>
@@ -619,15 +700,16 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('BranchCode')
                                             (
-                                                <TreeSelect
-                                                    {...tProps}
-                                                    disabled={_.isEmpty(getFieldValue("AreaID"))}
-                                                    treeDefaultExpandAll={false}
-                                                    treeData={this.getBranchSelectItem()}
-                                                    dropdownMatchSelectWidth={false}
-                                                    onClick={this.onBrExpand}
-                                                    searchPlaceholder="Please select branch"
-                                                />
+                                            <TreeSelect
+                                                {...tProps}
+                                                className={styles['branch_field']}
+                                                disabled={_.isEmpty(getFieldValue("AreaID"))}
+                                                treeDefaultExpandAll={false}
+                                                treeData={this.getBranchSelectItem()}
+                                                dropdownMatchSelectWidth={false}
+                                                onClick={this.onBrExpand}
+                                                searchPlaceholder="Please select branch"
+                                            />
                                             )
                                     }
                                 </FormItem>
@@ -643,7 +725,7 @@ class Filter extends Component {
                                             initialValue: defaultBranchType
                                         })
                                             (
-                                                <CheckboxGroup options={BranchTypeOptions} onChange={this.branch_type_change} />
+                                            <CheckboxGroup options={BranchTypeOptions} onChange={this.branch_type_change} />
                                             )
                                     }
                                 </FormItem>
@@ -660,15 +742,16 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('CAName')
                                             (
-                                                <TreeSelect
-                                                    {...tProps}
-                                                    disabled={_.isEmpty(getFieldValue("BranchCode"))}
-                                                    treeDefaultExpandAll={false}
-                                                    treeData={this.getCANameSelect()}
-                                                    dropdownMatchSelectWidth={false}
-                                                    onClick={this.onCAExpand}
-                                                    searchPlaceholder="Search ca name"
-                                                />
+                                            <TreeSelect
+                                                {...tProps}
+                                                className={styles['calist_field']}
+                                                disabled={_.isEmpty(getFieldValue("BranchCode"))}
+                                                treeDefaultExpandAll={false}
+                                                treeData={this.getCANameSelect()}
+                                                dropdownMatchSelectWidth={false}
+                                                onClick={this.onCAExpand}
+                                                searchPlaceholder="Search ca name"
+                                            />
                                             )
                                     }
                                 </FormItem>
@@ -800,11 +883,13 @@ class Filter extends Component {
                                                         (
                                                         <TreeSelect
                                                             {...tProps}
+                                                            className={styles['competitor_field']}
                                                             treeDefaultExpandAll={false}
                                                             dropdownMatchSelectWidth={false}
                                                             treeData={this.getComplititorSelect()}
                                                             searchPlaceholder="กรุณาเลือกจังหวัด"
-                                                            style={{ 'width': '100%' }} />
+                                                            style={{ 'width': '100%' }}
+                                                            onClick={this.onCompetitorExpand} />
                                                         )
                                                 }
                                             </Col>
@@ -832,8 +917,7 @@ class Filter extends Component {
                                             initialValue: false,
                                         })
                                             (
-                                            <Checkbox
-                                                className={styles['check-box']}>
+                                            <Checkbox className={styles['check-box']}>
                                                 Include Potential Mkt ({this.props.RELATED_TARGET_MARKET_DATA.length})
                                             </Checkbox>
                                             )
@@ -876,10 +960,12 @@ class Filter extends Component {
                                                 (
                                                 <TreeSelect
                                                     {...tProps}
+                                                    className={styles['province_field']}
                                                     treeDefaultExpandAll={true}
                                                     treeDefaultExpandedKeys={['all']}
                                                     treeData={this.getProvinceSelect()}
-                                                    searchPlaceholder="Search employee name" />
+                                                    searchPlaceholder="Search employee name"
+                                                    onClick={this.onProvinceExpand} />
                                                 )
                                         }
                                     </FormItem>
@@ -915,6 +1001,8 @@ class Filter extends Component {
 
 const FilterForm = Form.create()(Filter)
 
+const CookiesFilterForm = withCookies(FilterForm)
+
 export default connect(
     (state) => ({
         NANO_MASTER_ALL: state.NANO_MASTER_ALL,
@@ -925,4 +1013,4 @@ export default connect(
         RELATED_COMPLITITOR_DATA: state.RELATED_COMPLITITOR_DATA
     }), {
         searchNanoData: searchNanoData
-    })(FilterForm)
+    })(CookiesFilterForm)

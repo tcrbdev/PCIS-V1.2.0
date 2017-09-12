@@ -11,7 +11,6 @@
         margin-right: 10px;
     }
 }
-
 .check-box
 {
     display: flex;
@@ -91,11 +90,13 @@ button.searchCriteria {
     }
 }
 
-.region_field {
-    cursor: pointer;
-}
 
-.area_field {
+.region_field,
+.area_field,
+.branch_field,
+.calist_field,
+.province_field,
+.competitor_field {
     cursor: pointer;
 }
 

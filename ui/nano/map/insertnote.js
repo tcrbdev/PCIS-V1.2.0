@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withCookies } from 'react-cookie';
 
 import { Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Input, Popover, Popconfirm, Checkbox, message } from 'antd';
 
@@ -19,7 +20,8 @@ const { TextArea } = Input
 class InsertNote extends Component {
 
     state = {
-        IsSubmit: false
+        IsSubmit: false,
+        auth: {}
     }
 
     ClearField = () => {
@@ -48,6 +50,7 @@ class InsertNote extends Component {
                 }
                 else {
                     data.SysNO = this.props.modalSelectData.NOTE[0].SysNO
+                    data.UpdateBy = this.state.auth.Session.sess_engname
                     this.props.insertUpdateMarkerNote(data, 'put', this.getLoading, this.getStatusFrom, this.props.modalSelectData, currentState)
                 }
 
@@ -65,6 +68,14 @@ class InsertNote extends Component {
         setTimeout(() => message.success(`${this.props.modalSelectData.NOTE.length <= 0 ? 'Insert' : 'Update'} note success..`), 500)
     }
 
+    componentDidMount() {
+        const { cookies } = this.props
+        if (!_.isEmpty(cookies.get('authen_info'))) {
+            const auth = cookies.get('authen_info')
+            this.setState({ auth })
+        }
+    }
+
     render() {
         const { modalSelectData, form: { getFieldDecorator } } = this.props
         const formItemLayout = {
@@ -76,6 +87,10 @@ class InsertNote extends Component {
             iniBy = modalSelectData.NOTE[0].UpdateBy
             iniNote = modalSelectData.NOTE[0].Note
             iniDefault = modalSelectData.NOTE[0].IsDefault
+        }
+        else {
+            if (!_.isEmpty(this.state.auth))
+                iniBy = this.state.auth.Session.sess_engname
         }
 
         return (
@@ -95,7 +110,7 @@ class InsertNote extends Component {
                                         ]
                                     })
                                         (
-                                        <Input placeholder="Edit By Name" disabled={this.props.STATUS_INSERT_MARKER_NOTE} />
+                                        <Input placeholder="Edit By Name" disabled={this.props.STATUS_INSERT_MARKER_NOTE} disabled={true} />
                                         )
                                 }
                             </FormItem>
@@ -163,6 +178,8 @@ class InsertNote extends Component {
 
 const formInsertNote = Form.create()(InsertNote)
 
+const CookiesInsertNote = withCookies(formInsertNote)
+
 export default connect(
     (state) => ({
         STATUS_INSERT_MARKER_NOTE: state.STATUS_INSERT_MARKER_NOTE,
@@ -170,4 +187,4 @@ export default connect(
         RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
     }), {
         insertUpdateMarkerNote: insertUpdateMarkerNote
-    })(formInsertNote)
+    })(CookiesInsertNote)

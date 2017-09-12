@@ -231,7 +231,8 @@ class Index extends Component {
         if (process.env.NODE_ENV === 'production') {
             console.log("Cookie : ", cookies.get('authen_info'))
             if (!_.isEmpty(cookies.get('authen_info'))) {
-                getNanoMasterData();
+                const auth = cookies.get('authen_info')
+                getNanoMasterData(auth.Session.sess_empcode);
             }
             else {
                 window.location.href = 'http://tc001pcis1p/login/'
@@ -299,7 +300,7 @@ class Index extends Component {
 
                 const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: `${value[0].CAID}` })
                 const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
-                const work_date_format = `Working period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+                const work_date_format = `Work period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
 
                 temp = {
                     CAID: value[0].CAID,
@@ -313,6 +314,7 @@ class Index extends Component {
                 temp = {
                     GroupName: key,
                     Data: value,
+                    Period: null,
                     OrderByOS: _.find(value, { Kpi: 'Unit' }).OS,
                     BranchCode: value[0].BranchCode
                 }
@@ -330,6 +332,7 @@ class Index extends Component {
 
         if (obj.length > 0) {
             return obj.map((item, index) => {
+
                 return (
                     <div className="rotate-total">
                         <div style={{ backgroundColor: (item.GroupName.indexOf('osk') <= 0 ? '#0099ff' : '#ff6500'), cursor: 'pointer' }}>
@@ -351,7 +354,9 @@ class Index extends Component {
                                         <div>{item.GroupName.indexOf('osk') <= 0 ? item.GroupName.split(' ')[0] : item.GroupName.split(' ')[1]}</div>
                                     </Popover>
                                     :
-                                    <Tooltip placement="topLeft" title={`${item.GroupName}`}>
+                                    <Tooltip
+                                        placement="topLeft"
+                                        title={<div>{item.GroupName} <br /> Br. Open: Coming soon..</div>}>
                                         <div>{item.GroupName.indexOf('osk') <= 0 ? item.GroupName.split(' ')[0] : item.GroupName.split(' ')[1]}</div>
                                     </Tooltip>
                             }
@@ -468,7 +473,7 @@ class Index extends Component {
                         </div>
                         <div>
                             <div className={styles['icon-header-container']}>
-                                <div>
+                                <div className={`${this.state.collapsed && styles['hide']}`}>
                                     <Tooltip title="View">
                                         <Dropdown overlay={this.getMenuGroupBy()} placement="bottomCenter">
                                             <div className={styles['icon-split']}>
@@ -477,6 +482,7 @@ class Index extends Component {
                                             </div>
                                         </Dropdown>
                                     </Tooltip>
+
                                     <div className={styles['ca-icon-lists']}>
                                         <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
                                         <ModalAreaSummary />

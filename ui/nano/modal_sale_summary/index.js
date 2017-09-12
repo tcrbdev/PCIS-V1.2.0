@@ -366,7 +366,7 @@ class ModalSaleSummary extends Component {
     getCAPenetation = () => {
 
         const { CA_SUMMARY_ONLY_MARKET_PENETRATION } = this.props
-
+        
         if (!_.isEmpty(CA_SUMMARY_ONLY_MARKET_PENETRATION)) {
             const Amt = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
             const os = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
@@ -375,7 +375,7 @@ class ModalSaleSummary extends Component {
             const cancel = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'CANCELLED' }) || { Total: 0, Ach: 0 }
             const potential = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'TOTAL' }) || { Total: 0, Ach: 0 }
             const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
-
+            console.log(CA_SUMMARY_ONLY_MARKET_PENETRATION)
             return [
                 {
                     Detail: 'Total App',

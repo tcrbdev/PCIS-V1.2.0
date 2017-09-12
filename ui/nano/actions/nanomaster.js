@@ -20,6 +20,7 @@ import {
 
     GET_BRANCH_MARKER_DATA_URL,
     GET_EXITING_MARKET_MARKER_DATA_URL,
+    GET_EXITING_MARKET_IMAGE_MARKER_URL,
 
     INSERT_UPDATE_MARKER_NOTE_URL
 } from '../../common/constants/endpoints'
@@ -118,10 +119,37 @@ export const setOpenExitingMarketMarker = (targetMarker, currentState, isOpen) =
         .then(res => {
             let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
             item.showInfo = isOpen
+            item.showImage = false
             item.showMenu = false
             item.MARKET_INFORMATION = res[0]
             item.CA_INFORMATION = res[1]
             item.NOTE = res[2]
+            item.MARKET_IMAGE = []
+
+            let newState = _.cloneDeep(currentState)
+
+            dispatch({
+                type: SET_OPEN_EXITING_MARKET_MARKER_REQUEST,
+                payload: newState
+            })
+        })
+}
+
+export const setOpenExitingMarketImageMarker = (targetMarker, currentState, isOpen) => dispatch => {
+
+    const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
+
+    fetch(URL)
+        .then(res => (res.json()))
+        .then(res => {
+            let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
+            item.showInfo = false
+            item.showImage = isOpen
+            item.showMenu = false
+            item.MARKET_INFORMATION = []
+            item.CA_INFORMATION = []
+            item.NOTE = []
+            item.MARKET_IMAGE = res
 
             let newState = _.cloneDeep(currentState)
 
@@ -154,7 +182,7 @@ export const selectMarkerByCA = (newState, value) => dispatch => {
     })
 }
 
-export const getNanoMasterData = (token) => ((dispatch) => {
+export const getNanoMasterData = (token = '') => ((dispatch) => {
 
     dispatch({
         type: LOAD_NANO_MASTER_ALL_REQUEST,
@@ -162,12 +190,12 @@ export const getNanoMasterData = (token) => ((dispatch) => {
     })
 
     let api = [
-        fetch(MASTER_REGION_URL).then(res => (res.json())),
-        fetch(MASTER_AREA_URL).then(res => (res.json())),
-        fetch(MASTER_BRANCH_URL).then(res => (res.json())),
-        fetch(MASTER_TARGET_MARKET_PROVINCE_URL).then(res => (res.json())),
-        fetch(MASTER_CALIST_URL).then(res => (res.json())),
-        fetch(MASTER_COMPLITITOR_PROVINCE_URL).then(res => (res.json()))
+        fetch(`${MASTER_REGION_URL}/${token}`).then(res => (res.json())),
+        fetch(`${MASTER_AREA_URL}/${token}`).then(res => (res.json())),
+        fetch(`${MASTER_BRANCH_URL}/${token}`).then(res => (res.json())),
+        fetch(`${MASTER_TARGET_MARKET_PROVINCE_URL}/${token}`).then(res => (res.json())),
+        fetch(`${MASTER_CALIST_URL}/${token}`).then(res => (res.json())),
+        fetch(`${MASTER_COMPLITITOR_PROVINCE_URL}/${token}`).then(res => (res.json()))
     ]
 
     bluebird.all(api).spread((

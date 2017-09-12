@@ -88,8 +88,9 @@ class SummaryTable extends Component {
 
 
         const { getFieldDecorator } = this.props.form
+
         return (
-            <div className={styles['ca-icon-list']}>
+            <div id="ca_tools" className={`${styles['ca-icon-list']}`}>
                 {
                     getFieldDecorator('select_ca', {
                         initialValue: [this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]]
@@ -262,7 +263,7 @@ class SummaryTable extends Component {
                 return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
             }
         }, {
-            title: (<div className={styles['div-center']}><span>Market Penetation</span></div>),
+            title: (<div className={styles['div-center']}><span>Market Penetration</span></div>),
             children: [{
                 title: (<div className={styles['div-center']}><span>Pot.</span></div>),
                 width: '5%',

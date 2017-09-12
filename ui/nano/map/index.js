@@ -7,6 +7,7 @@ import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, C
 import FontAwesome from 'react-fontawesome'
 import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
+import Scrollbar from 'react-smooth-scrollbar';
 
 import InsertNote from './insertnote'
 import StreetViewMap from './streetview'
@@ -29,6 +30,7 @@ import {
     setOpenExitingMarketMarker,
     setOpenExitingMarketMarkerMenu,
     setOpenTargetMarketMarker,
+    setOpenExitingMarketImageMarker,
     insertUpdateMarkerNote
 } from '../actions/nanomaster'
 
@@ -817,27 +819,6 @@ const getBranchMarkerCircle = (props) => {
     }
 }
 
-const getCAExitingMarker = (props) => {
-
-    const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
-
-    return RELATED_EXITING_MARKET_DATA.map((item, index) => {
-        return (
-            <OverlayView
-                key={index}
-                position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                getPixelPositionOffset={getPixelPositionOffset}>
-                <div className={styles['ca-marker-img-container']}>
-                    <img src={pinpao} />
-                    <img className={styles['ca-marker-img']} src={'http://172.17.9.94/newservices/LBServices.svc/employee/image/57345'} />
-
-                </div>
-            </OverlayView>
-        )
-    })
-}
-
 const getCAPicture = (props, marketCode) => {
     let ca = []
     if (_.isEmpty(props.SELECTED_CA_MAP)) {
@@ -901,7 +882,7 @@ const getExitingMarkerMenu = props => {
                                 </label>
                                 <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
                                     <ul>
-                                        <li><Tooltip title="Market Picture"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenExitingMarketImageMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Picture"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
                                         <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
                                         <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenExitingMarketMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
@@ -925,7 +906,7 @@ const getExitingMarker = (props, handleShowModal) => {
             if (item.showMenu) {
                 icon = '_blanks'
             }
-            if (NANO_FILTER_CRITERIA.CAName && !item.showMenu && !item.showInfo) {
+            if (NANO_FILTER_CRITERIA.CAName && !item.showMenu && !item.showInfo && !item.showImage) {
                 return (
                     <OverlayView
                         key={index}
@@ -949,7 +930,10 @@ const getExitingMarker = (props, handleShowModal) => {
                     <Marker
                         key={index}
                         title={item.MarketName}
-                        onClick={() => props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)}
+                        onClick={() => {
+                            if (!item.showInfo && !item.showImage)
+                                props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)
+                        }}
                         position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
                         icon={{
                             url: icon
@@ -990,6 +974,11 @@ const getExitingMarker = (props, handleShowModal) => {
                                                                     {` ${parseFloat(item.Radius).toFixed(1)}Km.`}
                                                                     {
                                                                         (!in_array(item.BranchType, ['P', 'L'])) && ` (Br ${parseFloat(item.RadiusToPure).toFixed(1)}Km.)`
+                                                                    }
+                                                                    {
+                                                                        <span>
+                                                                            {` (Mkt Open : ${item.TelsCreateDate ? moment(item.TelsCreateDate).format("MMM-YY") : 'unknow'})`}
+                                                                        </span>
                                                                     }
                                                                 </span>
                                                             </div>
@@ -1057,54 +1046,106 @@ const getExitingMarker = (props, handleShowModal) => {
     }
 }
 
+
+
+class MarketImage extends Component {
+
+    state = {
+        ImageState: "front"
+    }
+
+    openImageNewTab = (url) => (window.open(url))
+
+    imageChange = (from, to, item) => {
+        switch (to) {
+            case 0:
+                this.setState({ ImageState: "front" })
+                break;
+            case 1:
+                this.setState({ ImageState: "inside" })
+                break;
+            case 2:
+                this.setState({ ImageState: "Enviroment" })
+                break;
+        }
+    }
+
+    render() {
+        const item = this.props.item
+        const index = this.props.index
+        const { RELATED_EXITING_MARKET_DATA, setOpenExitingMarketImageMarker } = this.props.ownProps
+
+        return (
+            <OverlayView
+                key={index}
+                position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                getPixelPositionOffset={getPixelPositionOffset}>
+                <Layout style={{ width: '675px'}}>
+                    <div className={styles['headers']}>
+                        <Icon
+                            className="trigger"
+                            type='pie-chart' />
+                        <span>
+                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                        </span>
+                        <Icon
+                            onClick={() => setOpenExitingMarketImageMarker(item, RELATED_EXITING_MARKET_DATA, false)}
+                            className="trigger"
+                            type='close' />
+                    </div>
+                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                        <div className={styles['detail-container-picture']}>
+                            {
+                                this.state.ImageState
+                            }
+                            <div className={styles['picture-market-view']}>
+                                {
+                                    item.MARKET_IMAGE.length > 0
+                                        ?
+                                        <div className={styles['image-preview']}>
+                                            <Carousel vertical autoplay beforeChange={this.imageChange}>
+                                                {
+                                                    item.MARKET_IMAGE.map((file, i) => {
+                                                        return (
+                                                            <div>
+                                                                <div className={styles['image-slide']}>
+                                                                    <img src={file.Url} style={{ width: '460px', height: '325px' }} onClick={() => this.openImageNewTab(file.Url)} />
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </Carousel>
+                                        </div>
+                                        :
+                                        <div className="image-not-found"><span><Icon type="frown-o" /> Image not avaliable.</span></div>
+                                }
+                            </div>
+                            <div>
+                                <StreetViewMap
+                                    key={index}
+                                    item={item}
+                                    containerElement={<div style={{ height: `100%` }} />}
+                                    mapElement={<div style={{ height: `100%` }} />}
+                                />
+                            </div>
+                        </div>
+                    </Layout>
+                </Layout>
+            </OverlayView>
+        )
+    }
+}
+
 const getMarketPictureMarker = props => {
     const { RELATED_EXITING_MARKET_DATA } = props
 
     if (RELATED_EXITING_MARKET_DATA.length > 0) {
-        return [RELATED_EXITING_MARKET_DATA[0]].map((item, index) => {
-            return (
-                <Marker
-                    key={index}
-                    title={item.MarketName}
-                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                    icon={{
-                        url: ''
-                    }}>
-                    <InfoWindow
-                        title={item.MarketName}
-                        onDomReady={onDomReady}>
-                        <Layout>
-                            <div className={styles['headers']}>
-                                <Icon
-                                    className="trigger"
-                                    type='pie-chart' />
-                                <span>
-                                    {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
-                                </span>
-                                <Icon
-                                    onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
-                                    className="trigger"
-                                    type='close' />
-                            </div>
-                            <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                <div className={styles['detail-container-picture']}>
-                                    <div>
-                                        <h1>Hello</h1>
-                                    </div>
-                                    <div>
-                                        <StreetViewMap
-                                            key={index}
-                                            item={item}
-                                            containerElement={<div style={{ height: `100%` }} />}
-                                            mapElement={<div style={{ height: `100%` }} />}
-                                        />
-                                    </div>
-                                </div>
-                            </Layout>
-                        </Layout>
-                    </InfoWindow>
-                </Marker>
-            )
+        return RELATED_EXITING_MARKET_DATA.map((item, index) => {
+            if (item.showImage) {
+                return <MarketImage item={item} index={index} ownProps={props} />
+            }
         })
     }
 }
@@ -1193,26 +1234,25 @@ class Map extends Component {
                         getExitingMarker(props, this.handleShowModal)
                     }
                     {
-                        /*getCAExitingMarker(props)*/
-                    }
-                    {
                         getComplititorMarker(props)
                     }
                     {
-                        //getMarketPictureMarker(props)
+                        getMarketPictureMarker(props)
                     }
                     {
                         props.RELATED_TARGET_MARKET_DATA &&
                         props.RELATED_TARGET_MARKET_DATA.map((item, index) => {
                             return (
                                 <Marker
+
                                     key={index}
                                     onClick={() => props.setOpenTargetMarketMarker(item, props.RELATED_TARGET_MARKET_DATA, true)}
                                     position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
                                     title={item.MarketName}
                                     icon={{
                                         url: icon_Target
-                                    }}>
+                                    }}
+                                >
                                     {
                                         item.showInfo &&
                                         (
@@ -1222,7 +1262,7 @@ class Map extends Component {
                                                         <Icon
                                                             className="trigger"
                                                             type='pie-chart' />
-                                                        <span>
+                                                        <span style={{ fontSize: '.9em' }}>
                                                             {`${item.MarketName}`}
                                                         </span>
                                                         <Icon
@@ -1271,5 +1311,6 @@ export default connect(
         setOpenBranchMarkerMenu: setOpenBranchMarkerMenu,
         setOpenExitingMarketMarker: setOpenExitingMarketMarker,
         setOpenExitingMarketMarkerMenu: setOpenExitingMarketMarkerMenu,
-        setOpenTargetMarketMarker: setOpenTargetMarketMarker
+        setOpenTargetMarketMarker: setOpenTargetMarketMarker,
+        setOpenExitingMarketImageMarker: setOpenExitingMarketImageMarker
     })(wrapMap)

@@ -26,7 +26,7 @@ export const LOAD_ASSIGNMENT_CHART = `${apiDevUrl}/assignmentChart`
 
 
 //-------------------- FOR NANO MAP
-let url = "";
+let url = "", urlPcis = "http://tc001pcis1p/newservices/LBServices.svc/";
 if (process.env.NODE_ENV === 'dev')
     url = `http://localhost:60001`
 else
@@ -50,7 +50,7 @@ export const GET_CA_SUMMARY_ONLY_URL = `${url}/nano/ca/summary/`
 
 export const GET_BRANCH_MARKER_DATA_URL = `${url}/nano/branch/`
 export const GET_EXITING_MARKET_MARKER_DATA_URL = `${url}/nano/market/`
+export const GET_EXITING_MARKET_IMAGE_MARKER_URL = `${urlPcis}/nano/market/image/list/`
 
 export const INSERT_UPDATE_MARKER_NOTE_URL = `${url}/nano/marker/note`
 
-        
