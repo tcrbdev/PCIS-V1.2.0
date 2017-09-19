@@ -274,6 +274,23 @@ export const RELATED_GROUP_BY_SUMMARY_DATA = (state = initialStateArray, action)
     }
 }
 
+export const RELATED_GROUP_BY_MARKET_SUMMARY_DATA = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS:
+            return action.payload.groupBYMarketSummary
+            break;
+        case SEARCH_NANO_DATA_SUCCESS:
+            return action.payload.groupBYMarketSummary
+            break;
+        case SEARCH_NANO_DATA_FAILURE:
+            return [action.payload]
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
 export const RELATED_COMPLITITOR_DATA = (state = initialStateArray, action) => {
     switch (action.type) {
         case SEARCH_NANO_DATA_SUCCESS:

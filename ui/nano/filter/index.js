@@ -360,10 +360,13 @@ class Filter extends Component {
                     Muangthai: values.Muangthai,
                     ngerdlor: values.ngerdlor,
                     QueryType: this.getQueryTypeReportSummary(values),
-                    // EmpCode: auth.Session.sess_empcode
                 }
 
-                searchNanoData(criteria)
+                if (process.env.NODE_ENV === 'production') {
+                    criteria.EmpCode = auth.Session.sess_empcode
+                }
+
+                // searchNanoData(criteria)
             }
         });
     }
@@ -380,7 +383,7 @@ class Filter extends Component {
         const KioskBranch = _.isEmpty(values.BranchCode) ? [] : _.filter(values.BranchCode.join(',').split(','), o => o.length > 3)
         const CAName = _.isEmpty(values.CAName) ? [] : values.CAName.join(',').split(',')
 
-        // console.log(Region, Area, Zone, Branch, KioskBranch, CAName)
+        console.log(Region, Area, Zone, Branch, KioskBranch, CAName)
 
         // let result = "";
 
@@ -433,6 +436,7 @@ class Filter extends Component {
             result = constantQueryType.area
         }
 
+        console.log(result)
         return result
     }
 

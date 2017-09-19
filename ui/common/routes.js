@@ -17,11 +17,16 @@ export default (store, history) => {
                 <Route path='/login' component={Login} />
                 <Route path='/reactweb' component={Login} />
                 <Route component={Auth} >
-                    <Route path='/' component={App} >
+                    <Route path='/reactweb' component={App} >
                         <IndexRoute component={Home} />
                         <Route path='/customer(/:name)' component={CustomerProfile} />
                         <Route path='/home' component={Home} />
                         <Route path='/assignment' component={AppAssignmentContainer} />
+                    </Route>
+                </Route>
+                <Route component={Auth} >
+                    <Route path='/reactweb' component={App} >
+                        <Route path='/customer(/:name)' component={CustomerProfile} />
                     </Route>
                 </Route>
             </Router>

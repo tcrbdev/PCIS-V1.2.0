@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama } from "react-google-maps"
 import { MAP } from 'react-google-maps/lib/constants';
 
-import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel } from 'antd';
+import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination } from 'antd';
 import FontAwesome from 'react-fontawesome'
 import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
@@ -27,6 +27,7 @@ import pinpao from '../../../image/pinpao.png'
 import {
     setOpenBranchMarker,
     setOpenBranchMarkerMenu,
+    setOpenBranchImageMarker,
     setOpenExitingMarketMarker,
     setOpenExitingMarketMarkerMenu,
     setOpenTargetMarketMarker,
@@ -37,14 +38,18 @@ import {
 import styles from './index.scss'
 
 const { Header } = Layout
+const TabPane = Tabs.TabPane;
 
-const onDomReady = () => {
+const onDomReady = (isImage) => {
     let iwOuter = $('.gm-style-iw');
     let iwBackground = iwOuter.prev();
     iwBackground.children(':nth-child(2)').css({ 'display': 'none' });
     iwBackground.children(':nth-child(4)').css({ 'display': 'none' });
     iwBackground.children(':nth-child(3)').find('div').children().css({ 'box-shadow': '0 1px 6px rgba(72, 181, 233, 0.6)', 'z-index': '1' });
 
+    if (isImage) {
+        iwOuter.addClass(styles['info-image'])
+    }
     let iwCloseBtn = iwOuter.next();
     iwCloseBtn.remove()
     iwOuter.css({ opacity: 1 })
@@ -601,7 +606,7 @@ const getBranchMarkerMenu = (props) => {
                                 </Tooltip>
                                 <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
                                     <ul>
-                                        <li><Tooltip title="Market Picture"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenBranchImageMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Picture"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
                                         <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
                                         <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
@@ -660,6 +665,10 @@ const getBranchMarker = (props, handleShowModal) => {
                     icon={{
                         url: icon
                     }}>
+                    {
+                        item.showImage &&
+                        (<BranchImage item={item} index={index} ownProps={props} />)
+                    }
                     {
                         item.showInfo &&
                         (
@@ -939,6 +948,12 @@ const getExitingMarker = (props, handleShowModal) => {
                             url: icon
                         }}>
                         {
+                            item.showImage &&
+                            (
+                                <MarketImage item={item} index={index} ownProps={props} />
+                            )
+                        }
+                        {
                             item.showInfo &&
                             (
                                 <InfoWindow
@@ -969,21 +984,21 @@ const getExitingMarker = (props, handleShowModal) => {
                                                             <div>
                                                                 <span>{`${item.MarketShop} Shop `}</span>
                                                                 <span>
-                                                                    {`Distance From `}
+                                                                    {`Distance `}
                                                                     {<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}
                                                                     {` ${parseFloat(item.Radius).toFixed(1)}Km.`}
                                                                     {
-                                                                        (!in_array(item.BranchType, ['P', 'L'])) && ` (Br ${parseFloat(item.RadiusToPure).toFixed(1)}Km.)`
+                                                                        (!in_array(item.BranchType, ['P', 'L'])) && ` (Br ${parseFloat(item.RadiusToPure).toFixed(1)}Km)`
                                                                     }
                                                                     {
                                                                         <span>
-                                                                            {` (Mkt Open : ${item.TelsCreateDate ? moment(item.TelsCreateDate).format("MMM-YY") : 'unknow'})`}
+                                                                            {` / Reg.${item.TelsCreateDate ? moment(item.TelsCreateDate).format("MMM-YY") : 'unknow'}`}
                                                                         </span>
                                                                     }
                                                                 </span>
                                                             </div>
                                                             <span>
-                                                                {` ${item.MarketType} Open Time ${item.OpenTime} (${item.MarketOpenDay}) `}
+                                                                {` ${item.MarketType} Work Hour ${item.OpenTime} (${item.MarketOpenDay}) `}
                                                             </span>
                                                             <div className={styles['note-icon']}>
                                                                 <Tooltip title='Note' placement="bottom">
@@ -1046,46 +1061,203 @@ const getExitingMarker = (props, handleShowModal) => {
     }
 }
 
+class BranchImage extends Component {
+
+    state = {
+        branchPage: 1,
+        showBranchFullImage: false,
+        branchImageIndex: 0
+    }
+
+    openImageNewTab = (url) => (window.open(url))
+
+    openBranchFullImage = (index) => {
+        this.setState({ showBranchFullImage: !this.state.showBranchFullImage, branchImageIndex: index })
+    }
+
+    pageChange = (page, pageSize) => {
+        this.setState({ branchPage: page })
+    }
+
+    onPrevImage = () => {
+        this.setState({ branchImageIndex: this.state.branchImageIndex - 1 })
+    }
+
+    onNextImage = () => {
+        this.setState({ branchImageIndex: this.state.branchImageIndex + 1 })
+    }
+
+    render() {
+        const item = this.props.item
+        const { BRANCH_IMAGE } = item
+        const index = this.props.index
+        const { RELATED_BRANCH_DATA, setOpenBranchImageMarker } = this.props.ownProps
+        const defaultPageSize = 3
+
+        const start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
+        const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+
+        return (
+            <InfoWindow
+                title={item.MarketName}
+                onDomReady={() => onDomReady(true)}>
+                <Layout style={{ width: '715px' }}>
+                    <div className={styles['headers']}>
+                        {
+                            <div className={styles['ca-imgs']}>
+                                <Popover placement="left" content={
+                                    <div className={styles['marker-tm-picture']}>
+                                        <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                        <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
+                                        <span>{`${work_date_format}`}</span>
+                                        <span>{`${item.TM_Tel}`}</span>
+                                    </div>
+                                } >
+                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                </Popover>
+                            </div>
+                        }
+                        <span className={styles['title-img']}>
+                            {`${item.BranchName}`}
+                        </span>
+                        <Icon
+                            onClick={() => setOpenBranchImageMarker(item, RELATED_BRANCH_DATA, false)}
+                            className="trigger"
+                            type='close' />
+                    </div>
+                    <Layout className={styles['layout-body-overlay']}>
+                        {
+                            this.state.showBranchFullImage &&
+                            <div className={styles['modal-full-image']}>
+                                <Tooltip
+                                    title='Close Image'
+                                    placement="left">
+                                    <Icon type="close"
+                                        className={styles['close-full-image']}
+                                        onClick={this.openBranchFullImage} />
+                                </Tooltip>
+                                <div className={styles['full-image']} >
+                                    <img
+                                        src={BRANCH_IMAGE[this.state.branchImageIndex].Url}
+                                        style={{ width: '100%', height: '100%' }} />
+                                    <div className={styles['tool-full-image']}>
+                                        <div>
+                                            <Tooltip
+                                                title='Previous'
+                                                placement="top">
+                                                <Button shape="circle" icon="caret-left" onClick={this.onPrevImage} disabled={this.state.branchImageIndex == 0}></Button>
+                                            </Tooltip>
+                                            <div>
+                                                <span>{`${this.state.branchImageIndex + 1} / ${BRANCH_IMAGE.length}`}</span>
+                                                <Tooltip
+                                                    title='Full Image'
+                                                    placement="top">
+                                                    <Icon type="search"
+                                                        className={styles['zoom-image']}
+                                                        onClick={() => this.openImageNewTab(BRANCH_IMAGE[this.state.branchImageIndex].Url)} />
+                                                </Tooltip>
+                                            </div>
+                                            <Tooltip
+                                                title='Next'
+                                                placement="top">
+                                                <Button shape="circle" icon="caret-right" onClick={this.onNextImage} disabled={this.state.branchImageIndex + 1 == BRANCH_IMAGE.length}>
+                                                </Button>
+                                            </Tooltip>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div>
+                            {
+                                BRANCH_IMAGE.length > 0 &&
+                                <div>
+                                    <div className={styles['layout-pagination']}>
+                                        <Pagination
+                                            size="small"
+                                            style={{ marginTop: '10px' }}
+                                            defaultCurrent={this.state.branchPage}
+                                            pageSize={defaultPageSize}
+                                            total={BRANCH_IMAGE.length}
+                                            onChange={this.pageChange}
+                                            showTotal={(total) => (`Total ${total} items`)} />
+                                    </div>
+                                    <div className={styles['detail-container-picture']}>
+                                        {
+                                            BRANCH_IMAGE
+                                                .slice((defaultPageSize * this.state.branchPage) - defaultPageSize, defaultPageSize * this.state.branchPage)
+                                                .map((file, i) => {
+                                                    return (
+                                                        <div className={styles['layout-child']} onClick={() => this.openBranchFullImage(i)}>
+                                                            <img src={file.Url} style={{ width: '100%', height: '100%' }} />
+                                                        </div>
+                                                    )
+                                                })
+                                        }
+                                        <div className={styles['layout-child']}>
+                                            <StreetViewMap
+                                                key={index}
+                                                item={{ Latitude: parseFloat(item.BranchLatitude), Longitude: parseFloat(item.BranchLongitude) }}
+                                                containerElement={<div style={{ height: `100%` }} />}
+                                                mapElement={<div style={{ height: `100%` }} />}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            {
+                                BRANCH_IMAGE.length <= 0 &&
+                                <div className={styles['image-not-found']}><span><Icon type="frown-o" /> Image not avaliable.</span></div>
+                            }
+                        </div>
+                    </Layout>
+                </Layout>
+            </InfoWindow>
+        )
+    }
+}
 
 
 class MarketImage extends Component {
 
     state = {
-        ImageState: "front"
+        marketPage: 1,
+        showMarketFullImage: false,
+        marketImageIndex: 0
     }
 
     openImageNewTab = (url) => (window.open(url))
 
-    imageChange = (from, to, item) => {
-        switch (to) {
-            case 0:
-                this.setState({ ImageState: "front" })
-                break;
-            case 1:
-                this.setState({ ImageState: "inside" })
-                break;
-            case 2:
-                this.setState({ ImageState: "Enviroment" })
-                break;
-        }
+    openMarketFullImage = (index) => {
+        this.setState({ showMarketFullImage: !this.state.showMarketFullImage, marketImageIndex: index })
+    }
+
+    pageChange = (page, pageSize) => {
+        this.setState({ marketPage: page })
+    }
+
+    onPrevImage = () => {
+        this.setState({ marketImageIndex: this.state.marketImageIndex - 1 })
+    }
+
+    onNextImage = () => {
+        this.setState({ marketImageIndex: this.state.marketImageIndex + 1 })
     }
 
     render() {
         const item = this.props.item
+        const { MARKET_IMAGE } = item
         const index = this.props.index
         const { RELATED_EXITING_MARKET_DATA, setOpenExitingMarketImageMarker } = this.props.ownProps
+        const defaultPageSize = 3
 
         return (
-            <OverlayView
-                key={index}
-                position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                getPixelPositionOffset={getPixelPositionOffset}>
-                <Layout style={{ width: '675px'}}>
+            <InfoWindow
+                title={item.MarketName}
+                onDomReady={() => onDomReady(true)}>
+                <Layout style={{ width: '715px' }}>
                     <div className={styles['headers']}>
-                        <Icon
-                            className="trigger"
-                            type='pie-chart' />
+                        <FontAwesome className="trigger" name="picture-o" />
                         <span>
                             {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
                         </span>
@@ -1094,61 +1266,121 @@ class MarketImage extends Component {
                             className="trigger"
                             type='close' />
                     </div>
-                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                        <div className={styles['detail-container-picture']}>
-                            {
-                                this.state.ImageState
-                            }
-                            <div className={styles['picture-market-view']}>
-                                {
-                                    item.MARKET_IMAGE.length > 0
-                                        ?
-                                        <div className={styles['image-preview']}>
-                                            <Carousel vertical autoplay beforeChange={this.imageChange}>
-                                                {
-                                                    item.MARKET_IMAGE.map((file, i) => {
-                                                        return (
-                                                            <div>
-                                                                <div className={styles['image-slide']}>
-                                                                    <img src={file.Url} style={{ width: '460px', height: '325px' }} onClick={() => this.openImageNewTab(file.Url)} />
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                            </Carousel>
+                    <Layout className={styles['layout-body-overlay']}>
+                        {
+                            this.state.showMarketFullImage &&
+                            <div className={styles['modal-full-image']}>
+                                <Tooltip
+                                    title='Close Image'
+                                    placement="left">
+                                    <Icon type="close"
+                                        className={styles['close-full-image']}
+                                        onClick={this.openMarketFullImage} />
+                                </Tooltip>
+                                <div className={styles['full-image']} >
+                                    <img
+                                        src={MARKET_IMAGE[this.state.marketImageIndex].Url}
+                                        style={{ width: '100%', height: '100%' }} />
+                                    <div className={styles['tool-full-image']}>
+                                        <div>
+                                            <Tooltip
+                                                title='Previous'
+                                                placement="top">
+                                                <Button shape="circle" icon="caret-left" onClick={this.onPrevImage} disabled={this.state.marketImageIndex == 0}></Button>
+                                            </Tooltip>
+                                            <div>
+                                                <span>{`${this.state.marketImageIndex + 1} / ${MARKET_IMAGE.length}`}</span>
+                                                <Tooltip
+                                                    title='Full Image'
+                                                    placement="top">
+                                                    <Icon type="search"
+                                                        className={styles['zoom-image']}
+                                                        onClick={() => this.openImageNewTab(MARKET_IMAGE[this.state.marketImageIndex].Url)} />
+                                                </Tooltip>
+                                            </div>
+                                            <Tooltip
+                                                title='Next'
+                                                placement="top">
+                                                <Button shape="circle" icon="caret-right" onClick={this.onNextImage} disabled={this.state.marketImageIndex + 1 == MARKET_IMAGE.length}>
+                                                </Button>
+                                            </Tooltip>
                                         </div>
-                                        :
-                                        <div className="image-not-found"><span><Icon type="frown-o" /> Image not avaliable.</span></div>
-                                }
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <StreetViewMap
-                                    key={index}
-                                    item={item}
-                                    containerElement={<div style={{ height: `100%` }} />}
-                                    mapElement={<div style={{ height: `100%` }} />}
-                                />
-                            </div>
+                        }
+                        <div>
+                            {
+                                MARKET_IMAGE.length > 0 &&
+                                <div>
+                                    <div className={styles['layout-pagination']}>
+                                        <Pagination
+                                            size="small"
+                                            style={{ marginTop: '10px' }}
+                                            defaultCurrent={this.state.marketPage}
+                                            pageSize={defaultPageSize}
+                                            total={MARKET_IMAGE.length}
+                                            onChange={this.pageChange}
+                                            showTotal={(total) => (`Total ${total} items`)} />
+                                    </div>
+                                    <div className={styles['detail-container-picture']}>
+                                        {
+                                            MARKET_IMAGE
+                                                .slice((defaultPageSize * this.state.marketPage) - defaultPageSize, defaultPageSize * this.state.marketPage)
+                                                .map((file, i) => {
+                                                    return (
+                                                        <div className={styles['layout-child']} onClick={() => this.openMarketFullImage(i)}>
+                                                            <img src={file.Url} style={{ width: '100%', height: '100%' }} />
+                                                        </div>
+                                                    )
+                                                })
+                                        }
+                                        <div className={styles['layout-child']}>
+                                            <StreetViewMap
+                                                key={index}
+                                                item={item}
+                                                containerElement={<div style={{ height: `100%` }} />}
+                                                mapElement={<div style={{ height: `100%` }} />}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            {
+                                MARKET_IMAGE.length <= 0 &&
+                                <div className={styles["image-not-found"]}><span><Icon type="frown-o" /> Image not avaliable.</span></div>
+                            }
                         </div>
                     </Layout>
                 </Layout>
-            </OverlayView>
+            </InfoWindow>
         )
     }
 }
 
-const getMarketPictureMarker = props => {
-    const { RELATED_EXITING_MARKET_DATA } = props
+// const getBranchPictureMarker = props => {
+//     const { RELATED_BRANCH_DATA } = props
 
-    if (RELATED_EXITING_MARKET_DATA.length > 0) {
-        return RELATED_EXITING_MARKET_DATA.map((item, index) => {
-            if (item.showImage) {
-                return <MarketImage item={item} index={index} ownProps={props} />
-            }
-        })
-    }
-}
+//     if (RELATED_BRANCH_DATA.length > 0) {
+//         return RELATED_BRANCH_DATA.map((item, index) => {
+//             if (item.showImage) {
+//                 return <BranchImage item={item} index={index} ownProps={props} />
+//             }
+//         })
+//     }
+// }
+
+// const getMarketPictureMarker = props => {
+//     const { RELATED_EXITING_MARKET_DATA } = props
+
+//     if (RELATED_EXITING_MARKET_DATA.length > 0) {
+//         return RELATED_EXITING_MARKET_DATA.map((item, index) => {
+//             if (item.showImage) {
+//                 return <MarketImage item={item} index={index} ownProps={props} />
+//             }
+//         })
+//     }
+// }
 
 const getComplititorMarker = props => {
     const { RELATED_COMPLITITOR_DATA } = props
@@ -1217,6 +1449,7 @@ class Map extends Component {
                 <GoogleMap
                     defaultZoom={8}
                     defaultCenter={options.center}
+                    disableDoubleClickZoom={true}
                     ref={(map) => (handleBounds(props, map))}>
                     {
                         getBranchMarkerMenu(props)
@@ -1235,9 +1468,6 @@ class Map extends Component {
                     }
                     {
                         getComplititorMarker(props)
-                    }
-                    {
-                        getMarketPictureMarker(props)
                     }
                     {
                         props.RELATED_TARGET_MARKET_DATA &&
@@ -1312,5 +1542,6 @@ export default connect(
         setOpenExitingMarketMarker: setOpenExitingMarketMarker,
         setOpenExitingMarketMarkerMenu: setOpenExitingMarketMarkerMenu,
         setOpenTargetMarketMarker: setOpenTargetMarketMarker,
-        setOpenExitingMarketImageMarker: setOpenExitingMarketImageMarker
+        setOpenExitingMarketImageMarker: setOpenExitingMarketImageMarker,
+        setOpenBranchImageMarker: setOpenBranchImageMarker
     })(wrapMap)

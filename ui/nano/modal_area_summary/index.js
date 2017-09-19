@@ -363,36 +363,34 @@ class ModalSaleSummary extends Component {
 
     getCAPenetation = () => {
 
-        const { CA_SUMMARY_ONLY_MARKET_PENETRATION } = this.props
+        const { RELATED_GROUP_BY_MARKET_SUMMARY_DATA } = this.props
+        const GroupTotal = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[0]
 
-        if (!_.isEmpty(CA_SUMMARY_ONLY_MARKET_PENETRATION)) {
-            const Amt = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
-            const os = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
-            const setup = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'APPROVED' }) || { Total: 0, Ach: 0 }
-            const reject = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'REJECTED' }) || { Total: 0, Ach: 0 }
-            const cancel = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'CANCELLED' }) || { Total: 0, Ach: 0 }
-            const potential = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'TOTAL' }) || { Total: 0, Ach: 0 }
-            const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
-            console.log(Amt)
+        if (!_.isEmpty(GroupTotal)) {
+
+            const sum_penatation = GroupTotal[2].OS
+
             return [
                 {
-                    Detail: 'Total App',
-                    Amt: Amt.Amt ? Amt.Amt : '',
-                    OS: os.Total,
-                    SETUP: setup.Total,
-                    REJECT: reject.Total,
-                    CANCEL: cancel.Total,
-                    POTENTIAL: potential.Total,
-                    sum_penatation: sum_penatation
+                    Detail: GroupTotal[0].Detail,
+                    Amt: GroupTotal[1].OS ? GroupTotal[1].OS : '',
+                    OS: GroupTotal[0].OS,
+                    SETUP: GroupTotal[0].SETUP,
+                    REJECT: GroupTotal[0].REJECTED,
+                    CANCEL: GroupTotal[0].CANCELLED,
+                    POTENTIAL: GroupTotal[0].TOTAL,
+                    sum_penatation: sum_penatation,
+                    total_shop: GroupTotal[0].TotalShop
                 },
                 {
-                    Detail: 'Achive',
-                    OS: os.Ach,
-                    SETUP: setup.Ach,
-                    REJECT: reject.Ach,
-                    CANCEL: cancel.Ach,
-                    POTENTIAL: potential.Ach,
-                    sum_penatation: sum_penatation
+                    Detail: GroupTotal[2].Detail,
+                    OS: GroupTotal[2].OS,
+                    SETUP: GroupTotal[2].SETUP,
+                    REJECT: GroupTotal[2].REJECTED,
+                    CANCEL: GroupTotal[2].CANCELLED,
+                    POTENTIAL: GroupTotal[2].TOTAL,
+                    sum_penatation: sum_penatation,
+                    total_shop: GroupTotal[0].TotalShop
                 },
             ]
         }
@@ -468,6 +466,7 @@ class ModalSaleSummary extends Component {
         // const count_market = Object.keys(_.groupBy(this.props.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode')).length
         // const os = _.find(this.props.CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
         // const branch = _.find(this.props.RELATED_EXITING_MARKET_DATA, { MarketCode: find.MarketCode })
+        const TotalData = this.getCAPenetation()
 
         return (
             <div style={{ marginLeft: '0px' }}>
@@ -505,12 +504,12 @@ class ModalSaleSummary extends Component {
                                         <div className={styles['detail-chart']}>
                                             <div style={{ width: '160px', height: '160px' }}>
                                                 <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
-                                                <span>{'0'}%</span>
+                                                <span>{parseFloat(TotalData[0].sum_penatation).toFixed(0)}%</span>
                                             </div>
                                             <div>
                                                 <div className={styles['text-descrition']}>
                                                     <div>
-                                                        <span>{`${'00'} Market`}</span>
+                                                        <span>{`${TotalData[0].total_shop} Shop`}</span>
                                                         <span>{` Out of ${'0000'} Markets From ${'0000'}`}</span>
                                                     </div>
                                                     <span>
@@ -527,7 +526,7 @@ class ModalSaleSummary extends Component {
                                                     <Layout style={{ backgroundColor: '#FFF' }}>
                                                         <Table
                                                             className={styles['summary-table-not-odd']}
-                                                            dataSource={this.getCAPenetation()}
+                                                            dataSource={TotalData}
                                                             columns={getMarketSummaryColumns()}
                                                             pagination={false}
                                                             bordered />
@@ -565,14 +564,9 @@ class ModalSaleSummary extends Component {
 
 export default connect(
     (state) => ({
-        RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA,
-        RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
-        RELATED_EXITING_MARKET_DATA_BACKUP: state.RELATED_EXITING_MARKET_DATA_BACKUP,
-        RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
-        RELATED_CA_NOTE_DATA: state.RELATED_CA_NOTE_DATA,
         CA_SUMMARY_ONLY_MARKET_PENETRATION: state.CA_SUMMARY_ONLY_MARKET_PENETRATION,
-        CA_SUMMARY_ONLY_MARKET_CONTRIBUTION: state.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION
+        CA_SUMMARY_ONLY_MARKET_CONTRIBUTION: state.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION,
+        NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
+        RELATED_GROUP_BY_MARKET_SUMMARY_DATA: state.RELATED_GROUP_BY_MARKET_SUMMARY_DATA
     }),
-    {
-        getCASummaryOnlyData: getCASummaryOnlyData
-    })(ModalSaleSummary)
+    {})(ModalSaleSummary)

@@ -16,9 +16,11 @@ import {
     SEARCH_PRODUCT_PERFORMANCE_URL,
     SEARCH_TOTAL_SUMMARY_URL,
     SEARCH_GROUP_BY_SUMMARY_URL,
+    SEARCH_GROUP_BY_MARKET_SUMMARY_URL,
     GET_CA_SUMMARY_ONLY_URL,
 
     GET_BRANCH_MARKER_DATA_URL,
+    GET_BRANCH_IMAGE_MARKER_URL,
     GET_EXITING_MARKET_MARKER_DATA_URL,
     GET_EXITING_MARKET_IMAGE_MARKER_URL,
 
@@ -82,12 +84,40 @@ export const setOpenBranchMarker = (targetMarker, currentState, isOpen) => dispa
         .then(res => {
             let item = _.find(currentState, { BranchCode: targetMarker.BranchCode })
             item.showInfo = isOpen
+            item.showImage = false
             item.showMenu = false
             item.BRANCH_INFORMATION = res[0]
             item.CA_BRANCH_INFORMATION = res[1]
             item.BRANCH_DESCRIPTION = res[2]
             item.BRANCH_RADIUS = res[3]
             item.NOTE = res[4]
+            item.BRANCH_IMAGE = []
+
+            let newState = _.cloneDeep(currentState)
+
+            dispatch({
+                type: SET_OPEN_BRANCH_MARKER_REQUEST,
+                payload: newState
+            })
+        })
+}
+
+export const setOpenBranchImageMarker = (targetMarker, currentState, isOpen) => dispatch => {
+    const URL = `${GET_BRANCH_IMAGE_MARKER_URL}${targetMarker.BranchCode}`
+
+    fetch(URL)
+        .then(res => (res.json()))
+        .then(res => {
+            let item = _.find(currentState, { BranchCode: targetMarker.BranchCode })
+            item.showInfo = false
+            item.showImage = isOpen
+            item.showMenu = false
+            item.BRANCH_INFORMATION = []
+            item.CA_BRANCH_INFORMATION = []
+            item.BRANCH_DESCRIPTION = []
+            item.BRANCH_RADIUS = []
+            item.NOTE = []
+            item.BRANCH_IMAGE = res
 
             let newState = _.cloneDeep(currentState)
 
@@ -229,44 +259,54 @@ export const getNanoMasterData = (token = '') => ((dispatch) => {
 })
 
 export const searchNanoChangeViewByData = criteria => dispatch => {
-    dispatch({
-        [CALL_API]: {
-            endpoint: SEARCH_GROUP_BY_SUMMARY_URL,
+
+    dispatch({ type: SET_FILTER_CRITERIA_REQUEST, criteria })
+
+    dispatch({ type: SEARCH_NANO_CHANGE_VIEW_DATA_REQUEST })
+
+    let api = [
+        fetch(SEARCH_GROUP_BY_SUMMARY_URL, {
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            method: 'POST',
             body: JSON.stringify(criteria),
-            types: [
-                SEARCH_NANO_CHANGE_VIEW_DATA_REQUEST, {
-                    type: SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS,
-                    payload: (_action, _state, res) => {
-                        dispatch({ type: SET_FILTER_CRITERIA_REQUEST, criteria })
+            timeout: 1500000
+        }).then(res => (res.json())),
+        fetch(SEARCH_GROUP_BY_MARKET_SUMMARY_URL, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(criteria),
+            timeout: 1500000
+        }).then(res => (res.json()))
+    ]
 
-                        return res.json().then((groupBYSummary) => {
-                            return { groupBYSummary }
-                        })
-                    }
-                },
-                {
+    bluebird.all(api)
+        .spread((groupBYSummary, groupBYMarketSummary) => {
+            const res = {
+                groupBYSummary,
+                groupBYMarketSummary
+            }
+            dispatch({
+                type: SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS,
+                payload: res
+            })
+        })
+        .catch(e => {
+            if (!e.response) {
+                dispatch({
                     type: SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE,
-                    payload: (action, state, res) => {
-                        if (res) {
-                            return {
-                                status: res.status,
-                                statusText: res.statusText
-                            };
-                        } else {
-                            return {
-                                status: 'Network request failed'
-                            }
-                        }
+                    payload: {
+                        status: "Error",
+                        statusText: e.response
                     }
-                }
-            ]
-        }
-    })
+                })
+            }
+        })
 }
 
 export const searchNanoData = criteria => (
@@ -320,17 +360,27 @@ export const searchNanoData = criteria => (
                 },
                 body: JSON.stringify(criteria),
                 timeout: 1500000
+            }).then(res => (res.json())),
+            fetch(SEARCH_GROUP_BY_MARKET_SUMMARY_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(criteria),
+                timeout: 1500000
             }).then(res => (res.json()))
         ]
 
         bluebird.all(api)
-            .spread((nanoMarker, complititorMarker, productPerformance, totalSummary, groupBYSummary) => {
+            .spread((nanoMarker, complititorMarker, productPerformance, totalSummary, groupBYSummary, groupBYMarketSummary) => {
                 const res = {
                     nanoMarker,
                     complititorMarker,
                     productPerformance,
                     totalSummary,
-                    groupBYSummary
+                    groupBYSummary,
+                    groupBYMarketSummary
                 }
                 dispatch({
                     type: SEARCH_NANO_DATA_SUCCESS,
@@ -464,8 +514,6 @@ export const insertUpdateMarkerNoteCA = (criteria, type, loading, success, curre
                     payload: newState
                 })
             }
-
-            console.log("Save Note : ", res)
 
             success(load)
         })
