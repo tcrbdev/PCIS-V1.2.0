@@ -151,6 +151,9 @@ export const setOpenExitingMarketMarker = (targetMarker, currentState, isOpen) =
             item.showInfo = isOpen
             item.showImage = false
             item.showMenu = false
+            item.showShopLayout = false
+            item.showSaleSummary = false
+            item.showPortfolio = false
             item.MARKET_INFORMATION = res[0]
             item.CA_INFORMATION = res[1]
             item.NOTE = res[2]
@@ -176,6 +179,9 @@ export const setOpenExitingMarketImageMarker = (targetMarker, currentState, isOp
             item.showInfo = false
             item.showImage = isOpen
             item.showMenu = false
+            item.showShopLayout = false
+            item.showSaleSummary = false
+            item.showPortfolio = false
             item.MARKET_INFORMATION = []
             item.CA_INFORMATION = []
             item.NOTE = []
@@ -189,6 +195,102 @@ export const setOpenExitingMarketImageMarker = (targetMarker, currentState, isOp
             })
         })
 }
+
+export const setOpenExitingMarketShopLayoutMarker = (targetMarker, currentState, isOpen) => dispatch => {
+
+    const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
+
+    fetch(URL)
+        .then(res => (res.json()))
+        .then(res => {
+            let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
+            item.showInfo = false
+            item.showImage = false
+            item.showMenu = false
+            item.showShopLayout = isOpen
+            item.showSaleSummary = false
+            item.showPortfolio = false
+            item.MARKET_INFORMATION = []
+            item.CA_INFORMATION = []
+            item.NOTE = []
+            item.MARKET_IMAGE = res
+
+            let newState = _.cloneDeep(currentState)
+
+            dispatch({
+                type: SET_OPEN_EXITING_MARKET_MARKER_REQUEST,
+                payload: newState
+            })
+        })
+}
+
+export const setOpenExitingMarketSaleSummaryMarker = (targetMarker, currentState, isOpen) => dispatch => {
+
+    const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
+
+    fetch(URL)
+        .then(res => (res.json()))
+        .then(res => {
+            let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
+            item.showInfo = false
+            item.showImage = false
+            item.showMenu = false
+            item.showShopLayout = false
+            item.showSaleSummary = isOpen
+            item.showPortfolio = false
+            item.MARKET_INFORMATION = []
+            item.CA_INFORMATION = []
+            item.NOTE = []
+            item.MARKET_IMAGE = res
+
+            let newState = _.cloneDeep(currentState)
+
+            dispatch({
+                type: SET_OPEN_EXITING_MARKET_MARKER_REQUEST,
+                payload: newState
+            })
+        })
+}
+
+export const setOpenExitingMarketPortfolioMarker = (targetMarker, currentState, isOpen) => dispatch => {
+
+    const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
+
+    fetch(URL)
+        .then(res => (res.json()))
+        .then(res => {
+            let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
+            item.showInfo = false
+            item.showImage = false
+            item.showMenu = false
+            item.showShopLayout = false
+            item.showSaleSummary = false
+            item.showPortfolio = isOpen
+            item.MARKET_INFORMATION = []
+            item.CA_INFORMATION = []
+            item.NOTE = []
+            item.MARKET_IMAGE = res
+
+            let newState = _.cloneDeep(currentState)
+
+            dispatch({
+                type: SET_OPEN_EXITING_MARKET_MARKER_REQUEST,
+                payload: newState
+            })
+        })
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const setOpenTargetMarketMarker = (targetMarker, currentState, isOpen) => dispatch => {
 

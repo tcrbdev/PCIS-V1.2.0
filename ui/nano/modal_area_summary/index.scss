@@ -323,9 +323,11 @@
         border-top: 0px !important;
         border-bottom: 0px !important;
     }
+
+    & table tbody tr:hover { color: red; }
 }
 
-.summary-table
+.summary-table-bb
 {
     margin-bottom: 0px;
 
@@ -380,23 +382,87 @@
         border-bottom: 0px !important;
     }
 
-    & table tbody tr:nth-child(odd)
+    & table tbody tr > [class*=sub-title]
+    {
+        display: flex;
+    }
+
+
+
+    & table tbody tr:hover { color: red; }
+}
+
+/*[class*=ant-table-tbody]
+{
+    & > [class*=ant-table-row-level-0]:nth-child(odd)
     {
         background: #FFF;
     }
 
-    & table tbody tr:nth-child(even)
+    & > [class*=ant-table-row-level-0]:nth-child(even)
+    {
+        background: #dcdcdc;
+    }
+
+    & > [class*=ant-table-row-level-1]:nth-child(odd)
     {
         background: #FFF;
     }
-}
+
+    & > [class*=ant-table-row-level-1]:nth-child(even)
+    {
+        background: #dcdcdc;
+    }
+
+    & > [class*=ant-table-row-level-2]:nth-child(odd)
+    {
+        background: #FFF;
+    }
+
+    & > [class*=ant-table-row-level-2]:nth-child(even)
+    {
+        background: #dcdcdc;
+    }
+
+    & > [class*=ant-table-row-level-3]:nth-child(odd)
+    {
+        background: #FFF;
+    }
+
+    & > [class*=ant-table-row-level-3]:nth-child(even)
+    {
+        background: #dcdcdc;
+    }
+
+    & > [class*=ant-table-row-level-4]:nth-child(odd)
+    {
+        background: #FFF;
+    }
+
+    & > [class*=ant-table-row-level-4]:nth-child(even)
+    {
+        background: #dcdcdc;
+    }
+
+    & > [class*=ant-table-row-level-5]:nth-child(odd)
+    {
+        background: #FFF;
+    }
+
+    & > [class*=ant-table-row-level-5]:nth-child(even)
+    {
+        background: #dcdcdc;
+    }
+}*/
 
 .modalParentSaleSummary {
     background-color: transparent !important;
     visibility: visible;
+    position: relative;
+    overflow: hidden;
 
     .wrapper {
-        width: 720px;
+        width: 100%;
     }
 
     .header-container
@@ -407,6 +473,7 @@
         background: #03a9f4;
         height: 35px;
         min-width: 100%;
+        position: relative;
         
         & > div
         {
@@ -432,10 +499,12 @@
     .modalSaleSummary
     {
         width: 700px !important;
+        top: 0px;
+        padding-bottom: 0px;
 
         & [class*=ant-modal-body]
         {
-            padding: 10px;
+            padding: 0;
         }
 
         & [class*=ant-modal-header]

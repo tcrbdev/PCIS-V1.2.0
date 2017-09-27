@@ -5,7 +5,7 @@ import { MAP } from 'react-google-maps/lib/constants';
 
 import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination } from 'antd';
 import FontAwesome from 'react-fontawesome'
-import { Doughnut } from 'react-chartjs-2'
+import { Doughnut, HorizontalBar, Bar, Pie, Line } from 'react-chartjs-2'
 import moment from 'moment'
 import Scrollbar from 'react-smooth-scrollbar';
 
@@ -32,6 +32,9 @@ import {
     setOpenExitingMarketMarkerMenu,
     setOpenTargetMarketMarker,
     setOpenExitingMarketImageMarker,
+    setOpenExitingMarketShopLayoutMarker,
+    setOpenExitingMarketSaleSummaryMarker,
+    setOpenExitingMarketPortfolioMarker,
     insertUpdateMarkerNote
 } from '../actions/nanomaster'
 
@@ -830,14 +833,15 @@ const getBranchMarkerCircle = (props) => {
 
 const getCAPicture = (props, marketCode) => {
     let ca = []
+    const filter = _.filter(props.RELATED_CA_IN_MARKET_DATA, f => parseInt(f.OS) > 0)
     if (_.isEmpty(props.SELECTED_CA_MAP)) {
-        _.mapKeys(_.groupBy(_.filter(props.RELATED_CA_IN_MARKET_DATA, { MarketCode: marketCode }), 'CA_Code'), (value, key) => {
+        _.mapKeys(_.groupBy(_.filter(filter, { MarketCode: marketCode }), 'CA_Code'), (value, key) => {
             ca.push(key)
         })
     }
     else {
         if (props.SELECTED_CA_MAP.length > 1) {
-            _.mapKeys(_.groupBy(_.filter(props.RELATED_CA_IN_MARKET_DATA, o => o.MarketCode == marketCode && !_.isEmpty(_.find(props.SELECTED_CA_MAP, f => f == o.CA_Code))), 'CA_Code'), (value, key) => {
+            _.mapKeys(_.groupBy(_.filter(filter, o => o.MarketCode == marketCode && !_.isEmpty(_.find(props.SELECTED_CA_MAP, f => f == o.CA_Code))), 'CA_Code'), (value, key) => {
                 ca.push(key)
             })
         }
@@ -892,10 +896,10 @@ const getExitingMarkerMenu = props => {
                                 <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
                                     <ul>
                                         <li onClick={() => props.setOpenExitingMarketImageMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Picture"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
-                                        <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
-                                        <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenExitingMarketShopLayoutMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenExitingMarketSaleSummaryMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenExitingMarketMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
-                                        <li><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenExitingMarketPortfolioMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
                                     </ul>
                                 </div>
                             </div>
@@ -954,6 +958,409 @@ const getExitingMarker = (props, handleShowModal) => {
                             )
                         }
                         {
+                            item.showShopLayout &&
+                            <InfoWindow
+                                title={item.MarketName}
+                                onDomReady={onDomReady}>
+                                <Layout>
+                                    <div className={styles['headers']}>
+                                        <FontAwesome className="trigger" name="map-marker" />
+                                        <span>
+                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                                        </span>
+                                        <Icon
+                                            onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
+                                            className="trigger"
+                                            type='close' />
+                                    </div>
+                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                    </Layout>
+                                </Layout>
+                            </InfoWindow>
+                        }
+                        {
+                            item.showSaleSummary &&
+                            <InfoWindow
+                                title={item.MarketName}
+                                onDomReady={onDomReady}>
+                                <Layout>
+                                    <div className={styles['headers']}>
+                                        <FontAwesome className="trigger" name='line-chart' />
+                                        <span>
+                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                                        </span>
+                                        <Icon
+                                            onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
+                                            className="trigger"
+                                            type='close' />
+                                    </div>
+                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                    </Layout>
+                                </Layout>
+                            </InfoWindow>
+                        }
+                        {
+                            item.showPortfolio &&
+                            <InfoWindow
+                                title={item.MarketName}
+                                onDomReady={() => onDomReady(true)}>
+                                <Layout style={{ width: '738px' }}>
+                                    <div className={styles['headers']}>
+                                        <FontAwesome className="trigger" name='dollar' />
+                                        <span>
+                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                                        </span>
+                                        <Icon
+                                            onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
+                                            className="trigger"
+                                            type='close' />
+                                    </div>
+                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <div className={`${styles['chart-card']} ${styles['card-blue']}`}>
+                                                <div className={styles['chart-header']}>
+                                                    <span>Share</span>
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <span style={{ fontSize: '35px', marginLeft: '5px', marginTop: '5px' }}>80%</span>
+                                                    <div style={{ width: '160px', height: '40px', marginLeft: '7px' }}>
+                                                        <Bar
+                                                            data={{
+                                                                datasets: [{
+                                                                    data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
+                                                                    type: 'line',
+                                                                    fill: false,
+                                                                    borderColor: '#EC932F',
+                                                                    backgroundColor: '#EC932F',
+                                                                    pointBorderColor: '#EC932F',
+                                                                    pointBackgroundColor: '#EC932F',
+                                                                    pointHoverBackgroundColor: '#EC932F',
+                                                                    pointHoverBorderColor: '#EC932F',
+                                                                    yAxisID: 'y-axis-1'
+                                                                }, {
+                                                                    data: [30, 10, 60, 75, 45, 20, 60, 75, 45],
+                                                                    fill: false,
+                                                                    borderColor: '#FFF',
+                                                                    backgroundColor: '#FFF',
+                                                                }, {
+                                                                    data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
+                                                                    fill: false,
+                                                                    borderColor: '#607d8b',
+                                                                    backgroundColor: '#607d8b',
+                                                                    yAxisID: 'y-axis-2'
+                                                                }],
+                                                                labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2', 'xx', 'xxx', 'xxxx']
+                                                            }}
+                                                            options={{
+                                                                legend: { display: false },
+                                                                maintainAspectRatio: false,
+                                                                tooltips: {
+                                                                    mode: 'point'
+                                                                },
+                                                                scales: {
+                                                                    xAxes: [{
+                                                                        display: false,
+                                                                        stacked: true,
+                                                                        barPercentage: 0.6,
+                                                                    }],
+                                                                    yAxes: [{
+                                                                        display: false,
+                                                                        stacked: true,
+                                                                        position: 'left',
+                                                                        id: 'y-axis-2',
+                                                                    }, {
+                                                                        type: 'linear',
+                                                                        display: false,
+                                                                        position: 'left',
+                                                                        id: 'y-axis-1',
+                                                                        gridLines: {
+                                                                            display: false
+                                                                        },
+                                                                        labels: {
+                                                                            show: true
+                                                                        }
+                                                                    }]
+                                                                }
+                                                            }} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles['chart-card']} ${styles['card-pink']}`}>
+                                                <div className={styles['chart-header']}>
+                                                    <span>% Collection</span>
+                                                </div>
+                                                <div style={{ marginLeft: '10px', display: 'flex' }}>
+                                                    <span style={{ fontSize: '35px', marginLeft: '20px' }}>90%</span>
+                                                    <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column', marginLeft: '40px', color: '#FFF', justifyContent: 'center' }}>
+                                                        <span>- 2500 Acc.</span>
+                                                        <span>- 1.89 MB</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles['chart-card']} ${styles['card-orange']}`} style={{ display: 'flex', flexDirection: 'column' }}>
+                                                <div className={styles['chart-header']}>
+                                                    <span>Trend</span>
+                                                </div>
+                                                <div style={{ width: '225px', height: '40px', marginTop: '10px', marginLeft: '5px' }}>
+                                                    <Line
+                                                        data={{
+                                                            datasets: [{
+                                                                data: [30, 10, 60, 75, 45, 20],
+                                                                fill: false,
+                                                                borderColor: '#FFF',
+                                                                backgroundColor: '#FFF',
+                                                            }, {
+                                                                data: [80, 40, 15, 20, 90, 50],
+                                                                fill: false,
+                                                                borderColor: '#607d8b',
+                                                                backgroundColor: '#607d8b',
+                                                            }, {
+                                                                data: [0, 100, 50, 45, 20, 30],
+                                                                fill: false,
+                                                                borderColor: '#2196F3',
+                                                                backgroundColor: '#2196F3',
+                                                            }],
+                                                            labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2']
+                                                        }}
+                                                        options={{
+                                                            legend: { display: false },
+                                                            maintainAspectRatio: false,
+                                                            tooltips: {
+                                                                mode: 'point'
+                                                            },
+                                                            scales: {
+                                                                xAxes: [{
+                                                                    display: false
+                                                                }],
+                                                                yAxes: [{
+                                                                    display: false
+                                                                }]
+                                                            }
+                                                        }} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
+                                            <div className={styles['bg-chart']} style={{ width: '220px', height: '180px', padding: '10px' }}>
+                                                <HorizontalBar
+                                                    data={{
+                                                        datasets: [{
+                                                            data: [30, 10, 60, 75, 45, 20],
+                                                            backgroundColor: 'red',
+                                                        }, {
+                                                            data: [50, 30, 15, 10, 45, 60],
+                                                            backgroundColor: '#ffca28',
+                                                        }, {
+                                                            data: [20, 60, 25, 15, 10, 20],
+                                                            backgroundColor: '#AEEA00',
+                                                        }],
+                                                        labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2']
+                                                    }}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        maintainAspectRatio: false,
+                                                        tooltips: {
+                                                            mode: 'index'
+                                                        },
+                                                        scales: {
+                                                            xAxes: [{
+                                                                display: false,
+                                                                stacked: true,
+                                                                gridLines: {
+                                                                    display: false
+                                                                }
+                                                            }],
+                                                            yAxes: [{
+                                                                stacked: true,
+                                                                barPercentage: 0.4,
+                                                                gridLines: {
+                                                                    display: false
+                                                                },
+                                                                ticks: {
+                                                                    fontFamily: 'Kanit',
+                                                                    fontColor: '#000'
+                                                                }
+                                                            }]
+                                                        }
+                                                    }}
+                                                    plugins={{
+                                                        afterDatasetsDraw: (chartInstance, easing) => {
+                                                            //debugger; 
+
+                                                            //console.log(chartInstance, easing)
+
+                                                            const current = {
+                                                                'NPL': 95,
+                                                                'M2': 50,
+                                                                'M1': 33,
+                                                                'X Day': 80,
+                                                                'W3-4': 130,
+                                                                'W1-2': 0
+                                                            }
+
+                                                            const
+                                                                points0 = chartInstance.chart.getDatasetMeta(0).data,
+                                                                points1 = chartInstance.chart.getDatasetMeta(1).data,
+                                                                points2 = chartInstance.chart.getDatasetMeta(2).data
+
+
+                                                            /*points0.map((item, index) => {
+                                                                const model = item._model
+                                                                console.log(`Dataset Index 0 ${model.label} [X : ${model.x} , Y : ${model.y}] Current : ${current[model.label]}`)
+     
+                                                                const ctx = chartInstance.chart.ctx;
+                                                                ctx.fillText("A", model.x, model.y);
+                                                            })
+     
+                                                            points1.map((item, index) => {
+                                                                const model = item._model
+                                                                console.log(`Dataset Index 1 ${model.label} [X : ${model.x} , Y : ${model.y}] Current : ${current[model.label]}`)
+     
+                                                                const ctx = chartInstance.chart.ctx;
+                                                                ctx.fillText("B", model.x, model.y);
+                                                            })
+     
+     
+                                                            points2.map((item, index) => {
+                                                                const model = item._model
+                                                                console.log(`Dataset Index 2 ${model.label} [X : ${model.x} , Y : ${model.y}] Current : ${current[model.label]}`)
+     
+                                                                const ctx = chartInstance.chart.ctx;
+                                                                ctx.fillText("C", model.x, model.y);
+                                                            })*/
+
+                                                            const datasets = chartInstance.data.datasets[0].data
+
+                                                            datasets.map((item, index) => {
+                                                                const ctx = chartInstance.chart.ctx;
+
+                                                                const y = points0[index]._model.y
+                                                                const minX = points0[index]._model.base
+                                                                const maxX = points2[0]._model.x
+
+                                                                let pointer = 0
+                                                                if (current[points0[index]._model.label] <= 0) {
+                                                                    pointer = 0
+                                                                }
+                                                                else if (current[points0[index]._model.label] > 100) {
+                                                                    pointer = 100
+                                                                }
+                                                                else {
+                                                                    pointer = current[points0[index]._model.label]
+                                                                }
+
+                                                                const pointerValue = current[points0[index]._model.label] <= 0 ? minX : ((pointer * (maxX - minX)) / 100) + minX
+                                                                //console.log(pointer, pointerValue, y, minX, maxX, pointerValue + minX)
+
+                                                                /*ctx.beginPath();
+                                                                ctx.moveTo(minX, y);
+                                                                ctx.strokeStyle = 'black';
+                                                                ctx.lineTo(pointerValue, y);
+                                                                ctx.stroke();*/
+
+                                                                ctx.restore();
+                                                                ctx.textAlign = 'center'
+                                                                ctx.font = '30px FontAwesome'
+                                                                ctx.fillStyle = '#2196f3'
+                                                                ctx.fillText('\uF0dd', pointerValue, y - 4)
+                                                                ctx.save();
+                                                            })
+                                                        }
+
+                                                    }} />
+                                            </div>
+                                            <div className={styles['bg-chart']} style={{ width: '230px', height: '180px', padding: '10px' }}>
+                                                <Pie
+                                                    data={{
+                                                        datasets: [{
+                                                            data: [75, 25],
+                                                            backgroundColor: ['#607d8b', '#795548'],
+                                                        }],
+                                                        labels: ['W0', 'อ']
+                                                    }}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        maintainAspectRatio: false
+                                                    }} />
+                                            </div>
+                                            <div className={styles['bg-chart']} style={{ width: '235px', height: '180px', padding: '10px' }}>
+                                                <Bar
+                                                    data={{
+                                                        datasets: [{
+                                                            data: [30, 10, 60, 75, 45],
+                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
+                                                        }],
+                                                        labels: ['จ', 'อ', 'พ', 'พฤ', 'ศ']
+                                                    }}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        maintainAspectRatio: false
+                                                    }} />
+                                            </div>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
+                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
+                                                <Pie
+                                                    data={{
+                                                        datasets: [{
+                                                            data: [60, 20, 10],
+                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
+                                                        }],
+                                                        labels: ['W0', 'อ', 'พ']
+                                                    }}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        maintainAspectRatio: false
+                                                    }} />
+                                            </div>
+                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
+                                                <Pie
+                                                    data={{
+                                                        datasets: [{
+                                                            data: [60, 20, 10],
+                                                            backgroundColor: ['#f44336', '#607d8b', '#2196F3', '#795548'],
+                                                        }],
+                                                        labels: ['W0', 'อ', 'พ']
+                                                    }}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        maintainAspectRatio: false
+                                                    }} />
+                                            </div>
+                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
+                                                <Pie
+                                                    data={{
+                                                        datasets: [{
+                                                            data: [60, 20, 10],
+                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
+                                                        }],
+                                                        labels: ['W0', 'อ', 'พ']
+                                                    }}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        maintainAspectRatio: false
+                                                    }} />
+                                            </div>
+                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
+                                                <Pie
+                                                    data={{
+                                                        datasets: [{
+                                                            data: [60, 20, 10],
+                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
+                                                        }],
+                                                        labels: ['W0', 'อ', 'พ']
+                                                    }}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        maintainAspectRatio: false
+                                                    }} />
+                                            </div>
+                                        </div>
+                                    </Layout>
+                                </Layout>
+                            </InfoWindow>
+                        }
+                        {
                             item.showInfo &&
                             (
                                 <InfoWindow
@@ -961,9 +1368,7 @@ const getExitingMarker = (props, handleShowModal) => {
                                     onDomReady={onDomReady}>
                                     <Layout>
                                         <div className={styles['headers']}>
-                                            <Icon
-                                                className="trigger"
-                                                type='pie-chart' />
+                                            <FontAwesome className="trigger" name='table' />
                                             <span>
                                                 {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
                                             </span>
@@ -1543,5 +1948,8 @@ export default connect(
         setOpenExitingMarketMarkerMenu: setOpenExitingMarketMarkerMenu,
         setOpenTargetMarketMarker: setOpenTargetMarketMarker,
         setOpenExitingMarketImageMarker: setOpenExitingMarketImageMarker,
-        setOpenBranchImageMarker: setOpenBranchImageMarker
+        setOpenBranchImageMarker: setOpenBranchImageMarker,
+        setOpenExitingMarketShopLayoutMarker: setOpenExitingMarketShopLayoutMarker,
+        setOpenExitingMarketSaleSummaryMarker: setOpenExitingMarketSaleSummaryMarker,
+        setOpenExitingMarketPortfolioMarker: setOpenExitingMarketPortfolioMarker
     })(wrapMap)

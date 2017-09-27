@@ -12,6 +12,7 @@ import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
 
 import { getCASummaryOnlyData } from '../actions/nanomaster'
+import { constantQueryType } from '../../common/constants/constants'
 
 import styles from './index.scss'
 import cls from './modal_hack.css'
@@ -92,7 +93,7 @@ const getMarketSummaryColumns = () => {
     }, {
         title: (
             <div className={styles['div-point']}>
-                <span>Total</span>
+                <span>Potential</span>
             </div>
         ),
         dataIndex: 'POTENTIAL',
@@ -108,40 +109,39 @@ const getMarketSummaryColumns = () => {
 const getColumnCA = (data) => {
     return [{
         title: (<div className={styles['div-center']}><span>Name</span></div>),
-        dataIndex: 'MarketName',
-        key: 'MarketName',
+        dataIndex: 'Name',
+        key: 'Name',
         width: '15%',
-        className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']} sub-title`,
         render: (text, record, index) => {
-            // const bg = _.find(data.offset, { name: text }).color
             return (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span className={styles['color-point']} style={{ backgroundColor: record.color }}></span>
-                    <Tooltip title={text} placement="left" >
-                        <span className={styles['text-ellipsis']}>{text}</span>
-                    </Tooltip>
-                </div>
+                <Tooltip title={text} placement="top" >
+                    <span className={styles['text-ellipsis']}>{text}</span>
+                </Tooltip>
             )
         }
     }, {
         title: (<div className={styles['div-center']}>Start<br />Month</div>),
-        dataIndex: 'StatusDate',
-        key: 'StatusDate',
+        dataIndex: 'StartWork',
+        key: 'StartWork',
         width: '6%',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        render: (text, record, index) => {
+            return !_.isEmpty(text) && text.split('T').length > 1 ? moment(text.split('T')[0]).format('MMM-YY') : ''
+        }
     }, {
-        title: (<div className={styles['div-center']}>WkCycle<br />Due</div>),
-        dataIndex: 'BillingDate',
-        key: 'BillingDate',
+        title: (<div className={styles['div-center']}>Status</div>),
+        dataIndex: 'CycleDueDate',
+        key: 'CycleDueDate',
         width: '6%',
-        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`
     }, {
         title: (<span className={styles['align-center']}>OS Bal.</span>),
         className: `${styles['hight-light']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             title: (<div className={styles['div-center']}><span>App</span></div>),
-            dataIndex: 'OS_App',
-            key: 'OS_App',
+            dataIndex: 'OS',
+            key: 'OS',
             width: '4.5%',
             className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -149,8 +149,8 @@ const getColumnCA = (data) => {
             }
         }, {
             title: (<div className={styles['div-center']}><span>%</span></div>),
-            dataIndex: 'OS_Ach',
-            key: 'OS_Ach',
+            dataIndex: 'OS_ACH',
+            key: 'OS_ACH',
             width: '4.5%',
             className: `${styles['align-right-hightlight']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -162,8 +162,8 @@ const getColumnCA = (data) => {
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             title: (<div className={styles['div-center']}><span>App</span></div>),
-            dataIndex: 'Setup_App',
-            key: 'Setup_App',
+            dataIndex: 'APPROVED',
+            key: 'APPROVED',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -171,8 +171,8 @@ const getColumnCA = (data) => {
             }
         }, {
             title: (<div className={styles['div-center']}><span>%</span></div>),
-            dataIndex: 'Setup_Ach',
-            key: 'Setup_Ach',
+            dataIndex: 'APPROVED_ACH',
+            key: 'APPROVED_ACH',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -184,8 +184,8 @@ const getColumnCA = (data) => {
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             title: (<div className={styles['div-center']}><span>App</span></div>),
-            dataIndex: 'Reject_App',
-            key: 'Reject_App',
+            dataIndex: 'REJECTED',
+            key: 'REJECTED',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -193,8 +193,8 @@ const getColumnCA = (data) => {
             }
         }, {
             title: (<div className={styles['div-center']}><span>%</span></div>),
-            dataIndex: 'Reject_Ach',
-            key: 'Reject_Ach',
+            dataIndex: 'REJECTED_ACH',
+            key: 'REJECTED_ACH',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -206,8 +206,8 @@ const getColumnCA = (data) => {
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             title: (<div className={styles['div-center']}><span>App</span></div>),
-            dataIndex: 'Cancel_App',
-            key: 'Cancel_App',
+            dataIndex: 'CANCELLED',
+            key: 'CANCELLED',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -215,8 +215,8 @@ const getColumnCA = (data) => {
             }
         }, {
             title: (<div className={styles['div-center']}><span>%</span></div>),
-            dataIndex: 'Cancel_Ach',
-            key: 'Cancel_Ach',
+            dataIndex: 'CANCELLED_ACH',
+            key: 'CANCELLED_ACH',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -228,8 +228,8 @@ const getColumnCA = (data) => {
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             title: (<div className={styles['div-center']}><span>App</span></div>),
-            dataIndex: 'Total_App',
-            key: 'Total_App',
+            dataIndex: 'TOTAL',
+            key: 'TOTAL',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -237,8 +237,8 @@ const getColumnCA = (data) => {
             }
         }, {
             title: (<div className={styles['div-center']}><span>%</span></div>),
-            dataIndex: 'Total_Ach',
-            key: 'Total_Ach',
+            dataIndex: 'TOTAL_ACH',
+            key: 'TOTAL_ACH',
             width: '4.5%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
             render: (text, record, index) => {
@@ -316,29 +316,33 @@ class ModalSaleSummary extends Component {
     }
 
     chartData = () => {
-        const ca_con = this.getCAContribution()
 
-        let data = [], labels = [], bg = [], top = 5
-        ca_con.map((item, index) => {
-            if (index < top) {
-                data.push(item.OS_App)
-                labels.push(item.label)
-                bg.push(item.color)
-            }
-            else if (index == top) {
-                data.push(_.sumBy(_.filter(ca_con, { label: 'Other' }), 'OS_App'))
-                labels.push('Other')
-                bg.push(item.color)
-            }
-        })
+        const { RELATED_GROUP_BY_MARKET_SUMMARY_DATA } = this.props
+        const GroupTotal = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[0]
+
+        // const ca_con = this.getCAContribution()
+
+        // let data = [], labels = [], bg = [], top = 5
+        // ca_con.map((item, index) => {
+        //     if (index < top) {
+        //         data.push(item.OS_App)
+        //         labels.push(item.label)
+        //         bg.push(item.color)
+        //     }
+        //     else if (index == top) {
+        //         data.push(_.sumBy(_.filter(ca_con, { label: 'Other' }), 'OS_App'))
+        //         labels.push('Other')
+        //         bg.push(item.color)
+        //     }
+        // })
 
         return {
             data: {
                 datasets: [{
-                    data: data,
-                    backgroundColor: bg
+                    data: !_.isEmpty(GroupTotal) ? [parseFloat(GroupTotal[2].SETUP), parseFloat(GroupTotal[2].REJECTED), parseFloat(GroupTotal[2].CANCELLED)] : [],
+                    backgroundColor: ['#8bc34a', '#e91e63', '#ff5722']
                 }],
-                labels: labels,
+                labels: ['SETUP', 'REJECTED', 'CANCEL'],
                 borderWidth: 0
             },
             options: {
@@ -347,16 +351,7 @@ class ModalSaleSummary extends Component {
                 legend: { display: false },
                 maintainAspectRatio: false,
                 fullWidth: true,
-                tooltipFontSize: 10,
-                tooltips: {
-                    callbacks: {
-                        label: (tooltipItem, cdata) => {
-                            const sum = _.sum(data)
-                            const avg = (data[tooltipItem.index] / sum) * 100
-                            return `${parseFloat(avg).toFixed(0)}%`
-                        }
-                    }
-                }
+                tooltipFontSize: 10
             }
         }
     }
@@ -368,7 +363,7 @@ class ModalSaleSummary extends Component {
 
         if (!_.isEmpty(GroupTotal)) {
 
-            const sum_penatation = GroupTotal[2].OS
+            const sum_penatation = 100 - parseFloat(GroupTotal[2].TOTAL)
 
             return [
                 {
@@ -400,50 +395,146 @@ class ModalSaleSummary extends Component {
     }
 
     getCAContribution = () => {
-        const { CA_SUMMARY_ONLY_MARKET_CONTRIBUTION } = this.props
+        const { RELATED_GROUP_BY_MARKET_SUMMARY_DATA, NANO_FILTER_CRITERIA } = this.props
 
-        let result = [], top = 5
-        _.mapKeys(_.groupBy(CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode'), (value, key) => {
+        const RegionSummary = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[6]
+        const AreaSummary = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[5]
+        const ZoneSummary = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[4]
+        const BranchSummary = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[3]
+        const MarketSummary = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[2]
+        const CASummary = RELATED_GROUP_BY_MARKET_SUMMARY_DATA[1]
 
-            const os = _.find(value, { Status: 'OS' })
-            const approved = _.find(value, { Status: 'APPROVED' })
-            const reject = _.find(value, { Status: 'REJECTED' })
-            const cancel = _.find(value, { Status: 'CANCELLED' })
-            const total = _.find(value, { Status: 'TOTAL' })
+        let data = []
 
-            const obj = {
-                MarketCode: key,
-                MarketName: value[0].MarketName,
-                OS_App: !_.isEmpty(os) ? os.Total : 0,
-                OS_Ach: !_.isEmpty(os) ? os.Ach : 0,
-                Setup_App: !_.isEmpty(approved) ? approved.Total : 0,
-                Setup_Ach: !_.isEmpty(approved) ? approved.Ach : 0,
-                Reject_App: !_.isEmpty(reject) ? reject.Total : 0,
-                Reject_Ach: !_.isEmpty(reject) ? reject.Ach : 0,
-                Cancel_App: !_.isEmpty(cancel) ? cancel.Total : 0,
-                Cancel_Ach: !_.isEmpty(cancel) ? cancel.Ach : 0,
-                Total_App: !_.isEmpty(total) ? total.Total : 0,
-                Total_Ach: !_.isEmpty(total) ? total.Ach : 0,
-                BillingDate: getFormatShortDay(value[0].CycleDue),
-                StatusDate: _.isEmpty(value[0].StartWork) ? '' : moment(value[0].StartWork).format('MMM-YY')
-            }
-            result.push(obj)
-        })
+        switch (NANO_FILTER_CRITERIA.QueryType) {
+            case constantQueryType.region:
+            case '':
+                data = RegionSummary.map((region_item, region_index) => {
+                    region_item.key = region_item.RegionID
+                    region_item.Name = region_item.RegionID
+                    region_item.children = _.filter(AreaSummary, { RegionID: region_item.RegionID }).map((area_item, area_index) => {
+                        area_item.key = area_item.AreaID
+                        area_item.Name = area_item.AreaID
+                        area_item.children = _.filter(ZoneSummary, { AreaID: area_item.AreaID }).map((zone_item, zone_index) => {
+                            zone_item.key = zone_item.ZoneValue
+                            zone_item.Name = zone_item.ZoneValue
+                            zone_item.children = _.filter(BranchSummary, { ZoneValue: zone_item.ZoneValue }).map((branch_item, branch_index) => {
+                                branch_item.key = branch_item.BranchCode
+                                branch_item.Name = branch_item.BranchName
+                                branch_item.children = _.filter(MarketSummary, { BranchCode: branch_item.BranchCode }).map((market_item, market_index) => {
+                                    market_item.key = market_item.MarketCode
+                                    market_item.Name = market_item.MarketName
+                                    market_item.children = _.filter(CASummary, { MarketCode: market_item.MarketCode }).map((ca_item, ca_index) => {
+                                        ca_item.key = `${market_item.MarketCode}_${ca_item.CAID}`
+                                        ca_item.Name = ca_item.CAName
+                                        return ca_item
+                                    })
+                                    return market_item
+                                })
+                                return branch_item
+                            })
+                            return zone_item
+                        })
+                        return area_item
+                    })
+                    return region_item
+                })
+                break;
+            case constantQueryType.area:
+                data = AreaSummary.map((area_item, area_index) => {
+                    area_item.key = area_item.AreaID
+                    area_item.Name = area_item.AreaID
+                    area_item.children = _.filter(ZoneSummary, { AreaID: area_item.AreaID }).map((zone_item, zone_index) => {
+                        zone_item.key = zone_item.ZoneValue
+                        zone_item.Name = zone_item.ZoneValue
+                        zone_item.children = _.filter(BranchSummary, { ZoneValue: zone_item.ZoneValue }).map((branch_item, branch_index) => {
+                            branch_item.key = branch_item.BranchCode
+                            branch_item.Name = branch_item.BranchName
+                            branch_item.children = _.filter(MarketSummary, { BranchCode: branch_item.BranchCode }).map((market_item, market_index) => {
+                                market_item.key = market_item.MarketCode
+                                market_item.Name = market_item.MarketName
+                                market_item.children = _.filter(CASummary, { MarketCode: market_item.MarketCode }).map((ca_item, ca_index) => {
+                                    ca_item.key = `${market_item.MarketCode}_${ca_item.CAID}`
+                                    ca_item.Name = ca_item.CAName
+                                    return ca_item
+                                })
+                                return market_item
+                            })
+                            return branch_item
+                        })
+                        return zone_item
+                    })
+                    return area_item
+                })
+                break;
+            case constantQueryType.zone:
+                data = ZoneSummary.map((zone_item, zone_index) => {
+                    zone_item.key = zone_item.ZoneValue
+                    zone_item.Name = zone_item.ZoneValue
+                    zone_item.children = _.filter(BranchSummary, { ZoneValue: zone_item.ZoneValue }).map((branch_item, branch_index) => {
+                        branch_item.key = branch_item.BranchCode
+                        branch_item.Name = branch_item.BranchName
+                        branch_item.children = _.filter(MarketSummary, { BranchCode: branch_item.BranchCode }).map((market_item, market_index) => {
+                            market_item.key = market_item.MarketCode
+                            market_item.Name = market_item.MarketName
+                            market_item.children = _.filter(CASummary, { MarketCode: market_item.MarketCode }).map((ca_item, ca_index) => {
+                                ca_item.key = `${market_item.MarketCode}_${ca_item.CAID}`
+                                ca_item.Name = ca_item.CAName
+                                return ca_item
+                            })
+                            return market_item
+                        })
+                        return branch_item
+                    })
+                    return zone_item
+                })
+                break;
+            case constantQueryType.branch:
+            case constantQueryType.branch_kiosk:
+                data = BranchSummary.map((item, index) => {
+                    item.key = item.BranchCode
+                    item.Name = item.BranchName
+                    item.children = _.filter(MarketSummary, { BranchCode: item.BranchCode }).map((market_item, market_index) => {
+                        market_item.key = market_item.MarketCode
+                        market_item.Name = market_item.MarketName
+                        market_item.children = _.filter(CASummary, { MarketCode: market_item.MarketCode }).map((ca_item, ca_index) => {
+                            ca_item.key = `${market_item.MarketCode}_${ca_item.CAID}`
+                            ca_item.Name = ca_item.CAName
+                            return ca_item
+                        })
+                        return market_item
+                    })
+                    return item
+                })
+                break;
+            case constantQueryType.ca:
+                data = MarketSummary.map((market_item, market_index) => {
+                    market_item.key = market_item.MarketCode
+                    market_item.Name = market_item.MarketName
+                    market_item.children = _.filter(CASummary, { MarketCode: market_item.MarketCode }).map((ca_item, ca_index) => {
+                        ca_item.key = `${market_item.MarketCode}_${ca_item.CAID}`
+                        ca_item.Name = ca_item.CAName
+                        return ca_item
+                    })
+                    return market_item
+                })
+                break;
+        }
 
-        let objResult = _.orderBy(result, ['OS_Ach', 'Setup_Ach', 'CAID'], ['desc', 'desc', 'asc'])
+        // if (!_.isEmpty(BranchSummary)) {
+        //     data = BranchSummary.map((item, index) => {
+        //         item.key = item.BranchCode
+        //         item.Name = item.BranchName
+        //         item.children = _.filter(CASummary, { BranchCode: item.BranchCode }).map((ca_item, ca_index) => {
+        //             ca_item.key = ca_item.CAID
+        //             ca_item.Name = ca_item.CAName
+        //             return ca_item
+        //         })
+        //         return item
+        //     })
+        // }
 
-        objResult.map((item, index) => {
-            if (index < top) {
-                item.label = item.MarketName
-                item.color = color[index]
-            }
-            else {
-                item.label = 'Other'
-                item.color = '#b1b1b1'
-            }
-        })
-
-        return objResult
+        return data
     }
 
     handleShowModal = () => {
@@ -478,8 +569,11 @@ class ModalSaleSummary extends Component {
                     onCancel={this.handleCancel}
                     footer={null}
                     closable={false}
+                    maskClosable={false}
+                    mask={false}
+                    getContainer={() => document.getElementById('modal-area-summary')}
                 >
-                    <Draggable onDrag={this.handleDrag}>
+
                         <article className={styles['wrapper']}>
                             <div className={styles['header-container']}>
                                 <div className={styles['ca-imgs']}>
@@ -504,12 +598,12 @@ class ModalSaleSummary extends Component {
                                         <div className={styles['detail-chart']}>
                                             <div style={{ width: '160px', height: '160px' }}>
                                                 <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
-                                                <span>{parseFloat(TotalData[0].sum_penatation).toFixed(0)}%</span>
+                                                <span>{TotalData.length > 0 ? parseFloat(TotalData[0].sum_penatation).toFixed(0) : 0}%</span>
                                             </div>
                                             <div>
                                                 <div className={styles['text-descrition']}>
                                                     <div>
-                                                        <span>{`${TotalData[0].total_shop} Shop`}</span>
+                                                        <span>{`${TotalData.length > 0 ? TotalData[0].total_shop : 0} Shop`}</span>
                                                         <span>{` Out of ${'0000'} Markets From ${'0000'}`}</span>
                                                     </div>
                                                     <span>
@@ -521,7 +615,7 @@ class ModalSaleSummary extends Component {
                                                         <Icon
                                                             className="trigger"
                                                             type='bars' />
-                                                        <span>O/S Contribution</span>
+                                                        <span>Market Penetation</span>
                                                     </div>
                                                     <Layout style={{ backgroundColor: '#FFF' }}>
                                                         <Table
@@ -539,14 +633,19 @@ class ModalSaleSummary extends Component {
                                                 <Icon
                                                     className="trigger"
                                                     type='bars' />
-                                                <span>CA Market Lists</span>
+                                                <span style={{ textTransform: 'capitalize' }}>{`${this.props.NANO_FILTER_CRITERIA.QueryType} Lists`}</span>
                                             </div>
                                             <Layout style={{ backgroundColor: '#FFF' }}>
                                                 <Table
-                                                    className={styles['summary-table']}
+                                                    className={styles['summary-table-bb']}
                                                     dataSource={this.getCAContribution()}
                                                     columns={getColumnCA(this.chartData())}
-                                                    pagination={false}
+                                                    pagination={{
+                                                        size: "small",
+                                                        style: { marginRight: '10px' },
+                                                        pageSize: 10,
+                                                        showTotal: (total) => (`Total ${total} items`)
+                                                    }}
                                                     bordered />
                                             </Layout>
                                         </div>
@@ -554,7 +653,7 @@ class ModalSaleSummary extends Component {
                                 </Layout>
                             </Layout>
                         </article>
-                    </Draggable>
+
                 </Modal>
                 <Tooltip title="Market Penatation" placement="topRight"><FontAwesome style={{ color: '#E91E63' }} name="table" onClick={this.handleModal} /></Tooltip>
             </div>

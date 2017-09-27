@@ -75,7 +75,7 @@ class Filter extends Component {
                 label: 'Select All',
                 value: MASTER_REGION_DATA.map(item => item.RegionID).join(','),
                 key: 'all',
-                children: MASTER_REGION_DATA.map((item, index) => {
+                children: _.orderBy(MASTER_REGION_DATA, ['RegionID'], ['asc']).map((item, index) => {
                     return ({
                         label: item.RegionID,
                         value: `${item.RegionID}`,
@@ -366,7 +366,7 @@ class Filter extends Component {
                     criteria.EmpCode = auth.Session.sess_empcode
                 }
 
-                // searchNanoData(criteria)
+                searchNanoData(criteria)
             }
         });
     }
@@ -385,7 +385,31 @@ class Filter extends Component {
 
         console.log(Region, Area, Zone, Branch, KioskBranch, CAName)
 
-        // let result = "";
+        let result = "";
+
+        if (Region.length > 1) {
+            result = constantQueryType.region
+        }
+
+        if (Area.length >= 1) {
+            result = constantQueryType.area
+        }
+
+        if (Zone.length > 0) {
+            result = constantQueryType.zone
+        }
+
+        if (Branch.length > 0) {
+            result = constantQueryType.branch
+        }
+
+        if (KioskBranch.length > 0) {
+            result = constantQueryType.branch_kiosk
+        }
+
+        if (CAName.length > 0) {
+            result = constantQueryType.ca
+        }
 
         // if (CAName.length > 0) {
         //     if (CAName.length == 1) {
@@ -419,22 +443,22 @@ class Filter extends Component {
         //     result = constantQueryType.region
         // }
 
-        let result = "";
-        if (CAName.length > 0) {
-            result = constantQueryType.ca
-        }
-        else if (Branch.length > 1 && KioskBranch.length > 1) {
-            result = constantQueryType.branch_kiosk
-        }
-        else if (Branch.length >= 2 && Branch.length <= 4) {
-            result = constantQueryType.branch
-        }
-        else if (Area.length == 1 && (Zone.length > 0)) {
-            result = constantQueryType.zone
-        }
-        else {
-            result = constantQueryType.area
-        }
+        // let result = "";
+        // if (CAName.length > 0) {
+        //     result = constantQueryType.ca
+        // }
+        // else if (Branch.length > 1 && KioskBranch.length > 1) {
+        //     result = constantQueryType.branch_kiosk
+        // }
+        // else if (Branch.length >= 2 && Branch.length <= 4) {
+        //     result = constantQueryType.branch
+        // }
+        // else if (Area.length == 1 && (Zone.length > 0)) {
+        //     result = constantQueryType.zone
+        // }
+        // else {
+        //     result = constantQueryType.area
+        // }
 
         console.log(result)
         return result

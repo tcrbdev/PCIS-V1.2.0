@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withCookies } from 'react-cookie';
+import Draggable from 'react-draggable'
 
 import { Icon, Button, Collapse, Layout, Table, Tooltip, Popover, Menu, Dropdown } from 'antd';
 import Scrollbar from 'react-smooth-scrollbar';
@@ -593,6 +594,17 @@ class Index extends Component {
                     }
 
                 </Sider>
+                <Draggable onDrag={this.handleDrag}>
+                    <div id="modal-sale-summary" className={styles['multiple-window']}>
+
+                    </div>
+                </Draggable>
+                <Draggable onDrag={this.handleDrag}>
+                    <div id="modal-area-summary" className={styles['multiple-window']}>
+
+                    </div>
+                </Draggable>
+
             </Layout>
         )
     }

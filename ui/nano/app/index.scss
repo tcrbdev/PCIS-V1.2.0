@@ -33,8 +33,8 @@
 .float-button
 {
     position: absolute;
-    right: 10px;
-    top: 45px;
+    right: 5px;
+    top: 5px;
     & > button
     {
         font-size: 30px !important;
@@ -642,3 +642,14 @@
     }
 
     .hide {display: none !important;}
+
+    .multiple-window
+    {
+        position: absolute;
+    display: flex;
+    /*width: 500px;
+    height: 500px;*/
+    box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);
+     z-index: 3;
+     overflow: hidden;
+    }
