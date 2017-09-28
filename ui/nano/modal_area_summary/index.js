@@ -302,6 +302,13 @@ class ModalSaleSummary extends Component {
     }
 
     componentDidMount() {
+        if (document.getElementById('modal-area-summary') === null || document.getElementById('modal-area-summary') === undefined) {
+            var divModal = document.createElement("div")
+            divModal.id = 'modal-area-summary'
+
+            document.getElementById('add-area').appendChild(divModal)
+        }
+
         this.getCAContribution(this.props)
     }
 
@@ -574,85 +581,85 @@ class ModalSaleSummary extends Component {
                     getContainer={() => document.getElementById('modal-area-summary')}
                 >
 
-                        <article className={styles['wrapper']}>
-                            <div className={styles['header-container']}>
-                                <div className={styles['ca-imgs']}>
-                                    <Popover placement="left" content={<img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${58385}`} />} >
-                                        <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${58385}`} />
-                                    </Popover>
-                                </div>
-                                <div className={styles['title-img']}>
-                                    <span>
-                                        {ca_name}&nbsp;
-                                         <span className={styles['title-wp']}>({work_date_format})</span>
-                                    </span>
-                                </div>
-                                <Icon
-                                    onClick={this.handleCancel}
-                                    className={styles["trigger-close"]}
-                                    type='close' />
+                    <article className={styles['wrapper']}>
+                        <div className={styles['header-container']}>
+                            <div className={styles['ca-imgs']}>
+                                <Popover placement="left" content={<img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${58385}`} />} >
+                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${58385}`} />
+                                </Popover>
                             </div>
-                            <Layout>
-                                <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>
-                                    <div className={styles['detail-container']}>
-                                        <div className={styles['detail-chart']}>
-                                            <div style={{ width: '160px', height: '160px' }}>
-                                                <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
-                                                <span>{TotalData.length > 0 ? parseFloat(TotalData[0].sum_penatation).toFixed(0) : 0}%</span>
-                                            </div>
-                                            <div>
-                                                <div className={styles['text-descrition']}>
-                                                    <div>
-                                                        <span>{`${TotalData.length > 0 ? TotalData[0].total_shop : 0} Shop`}</span>
-                                                        <span>{` Out of ${'0000'} Markets From ${'0000'}`}</span>
-                                                    </div>
-                                                    <span>
-                                                        {`Temp Information`}
-                                                    </span>
-                                                </div>
-                                                <div className={styles['box-shadow']}>
-                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                        <Icon
-                                                            className="trigger"
-                                                            type='bars' />
-                                                        <span>Market Penetation</span>
-                                                    </div>
-                                                    <Layout style={{ backgroundColor: '#FFF' }}>
-                                                        <Table
-                                                            className={styles['summary-table-not-odd']}
-                                                            dataSource={TotalData}
-                                                            columns={getMarketSummaryColumns()}
-                                                            pagination={false}
-                                                            bordered />
-                                                    </Layout>
-                                                </div>
-                                            </div>
+                            <div className={styles['title-img']}>
+                                <span>
+                                    {ca_name}&nbsp;
+                                         <span className={styles['title-wp']}>({work_date_format})</span>
+                                </span>
+                            </div>
+                            <Icon
+                                onClick={this.handleCancel}
+                                className={styles["trigger-close"]}
+                                type='close' />
+                        </div>
+                        <Layout>
+                            <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>
+                                <div className={styles['detail-container']}>
+                                    <div className={styles['detail-chart']}>
+                                        <div style={{ width: '160px', height: '160px' }}>
+                                            <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
+                                            <span>{TotalData.length > 0 ? parseFloat(TotalData[0].sum_penatation).toFixed(0) : 0}%</span>
                                         </div>
-                                        <div className={styles['box-shadow']}>
-                                            <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                <Icon
-                                                    className="trigger"
-                                                    type='bars' />
-                                                <span style={{ textTransform: 'capitalize' }}>{`${this.props.NANO_FILTER_CRITERIA.QueryType} Lists`}</span>
+                                        <div>
+                                            <div className={styles['text-descrition']}>
+                                                <div>
+                                                    <span>{`${TotalData.length > 0 ? TotalData[0].total_shop : 0} Shop`}</span>
+                                                    <span>{` Out of ${'0000'} Markets From ${'0000'}`}</span>
+                                                </div>
+                                                <span>
+                                                    {`Temp Information`}
+                                                </span>
                                             </div>
-                                            <Layout style={{ backgroundColor: '#FFF' }}>
-                                                <Table
-                                                    className={styles['summary-table-bb']}
-                                                    dataSource={this.getCAContribution()}
-                                                    columns={getColumnCA(this.chartData())}
-                                                    pagination={{
-                                                        size: "small",
-                                                        style: { marginRight: '10px' },
-                                                        pageSize: 10,
-                                                        showTotal: (total) => (`Total ${total} items`)
-                                                    }}
-                                                    bordered />
-                                            </Layout>
+                                            <div className={styles['box-shadow']}>
+                                                <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                    <Icon
+                                                        className="trigger"
+                                                        type='bars' />
+                                                    <span>Market Penetation</span>
+                                                </div>
+                                                <Layout style={{ backgroundColor: '#FFF' }}>
+                                                    <Table
+                                                        className={styles['summary-table-not-odd']}
+                                                        dataSource={TotalData}
+                                                        columns={getMarketSummaryColumns()}
+                                                        pagination={false}
+                                                        bordered />
+                                                </Layout>
+                                            </div>
                                         </div>
                                     </div>
-                                </Layout>
+                                    <div className={styles['box-shadow']}>
+                                        <div className={`${styles['header']} ${styles['header-border']}`}>
+                                            <Icon
+                                                className="trigger"
+                                                type='bars' />
+                                            <span style={{ textTransform: 'capitalize' }}>{`${this.props.NANO_FILTER_CRITERIA.QueryType} Lists`}</span>
+                                        </div>
+                                        <Layout style={{ backgroundColor: '#FFF' }}>
+                                            <Table
+                                                className={styles['summary-table-bb']}
+                                                dataSource={this.getCAContribution()}
+                                                columns={getColumnCA(this.chartData())}
+                                                pagination={{
+                                                    size: "small",
+                                                    style: { marginRight: '10px' },
+                                                    pageSize: 10,
+                                                    showTotal: (total) => (`Total ${total} items`)
+                                                }}
+                                                bordered />
+                                        </Layout>
+                                    </div>
+                                </div>
                             </Layout>
-                        </article>
+                        </Layout>
+                    </article>
 
                 </Modal>
                 <Tooltip title="Market Penatation" placement="topRight"><FontAwesome style={{ color: '#E91E63' }} name="table" onClick={this.handleModal} /></Tooltip>

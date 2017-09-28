@@ -304,6 +304,12 @@ class ModalSaleSummary extends Component {
     }
 
     componentDidMount() {
+        if (document.getElementById('modal-sale-summary') === null || document.getElementById('modal-sale-summary') === undefined) {
+            var divModal = document.createElement("div")
+            divModal.id = 'modal-sale-summary'
+
+            document.getElementById('add-sale').appendChild(divModal)
+        }
         this.getCAContribution(this.props)
     }
 

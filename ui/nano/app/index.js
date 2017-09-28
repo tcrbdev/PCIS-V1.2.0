@@ -570,7 +570,8 @@ class Index extends Component {
 
     renderForm() {
         const side_menu = this.state.collapsed ? styles['side-menu-close'] : styles['side-menu']
-
+        console.log("-------------------------------", document.getElementById('app').getBoundingClientRect())
+        const Coordinates = document.getElementById('app').getBoundingClientRect()
         return (
             <Layout style={{ overflow: 'hidden' }}>
                 <Layout>
@@ -594,17 +595,12 @@ class Index extends Component {
                     }
 
                 </Sider>
-                <Draggable onDrag={this.handleDrag}>
-                    <div id="modal-sale-summary" className={styles['multiple-window']}>
-
-                    </div>
+                <Draggable onDrag={this.handleDrag} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div id="add-sale" className={styles['multiple-window']}></div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag}>
-                    <div id="modal-area-summary" className={styles['multiple-window']}>
-
-                    </div>
+                <Draggable onDrag={this.handleDrag} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div id="add-area" className={styles['multiple-window']}></div>
                 </Draggable>
-
             </Layout>
         )
     }
