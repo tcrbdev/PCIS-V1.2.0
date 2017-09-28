@@ -114,11 +114,29 @@ const getColumnCA = (data) => {
         width: '15%',
         className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']} sub-title`,
         render: (text, record, index) => {
-            return (
-                <Tooltip title={text} placement="top" >
-                    <span className={styles['text-ellipsis']}>{text}</span>
-                </Tooltip>
-            )
+            if (!_.isEmpty(record.EmpCode)) {
+                return (
+                    <Popover placement="top" content={
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${record.EmpCode}`} />
+                            <span>{text}</span>
+                            <span>{`${record.NameTH}`} {`(${record.NickName})`}</span>
+                            <span>{`${record.YMD}`}</span>
+                            <span>{`${record.Mobile}`}</span>
+                        </div>
+                    } >
+                        <span className={styles['text-ellipsis']}>{text}</span>
+                    </Popover>
+                )
+            }
+            else {
+                console.log(record)
+                return (
+                    <Tooltip title={text} placement="top" >
+                        <span className={styles['text-ellipsis']}>{text}</span>
+                    </Tooltip>
+                )
+            }
         }
     }, {
         title: (<div className={styles['div-center']}>Start<br />Month</div>),
