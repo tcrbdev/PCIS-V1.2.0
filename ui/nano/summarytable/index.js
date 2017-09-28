@@ -246,7 +246,7 @@ class SummaryTable extends Component {
             dataIndex: 'MarketShop',
             key: 'MarketShop',
             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-            width: '7%',
+            width: '6%',
         }, {
             title: (<div className={styles['div-center']}><span>PMT</span><span>Succ.</span></div>),
             width: '7%',
@@ -258,7 +258,7 @@ class SummaryTable extends Component {
             title: (<div className={styles['div-center']}><span>#</span><span>OS</span></div>),
             dataIndex: 'OS',
             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-            width: '5%',
+            width: '6%',
             render: (text, record, index) => {
                 return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
             }
