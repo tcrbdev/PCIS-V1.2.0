@@ -32,6 +32,17 @@ const initialStateArray = []
 const initialStateBoolean = true
 const initialStateOnSearchData = false
 
+export const AUTH_NANO_USER = (state = initialStateObj, action) => {
+    switch (action.type) {
+        case LOAD_NANO_MASTER_ALL_SUCCESS:
+            return action.payload.AUTH_NANO_USER
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
 export const NANO_MASTER_ALL = (state = initialStateObj, action) => {
     switch (action.type) {
         case LOAD_NANO_MASTER_ALL_SUCCESS:

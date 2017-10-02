@@ -314,12 +314,17 @@ export const selectMarkerByCA = (newState, value) => dispatch => {
     })
 }
 
-export const getNanoMasterData = (token = '') => ((dispatch) => {
+export const getNanoMasterData = (auth = {}) => ((dispatch) => {
 
     dispatch({
         type: LOAD_NANO_MASTER_ALL_REQUEST,
         payload: {}
     })
+
+    let token = ''
+    if (!_.isEmpty(auth)) {
+        token = auth.Session.sess_empcode
+    }
 
     let api = [
         fetch(`${MASTER_REGION_URL}/${token}`).then(res => (res.json())),
@@ -347,6 +352,7 @@ export const getNanoMasterData = (token = '') => ((dispatch) => {
                 MASTER_CALIST_DATA,
                 MASTER_COMPLITITOR_PROVINCE_DATA,
                 MASTER_ASOF_DATA: MASTER_REGION_DATA[1],
+                AUTH_NANO_USER: auth
             }
         })
     }).catch(err => {

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover } from 'antd';
 import Draggable from 'react-draggable'
+import Scrollbar from 'react-smooth-scrollbar';
 
 const { Header } = Layout
 
@@ -38,7 +39,7 @@ const getMarketSummaryColumns = () => {
         className: `${styles['align-right-hightlight']} ${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             dataIndex: 'Amt',
-            width: '8%',
+            width: '9%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
                 return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `` : `${text}`}</span>
@@ -121,7 +122,7 @@ const getColumnCA = (data) => {
                             <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${record.EmpCode}`} />
                             <span>{text}</span>
                             <span>{`${record.NameTH}`} {`(${record.NickName})`}</span>
-                            <span>{`${record.YMD}`}</span>
+                            <span>{`อายุงาน ${record.YMD}`}</span>
                             <span>{`${record.Mobile}`}</span>
                         </div>
                     } >
@@ -130,7 +131,6 @@ const getColumnCA = (data) => {
                 )
             }
             else {
-                console.log(record)
                 return (
                     <Tooltip title={text} placement="top" >
                         <span className={styles['text-ellipsis']}>{text}</span>
@@ -142,7 +142,7 @@ const getColumnCA = (data) => {
         title: (<div className={styles['div-center']}>Start<br />Month</div>),
         dataIndex: 'StartWork',
         key: 'StartWork',
-        width: '6%',
+        width: '5%',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return !_.isEmpty(text) && text.split('T').length > 1 ? moment(text.split('T')[0]).format('MMM-YY') : ''
@@ -151,7 +151,7 @@ const getColumnCA = (data) => {
         title: (<div className={styles['div-center']}>Status</div>),
         dataIndex: 'CycleDueDate',
         key: 'CycleDueDate',
-        width: '6%',
+        width: '7%',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`
     }, {
         title: (<span className={styles['align-center']}>OS Bal.</span>),
@@ -364,10 +364,10 @@ class ModalSaleSummary extends Component {
         return {
             data: {
                 datasets: [{
-                    data: !_.isEmpty(GroupTotal) ? [parseFloat(GroupTotal[2].SETUP), parseFloat(GroupTotal[2].REJECTED), parseFloat(GroupTotal[2].CANCELLED)] : [],
-                    backgroundColor: ['#8bc34a', '#e91e63', '#ff5722']
+                    data: !_.isEmpty(GroupTotal) ? [parseFloat(GroupTotal[2].SETUP), parseFloat(GroupTotal[2].REJECTED), parseFloat(GroupTotal[2].CANCELLED), parseFloat(GroupTotal[2].TOTAL)] : [],
+                    backgroundColor: ['#8bc34a', '#e91e63', '#ff5722', '#9e9e9e']
                 }],
-                labels: ['SETUP', 'REJECTED', 'CANCEL'],
+                labels: ['SETUP', 'REJECTED', 'CANCEL', 'POTENTIAL'],
                 borderWidth: 0
             },
             options: {
@@ -570,6 +570,11 @@ class ModalSaleSummary extends Component {
         this.setState({ showAddNoteModal: false })
     }
 
+    onRowClassName = (record, index) => {
+        if (!_.isEmpty(record.CAName))
+            return styles['last-row-hilight']
+    }
+
     render() {
         // const { getFieldValue } = this.props.form
         const { modalSelectData } = this.state
@@ -661,17 +666,20 @@ class ModalSaleSummary extends Component {
                                             <span style={{ textTransform: 'capitalize' }}>{`${this.props.NANO_FILTER_CRITERIA.QueryType} Lists`}</span>
                                         </div>
                                         <Layout style={{ backgroundColor: '#FFF' }}>
-                                            <Table
-                                                className={styles['summary-table-bb']}
-                                                dataSource={this.getCAContribution()}
-                                                columns={getColumnCA(this.chartData())}
-                                                pagination={{
-                                                    size: "small",
-                                                    style: { marginRight: '10px' },
-                                                    pageSize: 10,
-                                                    showTotal: (total) => (`Total ${total} items`)
-                                                }}
-                                                bordered />
+                                            <Scrollbar overscrollEffect="bounce" style={{ minHeight: '150px', maxHeight: '300px' }}>
+                                                <Table
+                                                    className={styles['summary-table-bb']}
+                                                    dataSource={this.getCAContribution()}
+                                                    columns={getColumnCA(this.chartData())}
+                                                    rowClassName={this.onRowClassName}
+                                                    pagination={{
+                                                        size: "small",
+                                                        style: { marginRight: '10px' },
+                                                        pageSize: 10,
+                                                        showTotal: (total) => (`Total ${total} items`)
+                                                    }}
+                                                    bordered />
+                                            </Scrollbar>
                                         </Layout>
                                     </div>
                                 </div>

@@ -233,7 +233,7 @@ class Index extends Component {
             console.log("Cookie : ", cookies.get('authen_info'))
             if (!_.isEmpty(cookies.get('authen_info'))) {
                 const auth = cookies.get('authen_info')
-                getNanoMasterData(auth.Session.sess_empcode);
+                getNanoMasterData(auth);
             }
             else {
                 window.location.href = 'http://tc001pcis1p/login/'
@@ -460,7 +460,25 @@ class Index extends Component {
             )
         }
         else {
+            const { cookies, AUTH_NANO_USER } = this.props
             const collapsedSummary = this.state.collapsedSummary ? styles['coll-show'] : styles['coll-hide']
+            const authen_info = cookies.get('authen_info')
+            const AuthList = ['57251', '56225', '58141', '56679', '58106', '58385', '59016', '57568', '59440', '57160', '57249']
+
+            let auth_pass = false
+            if (process.env.NODE_ENV === 'production') {
+                if (!_.isEmpty(AUTH_NANO_USER)) {
+                    if (!_.isEmpty(_.find(AuthList, o => o == AUTH_NANO_USER.Session.sess_empcode))) {
+                        auth_pass = true
+                    }
+                }
+            }
+            else {
+                auth_pass = true
+            }
+
+            console.log(auth_pass)
+
             return (
                 <div className='info-container'>
                     <div className={`${styles['show-sm']} ${collapsedSummary}`}>
@@ -474,7 +492,7 @@ class Index extends Component {
                         </div>
                         <div>
                             <div className={styles['icon-header-container']}>
-                                <div className={`${this.state.collapsed && styles['hide']}`}>
+                                <div className={`${this.state.collapsed && styles['hide']} ${(!auth_pass) && styles['hide']}`}>
                                     <Tooltip title="View">
                                         <Dropdown overlay={this.getMenuGroupBy()} placement="bottomCenter">
                                             <div className={styles['icon-split']}>
@@ -498,7 +516,6 @@ class Index extends Component {
                                         <div className={styles['panel-header']}>
                                             <Icon type="area-chart" />
                                             <span>Branch Summary</span>
-
                                         </div>
                                     }
                                 >
@@ -568,6 +585,26 @@ class Index extends Component {
         }
     }
 
+    in_array = (needle, haystack, argStrict) => {
+        var key = '', strict = !!argStrict;
+        if (strict) {
+            for (key in haystack) {
+                if (haystack[key] === needle) {
+                    return true
+                }
+            }
+        } else {
+            for (key in haystack) {
+                if (haystack[key] == needle) {
+                    return true
+                }
+            }
+        }
+
+        return false
+
+    }
+
     handleLayer(e) {
         $(`.${styles['top-layer']}`).removeClass(styles['top-layer'])
     }
@@ -624,6 +661,7 @@ const CookiesHomeForm = withCookies(Index)
 
 export default connect(
     (state) => ({
+        AUTH_NANO_USER: state.AUTH_NANO_USER,
         NANO_INIT_PAGE: state.NANO_INIT_PAGE,
         ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA,
         ON_NANO_CHANGE_VIEW_SEARCHING_DATA: state.ON_NANO_CHANGE_VIEW_SEARCHING_DATA,

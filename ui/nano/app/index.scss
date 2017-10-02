@@ -646,12 +646,12 @@
     .multiple-window
     {
         position: absolute;
-    display: flex;
-    /*width: 500px;
-    height: 500px;*/
-    box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);
-     z-index: 3;
-     overflow: hidden;
+        display: flex;
+        /*width: 500px;
+        height: 500px;*/
+        box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);
+        z-index: 3;
+        overflow: hidden;
     }
 
     .top-layer

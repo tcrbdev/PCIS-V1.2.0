@@ -112,6 +112,18 @@
 
     & table tbody tr:hover { color: red; }
 
+    & .ant-table-thead > tr > th {
+        padding: 3px !important;
+    }
+    
+    & thead[class^="ant-table-thead"] > tr > th {
+        padding: 3px !important;
+    }
+
+    & thead[class^="ant-table-thead"] > tr:nth-child(4) {
+        display: none;
+    }
+
 }
 
 .kiosk-index

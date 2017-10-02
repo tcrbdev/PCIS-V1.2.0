@@ -3,6 +3,7 @@ import { routerReducer } from 'react-router-redux'
 import { MASTER_ALL } from './master'
 import { AUTH } from './login'
 import {
+    AUTH_NANO_USER,
     NANO_MASTER_ALL,
     NANO_INIT_PAGE,
 
@@ -31,6 +32,7 @@ export default combineReducers({
     AUTH: AUTH,
     MASTER_ALL: MASTER_ALL,
 
+    AUTH_NANO_USER,
     NANO_MASTER_ALL,
     NANO_INIT_PAGE,
 

@@ -264,51 +264,65 @@ class SummaryTable extends Component {
             }
         }, {
             title: (<div className={styles['div-center']}><span>Market Penetration</span></div>),
-            children: [{
-                title: (<div className={styles['div-center']}><span>Pot.</span></div>),
-                width: '5%',
-                dataIndex: 'Potential',
-                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                render: (text, record, index) => {
-                    return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+            children: [
+                {
+                    title: (<div className={styles['div-center']}><span>Pot.</span></div>),
+                    width: '5%',
+                    dataIndex: 'Potential',
+                    className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                    render: (text, record, index) => {
+                        return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+                    }
+                }, 
+                {
+                    title: (<div className={styles['div-center']}><span>Setup</span></div>),
+                    className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                    children: [
+                        {
+                            dataIndex: 'SetupTotal',
+                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                            //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                            width: '5%',
+                            render: (text, record, index) => {
+                                return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
+                            }
+                        }, 
+                        {
+                            dataIndex: 'SetupAch',
+                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                            //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                            width: '5%',
+                            render: (text, record, index) => {
+                                return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+                            }
+                        }
+                    ]
+                }, 
+                {
+                    title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
+                    className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                    children: [
+                        {
+                            dataIndex: 'TopContributeName',
+                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                            //className: `${styles['header-hide']} ${styles['align-left']} ${styles['vertical-bottom']}`,
+                            width: '10%',
+                            render: (text, record, index) => {
+                                return <span style={{ padding: '3px' }}>{text}</span>
+                            }
+                        }, 
+                        {
+                            dataIndex: 'TopContributeValue',
+                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                            //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                            width: '7%',
+                            render: (text, record, index) => {
+                                return <span style={{ padding: '3px 5px' }} className={text < 0 && styles['red-font']}>{parseFloat(text ? text : 0).toFixed(0)}%</span>
+                            }
+                        }
+                    ]
                 }
-            }, {
-                title: (<div className={styles['div-center']}><span>Setup</span></div>),
-                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                children: [{
-                    dataIndex: 'SetupTotal',
-                    className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                    width: '5%',
-                    render: (text, record, index) => {
-                        return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
-                    }
-                }, {
-                    dataIndex: 'SetupAch',
-                    className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                    width: '5%',
-                    render: (text, record, index) => {
-                        return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
-                    }
-                }]
-            }, {
-                title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
-                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                children: [{
-                    dataIndex: 'TopContributeName',
-                    className: `${styles['header-hide']} ${styles['align-left']} ${styles['vertical-bottom']}`,
-                    width: '10%',
-                    render: (text, record, index) => {
-                        return <span style={{ padding: '3px' }}>{text}</span>
-                    }
-                }, {
-                    dataIndex: 'TopContributeValue',
-                    className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                    width: '7%',
-                    render: (text, record, index) => {
-                        return <span style={{ padding: '3px 5px' }} className={text < 0 && styles['red-font']}>{parseFloat(text ? text : 0).toFixed(0)}%</span>
-                    }
-                }]
-            }]
+            ]
         }]
 
     getTableColumns() {
