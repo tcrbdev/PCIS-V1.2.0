@@ -13,19 +13,18 @@
 
 'use strict';
 
-import type { BidiDirection } from 'fbjs/lib/UnicodeBidiDirection';
 import type ContentBlock from './ContentBlock';
 import type ContentState from './ContentState';
 import type { DraftDecoratorType } from './DraftDecoratorType';
-import type { List } from 'immutable';
 import type SelectionState from './SelectionState';
+import type { BidiDirection } from 'fbjs/lib/UnicodeBidiDirection';
+import type { List } from 'immutable';
 
 const DraftEditorLeaf = require('./DraftEditorLeaf.react');
 const DraftOffsetKey = require('./DraftOffsetKey');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const Scroll = require('fbjs/lib/Scroll');
-
 const Style = require('fbjs/lib/Style');
 const UnicodeBidi = require('fbjs/lib/UnicodeBidi');
 const UnicodeBidiDirection = require('fbjs/lib/UnicodeBidiDirection');
@@ -60,7 +59,7 @@ type Props = {
  * A `DraftEditorBlock` is able to render a given `ContentBlock` to its
  * appropriate decorator and inline style components.
  */
-class DraftEditorBlock extends React.Component {
+class DraftEditorBlock extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props): boolean {
     return this.props.block !== nextProps.block || this.props.tree !== nextProps.tree || this.props.direction !== nextProps.direction || isBlockOnSelectionEdge(nextProps.selection, nextProps.block.getKey()) && nextProps.forceSelection;
   }
@@ -122,7 +121,13 @@ class DraftEditorBlock extends React.Component {
         var offsetKey = DraftOffsetKey.encode(blockKey, ii, jj);
         var start = leaf.get('start');
         var end = leaf.get('end');
-        return <DraftEditorLeaf key={offsetKey} offsetKey={offsetKey} block={block} start={start} selection={hasSelection ? this.props.selection : undefined} forceSelection={this.props.forceSelection} text={text.slice(start, end)} styleSet={block.getInlineStyleAt(start)} customStyleMap={this.props.customStyleMap} customStyleFn={this.props.customStyleFn} isLast={ii === lastLeafSet && jj === lastLeaf} />;
+        return (
+          /* $FlowFixMe(>=0.53.0 site=www,mobile) This comment suppresses an
+           * error when upgrading Flow's support for React. Common errors found
+           * when upgrading Flow's React support are documented at
+           * https://fburl.com/eq7bs81w */
+          <DraftEditorLeaf key={offsetKey} offsetKey={offsetKey} block={block} start={start} selection={hasSelection ? this.props.selection : undefined} forceSelection={this.props.forceSelection} text={text.slice(start, end)} styleSet={block.getInlineStyleAt(start)} customStyleMap={this.props.customStyleMap} customStyleFn={this.props.customStyleFn} isLast={ii === lastLeafSet && jj === lastLeaf} />
+        );
       }).toArray();
 
       var decoratorKey = leafSet.get('decoratorKey');
@@ -155,7 +160,11 @@ class DraftEditorBlock extends React.Component {
     }).toArray();
   }
 
-  render(): React.Element<any> {
+  render(): React.Node {
+    /* $FlowFixMe(>=0.53.0 site=www,mobile) This comment suppresses an error
+     * when upgrading Flow's support for React. Common errors found when
+     * upgrading Flow's React support are documented at
+     * https://fburl.com/eq7bs81w */
     const { direction, offsetKey } = this.props;
     const className = cx({
       'public/DraftStyleDefault/block': true,

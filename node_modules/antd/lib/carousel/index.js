@@ -24,20 +24,18 @@ var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _lodash = require('lodash.debounce');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _reactSlick = require('react-slick');
-
-var _reactSlick2 = _interopRequireDefault(_reactSlick);
-
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _lodash = require('lodash.debounce');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+// matchMedia polyfill for
+// https://github.com/WickyNilliams/enquire.js/issues/82
 if (typeof window !== 'undefined') {
     var matchMediaPolyfill = function matchMediaPolyfill(mediaQuery) {
         return {
@@ -48,8 +46,12 @@ if (typeof window !== 'undefined') {
         };
     };
     window.matchMedia = window.matchMedia || matchMediaPolyfill;
-} // matchMedia polyfill for
-// https://github.com/WickyNilliams/enquire.js/issues/82
+}
+// Use require over import (will be lifted up)
+// make sure matchMedia polyfill run before require('react-slick')
+// Fix https://github.com/ant-design/ant-design/issues/6560
+// Fix https://github.com/ant-design/ant-design/issues/3308
+var SlickCarousel = require('react-slick')['default'];
 
 var Carousel = function (_React$Component) {
     (0, _inherits3['default'])(Carousel, _React$Component);
@@ -82,6 +84,10 @@ var Carousel = function (_React$Component) {
             if (autoplay) {
                 window.addEventListener('resize', this.onWindowResized);
             }
+            var slick = this.refs.slick;
+            // https://github.com/ant-design/ant-design/issues/7191
+
+            this.innerSlider = slick && slick.innerSlider;
         }
     }, {
         key: 'componentWillUnmount',
@@ -107,7 +113,7 @@ var Carousel = function (_React$Component) {
             return _react2['default'].createElement(
                 'div',
                 { className: className },
-                _react2['default'].createElement(_reactSlick2['default'], (0, _extends3['default'])({ ref: 'slick' }, props))
+                _react2['default'].createElement(SlickCarousel, (0, _extends3['default'])({ ref: 'slick' }, props))
             );
         }
     }]);

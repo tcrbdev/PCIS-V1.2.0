@@ -20,9 +20,8 @@ var EditorState = require('./EditorState');
 var findAncestorOffsetKey = require('./findAncestorOffsetKey');
 var getTextContentFromFiles = require('./getTextContentFromFiles');
 var getUpdatedSelectionState = require('./getUpdatedSelectionState');
-var nullthrows = require('fbjs/lib/nullthrows');
-
 var isEventHandled = require('./isEventHandled');
+var nullthrows = require('fbjs/lib/nullthrows');
 
 /**
  * Get a SelectionState for the supplied mouse event.

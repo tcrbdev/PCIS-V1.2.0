@@ -137,7 +137,7 @@ var Sider = function (_React$Component) {
         key: 'getChildContext',
         value: function getChildContext() {
             return {
-                siderCollapsed: this.props.collapsed
+                siderCollapsed: this.state.collapsed
             };
         }
     }, {
@@ -195,10 +195,10 @@ var Sider = function (_React$Component) {
             var defaultTrigger = iconObj[status];
             var triggerDom = trigger !== null ? zeroWidthTrigger || _react2['default'].createElement(
                 'div',
-                { className: prefixCls + '-trigger', onClick: this.toggle },
+                { className: prefixCls + '-trigger', onClick: this.toggle, style: { width: siderWidth } },
                 trigger || defaultTrigger
             ) : null;
-            var divStyle = (0, _extends3['default'])({}, style, { flex: '0 0 ' + siderWidth + 'px', width: siderWidth + 'px' });
+            var divStyle = (0, _extends3['default'])({}, style, { flex: '0 0 ' + siderWidth + 'px', maxWidth: siderWidth + 'px', minWidth: siderWidth + 'px', width: siderWidth + 'px' });
             var siderCls = (0, _classnames2['default'])(className, prefixCls, (_classNames = {}, (0, _defineProperty3['default'])(_classNames, prefixCls + '-collapsed', !!this.state.collapsed), (0, _defineProperty3['default'])(_classNames, prefixCls + '-has-trigger', !!trigger), (0, _defineProperty3['default'])(_classNames, prefixCls + '-below', !!this.state.below), (0, _defineProperty3['default'])(_classNames, prefixCls + '-zero-width', siderWidth === 0 || siderWidth === '0'), _classNames));
             return _react2['default'].createElement(
                 'div',

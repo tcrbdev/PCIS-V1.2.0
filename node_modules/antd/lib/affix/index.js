@@ -108,6 +108,8 @@ var Affix = function (_React$Component) {
 
         var _this = (0, _possibleConstructorReturn3["default"])(this, (Affix.__proto__ || Object.getPrototypeOf(Affix)).call(this, props));
 
+        _this.events = ['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'];
+        _this.eventHandlers = {};
         _this.state = {
             affixStyle: null,
             placeholderStyle: null
@@ -195,7 +197,7 @@ var Affix = function (_React$Component) {
                 });
                 this.setPlaceholderStyle({
                     width: width,
-                    height: affixNode.offsetHeight
+                    height: elemSize.height
                 });
             } else if (scrollTop < elemOffset.top + elemSize.height + offsetBottom - targetInnerHeight && offsetMode.bottom) {
                 // Fixed Bottom
@@ -209,7 +211,7 @@ var Affix = function (_React$Component) {
                 });
                 this.setPlaceholderStyle({
                     width: _width,
-                    height: affixNode.offsetHeight
+                    height: elemOffset.height
                 });
             } else {
                 var affixStyle = this.state.affixStyle;
@@ -237,7 +239,7 @@ var Affix = function (_React$Component) {
         key: "componentWillReceiveProps",
         value: function componentWillReceiveProps(nextProps) {
             if (this.props.target !== nextProps.target) {
-                this.clearScrollEventListeners();
+                this.clearEventListeners();
                 this.setTargetEventListeners(nextProps.target);
                 // Mock Event object.
                 this.updatePosition({});
@@ -246,29 +248,33 @@ var Affix = function (_React$Component) {
     }, {
         key: "componentWillUnmount",
         value: function componentWillUnmount() {
-            this.clearScrollEventListeners();
+            this.clearEventListeners();
             clearTimeout(this.timeout);
             this.updatePosition.cancel();
         }
     }, {
         key: "setTargetEventListeners",
         value: function setTargetEventListeners(getTarget) {
+            var _this4 = this;
+
             var target = getTarget();
             if (!target) {
                 return;
             }
-            this.clearScrollEventListeners();
-            this.scrollEvent = (0, _addEventListener2["default"])(target, 'scroll', this.updatePosition);
-            this.resizeEvent = (0, _addEventListener2["default"])(target, 'resize', this.updatePosition);
+            this.clearEventListeners();
+            this.events.forEach(function (eventName) {
+                _this4.eventHandlers[eventName] = (0, _addEventListener2["default"])(target, eventName, _this4.updatePosition);
+            });
         }
     }, {
-        key: "clearScrollEventListeners",
-        value: function clearScrollEventListeners() {
-            var _this4 = this;
+        key: "clearEventListeners",
+        value: function clearEventListeners() {
+            var _this5 = this;
 
-            ['scrollEvent', 'resizeEvent'].forEach(function (name) {
-                if (_this4[name]) {
-                    _this4[name].remove();
+            this.events.forEach(function (eventName) {
+                var handler = _this5.eventHandlers[eventName];
+                if (handler && handler.remove) {
+                    handler.remove();
                 }
             });
         }

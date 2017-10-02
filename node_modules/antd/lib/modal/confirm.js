@@ -43,7 +43,7 @@ var _locale = require('./locale');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function confirm(config) {
-    var props = (0, _extends3['default'])({ iconType: 'question-circle' }, config);
+    var props = (0, _extends3['default'])({ iconType: 'question-circle', okType: 'primary' }, config);
     var prefixCls = props.prefixCls || 'ant-confirm';
     var div = document.createElement('div');
     document.body.appendChild(div);
@@ -102,7 +102,7 @@ function confirm(config) {
             ),
             _react2['default'].createElement(
                 _ActionButton2['default'],
-                { type: 'primary', actionFn: props.onOk, closeModal: close, autoFocus: true },
+                { type: props.okType, actionFn: props.onOk, closeModal: close, autoFocus: true },
                 props.okText
             )
         );
@@ -112,7 +112,7 @@ function confirm(config) {
             { className: prefixCls + '-btns' },
             _react2['default'].createElement(
                 _ActionButton2['default'],
-                { type: 'primary', actionFn: props.onOk, closeModal: close, autoFocus: true },
+                { type: props.okType, actionFn: props.onOk, closeModal: close, autoFocus: true },
                 props.okText
             )
         );
@@ -120,7 +120,7 @@ function confirm(config) {
     var classString = (0, _classnames2['default'])(prefixCls, (0, _defineProperty3['default'])({}, prefixCls + '-' + props.type, true), props.className);
     _reactDom2['default'].render(_react2['default'].createElement(
         _Modal2['default'],
-        { className: classString, onCancel: close.bind(this, { triggerCancel: true }), visible: true, title: '', transitionName: 'zoom', footer: '', maskTransitionName: 'fade', maskClosable: maskClosable, style: style, width: width },
+        { className: classString, onCancel: close.bind(this, { triggerCancel: true }), visible: true, title: '', transitionName: 'zoom', footer: '', maskTransitionName: 'fade', maskClosable: maskClosable, style: style, width: width, zIndex: props.zIndex },
         _react2['default'].createElement(
             'div',
             { className: prefixCls + '-body-wrapper' },

@@ -114,6 +114,9 @@ var Mention = function (_React$Component) {
         value: function defaultSearchChange(value) {
             var searchValue = value.toLowerCase();
             var filteredSuggestions = (this.props.suggestions || []).filter(function (suggestion) {
+                if (suggestion.type && suggestion.type === _rcEditorMention.Nav) {
+                    return suggestion.props.value ? suggestion.props.value.toLowerCase().indexOf(searchValue) !== -1 : true;
+                }
                 return suggestion.toLowerCase().indexOf(searchValue) !== -1;
             });
             this.setState({

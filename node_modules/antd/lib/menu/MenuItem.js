@@ -32,5 +32,6 @@ var MenuItem = function MenuItem(props, _ref) {
 MenuItem.contextTypes = {
     inlineCollapsed: _propTypes2['default'].bool
 };
+MenuItem.isMenuItem = 1;
 exports['default'] = MenuItem;
 module.exports = exports['default'];

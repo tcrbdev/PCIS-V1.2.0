@@ -34,6 +34,8 @@ export interface SelectProps extends AbstractSelectProps {
     onChange?: (value: SelectValue) => void;
     onSelect?: (value: SelectValue, option: Object) => any;
     onDeselect?: (value: SelectValue) => any;
+    onBlur?: () => any;
+    onFocus?: () => any;
     dropdownMatchSelectWidth?: boolean;
     optionFilterProp?: string;
     defaultActiveFirstOption?: boolean;
@@ -45,6 +47,7 @@ export interface SelectProps extends AbstractSelectProps {
 export interface OptionProps {
     disabled?: boolean;
     value?: any;
+    title?: string;
 }
 export interface OptGroupProps {
     label?: string | React.ReactElement<any>;

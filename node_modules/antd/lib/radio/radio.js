@@ -90,6 +90,7 @@ var Radio = function (_React$Component) {
 
             var radioProps = (0, _extends3['default'])({}, restProps);
             if (radioGroup) {
+                radioProps.name = radioGroup.name;
                 radioProps.onChange = radioGroup.onChange;
                 radioProps.checked = props.value === radioGroup.value;
                 radioProps.disabled = props.disabled || radioGroup.disabled;

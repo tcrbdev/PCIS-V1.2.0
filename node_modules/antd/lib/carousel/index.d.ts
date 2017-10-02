@@ -52,6 +52,7 @@ export default class Carousel extends React.Component<CarouselProps, any> {
     refs: {
         slick: any;
     };
+    innerSlider: any;
     constructor();
     componentDidMount(): void;
     componentWillUnmount(): void;

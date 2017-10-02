@@ -95,7 +95,7 @@ var Checkbox = function (_React$Component) {
                     return checkboxGroup.toggleOption({ label: children, value: props.value });
                 };
                 checkboxProps.checked = checkboxGroup.value.indexOf(props.value) !== -1;
-                checkboxProps.disabled = 'disabled' in props ? props.disabled : checkboxGroup.disabled;
+                checkboxProps.disabled = props.disabled || checkboxGroup.disabled;
             }
             var classString = (0, _classnames2['default'])(className, (0, _defineProperty3['default'])({}, prefixCls + '-wrapper', true));
             var checkboxClass = (0, _classnames2['default'])((0, _defineProperty3['default'])({}, prefixCls + '-indeterminate', indeterminate));

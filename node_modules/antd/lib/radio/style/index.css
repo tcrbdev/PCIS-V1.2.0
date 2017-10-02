@@ -1,3 +1,6 @@
+/* stylelint-disable at-rule-empty-line-before,at-rule-name-space-after,at-rule-no-unknown */
+/* stylelint-disable declaration-bang-space-before */
+/* stylelint-disable declaration-bang-space-before */
 .ant-radio-group {
   display: inline-block;
   font-size: 12px;
@@ -197,7 +200,7 @@ span.ant-radio + * {
 }
 .ant-radio-button-wrapper-checked:first-child {
   border-color: #108ee9;
-  box-shadow: none!important;
+  box-shadow: none !important;
 }
 .ant-radio-button-wrapper-checked:hover {
   border-color: #49a9ee;

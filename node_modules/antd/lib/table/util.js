@@ -30,11 +30,15 @@ function flatArray() {
     var result = [];
     var loop = function loop(array) {
         array.forEach(function (item) {
-            var newItem = (0, _extends3['default'])({}, item);
-            delete newItem[childrenName];
-            result.push(newItem);
-            if (item[childrenName] && item[childrenName].length > 0) {
-                loop(item[childrenName]);
+            if (item[childrenName]) {
+                var newItem = (0, _extends3['default'])({}, item);
+                delete newItem[childrenName];
+                result.push(newItem);
+                if (item[childrenName].length > 0) {
+                    loop(item[childrenName]);
+                }
+            } else {
+                result.push(item);
             }
         });
     };

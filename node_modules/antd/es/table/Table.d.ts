@@ -16,6 +16,7 @@ export interface TableRowSelection<T> {
     onSelectAll?: (selected: boolean, selectedRows: Object[], changeRows: Object[]) => any;
     onSelectInvert?: (selectedRows: Object[]) => any;
     selections?: SelectionDecorator[] | boolean;
+    hideDefaultSelections?: boolean;
 }
 export interface TableProps<T> {
     prefixCls?: string;
@@ -45,8 +46,8 @@ export interface TableProps<T> {
     footer?: (currentPageData: Object[]) => React.ReactNode;
     title?: (currentPageData: Object[]) => React.ReactNode;
     scroll?: {
-        x?: boolean | number;
-        y?: boolean | number;
+        x?: boolean | number | string;
+        y?: boolean | number | string;
     };
     childrenColumnName?: string;
     bodyStyle?: React.CSSProperties;
@@ -101,6 +102,13 @@ export default class Table<T> extends React.Component<TableProps<T>, any> {
     getDefaultSelection(): string[];
     getDefaultPagination(props: any): any;
     getLocale(): {
+        filterTitle: string;
+        filterConfirm: string;
+        filterReset: string;
+        emptyText: JSX.Element;
+        selectAll: string;
+        selectInvert: string;
+    } | {
         constructor: Function;
         toString(): string;
         toLocaleString(): string;

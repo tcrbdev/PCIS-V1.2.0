@@ -24,6 +24,8 @@ export interface SliderProps {
     onChange?: (value: SliderValue) => void;
     onAfterChange?: (value: SliderValue) => void;
     tipFormatter?: void | ((value: number) => React.ReactNode);
+    className?: string;
+    id?: string;
 }
 export default class Slider extends React.Component<SliderProps, any> {
     static defaultProps: {

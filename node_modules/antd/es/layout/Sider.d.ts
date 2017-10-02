@@ -31,7 +31,7 @@ export default class Sider extends React.Component<SiderProps, any> {
     private mql;
     constructor(props: any);
     getChildContext(): {
-        siderCollapsed: boolean | undefined;
+        siderCollapsed: any;
     };
     componentWillReceiveProps(nextProps: any): void;
     componentDidMount(): void;

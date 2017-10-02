@@ -34,9 +34,9 @@ export interface DatePickerProps extends PickerProps, SinglePickerProps {
         open: boolean;
     }) => void;
     disabledTime?: (current: moment.Moment) => {
-        disabledHours?: () => [number, number];
-        disabledMinutes?: () => [number, number];
-        disabledSeconds?: () => [number, number];
+        disabledHours?: () => number[];
+        disabledMinutes?: () => number[];
+        disabledSeconds?: () => number[];
     };
     onOpenChange?: (status: boolean) => void;
     onOk?: (selectedTime: moment.Moment) => void;
@@ -59,9 +59,9 @@ export interface RangePickerProps extends PickerProps {
     };
     placeholder?: [string, string];
     disabledTime?: (current: moment.Moment, type: string) => {
-        disabledHours?: () => [number, number];
-        disabledMinutes?: () => [number, number];
-        disabledSeconds?: () => [number, number];
+        disabledHours?: () => number[];
+        disabledMinutes?: () => number[];
+        disabledSeconds?: () => number[];
     };
 }
 export interface DatePickerDecorator extends React.ClassicComponentClass<DatePickerProps> {

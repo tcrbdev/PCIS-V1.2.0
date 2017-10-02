@@ -46,17 +46,20 @@ var InputElement = function (_React$Component) {
         _this.blur = function () {
             _this.ele.blur ? _this.ele.blur() : (0, _reactDom.findDOMNode)(_this.ele).blur();
         };
+        _this.saveRef = function (ele) {
+            _this.ele = ele;
+            var childRef = _this.props.children.ref;
+            if (typeof childRef === 'function') {
+                childRef(ele);
+            }
+        };
         return _this;
     }
 
     (0, _createClass3['default'])(InputElement, [{
         key: 'render',
         value: function render() {
-            var _this2 = this;
-
-            return _react2['default'].cloneElement(this.props.children, (0, _extends3['default'])({}, this.props, { ref: function ref(ele) {
-                    return _this2.ele = ele;
-                } }), null);
+            return _react2['default'].cloneElement(this.props.children, (0, _extends3['default'])({}, this.props, { ref: this.saveRef }), null);
         }
     }]);
     return InputElement;

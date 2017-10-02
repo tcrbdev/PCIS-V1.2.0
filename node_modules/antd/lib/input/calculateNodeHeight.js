@@ -99,6 +99,10 @@ function calculateNodeHeight(uiTextNode) {
             height = Math.min(maxHeight, height);
         }
     }
+    // Remove scroll bar flash when autosize without maxRows
+    if (!maxRows) {
+        overflowY = 'hidden';
+    }
     return { height: height, minHeight: minHeight, maxHeight: maxHeight, overflowY: overflowY };
 }
 module.exports = exports['default'];

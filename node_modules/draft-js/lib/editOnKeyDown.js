@@ -19,18 +19,17 @@ var Keys = require('fbjs/lib/Keys');
 var SecondaryClipboard = require('./SecondaryClipboard');
 var UserAgent = require('fbjs/lib/UserAgent');
 
+var isEventHandled = require('./isEventHandled');
 var keyCommandBackspaceToStartOfLine = require('./keyCommandBackspaceToStartOfLine');
 var keyCommandBackspaceWord = require('./keyCommandBackspaceWord');
 var keyCommandDeleteWord = require('./keyCommandDeleteWord');
 var keyCommandInsertNewline = require('./keyCommandInsertNewline');
-var keyCommandPlainBackspace = require('./keyCommandPlainBackspace');
-var keyCommandPlainDelete = require('./keyCommandPlainDelete');
 var keyCommandMoveSelectionToEndOfBlock = require('./keyCommandMoveSelectionToEndOfBlock');
 var keyCommandMoveSelectionToStartOfBlock = require('./keyCommandMoveSelectionToStartOfBlock');
+var keyCommandPlainBackspace = require('./keyCommandPlainBackspace');
+var keyCommandPlainDelete = require('./keyCommandPlainDelete');
 var keyCommandTransposeCharacters = require('./keyCommandTransposeCharacters');
 var keyCommandUndo = require('./keyCommandUndo');
-
-var isEventHandled = require('./isEventHandled');
 
 var isOptionKeyCommand = KeyBindingUtil.isOptionKeyCommand;
 

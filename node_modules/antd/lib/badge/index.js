@@ -116,7 +116,7 @@ var Badge = function (_React$Component) {
                     )
                 );
             }
-            var scrollNumber = hidden ? null : _react2['default'].createElement(_ScrollNumber2['default'], { 'data-show': !hidden, className: scrollNumberCls, count: displayCount, style: style });
+            var scrollNumber = hidden ? null : _react2['default'].createElement(_ScrollNumber2['default'], { 'data-show': !hidden, className: scrollNumberCls, count: displayCount, title: count, style: style });
             var statusText = hidden || !text ? null : _react2['default'].createElement(
                 'span',
                 { className: prefixCls + '-status-text' },
@@ -124,7 +124,7 @@ var Badge = function (_React$Component) {
             );
             return _react2['default'].createElement(
                 'span',
-                (0, _extends3['default'])({}, restProps, { className: badgeCls, title: count }),
+                (0, _extends3['default'])({}, restProps, { className: badgeCls }),
                 children,
                 _react2['default'].createElement(
                     _rcAnimate2['default'],

@@ -102,7 +102,8 @@ var RadioGroup = function (_React$Component) {
                 radioGroup: {
                     onChange: this.onRadioChange,
                     value: this.state.value,
-                    disabled: this.props.disabled
+                    disabled: this.props.disabled,
+                    name: this.props.name
                 }
             };
         }

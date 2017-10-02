@@ -121,8 +121,9 @@ var Popconfirm = function (_React$Component) {
                 title = _a.title,
                 placement = _a.placement,
                 okText = _a.okText,
+                okType = _a.okType,
                 cancelText = _a.cancelText,
-                restProps = __rest(_a, ["prefixCls", "title", "placement", "okText", "cancelText"]);
+                restProps = __rest(_a, ["prefixCls", "title", "placement", "okText", "okType", "cancelText"]);
             var popconfirmLocale = this.getLocale();
             var overlay = _react2['default'].createElement(
                 'div',
@@ -150,7 +151,7 @@ var Popconfirm = function (_React$Component) {
                         ),
                         _react2['default'].createElement(
                             _button2['default'],
-                            { onClick: this.onConfirm, type: 'primary', size: 'small' },
+                            { onClick: this.onConfirm, type: okType, size: 'small' },
                             okText || popconfirmLocale.okText
                         )
                     )
@@ -166,7 +167,8 @@ Popconfirm.defaultProps = {
     prefixCls: 'ant-popover',
     transitionName: 'zoom-big',
     placement: 'top',
-    trigger: 'click'
+    trigger: 'click',
+    okType: 'primary'
 };
 var injectPopconfirmLocale = (0, _injectLocale2['default'])('Popconfirm', {
     cancelText: '取消',
