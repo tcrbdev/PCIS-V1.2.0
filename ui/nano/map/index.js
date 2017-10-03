@@ -1592,8 +1592,9 @@ class BranchImage extends Component {
                                             BRANCH_IMAGE
                                                 .slice((defaultPageSize * this.state.branchPage) - defaultPageSize, defaultPageSize * this.state.branchPage)
                                                 .map((file, i) => {
+                                                    let indexOfImage = ((defaultPageSize * this.state.marketPage) - defaultPageSize) + i
                                                     return (
-                                                        <div className={styles['layout-child']} onClick={() => this.openBranchFullImage(i)}>
+                                                        <div className={styles['layout-child']} onClick={() => this.openBranchFullImage(indexOfImage)}>
                                                             <img src={file.Url} style={{ width: '100%', height: '100%' }} />
                                                         </div>
                                                     )
@@ -1733,8 +1734,9 @@ class MarketImage extends Component {
                                             MARKET_IMAGE
                                                 .slice((defaultPageSize * this.state.marketPage) - defaultPageSize, defaultPageSize * this.state.marketPage)
                                                 .map((file, i) => {
+                                                    let indexOfImage = ((defaultPageSize * this.state.marketPage) - defaultPageSize) + i
                                                     return (
-                                                        <div className={styles['layout-child']} onClick={() => this.openMarketFullImage(i)}>
+                                                        <div className={styles['layout-child']} onClick={() => this.openMarketFullImage(indexOfImage)}>
                                                             <img src={file.Url} style={{ width: '100%', height: '100%' }} />
                                                         </div>
                                                     )
