@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { compose, withProps, lifecycle } from "recompose"
+
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, withScriptjs } from "react-google-maps"
 import { MAP } from 'react-google-maps/lib/constants';
 
