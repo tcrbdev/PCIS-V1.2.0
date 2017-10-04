@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama } from "react-google-maps"
+import { compose, withProps, lifecycle } from "recompose"
+import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, withScriptjs } from "react-google-maps"
 import { MAP } from 'react-google-maps/lib/constants';
 
 import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination } from 'antd';
@@ -555,11 +556,22 @@ const getColumnCA = [{
     }]
 }]
 
-const getLinkDetail = (obj, props, branch_radius) => {
+const getLinkDetail = (obj, props, branch_radius, current, handleDirection) => {
     return obj.map((m, i) => {
         const item = _.find(props.RELATED_BRANCH_DATA, { BranchCode: m.BranchCode })
         const radius = parseFloat(_.find(branch_radius, { BranchCode: m.BranchCode }).Radius).toFixed(1)
-        return (<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{m.BranchName}</a> {radius}Km. {(i + 1) < obj.length && ' / '} </span>)
+        return (
+            <span>
+                <a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{m.BranchName}</a>{
+                    <Tooltip title={`Direction To ${item.BranchName}`} placement="top">
+                        <FontAwesome className={styles['icon-direction']}
+                            name="road"
+                            onClick={() => handleDirection(
+                                { name: current.BranchName, Latitude: current.BranchLatitude, Longitude: current.BranchLongitude },
+                                { name: item.BranchName, Latitude: item.BranchLatitude, Longitude: item.BranchLongitude })} />
+                    </Tooltip>
+                } {radius}Km. {(i + 1) < obj.length && ' / '}
+            </span>)
     })
 }
 
@@ -625,7 +637,7 @@ const getBranchMarkerMenu = (props) => {
     }
 }
 
-const getBranchMarker = (props, handleShowModal) => {
+const getBranchMarker = (props, handleShowModal, handleDirection) => {
 
     const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
 
@@ -724,7 +736,7 @@ const getBranchMarker = (props, handleShowModal) => {
                                                                 //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
                                                             }
                                                             {
-                                                                getLinkDetail(related_branch, props, item.BRANCH_RADIUS)
+                                                                getLinkDetail(related_branch, props, item.BRANCH_RADIUS, item, handleDirection)
                                                             }
                                                         </span>
                                                         <div className={styles['note-icon']}>
@@ -911,7 +923,7 @@ const getExitingMarkerMenu = props => {
     }
 }
 
-const getExitingMarker = (props, handleShowModal) => {
+const getExitingMarker = (props, handleShowModal, handleDirection) => {
     const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
     let icon = icon_Market
     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
@@ -1391,6 +1403,15 @@ const getExitingMarker = (props, handleShowModal) => {
                                                                 <span>
                                                                     {`Distance `}
                                                                     {<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}
+                                                                    {
+                                                                        <Tooltip title={`Direction To ${item.BranchName}`} placement="top">
+                                                                            <FontAwesome className={styles['icon-direction']}
+                                                                                name="road"
+                                                                                onClick={() => handleDirection(
+                                                                                    { name: item.MarketName, Latitude: item.Latitude, Longitude: item.Longitude },
+                                                                                    { name: item.BranchName, Latitude: item.BranchLatitude, Longitude: item.BranchLongitude })} />
+                                                                        </Tooltip>
+                                                                    }
                                                                     {` ${parseFloat(item.Radius).toFixed(1)}Km.`}
                                                                     {
                                                                         (!in_array(item.BranchType, ['P', 'L'])) && ` (Br ${parseFloat(item.RadiusToPure).toFixed(1)}Km)`
@@ -1592,7 +1613,7 @@ class BranchImage extends Component {
                                             BRANCH_IMAGE
                                                 .slice((defaultPageSize * this.state.branchPage) - defaultPageSize, defaultPageSize * this.state.branchPage)
                                                 .map((file, i) => {
-                                                    let indexOfImage = ((defaultPageSize * this.state.marketPage) - defaultPageSize) + i
+                                                    let indexOfImage = ((defaultPageSize * this.state.branchPage) - defaultPageSize) + i
                                                     return (
                                                         <div className={styles['layout-child']} onClick={() => this.openBranchFullImage(indexOfImage)}>
                                                             <img src={file.Url} style={{ width: '100%', height: '100%' }} />
@@ -1818,11 +1839,74 @@ const getComplititorMarker = props => {
     })
 }
 
+class ModalDirectionInfo extends Component {
+
+    componentDidMount() {
+        console.log("------------------------------------------------------", this.props)
+        if (document.getElementById('modal-direction-info') === null || document.getElementById('modal-direction-info') === undefined) {
+            var divModal = document.createElement("div")
+            divModal.id = 'modal-direction-info'
+
+            document.getElementById('direction-info').appendChild(divModal)
+        }
+    }
+
+    render() {
+        const { directions } = this.props
+
+        return (
+            <Modal
+                wrapClassName={`parent_salesummary ${styles['modalParentDirectionInfo']}`}
+                className={styles['modalDirectionInfo']}
+                visible={this.props.directions}
+                onOk={false}
+                onCancel={this.props.close}
+                footer={null}
+                closable={false}
+                maskClosable={false}
+                mask={false}
+                getContainer={() => document.getElementById('modal-direction-info')}
+            >
+                <article className={styles['wrapper']}>
+                    <div className={styles['header-container']}>
+                        <div className={styles['title-img-direction']}>
+                            <span>
+                                <FontAwesome name="road" style={{ marginRight: '5px' }} />
+                                Direction Route
+                            </span>
+                        </div>
+                        <Tooltip title='Close Direction route'>
+                            <Icon
+                                onClick={this.props.close}
+                                className={styles["trigger-close"]}
+                                type='close' />
+                        </Tooltip>
+                    </div>
+                    <Layout>
+                        <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>
+                            <div className={styles['detail-container']}>
+                                <span>
+                                    <FontAwesome style={{ marginRight: '5px' }} name="road" />
+                                    {directions && <span>{directions.from.name} <FontAwesome name="chevron-right" /> {directions.to.name}</span>}
+                                </span>
+                                <span><Icon style={{ marginRight: '5px' }} type="car" /> {directions && directions.routes[0].legs[0].distance.text}</span>
+                                <span><FontAwesome style={{ marginRight: '5px' }} name="clock-o" /> {directions && directions.routes[0].legs[0].duration.text}</span>
+                            </div>
+                        </Layout>
+                    </Layout>
+                </article>
+            </Modal>
+        )
+    }
+
+}
+
 class Map extends Component {
 
     state = {
         showAddNoteModal: false,
-        modalSelectData: null
+        modalSelectData: null,
+        directions: null
     }
 
     handleShowModal = (item) => {
@@ -1831,6 +1915,32 @@ class Map extends Component {
 
     handleCancel = () => {
         this.setState({ showAddNoteModal: false, modalSelectData: null })
+    }
+
+    closeDirection = () => {
+        this.setState({ directions: null })
+    }
+
+    getDirection = (origin, destination) => {
+        const DirectionsService = new google.maps.DirectionsService();
+
+        DirectionsService.route({
+            origin: new google.maps.LatLng(origin.Latitude, origin.Longitude),
+            destination: new google.maps.LatLng(destination.Latitude, destination.Longitude),
+            travelMode: google.maps.TravelMode.DRIVING,
+        }, (result, status) => {
+            if (status === google.maps.DirectionsStatus.OK) {
+                result.from = origin
+                result.to = destination
+                this.setState({ directions: result })
+            } else {
+                console.error(`error fetching directions ${result}`);
+            }
+        })
+    }
+
+    componentDidMount() {
+        //this.getDirection()
     }
 
     render() {
@@ -1846,12 +1956,14 @@ class Map extends Component {
                         visible={this.state.showAddNoteModal}
                         onOk={false}
                         onCancel={this.handleCancel}
-                        footer={null}
-                    >
+                        footer={null}>
                         {
                             <InsertNote modalSelectData={modalSelectData} />
                         }
                     </Modal>
+                }
+                {
+                    <ModalDirectionInfo directions={this.state.directions} close={this.closeDirection} />
                 }
                 <GoogleMap
                     defaultZoom={8}
@@ -1862,7 +1974,7 @@ class Map extends Component {
                         getBranchMarkerMenu(props)
                     }
                     {
-                        getBranchMarker(props, this.handleShowModal)
+                        getBranchMarker(props, this.handleShowModal, this.getDirection)
                     }
                     {
                         getBranchMarkerCircle(props)
@@ -1871,7 +1983,7 @@ class Map extends Component {
                         getExitingMarkerMenu(props)
                     }
                     {
-                        getExitingMarker(props, this.handleShowModal)
+                        getExitingMarker(props, this.handleShowModal, this.getDirection)
                     }
                     {
                         getComplititorMarker(props)
@@ -1924,6 +2036,17 @@ class Map extends Component {
                             )
 
                         })
+                    }
+                    {
+                        this.state.directions &&
+                        <DirectionsRenderer
+                            directions={this.state.directions}
+                            options={{
+                                suppressMarkers: true,
+                                polylineOptions: {
+                                    strokeColor: '#2196F3'
+                                }
+                            }} />
                     }
                 </GoogleMap>
             </div>

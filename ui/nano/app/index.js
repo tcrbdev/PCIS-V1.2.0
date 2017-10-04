@@ -642,6 +642,9 @@ class Index extends Component {
                 <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
                     <div id="add-area" className={styles['multiple-window']}></div>
                 </Draggable>
+                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div id="direction-info" className={styles['multiple-window']}></div>
+                </Draggable>
             </Layout>
         )
     }
