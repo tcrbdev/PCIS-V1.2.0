@@ -1851,6 +1851,12 @@ class ModalDirectionInfo extends Component {
         }
     }
 
+    reverseRoute = () => {
+        console.log(this.props)
+        const { handleDirection, directions } = this.props
+        handleDirection(directions.to, directions.from)
+    }
+
     render() {
         const { directions } = this.props
 
@@ -1887,7 +1893,14 @@ class ModalDirectionInfo extends Component {
                             <div className={styles['detail-container']}>
                                 <span>
                                     <FontAwesome style={{ marginRight: '5px' }} name="road" />
-                                    {directions && <span>{directions.from.name} <FontAwesome name="chevron-right" /> {directions.to.name}</span>}
+                                    {
+                                        directions &&
+                                        <span>
+                                            {directions.from.name}
+                                            <Tooltip title='Reverse starting point and destination'><Icon className={styles['reverse-route']} onClick={this.reverseRoute} type="swap" /></Tooltip>
+                                            {directions.to.name}
+                                        </span>
+                                    }
                                 </span>
                                 <span><Icon style={{ marginRight: '5px' }} type="car" /> {directions && directions.routes[0].legs[0].distance.text}</span>
                                 <span><FontAwesome style={{ marginRight: '5px' }} name="clock-o" /> {directions && directions.routes[0].legs[0].duration.text}</span>
@@ -1963,7 +1976,7 @@ class Map extends Component {
                     </Modal>
                 }
                 {
-                    <ModalDirectionInfo directions={this.state.directions} close={this.closeDirection} />
+                    <ModalDirectionInfo handleDirection={this.getDirection} directions={this.state.directions} close={this.closeDirection} />
                 }
                 <GoogleMap
                     defaultZoom={8}
