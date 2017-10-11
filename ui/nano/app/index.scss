@@ -208,7 +208,8 @@
 {
     background-color: #FFF;
     flex: 0 0 0% !important;
-    width: 0px !important;
+    max-width: 0px !important;
+    min-width: 0px !important;
 }
 
 .panel-header

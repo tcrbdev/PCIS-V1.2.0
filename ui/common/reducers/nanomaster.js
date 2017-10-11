@@ -24,7 +24,9 @@ import {
 
     GET_CA_SUMMARY_ONLY_REQUEST,
     GET_CA_SUMMARY_ONLY_SUCCESS,
-    GET_CA_SUMMARY_ONLY_FAILURE
+    GET_CA_SUMMARY_ONLY_FAILURE,
+
+    SET_OPEN_PLAN_OPEN_BRANCH_REQUEST
 } from '../constants/actionsType'
 
 const initialStateObj = {}
@@ -130,6 +132,7 @@ export const DO_BOUNDS_MAP = (state = initialStateBoolean, action) => {
         case SET_OPEN_BRANCH_MARKER_REQUEST:
         case SET_OPEN_EXITING_MARKET_MARKER_REQUEST:
         case SET_OPEN_TARGET_MARKET_MARKER_REQUEST:
+        case SET_OPEN_PLAN_OPEN_BRANCH_REQUEST:
             return false
             break;
         case CHANGE_MAP_MARKER_BY_CA:
@@ -233,6 +236,20 @@ export const RELATED_CA_NOTE_DATA = (state = initialStateArray, action) => {
             break;
         case SEARCH_NANO_DATA_FAILURE:
             return [action.payload]
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const RELATED_PLAN_OPEN_BRANCH_DATA = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case SET_OPEN_PLAN_OPEN_BRANCH_REQUEST:
+            return action.payload
+            break;
+        case SEARCH_NANO_DATA_SUCCESS:
+            return action.payload.nanoMarker[5]
             break;
         default:
             return state

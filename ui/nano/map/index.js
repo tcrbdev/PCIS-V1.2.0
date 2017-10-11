@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, withScriptjs } from "react-google-maps"
+import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
+
+import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
+
 import { MAP } from 'react-google-maps/lib/constants';
 
 import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination } from 'antd';
@@ -24,6 +27,8 @@ import icon_Srisawat from '../../../image/icon_Srisawat.png'
 import icon_SrisawatPower from '../../../image/icon_SrisawatPower.png'
 import icon_Mtls from '../../../image/icon_Mtls.png'
 import pinpao from '../../../image/pinpao.png'
+import icon_Plan_Branch_Nano from '../../../image/i_Nano.png'
+import resize_radius from '../../../image/resize-radius.png'
 
 import {
     setOpenBranchMarker,
@@ -36,6 +41,7 @@ import {
     setOpenExitingMarketShopLayoutMarker,
     setOpenExitingMarketSaleSummaryMarker,
     setOpenExitingMarketPortfolioMarker,
+    setOpenPlanOpenBranch,
     insertUpdateMarkerNote
 } from '../actions/nanomaster'
 
@@ -681,6 +687,20 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                         url: icon
                     }}>
                     {
+                        _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'SBVOL').length > 0 &&
+                        item.Branch &&
+                        <OverlayView
+                            position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
+                            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                            getPixelPositionOffset={getPixelPositionOffset}>
+                            <div className={styles['sb-vol-info']}>
+                                <span>{item.Branch}</span>
+                                <span>{parseFloat(item.Actual).toFixed(0)} Mb ({parseFloat(item.Achieve).toFixed(0)}%)</span>
+                                <span>{item.Opening}</span>
+                            </div>
+                        </OverlayView>
+                    }
+                    {
                         item.showImage &&
                         (<BranchImage item={item} index={index} ownProps={props} />)
                     }
@@ -820,7 +840,7 @@ const getLineKioskToBranch = (props) => {
 
 const getBranchMarkerCircle = (props) => {
     const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
-
+    console.log(RELATED_BRANCH_DATA)
     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0) {
         return RELATED_BRANCH_DATA.map((item, index) => {
             const radius = circle.map(c => (
@@ -1408,8 +1428,9 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                                                             <FontAwesome className={styles['icon-direction']}
                                                                                 name="road"
                                                                                 onClick={() => handleDirection(
-                                                                                    { name: item.MarketName, Latitude: item.Latitude, Longitude: item.Longitude },
-                                                                                    { name: item.BranchName, Latitude: item.BranchLatitude, Longitude: item.BranchLongitude })} />
+                                                                                    { name: item.BranchName, Latitude: item.BranchLatitude, Longitude: item.BranchLongitude },
+                                                                                    { name: item.MarketName, Latitude: item.Latitude, Longitude: item.Longitude }
+                                                                                )} />
                                                                         </Tooltip>
                                                                     }
                                                                     {` ${parseFloat(item.Radius).toFixed(1)}Km.`}
@@ -1485,6 +1506,282 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
             }
         })
     }
+}
+
+
+const distanceBetweenPoints = (p1, p2) => {
+    if (!p1 || !p2) {
+        return 0;
+    }
+
+    var R = 6371; // Radius of the Earth in km 
+    var dLat = (p2.lat() - p1.lat()) * Math.PI / 180;
+    var dLon = (p2.lng() - p1.lng()) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(p1.lat() * Math.PI / 180) * Math.cos(p2.lat() * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return d;
+}
+
+const getBranchDrableCircle = (props) => {
+
+    const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
+
+    return RELATED_BRANCH_DATA.map((item, index) => {
+        return (
+            <DragRadius
+                item={item}
+                index={index}
+                NANO_FILTER_CRITERIA={NANO_FILTER_CRITERIA} />
+        )
+    })
+}
+
+class DragRadius extends Component {
+    state = {
+        const_radius: 15000,
+        defalt_lng: null,
+        default_radius: 15000,
+        ref_circle: null,
+        on_drag: false,
+        drag_location: null
+    }
+
+    onDrag = (e) => {
+        const radius = distanceBetweenPoints(this.state.ref_circle.getCenter(), e.latLng) * 1000
+
+        this.setState({ default_radius: radius, on_drag: true, drag_location: e.latLng })
+    }
+
+    onDragEnd = (e) => {
+        const radius = distanceBetweenPoints(this.state.ref_circle.getCenter(), e.latLng) * 1000
+
+        this.setState({ default_radius: radius, on_drag: false, drag_location: e.latLng })
+    }
+
+    restoreToDefault = () => {
+        this.setState({ default_radius: this.state.const_radius, on_drag: false })
+    }
+
+    componentDidMount() {
+        this.setState({ ref_circle: this.refs.circle, defalt_lng: parseFloat(this.refs.circle.getBounds().getNorthEast().lng()) })
+    }
+
+    render() {
+        const { item, index, NANO_FILTER_CRITERIA } = this.props
+        let icon = icon_Plan_Branch_Nano
+
+        let bgColor = 'rgba(0, 153, 255, 0.63)'
+        switch (item.BranchType) {
+            case "K":
+                bgColor = 'rgba(255, 101, 0, 0.6)'
+                break;
+        }
+
+        return (
+            <div>
+                {
+                    _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
+                    <Circle
+                        center={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
+                        radius={this.state.default_radius}
+                        ref='circle'
+                        options={{
+                            strokeColor: this.state.on_drag ? '#656565' : '#F33A00',
+                            strokeOpacity: 1,
+                            strokeWeight: 2,
+                            fillColor: '#656565',
+                            fillOpacity: this.state.on_drag ? 0.1 : 0
+                        }}>
+                    </Circle>
+                }
+                {
+                    _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
+                    this.refs.circle &&
+                    <Marker
+                        draggable={true}
+                        onDrag={this.onDrag}
+                        icon={{
+                            url: "https://maps.gstatic.com/intl/en_us/mapfiles/markers2/measle_blue.png",
+                            size: new google.maps.Size(7, 7),
+                            anchor: new google.maps.Point(4, 4)
+                        }}
+                        title='Resize'
+                        position={{
+                            lat: this.state.on_drag ? parseFloat(this.state.drag_location.lat()) : parseFloat(item.BranchLatitude),
+                            lng: this.state.on_drag ? parseFloat(this.state.drag_location.lng()) : this.state.defalt_lng
+                        }}
+                        key={`C_${index}`}
+                    />
+                }
+                {
+                    this.state.on_drag &&
+                    <OverlayView
+                        position={{
+                            lat: this.state.on_drag ? parseFloat(this.state.drag_location.lat()) : parseFloat(item.BranchLatitude),
+                            lng: this.state.on_drag ? parseFloat(this.state.drag_location.lng()) : this.state.defalt_lng
+                        }}
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                        getPixelPositionOffset={getPixelPositionOffset}>
+                        <div className={styles['radius-info']} style={{ color: '#5f5f5f' }} >
+                            <span>{parseFloat(this.state.default_radius / 1000).toFixed(1)}Km.
+                                <Tooltip title="Reset">
+                                    <FontAwesome name="refresh" style={{ marginLeft: '5px', cursor: 'pointer' }} onClick={this.restoreToDefault} />
+                                </Tooltip>
+                            </span>
+                        </div>
+                    </OverlayView>
+                }
+            </div>
+        )
+    }
+}
+
+class PlanOpenBranchMarker extends Component {
+
+    state = {
+        default_radius: 5000,
+        ref_circle: null,
+        on_drag: false,
+        drag_location: null
+    }
+
+    onDrag = (e) => {
+        const radius = distanceBetweenPoints(this.state.ref_circle.getCenter(), e.latLng) * 1000
+
+        this.setState({ default_radius: radius, on_drag: true, drag_location: e.latLng })
+    }
+
+    onDragEnd = (e) => {
+        const radius = distanceBetweenPoints(this.state.ref_circle.getCenter(), e.latLng) * 1000
+
+        this.setState({ default_radius: radius, on_drag: false, drag_location: e.latLng })
+    }
+
+    componentDidMount() {
+        this.setState({ ref_circle: this.refs.circle })
+    }
+
+    render() {
+        const { item, index, setOpenPlanOpenBranch, RELATED_PLAN_OPEN_BRANCH_DATA, NANO_FILTER_CRITERIA } = this.props
+        let icon = icon_Plan_Branch_Nano
+
+        let bgColor = 'rgba(0, 153, 255, 0.63)'
+        switch (item.BranchType) {
+            case "K":
+                bgColor = 'rgba(255, 101, 0, 0.6)'
+                break;
+        }
+
+        return (
+            <div>
+                <Marker
+                    key={index}
+                    title={item.BranchName}
+                    onClick={() => setOpenPlanOpenBranch(item, RELATED_PLAN_OPEN_BRANCH_DATA, true)}
+                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                    icon={{
+                        url: '_'
+                    }}>
+                </Marker>
+                {
+                    _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
+                    <Circle
+                        center={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                        radius={5000}
+                        ref='circle'
+                        options={{
+                            strokeColor: '#656565',
+                            strokeOpacity: 1,
+                            strokeWeight: 2,
+                            fillColor: '#656565',
+                            fillOpacity: 0.2
+                        }}>
+                    </Circle>
+                }
+                {
+                    _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
+                    <Circle
+                        center={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                        radius={item.Radius || this.state.default_radius}
+                        ref='circle'
+                        options={{
+                            strokeColor: '#656565',
+                            strokeOpacity: 1,
+                            strokeWeight: 2,
+                            fillColor: '#656565',
+                            fillOpacity: 0.2
+                        }}>
+                    </Circle>
+                }
+                {
+                    _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
+                    this.refs.circle &&
+                    <Marker
+                        draggable={true}
+                        onDrag={this.onDrag}
+                        icon={{
+                            url: "https://maps.gstatic.com/intl/en_us/mapfiles/markers2/measle_blue.png",
+                            size: new google.maps.Size(7, 7),
+                            anchor: new google.maps.Point(4, 4)
+                        }}
+                        title='Resize'
+                        position={{
+                            lat: this.state.on_drag ? parseFloat(this.state.drag_location.lat()) : parseFloat(item.Latitude),
+                            lng: this.state.on_drag ? parseFloat(this.state.drag_location.lng()) : parseFloat(this.state.ref_circle.getBounds().getNorthEast().lng())
+                        }}
+                        key={`C_${index}`}
+                    />
+                }
+                <OverlayView
+                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                    getPixelPositionOffset={getPixelPositionOffset}>
+                    <div className={styles['radius-info']} style={{ backgroundColor: bgColor }}>
+                        <span>{item.BranchName}</span>
+                        <span>{parseFloat(this.state.default_radius / 1000).toFixed(1)}Km.</span>
+                    </div>
+                </OverlayView>
+                {
+                    item.showInfo &&
+                    <InfoWindow
+                        title={item.MarketName}
+                        onDomReady={onDomReady}>
+                        <Layout>
+                            <div className={styles['headers']}>
+                                <FontAwesome className="trigger" name="map-marker" />
+                                <span>
+                                    {`(${item.BranchName})`}
+                                </span>
+                                <Icon
+                                    onClick={() => setOpenPlanOpenBranch(item, RELATED_PLAN_OPEN_BRANCH_DATA, false)}
+                                    className="trigger"
+                                    type='close' />
+                            </div>
+                            <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                            </Layout>
+                        </Layout>
+                    </InfoWindow>
+                }
+            </div>
+        )
+    }
+}
+
+const getPlanOpenBranchMarker = (props, handleDirection) => {
+
+    const { NANO_FILTER_CRITERIA, RELATED_PLAN_OPEN_BRANCH_DATA, setOpenPlanOpenBranch } = props
+
+    return RELATED_PLAN_OPEN_BRANCH_DATA.map((item, index) => {
+        return (
+            <PlanOpenBranchMarker
+                item={item}
+                index={index}
+                setOpenPlanOpenBranch={setOpenPlanOpenBranch}
+                RELATED_PLAN_OPEN_BRANCH_DATA={RELATED_PLAN_OPEN_BRANCH_DATA}
+                NANO_FILTER_CRITERIA={NANO_FILTER_CRITERIA} />
+        )
+    })
 }
 
 class BranchImage extends Component {
@@ -1842,7 +2139,6 @@ const getComplititorMarker = props => {
 class ModalDirectionInfo extends Component {
 
     componentDidMount() {
-        console.log("------------------------------------------------------", this.props)
         if (document.getElementById('modal-direction-info') === null || document.getElementById('modal-direction-info') === undefined) {
             var divModal = document.createElement("div")
             divModal.id = 'modal-direction-info'
@@ -1852,7 +2148,6 @@ class ModalDirectionInfo extends Component {
     }
 
     reverseRoute = () => {
-        console.log(this.props)
         const { handleDirection, directions } = this.props
         handleDirection(directions.to, directions.from)
     }
@@ -1956,8 +2251,13 @@ class Map extends Component {
         //this.getDirection()
     }
 
+    onPolylineComplete = (a, b, c, d) => {
+        console.log(a, b, c, d, this)
+    }
+
     render() {
         const props = this.props
+        const { NANO_FILTER_CRITERIA } = props
         const { modalSelectData } = this.state
 
         return (
@@ -1993,6 +2293,9 @@ class Map extends Component {
                         getBranchMarkerCircle(props)
                     }
                     {
+                        getBranchDrableCircle(props)
+                    }
+                    {
                         getExitingMarkerMenu(props)
                     }
                     {
@@ -2000,6 +2303,9 @@ class Map extends Component {
                     }
                     {
                         getComplititorMarker(props)
+                    }
+                    {
+                        getPlanOpenBranchMarker(props, this.getDirection)
                     }
                     {
                         props.RELATED_TARGET_MARKET_DATA &&
@@ -2061,6 +2367,39 @@ class Map extends Component {
                                 }
                             }} />
                     }
+                    {
+                        this.state.directions &&
+                        <TrafficLayer autoUpdate />
+                    }
+                    {
+                        /*<DrawingManager
+                            defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
+                            onPolylineComplete={this.onPolylineComplete}
+                            defaultOptions={{
+                                drawingControl: true,
+                                drawingControlOptions: {
+                                    position: google.maps.ControlPosition.TOP_CENTER,
+                                    drawingModes: [
+                                        google.maps.drawing.OverlayType.CIRCLE,
+                                        google.maps.drawing.OverlayType.POLYGON,
+                                        google.maps.drawing.OverlayType.POLYLINE,
+                                        google.maps.drawing.OverlayType.RECTANGLE,
+                                    ],
+                                },
+                                polylineOptions: {
+                                    editable: true
+                                },
+                                circleOptions: {
+                                    fillColor: `#ffff00`,
+                                    fillOpacity: 1,
+                                    strokeWeight: 5,
+                                    clickable: false,
+                                    editable: true,
+                                    zIndex: 1,
+                                },
+                            }}
+                        />*/
+                    }
                 </GoogleMap>
             </div>
         )
@@ -2078,7 +2417,8 @@ export default connect(
         RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,
         RELATED_TARGET_MARKET_DATA: state.RELATED_TARGET_MARKET_DATA,
         RELATED_COMPLITITOR_DATA: state.RELATED_COMPLITITOR_DATA,
-        RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA
+        RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA,
+        RELATED_PLAN_OPEN_BRANCH_DATA: state.RELATED_PLAN_OPEN_BRANCH_DATA
     }), {
         setOpenBranchMarker: setOpenBranchMarker,
         setOpenBranchMarkerMenu: setOpenBranchMarkerMenu,
@@ -2089,5 +2429,6 @@ export default connect(
         setOpenBranchImageMarker: setOpenBranchImageMarker,
         setOpenExitingMarketShopLayoutMarker: setOpenExitingMarketShopLayoutMarker,
         setOpenExitingMarketSaleSummaryMarker: setOpenExitingMarketSaleSummaryMarker,
-        setOpenExitingMarketPortfolioMarker: setOpenExitingMarketPortfolioMarker
+        setOpenExitingMarketPortfolioMarker: setOpenExitingMarketPortfolioMarker,
+        setOpenPlanOpenBranch: setOpenPlanOpenBranch
     })(wrapMap)

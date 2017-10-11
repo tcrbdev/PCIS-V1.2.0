@@ -96,8 +96,32 @@ button.searchCriteria {
 .branch_field,
 .calist_field,
 .province_field,
+.branch_type_field,
 .competitor_field {
     cursor: pointer;
+    /* Let's get this party started */
+& > span::-webkit-scrollbar {
+    width: 4px;
+}
+ 
+/* Track */
+& > span::-webkit-scrollbar-track {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #EEE; 
+}
+ 
+/* Handle */
+& > span::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #6f6f6f; 
+}
+
+& [class*=ant-select-selection__choice]
+{
+margin-right: .11em;
+}
 }
 
 .as-of-date

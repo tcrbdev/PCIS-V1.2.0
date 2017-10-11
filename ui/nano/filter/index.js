@@ -49,14 +49,18 @@ const tProps = {
 
 const ShowMarkerOptions = [
     { label: 'PIN', value: 'MR' },
-    { label: 'Radius', value: 'RA' }
+    { label: 'Radius', value: 'RA' },
+    // { label: 'KPI', value: 'SBVOL', disabled: true }
 ];
 const defaultShowMarkerOptions = ['MR', 'RA'];
 
 const BranchTypeOptions = [
-    { label: 'LB', value: 'L' },
-    { label: 'Pure', value: 'P' },
-    { label: 'Kiosk', value: 'K' }
+    { Group: 'Current', label: 'LB', value: 'L' },
+    { Group: 'Current', label: 'Pure', value: 'P' },
+    { Group: 'Current', label: 'Kiosk', value: 'K' },
+    //{ Group: 'Plan Branch', label: 'LB', value: '_L' },
+    { Group: 'New Branch', label: 'Pure', value: '_P' },
+    { Group: 'New Branch', label: 'Kiosk', value: '_K' }
 ];
 const defaultBranchType = ['L', 'P', 'K'];
 
@@ -84,6 +88,40 @@ class Filter extends Component {
                 })
             }]
         }
+    }
+
+    getBranchTypeSelectItem() {
+        let resultGroupBy = []
+        _.mapKeys(_.groupBy(BranchTypeOptions, 'Group'), (value, key) => {
+            if (key == 'Current') {
+                value.map((item, index) => {
+                    resultGroupBy.push({
+                        label: item.label,
+                        value: item.value,
+                        key: item.value,
+                    })
+                })
+            }
+            else {
+                resultGroupBy.push({
+                    label: key,
+                    value: value.map(item => item.value).join(','),
+                    key: value.map(item => item.value).join(','),
+                    children: value.map((item, index) => ({
+                        label: item.label,
+                        value: item.value,
+                        key: item.value
+                    }))
+                })
+            }
+        })
+
+        return [{
+            label: 'Select All',
+            value: resultGroupBy.map(item => item.value).join(','),
+            key: 'all',
+            children: resultGroupBy
+        }]
     }
 
     getAreaSelectItem() {
@@ -282,7 +320,7 @@ class Filter extends Component {
                 label: 'Select All',
                 value: [...haveDistrict.map(item => item.District), ..._.uniqBy(PROVINCE_DATA, "ProvinceName").map(item => item.ProvinceName)].join(','),
                 key: [...haveDistrict.map(item => item.District), ..._.uniqBy(PROVINCE_DATA, "ProvinceName").map(item => item.ProvinceName)].join(','),
-                children: result
+                children: _.orderBy(result, 'key', 'asc')
             }]
         }
     }
@@ -344,7 +382,7 @@ class Filter extends Component {
 
                 const criteria = {
                     RegionID: !_.isEmpty(values.RegionID) ? values.RegionID.join(',') : null,
-                    AreaID: null,
+                    AreaID: !_.isEmpty(values.AreaID) ? _.uniq(values.AreaID.join(",").split(',').map(i => i.indexOf('-') > 0 ? i.substring(0, i.indexOf('-')) : i)).join(',') : null,
                     Zone: !_.isEmpty(values.AreaID) ? values.AreaID.join(",") : null,
                     BranchCode: !_.isEmpty(values.BranchCode) ? values.BranchCode.join(',') : null,
                     BranchType: !_.isEmpty(values.BranchType) ? values.BranchType.join(',') : null,
@@ -359,7 +397,7 @@ class Filter extends Component {
                     Srisawat: values.Srisawat,
                     Muangthai: values.Muangthai,
                     ngerdlor: values.ngerdlor,
-                    QueryType: this.getQueryTypeReportSummary(values),
+                    QueryType: this.getQueryTypeReportSummary(values)
                 }
 
                 if (process.env.NODE_ENV === 'production') {
@@ -753,7 +791,14 @@ class Filter extends Component {
                                             initialValue: defaultBranchType
                                         })
                                             (
-                                            <CheckboxGroup options={BranchTypeOptions} onChange={this.branch_type_change} />
+                                            <TreeSelect
+                                                {...tProps}
+                                                className={`${styles['branch_type_field']} ${styles['select-maxheight']}`}
+                                                treeData={this.getBranchTypeSelectItem()}
+                                                autoExpandParent={true}
+                                                searchPlaceholder="Please select branch type"
+                                                onClick={this.onExpand(styles['branch_type_field'])}
+                                            />
                                             )
                                     }
                                 </FormItem>
@@ -825,12 +870,11 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('IncludeExitingMarket', {
                                             valuePropName: 'checked',
-                                            initialValue: true,
+                                            initialValue: false,
                                         })
                                             (
                                             <Checkbox
-                                                className={styles['check-box']}
-                                                defaultChecked={true}>
+                                                className={styles['check-box']}>
                                                 Include Branch Market ({_.filter(this.props.RELATED_EXITING_MARKET_DATA, o => o.BranchType != 'K').length})
                                             </Checkbox>
                                             )
@@ -962,7 +1006,7 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('IncludeKioskMarket', {
                                             valuePropName: 'checked',
-                                            initialValue: true,
+                                            initialValue: false,
                                         })
                                             (
                                             <Checkbox

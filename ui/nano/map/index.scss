@@ -1213,3 +1213,34 @@ background-image: linear-gradient(-225deg, #A445B2 0%, #D41872 52%, #FF0066 100%
             color: #009688;
         }
     }
+
+    .radius-info
+    {
+                display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.50);
+        margin-top: -35px;
+        padding: 5px;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        font-size: 11px;
+        font-weight: bold;
+        color: #e6e6e6;
+    }
+
+    .sb-vol-info
+    {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        margin-top: 45px;
+        padding: 5px;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        font-size: 12px;
+        font-weight: bold;
+    }

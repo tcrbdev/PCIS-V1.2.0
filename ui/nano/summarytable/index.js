@@ -156,7 +156,7 @@ class SummaryTable extends Component {
     columnsSelect = () => {
         const { getFieldDecorator } = this.props.form
         const CA_Count = [this.props.NANO_FILTER_CRITERIA.CAName].length
-    
+
         if (this.props.NANO_FILTER_CRITERIA.CAName)
             return [{
                 title: (
@@ -168,7 +168,7 @@ class SummaryTable extends Component {
                                 initialValue: this.props.NANO_FILTER_CRITERIA.CAName.split(',').length > 1
                             })(<Checkbox className={styles['ca-checkbox-all']} onChange={this.checkboxSelectAllCAChange}>All</Checkbox>)
                         }
-                        <span className={`${ styles['fullWidth']} ${(CA_Count <= 1) && styles['align-right']}` }>CA Market List</span>
+                        <span className={`${styles['fullWidth']} ${(CA_Count <= 1) && styles['align-right']}`}>CA Market List</span>
                     </div>
                 ),
                 className: `${styles['header-select']} ${styles['header-vertical-middle']}`,
@@ -180,11 +180,11 @@ class SummaryTable extends Component {
             }]
         else
             return [{
-                title: (<span className={`${ styles['fullWidth']}`}>Branch Market List</span>),
+                title: (<span className={`${styles['fullWidth']}`}>Branch Market List</span>),
                 className: styles['header-select'],
                 children: null
             }, {
-                title: (<span className={`${ styles['fullWidth']}`}>{this.select()}</span>),
+                title: (<span className={`${styles['fullWidth']}`}>{this.select()}</span>),
                 className: styles['header-select'],
                 children: null
             }]
@@ -249,10 +249,12 @@ class SummaryTable extends Component {
             width: '6%',
         }, {
             title: (<div className={styles['div-center']}><span>PMT</span><span>Succ.</span></div>),
+            dataIndex: 'SuccessRate',
+            key: 'SuccessRate',
             width: '7%',
             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
             render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{0}%</span>
+                return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
             }
         }, {
             title: (<div className={styles['div-center']}><span>#</span><span>OS</span></div>),
@@ -273,7 +275,7 @@ class SummaryTable extends Component {
                     render: (text, record, index) => {
                         return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
                     }
-                }, 
+                },
                 {
                     title: (<div className={styles['div-center']}><span>Setup</span></div>),
                     className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
@@ -286,7 +288,7 @@ class SummaryTable extends Component {
                             render: (text, record, index) => {
                                 return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
                             }
-                        }, 
+                        },
                         {
                             dataIndex: 'SetupAch',
                             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
@@ -297,7 +299,7 @@ class SummaryTable extends Component {
                             }
                         }
                     ]
-                }, 
+                },
                 {
                     title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
                     className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
@@ -310,7 +312,7 @@ class SummaryTable extends Component {
                             render: (text, record, index) => {
                                 return <span style={{ padding: '3px' }}>{text}</span>
                             }
-                        }, 
+                        },
                         {
                             dataIndex: 'TopContributeValue',
                             className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,

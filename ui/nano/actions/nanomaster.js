@@ -61,7 +61,9 @@ import {
 
     GET_CA_SUMMARY_ONLY_REQUEST,
     GET_CA_SUMMARY_ONLY_SUCCESS,
-    GET_CA_SUMMARY_ONLY_FAILURE
+    GET_CA_SUMMARY_ONLY_FAILURE,
+
+    SET_OPEN_PLAN_OPEN_BRANCH_REQUEST
 } from '../../common/constants/actionsType'
 
 export const setOpenBranchMarkerMenu = (targetMarker, currentState, isOpen) => dispatch => {
@@ -289,7 +291,18 @@ export const setOpenExitingMarketPortfolioMarker = (targetMarker, currentState, 
 
 
 
+export const setOpenPlanOpenBranch = (targetMarker, currentState, isOpen) => dispatch => {
 
+    let item = _.find(currentState, { SysNO: targetMarker.SysNO })
+    item.showInfo = isOpen
+
+    let newState = _.cloneDeep(currentState)
+
+    dispatch({
+        type: SET_OPEN_PLAN_OPEN_BRANCH_REQUEST,
+        payload: newState
+    })
+}
 
 
 export const setOpenTargetMarketMarker = (targetMarker, currentState, isOpen) => dispatch => {
