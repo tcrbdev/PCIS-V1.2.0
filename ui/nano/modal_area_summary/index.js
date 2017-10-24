@@ -112,7 +112,7 @@ const getColumnCA = (data) => {
         title: (<div className={styles['div-center']}><span>Name</span></div>),
         dataIndex: 'Name',
         key: 'Name',
-        width: '15%',
+        width: '14%',
         className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']} sub-title`,
         render: (text, record, index) => {
             if (!_.isEmpty(record.EmpCode)) {
@@ -142,7 +142,7 @@ const getColumnCA = (data) => {
         title: (<div className={styles['div-center']}>Start<br />Month</div>),
         dataIndex: 'StartWork',
         key: 'StartWork',
-        width: '5%',
+        width: '6%',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return !_.isEmpty(text) && text.split('T').length > 1 ? moment(text.split('T')[0]).format('MMM-YY') : ''
@@ -400,7 +400,8 @@ class ModalSaleSummary extends Component {
                     CANCEL: GroupTotal[0].CANCELLED,
                     POTENTIAL: GroupTotal[0].TOTAL,
                     sum_penatation: sum_penatation,
-                    total_shop: GroupTotal[0].TotalShop
+                    total_shop: GroupTotal[0].TotalShop,
+                    total_market: GroupTotal[0].TotalMarket
                 },
                 {
                     Detail: GroupTotal[2].Detail,
@@ -410,7 +411,8 @@ class ModalSaleSummary extends Component {
                     CANCEL: GroupTotal[2].CANCELLED,
                     POTENTIAL: GroupTotal[2].TOTAL,
                     sum_penatation: sum_penatation,
-                    total_shop: GroupTotal[0].TotalShop
+                    total_shop: GroupTotal[0].TotalShop,
+                    total_market: GroupTotal[0].TotalMarket
                 },
             ]
         }
@@ -634,10 +636,10 @@ class ModalSaleSummary extends Component {
                                             <div className={styles['text-descrition']}>
                                                 <div>
                                                     <span>{`${TotalData.length > 0 ? TotalData[0].total_shop : 0} Shop`}</span>
-                                                    <span>{` Out of ${'0000'} Markets From ${'0000'}`}</span>
+                                                    <span>{` From ${TotalData.length > 0 ? TotalData[0].total_market : 0} Markets`}</span>
                                                 </div>
                                                 <span>
-                                                    {`Temp Information`}
+                                                    {``}
                                                 </span>
                                             </div>
                                             <div className={styles['box-shadow']}>

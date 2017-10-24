@@ -50,7 +50,7 @@ const tProps = {
 const ShowMarkerOptions = [
     { label: 'PIN', value: 'MR' },
     { label: 'Radius', value: 'RA' },
-    // { label: 'KPI', value: 'SBVOL', disabled: true }
+    { label: 'KPI', value: 'SBVOL', disabled: true }
 ];
 const defaultShowMarkerOptions = ['MR', 'RA'];
 
@@ -695,6 +695,24 @@ class Filter extends Component {
             wrapperCol: { span: 17 },
         };
 
+        const { cookies, AUTH_NANO_USER } = this.props
+        const authen_info = cookies.get('authen_info')
+        const AuthList = ['57251', '56225', '58141', '56679', '58106', '58385', '59016', '57568', '59440', '57160', '57249']
+
+        let auth_pass = false
+        if (process.env.NODE_ENV === 'production') {
+            if (!_.isEmpty(AUTH_NANO_USER)) {
+                if (!_.isEmpty(_.find(AuthList, o => o == AUTH_NANO_USER.Session.sess_empcode))) {
+                    auth_pass = true
+                    ShowMarkerOptions[2].disabled = !auth_pass
+                }
+            }
+        }
+        else {
+            auth_pass = true
+            ShowMarkerOptions[2].disabled = !auth_pass
+        }
+
         return (
             <Collapse bordered={true} onChange={this.onFilterCollapsedChange} style={{ zIndex: '3' }} activeKey={this.state.openFilterCollapsed}>
                 <Panel
@@ -1077,6 +1095,7 @@ const CookiesFilterForm = withCookies(FilterForm)
 
 export default connect(
     (state) => ({
+        AUTH_NANO_USER: state.AUTH_NANO_USER,
         NANO_MASTER_ALL: state.NANO_MASTER_ALL,
         ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA,
         RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,

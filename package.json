@@ -61,6 +61,7 @@
     "react-smooth-scrollbar": "^7.2.2",
     "react-sparklines": "^1.6.0",
     "react-tap-event-plugin": "^2.0.1",
+    "recharts": "^1.0.0-alpha.6",
     "recompose": "^0.25.1",
     "redux": "^3.6.0",
     "redux-api-middleware": "^1.0.3",

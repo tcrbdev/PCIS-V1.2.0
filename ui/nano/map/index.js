@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { renderToString } from 'react-dom/server'
 
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
 
@@ -9,6 +10,24 @@ import { MAP } from 'react-google-maps/lib/constants';
 
 import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination } from 'antd';
 import FontAwesome from 'react-fontawesome'
+import {
+    Sector,
+    Cell,
+    PieChart,
+    Pie as Pies,
+    Tooltip as Tooltips,
+    BarChart,
+    Bar as Bars,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Legend,
+    Area,
+    Line as Lines,
+    Scatter,
+    ComposedChart,
+    ReferenceDot
+} from 'recharts'
 import { Doughnut, HorizontalBar, Bar, Pie, Line } from 'react-chartjs-2'
 import moment from 'moment'
 import Scrollbar from 'react-smooth-scrollbar';
@@ -50,6 +69,288 @@ import styles from './index.scss'
 const { Header } = Layout
 const TabPane = Tabs.TabPane;
 
+const renderActiveShape = (props) => {
+    const RADIAN = Math.PI / 180;
+    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
+        fill, payload, percent, value } = props;
+    const sin = Math.sin(-RADIAN * midAngle);
+    const cos = Math.cos(-RADIAN * midAngle);
+    const sx = cx + (outerRadius + 10) * cos;
+    const sy = cy + (outerRadius + 10) * sin;
+    const mx = cx + (outerRadius + 30) * cos;
+    const my = cy + (outerRadius + 30) * sin;
+    const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+    const ey = my;
+    const textAnchor = cos >= 0 ? 'start' : 'end';
+
+    return (
+        <g>
+            <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>{payload.name}</text>
+            <Sector
+                cx={cx}
+                cy={cy}
+                innerRadius={innerRadius}
+                outerRadius={outerRadius}
+                startAngle={startAngle}
+                endAngle={endAngle}
+                fill={fill}
+            />
+            <Sector
+                cx={cx}
+                cy={cy}
+                startAngle={startAngle}
+                endAngle={endAngle}
+                innerRadius={outerRadius + 6}
+                outerRadius={outerRadius + 10}
+                fill={fill}
+            />
+            <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+            <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+            <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`PV ${value}`}</text>
+            <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
+                {`(Rate ${(percent * 100).toFixed(2)}%)`}
+            </text>
+        </g>
+    );
+}
+
+const GaugeChart = (props) => {
+
+    const { data, colorData } = props
+
+    const width = 140;
+    const height = 117;
+    const chartValue = 100//data.FirstPinAch;
+
+
+    const activeSectorIndex = colorData.map((cur, index, arr) => {
+        const curMax = [...arr]
+            .splice(0, index + 1)
+            .reduce((a, b) => ({ value: a.value + b.value }))
+            .value;
+        return (chartValue > (curMax - cur.value)) && (chartValue <= curMax);
+    })
+        .findIndex(cur => cur);
+
+    const sumValues = colorData
+        .map(cur => cur.value)
+        .reduce((a, b) => a + b);
+
+    const arrowData = [
+        { value: data.FirstPinAch < 0 ? 0 : data.FirstPinAch },
+        { value: 0 },
+        { value: sumValues - (data.FirstPinAch < 0 ? 0 : data.FirstPinAch) }
+    ];
+
+    const arrowData2 = [
+        { value: data.SecondPinAch < 0 ? 0 : data.SecondPinAch },
+        { value: 0 },
+        { value: sumValues - (data.SecondPinAch < 0 ? 0 : data.SecondPinAch) }
+    ];
+
+    const pieProps = {
+        startAngle: 225,
+        endAngle: -45,
+        cy: height - 25
+    };
+
+    const pieRadius = {
+        innerRadius: (width) * 0.35,
+        outerRadius: (width) * 0.4
+    };
+
+    const Arrow = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
+        const RADIAN = Math.PI / 180;
+        const sin = Math.sin(-RADIAN * midAngle);
+        const cos = Math.cos(-RADIAN * midAngle);
+        const mx = cx + (outerRadius + width * 0.03) * cos;
+        const my = cy + (outerRadius + width * 0.03) * sin;
+        return (
+            <g>
+                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#000" fill="none" strokeLinecap="round" />
+                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" stroke="none" />
+            </g>
+        );
+    };
+
+    const Arrow2 = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
+        const RADIAN = Math.PI / 180;
+        const sin = Math.sin(-RADIAN * midAngle);
+        const cos = Math.cos(-RADIAN * midAngle);
+        const mx = cx + (outerRadius + width * 0.03) * cos;
+        const my = cy + (outerRadius + width * 0.03) * sin;
+        return (
+            <g>
+                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#ff7300" fill="none" strokeLinecap="round" />
+                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" />
+            </g>
+        );
+    };
+
+    const ActiveSectorMark = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill }) => { //eslint-disable-line react/no-multi-comp
+        return (
+            <g>
+                <Sector
+                    cx={cx}
+                    cy={cy}
+                    innerRadius={innerRadius}
+                    outerRadius={outerRadius * 1.2}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    fill={fill}
+                />
+            </g>
+        );
+    };
+
+    return (
+        <PieChart width={width} height={height} margin={{ top: -25, right: 0, left: -10, bottom: 0 }}>
+            <Pies
+                activeIndex={activeSectorIndex}
+                data={colorData}
+                innerRadius={(width) * 0.23}
+                { ...pieProps }
+                strokeWidth={0}>
+                {
+                    colorData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={colorData[index].color} />
+                    ))
+                }
+            </Pies>
+            <Pies
+                stroke="none"
+                activeIndex={1}
+                activeShape={Arrow}
+                data={arrowData}
+                outerRadius={pieRadius.innerRadius}
+                fill="none"
+                { ...pieProps }
+            />
+            <Pies
+                stroke="none"
+                activeIndex={1}
+                activeShape={Arrow2}
+                data={arrowData2}
+                outerRadius={pieRadius.innerRadius}
+                fill="none"
+                { ...pieProps }
+            />
+            <Tooltips />
+        </PieChart>
+    );
+}
+
+const GaugeChart1Needle = (props) => {
+
+    const { data, colorData } = props
+
+    const width = 140;
+    const height = 117;
+    const chartValue = 100//data.FirstPinAch;
+
+
+    const activeSectorIndex = colorData.map((cur, index, arr) => {
+        const curMax = [...arr]
+            .splice(0, index + 1)
+            .reduce((a, b) => ({ value: a.value + b.value }))
+            .value;
+        return (chartValue > (curMax - cur.value)) && (chartValue <= curMax);
+    })
+        .findIndex(cur => cur);
+
+    const sumValues = colorData
+        .map(cur => cur.value)
+        .reduce((a, b) => a + b);
+
+    const arrowData = [
+        { value: data.RankAch < 0 ? 0 : data.RankAch },
+        { value: 0 },
+        { value: sumValues - (data.RankAch < 0 ? 0 : data.RankAch) }
+    ];
+
+    const pieProps = {
+        startAngle: 225,
+        endAngle: -45,
+        cy: height - 25
+    };
+
+    const pieRadius = {
+        innerRadius: (width) * 0.35,
+        outerRadius: (width) * 0.4
+    };
+
+    const Arrow = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
+        const RADIAN = Math.PI / 180;
+        const sin = Math.sin(-RADIAN * midAngle);
+        const cos = Math.cos(-RADIAN * midAngle);
+        const mx = cx + (outerRadius + width * 0.03) * cos;
+        const my = cy + (outerRadius + width * 0.03) * sin;
+        return (
+            <g>
+                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#000" fill="none" strokeLinecap="round" />
+                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" stroke="none" />
+            </g>
+        );
+    };
+
+    const Arrow2 = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
+        const RADIAN = Math.PI / 180;
+        const sin = Math.sin(-RADIAN * midAngle);
+        const cos = Math.cos(-RADIAN * midAngle);
+        const mx = cx + (outerRadius + width * 0.03) * cos;
+        const my = cy + (outerRadius + width * 0.03) * sin;
+        return (
+            <g>
+                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#ff7300" fill="none" strokeLinecap="round" />
+                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" />
+            </g>
+        );
+    };
+
+    const ActiveSectorMark = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill }) => { //eslint-disable-line react/no-multi-comp
+        return (
+            <g>
+                <Sector
+                    cx={cx}
+                    cy={cy}
+                    innerRadius={innerRadius}
+                    outerRadius={outerRadius * 1.2}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    fill={fill}
+                />
+            </g>
+        );
+    };
+
+    return (
+        <PieChart width={width} height={height} margin={{ top: -25, right: 0, left: -10, bottom: 0 }}>
+            <Pies
+                activeIndex={activeSectorIndex}
+                data={colorData}
+                innerRadius={(width) * 0.23}
+                { ...pieProps }
+                strokeWidth={0}>
+                {
+                    colorData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={colorData[index].color} />
+                    ))
+                }
+            </Pies>
+            <Pies
+                stroke="none"
+                activeIndex={1}
+                activeShape={Arrow}
+                data={arrowData}
+                outerRadius={pieRadius.innerRadius}
+                fill="none"
+                { ...pieProps }
+            />
+            <Tooltips />
+        </PieChart>
+    );
+}
+
 const onDomReady = (isImage) => {
     let iwOuter = $('.gm-style-iw');
     let iwBackground = iwOuter.prev();
@@ -59,6 +360,10 @@ const onDomReady = (isImage) => {
 
     if (isImage) {
         iwOuter.addClass(styles['info-image'])
+    }
+
+    if (isImage == 'chart') {
+        iwOuter.addClass(styles['info-chart'])
     }
     let iwCloseBtn = iwOuter.next();
     iwCloseBtn.remove()
@@ -187,10 +492,11 @@ const handleBounds = (props, map) => {
             let hasMarker = false
 
             const {
-            RELATED_BRANCH_DATA,
+                RELATED_BRANCH_DATA,
                 RELATED_EXITING_MARKET_DATA,
                 RELATED_TARGET_MARKET_DATA,
-                RELATED_COMPLITITOR_DATA
+                RELATED_COMPLITITOR_DATA,
+                RELATED_PLAN_OPEN_BRANCH_DATA
             } = props
 
             RELATED_BRANCH_DATA.map((item, index) => {
@@ -220,6 +526,14 @@ const handleBounds = (props, map) => {
             RELATED_COMPLITITOR_DATA.map((item, index) => {
                 let marker = new google.maps.Marker({
                     position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
+                })
+                hasMarker = true
+                bounds.extend(marker.position)
+            })
+
+            RELATED_PLAN_OPEN_BRANCH_DATA.map((item, index) => {
+                let marker = new google.maps.Marker({
+                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
                 })
                 hasMarker = true
                 bounds.extend(marker.position)
@@ -408,6 +722,8 @@ const getCAData = (item) => {
 
             data.push({
                 Name: key,
+                EmpCode: value[0].CAID,
+                StartWork: value[0].StartWork,
                 CAID: caid == 99999 ? 1 : 0,
                 OS_App: !_.isEmpty(os) ? os.Total : 0,
                 OS_Ach: !_.isEmpty(os) ? os.Ach : 0,
@@ -437,6 +753,31 @@ const getColumnCA = [{
     className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     render: (text, record, index) => {
         return <span>{text}</span>
+    },
+    render: (text, record, index) => {
+        if (record.CAID != 99999 && !_.isEmpty(record.EmpCode)) {
+            const start_work_date = !_.isEmpty(record.StartWork) ? moment.duration(moment(new Date()).diff(moment(record.StartWork)))._data : ''
+            const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+            return (
+                <Popover placement="top" content={
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${record.EmpCode}`} />
+                        <span>{`${record.Name}`} {`(${'NickName'})`}</span>
+                        <span>{`อายุงาน ${work_date_format}`}</span>
+                        <span>{`${'Mobile'}`}</span>
+                    </div>
+                } >
+                    <span className={styles['text-ellipsis']}>{text}</span>
+                </Popover>
+            )
+        }
+        else {
+            return (
+                <Tooltip title={text} placement="top" >
+                    <span className={styles['text-ellipsis']}>{text}</span>
+                </Tooltip>
+            )
+        }
     }
 }, {
     title: (<div className={styles['div-center']}>Start<br />Month</div>),
@@ -647,7 +988,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
 
     const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
 
-    // return _.filter(RELATED_BRANCH_DATA, { showInfo: true }).map((item, index) => {
+    // return _.filter(RELATED_BRANCH_DATA, {showInfo: true }).map((item, index) => {
     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
         return RELATED_BRANCH_DATA.map((item, index) => {
 
@@ -678,14 +1019,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
             const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
 
             return (
-                <Marker
-                    key={index}
-                    title={item.BranchName}
-                    onClick={() => props.setOpenBranchMarkerMenu(item, props.RELATED_BRANCH_DATA, true)}
-                    position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
-                    icon={{
-                        url: icon
-                    }}>
+                <div>
                     {
                         _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'SBVOL').length > 0 &&
                         item.Branch &&
@@ -700,120 +1034,129 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                             </div>
                         </OverlayView>
                     }
-                    {
-                        item.showImage &&
-                        (<BranchImage item={item} index={index} ownProps={props} />)
-                    }
-                    {
-                        item.showInfo &&
-                        (
-                            <InfoWindow onDomReady={onDomReady}>
-                                <Layout>
-                                    <div className={styles['headers']}>
-                                        {
-                                            <div className={styles['ca-imgs']}>
-                                                <Popover placement="left" content={
-                                                    <div className={styles['marker-tm-picture']}>
-                                                        <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
-                                                        <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
-                                                        <span>{`${work_date_format}`}</span>
-                                                        <span>{`${item.TM_Tel}`}</span>
-                                                    </div>
-                                                } >
-                                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
-                                                </Popover>
-                                            </div>
-                                        }
-                                        <span className={styles['title-img']}>
-                                            {`${item.BranchName}`}
-                                        </span>
-                                        <Icon
-                                            onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, false)}
-                                            className="trigger"
-                                            type='close' />
-                                    </div>
-                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                        <div className={styles['detail-container']}>
-                                            <div className={styles['detail-chart']}>
-                                                <div style={{ width: '160px', height: '160px' }}>
-                                                    <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
-                                                    <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
-                                                </div>
-                                                <div>
-                                                    <div className={styles['text-descrition']}>
-                                                        <div>
-                                                            <span>{`${current_branch.MarketShop} Shop `}</span>
-                                                            <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
-                                                        </div>
-                                                        <span>
-                                                            {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
-                                                            <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
-                                                            <span>{`${item.BranchTel}`} </span>
-                                                            {
-                                                                current_branch.BranchType == 'K' ?
-                                                                    `Distances From `
-                                                                    : ``
-                                                                //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
-                                                            }
-                                                            {
-                                                                getLinkDetail(related_branch, props, item.BRANCH_RADIUS, item, handleDirection)
-                                                            }
-                                                        </span>
-                                                        <div className={styles['note-icon']}>
-                                                            <Tooltip title='Note' placement="bottom">
-                                                                <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
-                                                            </Tooltip>
-                                                        </div>
-                                                    </div>
-                                                    <div className={styles['box-shadow']}>
-                                                        <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                            <Icon
-                                                                className="trigger"
-                                                                type='bars' />
-                                                            <span>Market Penetration</span>
-                                                        </div>
-                                                        <Layout style={{ backgroundColor: '#FFF' }}>
-                                                            <Table
-                                                                className={styles['summary-table-not-odd']}
-                                                                dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
-                                                                columns={getMarketSummaryColumns()}
-                                                                pagination={false}
-                                                                bordered />
-                                                        </Layout>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={styles['box-shadow']}>
-                                                <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                    <Icon
-                                                        className="trigger"
-                                                        type='bars' />
-                                                    <span>CA Contribution</span>
-                                                </div>
-                                                <Layout style={{ backgroundColor: '#FFF' }}>
-                                                    <Table
-                                                        className={styles['summary-table']}
-                                                        dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
-                                                        columns={getColumnCA}
-                                                        pagination={false}
-                                                        bordered />
-                                                </Layout>
-                                            </div>
+                    <Marker
+                        key={index}
+                        title={item.BranchName}
+                        onClick={() => props.setOpenBranchMarkerMenu(item, props.RELATED_BRANCH_DATA, true)}
+                        position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
+                        icon={{
+                            url: icon
+                        }}>
+                        {
+                            item.showImage &&
+                            (<BranchImage item={item} index={index} ownProps={props} />)
+                        }
+                        {
+                            item.showInfo &&
+                            (
+                                <InfoWindow onDomReady={onDomReady}>
+                                    <Layout>
+                                        <div className={styles['headers']}>
                                             {
-                                                item.NOTE.length > 0 &&
-                                                item.NOTE[0].IsDefault &&
-                                                <div className={styles['note-container']}>
-                                                    <span>Note *</span>
-                                                    <span>{item.NOTE[0].Note}</span>
+                                                <div className={styles['ca-imgs']}>
+                                                    <Popover placement="left" content={
+                                                        <div className={styles['marker-tm-picture']}>
+                                                            <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                                            <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
+                                                            <span>{`${work_date_format}`}</span>
+                                                            <span>{`${item.TM_Tel}`}</span>
+                                                        </div>
+                                                    } >
+                                                        <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                                    </Popover>
                                                 </div>
                                             }
+                                            <span className={styles['title-img']}>
+                                                {`${item.BranchName}`}
+                                            </span>
+                                            <Icon
+                                                onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, false)}
+                                                className="trigger"
+                                                type='close' />
                                         </div>
+                                        <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                            <div className={styles['detail-container']}>
+                                                <div className={styles['detail-chart']}>
+                                                    <div style={{ width: '160px', height: '160px' }}>
+                                                        <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
+                                                        <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
+                                                    </div>
+                                                    <div>
+                                                        <div className={styles['text-descrition']}>
+                                                            <div>
+                                                                <span>{`${current_branch.MarketShop} Shop `}</span>
+                                                                <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
+                                                            </div>
+                                                            <span>
+                                                                {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
+                                                                <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
+                                                                <span>{`${item.BranchTel}`} </span>
+                                                                {
+                                                                    current_branch.BranchType == 'K' ?
+                                                                        `Distances From `
+                                                                        : ``
+                                                                    //`${related_branch.length > 0 ? `${related_branch.length} kiosk` : ''} `
+                                                                }
+                                                                {
+                                                                    getLinkDetail(related_branch, props, item.BRANCH_RADIUS, item, handleDirection)
+                                                                }
+                                                            </span>
+                                                            <div className={styles['note-icon']}>
+                                                                <Tooltip title='Note' placement="bottom">
+                                                                    <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
+                                                                </Tooltip>
+                                                            </div>
+                                                        </div>
+                                                        <div className={styles['box-shadow']}>
+                                                            <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                                <Icon
+                                                                    className="trigger"
+                                                                    type='bars' />
+                                                                <span>Market Penetration</span>
+                                                            </div>
+                                                            <Layout style={{ backgroundColor: '#FFF' }}>
+                                                                <Table
+                                                                    className={styles['summary-table-not-odd']}
+                                                                    dataSource={getMarketSummaryData(item.BRANCH_INFORMATION)}
+                                                                    columns={getMarketSummaryColumns()}
+                                                                    pagination={false}
+                                                                    bordered />
+                                                            </Layout>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={styles['box-shadow']}>
+                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                        <Icon
+                                                            className="trigger"
+                                                            type='bars' />
+                                                        <span>CA Contribution</span>
+                                                    </div>
+                                                    <Layout style={{ backgroundColor: '#FFF' }}>
+                                                        <Table
+                                                            className={styles['summary-table']}
+                                                            dataSource={getCAData(item.CA_BRANCH_INFORMATION)}
+                                                            columns={getColumnCA}
+                                                            pagination={false}
+                                                            bordered />
+                                                    </Layout>
+                                                </div>
+                                                {
+                                                    item.NOTE.length > 0 &&
+                                                    item.NOTE[0].IsDefault &&
+                                                    <div className={styles['note-container']}>
+                                                        <span>Note *</span>
+                                                        <span>{item.NOTE[0].Note}</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </Layout>
                                     </Layout>
-                                </Layout>
-                            </InfoWindow>
-                        )
-                    }
-                </Marker>
+                                </InfoWindow>
+                            )
+                        }
+                    </Marker>
+                </div>
             )
         })
     }
@@ -840,7 +1183,7 @@ const getLineKioskToBranch = (props) => {
 
 const getBranchMarkerCircle = (props) => {
     const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
-    console.log(RELATED_BRANCH_DATA)
+
     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0) {
         return RELATED_BRANCH_DATA.map((item, index) => {
             const radius = circle.map(c => (
@@ -910,6 +1253,14 @@ const getExitingMarkerMenu = props => {
     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
         return props.RELATED_EXITING_MARKET_DATA.map((item, index) => {
             if (item.showMenu) {
+
+                const criteria = {
+                    BranchCode: null,
+                    MktCode: item.MarketCode,
+                    CAID: null,
+                    EmpCode: null
+                }
+
                 return (
                     <OverlayView
                         key={index}
@@ -931,7 +1282,7 @@ const getExitingMarkerMenu = props => {
                                         <li onClick={() => props.setOpenExitingMarketShopLayoutMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenExitingMarketSaleSummaryMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenExitingMarketMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
-                                        <li onClick={() => props.setOpenExitingMarketPortfolioMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenExitingMarketPortfolioMarker(item, props.RELATED_EXITING_MARKET_DATA, true, criteria)}><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
                                     </ul>
                                 </div>
                             </div>
@@ -946,6 +1297,19 @@ const getExitingMarkerMenu = props => {
 const getExitingMarker = (props, handleShowModal, handleDirection) => {
     const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
     let icon = icon_Market
+    const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item, index) => new Date(`${new Date().getFullYear()}-${item}-1`))
+    const date = new Date()
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    let workingDay = []
+
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+        let day = new Date(date.getFullYear(), date.getMonth(), i)
+        if (day.getDay() != 0 && day.getDay() != 6) {
+            workingDay.push(day)
+        }
+    }
+
     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
         return RELATED_EXITING_MARKET_DATA.map((item, index) => {
             if (item.showMenu) {
@@ -1027,6 +1391,67 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                             type='close' />
                                     </div>
                                     <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                        <div style={{ width: '300px', height: '100px', marginLeft: '7px' }}>
+                                            <Bar
+                                                data={{
+                                                    datasets: [{
+                                                        data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
+                                                        type: 'line',
+                                                        fill: false,
+                                                        borderColor: '#EC932F',
+                                                        backgroundColor: '#EC932F',
+                                                        pointBorderColor: '#EC932F',
+                                                        pointBackgroundColor: '#EC932F',
+                                                        pointHoverBackgroundColor: '#EC932F',
+                                                        pointHoverBorderColor: '#EC932F',
+                                                        yAxisID: 'y-axis-1'
+                                                    }, {
+                                                        data: [30, 10, 60, 75, 45, 20, 60, 75, 45],
+                                                        fill: false,
+                                                        borderColor: '#FFF',
+                                                        backgroundColor: '#FFF',
+                                                    }, {
+                                                        data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
+                                                        fill: false,
+                                                        borderColor: '#607d8b',
+                                                        backgroundColor: '#607d8b',
+                                                        yAxisID: 'y-axis-2'
+                                                    }],
+                                                    labels: month.map((item, index) => moment(item).format('MMM'))
+                                                }}
+                                                options={{
+                                                    legend: { display: false },
+                                                    maintainAspectRatio: false,
+                                                    tooltips: {
+                                                        mode: 'point'
+                                                    },
+                                                    scales: {
+                                                        xAxes: [{
+                                                            stacked: true,
+                                                            barPercentage: 0.6,
+                                                            gridLines: {
+                                                                display: false
+                                                            }
+                                                        }],
+                                                        yAxes: [{
+                                                            stacked: true,
+                                                            position: 'left',
+                                                            id: 'y-axis-2',
+                                                        }, {
+                                                            type: 'linear',
+                                                            display: false,
+                                                            position: 'left',
+                                                            id: 'y-axis-1',
+                                                            gridLines: {
+                                                                display: false
+                                                            },
+                                                            labels: {
+                                                                show: true
+                                                            }
+                                                        }]
+                                                    }
+                                                }} />
+                                        </div>
                                     </Layout>
                                 </Layout>
                             </InfoWindow>
@@ -1035,8 +1460,8 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                             item.showPortfolio &&
                             <InfoWindow
                                 title={item.MarketName}
-                                onDomReady={() => onDomReady(true)}>
-                                <Layout style={{ width: '738px' }}>
+                                onDomReady={() => onDomReady('chart')}>
+                                <Layout style={{ width: '650px', overflow: 'hidden' }}>
                                     <div className={styles['headers']}>
                                         <FontAwesome className="trigger" name='dollar' />
                                         <span>
@@ -1051,11 +1476,11 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                             <div className={`${styles['chart-card']} ${styles['card-blue']}`}>
                                                 <div className={styles['chart-header']}>
-                                                    <span>Share</span>
+                                                    <span>Portfolio Quality</span>
                                                 </div>
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ fontSize: '35px', marginLeft: '5px', marginTop: '5px' }}>80%</span>
-                                                    <div style={{ width: '160px', height: '40px', marginLeft: '7px' }}>
+                                                    <span style={{ fontSize: '25px', marginLeft: '5px', marginTop: '5px' }}>80%</span>
+                                                    <div style={{ width: '120px', height: '30px', marginLeft: '7px' }}>
                                                         <Bar
                                                             data={{
                                                                 datasets: [{
@@ -1119,13 +1544,13 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                             </div>
                                             <div className={`${styles['chart-card']} ${styles['card-pink']}`}>
                                                 <div className={styles['chart-header']}>
-                                                    <span>% Collection</span>
+                                                    <span>% Collection Succ.</span>
                                                 </div>
                                                 <div style={{ marginLeft: '10px', display: 'flex' }}>
-                                                    <span style={{ fontSize: '35px', marginLeft: '20px' }}>90%</span>
-                                                    <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column', marginLeft: '40px', color: '#FFF', justifyContent: 'center' }}>
-                                                        <span>- 2500 Acc.</span>
-                                                        <span>- 1.89 MB</span>
+                                                    <span style={{ fontSize: '25px', marginLeft: '20px' }}>{item.PORTFOLIO_QUALITY_CHART[3][0].SuccessRate}%</span>
+                                                    <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column', marginLeft: '20px', color: '#FFF', justifyContent: 'center' }}>
+                                                        <span>- {item.PORTFOLIO_QUALITY_CHART[3][0].TotalAct}.</span>
+                                                        <span>- {item.PORTFOLIO_QUALITY_CHART[3][0].TotalAmt}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1133,7 +1558,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                                 <div className={styles['chart-header']}>
                                                     <span>Trend</span>
                                                 </div>
-                                                <div style={{ width: '225px', height: '40px', marginTop: '10px', marginLeft: '5px' }}>
+                                                <div style={{ width: '180px', height: '30px', marginTop: '10px', marginLeft: '5px' }}>
                                                     <Line
                                                         data={{
                                                             datasets: [{
@@ -1173,219 +1598,136 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                             </div>
                                         </div>
                                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
-                                            <div className={styles['bg-chart']} style={{ width: '220px', height: '180px', padding: '10px' }}>
-                                                <HorizontalBar
-                                                    data={{
-                                                        datasets: [{
-                                                            data: [30, 10, 60, 75, 45, 20],
-                                                            backgroundColor: 'red',
-                                                        }, {
-                                                            data: [50, 30, 15, 10, 45, 60],
-                                                            backgroundColor: '#ffca28',
-                                                        }, {
-                                                            data: [20, 60, 25, 15, 10, 20],
-                                                            backgroundColor: '#AEEA00',
-                                                        }],
-                                                        labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2']
-                                                    }}
-                                                    options={{
-                                                        legend: { display: false },
-                                                        maintainAspectRatio: false,
-                                                        tooltips: {
-                                                            mode: 'index'
-                                                        },
-                                                        scales: {
-                                                            xAxes: [{
-                                                                display: false,
-                                                                stacked: true,
-                                                                gridLines: {
-                                                                    display: false
-                                                                }
+                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
+                                                <div>
+                                                    <span className={styles['header-other-chart']}>Collection Movement Trend</span>
+                                                </div>
+                                                <div id="my-chart" style={{ flex: '1', width: '100%', height: '100px' }}>
+                                                    <ComposedChart layout="vertical" width={178} height={170}
+                                                        margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
+                                                        data={
+                                                            [{ name: 'NPL', red: item.PORTFOLIO_QUALITY_CHART[0][0].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][0].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][0].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][0].RankAch },
+                                                            { name: 'M1-2', red: item.PORTFOLIO_QUALITY_CHART[0][1].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][1].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][1].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][1].RankAch },
+                                                            { name: 'X Day', red: item.PORTFOLIO_QUALITY_CHART[0][2].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][2].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][2].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][2].RankAch },
+                                                            { name: 'W3-4', red: item.PORTFOLIO_QUALITY_CHART[0][3].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][3].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][3].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][3].RankAch },
+                                                            { name: 'W1-2', red: item.PORTFOLIO_QUALITY_CHART[0][4].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][4].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][4].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][4].RankAch }]
+                                                        }>
+                                                        <XAxis type="number" tick={false} domain={['dataMin', '100']} />
+                                                        <YAxis dataKey="name" type="category" tick={<NotAxisTickButLabel />} />
+                                                        <Bars dataKey="red" barSize={10} stackId="a" fill="#f51100" />
+                                                        <Bars dataKey="yellow" stackId="a" fill="#ffc925" />
+                                                        <Bars dataKey="green" stackId="a" fill="#65bb02" />
+                                                        <Lines dataKey='actual' stroke='#ff7300' dot={<CustomizedDot tickSize={8} fill="#2196f3" stroke="#1672bc" />} activeDot={false} stroke={false} />
+                                                        <Tooltips />
+                                                    </ComposedChart>
+                                                </div>
+                                            </div>
+                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
+                                                <div>
+                                                    <span className={styles['header-other-chart']}>Current (W0)</span>
+                                                </div>
+                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
+                                                    <Pie
+                                                        data={{
+                                                            datasets: [{
+                                                                data: [item.PORTFOLIO_QUALITY_CHART[1][0].TotalAch, parseFloat(100 - item.PORTFOLIO_QUALITY_CHART[1][0].TotalAch).toFixed(2)],
+                                                                backgroundColor: ['#607d8b', '#795548'],
                                                             }],
-                                                            yAxes: [{
-                                                                stacked: true,
-                                                                barPercentage: 0.4,
-                                                                gridLines: {
-                                                                    display: false
-                                                                },
-                                                                ticks: {
-                                                                    fontFamily: 'Kanit',
-                                                                    fontColor: '#000'
-                                                                }
-                                                            }]
-                                                        }
-                                                    }}
-                                                    plugins={{
-                                                        afterDatasetsDraw: (chartInstance, easing) => {
-                                                            //debugger; 
-
-                                                            //console.log(chartInstance, easing)
-
-                                                            const current = {
-                                                                'NPL': 95,
-                                                                'M2': 50,
-                                                                'M1': 33,
-                                                                'X Day': 80,
-                                                                'W3-4': 130,
-                                                                'W1-2': 0
-                                                            }
-
-                                                            const
-                                                                points0 = chartInstance.chart.getDatasetMeta(0).data,
-                                                                points1 = chartInstance.chart.getDatasetMeta(1).data,
-                                                                points2 = chartInstance.chart.getDatasetMeta(2).data
-
-
-                                                            /*points0.map((item, index) => {
-                                                                const model = item._model
-                                                                console.log(`Dataset Index 0 ${model.label} [X : ${model.x} , Y : ${model.y}] Current : ${current[model.label]}`)
-     
-                                                                const ctx = chartInstance.chart.ctx;
-                                                                ctx.fillText("A", model.x, model.y);
-                                                            })
-     
-                                                            points1.map((item, index) => {
-                                                                const model = item._model
-                                                                console.log(`Dataset Index 1 ${model.label} [X : ${model.x} , Y : ${model.y}] Current : ${current[model.label]}`)
-     
-                                                                const ctx = chartInstance.chart.ctx;
-                                                                ctx.fillText("B", model.x, model.y);
-                                                            })
-     
-     
-                                                            points2.map((item, index) => {
-                                                                const model = item._model
-                                                                console.log(`Dataset Index 2 ${model.label} [X : ${model.x} , Y : ${model.y}] Current : ${current[model.label]}`)
-     
-                                                                const ctx = chartInstance.chart.ctx;
-                                                                ctx.fillText("C", model.x, model.y);
-                                                            })*/
-
-                                                            const datasets = chartInstance.data.datasets[0].data
-
-                                                            datasets.map((item, index) => {
-                                                                const ctx = chartInstance.chart.ctx;
-
-                                                                const y = points0[index]._model.y
-                                                                const minX = points0[index]._model.base
-                                                                const maxX = points2[0]._model.x
-
-                                                                let pointer = 0
-                                                                if (current[points0[index]._model.label] <= 0) {
-                                                                    pointer = 0
-                                                                }
-                                                                else if (current[points0[index]._model.label] > 100) {
-                                                                    pointer = 100
-                                                                }
-                                                                else {
-                                                                    pointer = current[points0[index]._model.label]
-                                                                }
-
-                                                                const pointerValue = current[points0[index]._model.label] <= 0 ? minX : ((pointer * (maxX - minX)) / 100) + minX
-                                                                //console.log(pointer, pointerValue, y, minX, maxX, pointerValue + minX)
-
-                                                                /*ctx.beginPath();
-                                                                ctx.moveTo(minX, y);
-                                                                ctx.strokeStyle = 'black';
-                                                                ctx.lineTo(pointerValue, y);
-                                                                ctx.stroke();*/
-
-                                                                ctx.restore();
-                                                                ctx.textAlign = 'center'
-                                                                ctx.font = '30px FontAwesome'
-                                                                ctx.fillStyle = '#2196f3'
-                                                                ctx.fillText('\uF0dd', pointerValue, y - 4)
-                                                                ctx.save();
-                                                            })
-                                                        }
-
-                                                    }} />
+                                                            labels: ['W0', 'DPD']
+                                                        }}
+                                                        options={{
+                                                            legend: { display: false },
+                                                            maintainAspectRatio: false
+                                                        }} />
+                                                </div>
                                             </div>
-                                            <div className={styles['bg-chart']} style={{ width: '230px', height: '180px', padding: '10px' }}>
-                                                <Pie
-                                                    data={{
-                                                        datasets: [{
-                                                            data: [75, 25],
-                                                            backgroundColor: ['#607d8b', '#795548'],
-                                                        }],
-                                                        labels: ['W0', 'อ']
-                                                    }}
-                                                    options={{
-                                                        legend: { display: false },
-                                                        maintainAspectRatio: false
-                                                    }} />
-                                            </div>
-                                            <div className={styles['bg-chart']} style={{ width: '235px', height: '180px', padding: '10px' }}>
-                                                <Bar
-                                                    data={{
-                                                        datasets: [{
-                                                            data: [30, 10, 60, 75, 45],
-                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
-                                                        }],
-                                                        labels: ['จ', 'อ', 'พ', 'พฤ', 'ศ']
-                                                    }}
-                                                    options={{
-                                                        legend: { display: false },
-                                                        maintainAspectRatio: false
-                                                    }} />
+                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
+                                                <div style={{ marginBottom: '5px' }}>
+                                                    <span className={styles['header-other-chart']}>Wkcycle Due Plan</span>
+                                                </div>
+                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
+                                                    <Bar
+                                                        data={{
+                                                            datasets: [{
+                                                                data: [
+                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Mon,
+                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Tue,
+                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Wed,
+                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Thu,
+                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Fri],
+                                                                backgroundColor: ['#f7d827', '#ef3ecf', '#17b21e', '#d64713', '#12c0e8'],
+                                                            }],
+                                                            labels: ['จ', 'อ', 'พ', 'พฤ', 'ศ']
+                                                        }}
+                                                        options={{
+                                                            legend: { display: false },
+                                                            maintainAspectRatio: false
+                                                        }} />
+                                                </div>
                                             </div>
                                         </div>
                                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
-                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
-                                                <Pie
-                                                    data={{
-                                                        datasets: [{
-                                                            data: [60, 20, 10],
-                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
-                                                        }],
-                                                        labels: ['W0', 'อ', 'พ']
-                                                    }}
-                                                    options={{
-                                                        legend: { display: false },
-                                                        maintainAspectRatio: false
-                                                    }} />
+                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
+                                                <div style={{ marginBottom: '5px' }}>
+                                                    <span className={styles['header-other-chart']}>%Flow Rate 0 MDPD</span>
+                                                </div>
+                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
+                                                    <GaugeChart data={item.PORTFOLIO_QUALITY_CHART[4][0]} colorData={[{
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][0].RankG, // span 140 to 190
+                                                        color: '#65bb02'
+                                                    }, {
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][0].RankY, // span 40 to 140
+                                                        color: '#ffc925'
+                                                    }, {
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][0].RankR, // Meaning span is 0 to 40
+                                                        color: '#f51100'
+                                                    }]} />
+                                                </div>
                                             </div>
-                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
-                                                <Pie
-                                                    data={{
-                                                        datasets: [{
-                                                            data: [60, 20, 10],
-                                                            backgroundColor: ['#f44336', '#607d8b', '#2196F3', '#795548'],
-                                                        }],
-                                                        labels: ['W0', 'อ', 'พ']
-                                                    }}
-                                                    options={{
-                                                        legend: { display: false },
-                                                        maintainAspectRatio: false
-                                                    }} />
+                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
+                                                <div style={{ marginBottom: '5px' }}>
+                                                    <span className={styles['header-other-chart']}>%Flow Rate 1-30 MDPD</span>
+                                                </div>
+                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
+                                                    <GaugeChart data={item.PORTFOLIO_QUALITY_CHART[4][1]} colorData={[{
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][1].RankG, // span 140 to 190
+                                                        color: '#65bb02'
+                                                    }, {
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][1].RankY, // span 40 to 140
+                                                        color: '#ffc925'
+                                                    }, {
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][1].RankR, // Meaning span is 0 to 40
+                                                        color: '#f51100'
+                                                    }]} />
+                                                </div>
                                             </div>
-                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
-                                                <Pie
-                                                    data={{
-                                                        datasets: [{
-                                                            data: [60, 20, 10],
-                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
-                                                        }],
-                                                        labels: ['W0', 'อ', 'พ']
-                                                    }}
-                                                    options={{
-                                                        legend: { display: false },
-                                                        maintainAspectRatio: false
-                                                    }} />
+                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
+                                                <div style={{ marginBottom: '5px' }}>
+                                                    <span className={styles['header-other-chart']}>%Flow Rate 31-60 MDPD</span>
+                                                </div>
+                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
+                                                    <GaugeChart data={item.PORTFOLIO_QUALITY_CHART[4][2]} colorData={[{
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][2].RankR, // Meaning span is 0 to 40
+                                                        color: '#f51100'
+                                                    }, {
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][2].RankY, // span 40 to 140
+                                                        color: '#ffc925'
+                                                    }, {
+                                                        value: item.PORTFOLIO_QUALITY_CHART[4][2].RankG, // span 140 to 190
+                                                        color: '#65bb02'
+                                                    }]} />
+                                                </div>
                                             </div>
-                                            <div className={styles['bg-chart']} style={{ width: '175px', height: '175px', padding: '10px' }}>
-                                                <Pie
-                                                    data={{
-                                                        datasets: [{
-                                                            data: [60, 20, 10],
-                                                            backgroundColor: ['#2196F3', '#cddc39', '#f44336', '#607d8b', '#795548'],
-                                                        }],
-                                                        labels: ['W0', 'อ', 'พ']
-                                                    }}
-                                                    options={{
-                                                        legend: { display: false },
-                                                        maintainAspectRatio: false
-                                                    }} />
+                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
+                                                <div style={{ marginBottom: '5px' }}>
+                                                    <span className={styles['header-other-chart']}>% 0 WDPD of New Cust.</span>
+                                                </div>
+                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
+                                                    <GaugeChart1Needle data={item.PORTFOLIO_QUALITY_CHART[5][0]} colorData={[{
+                                                        value: 100, // Meaning span is 0 to 40
+                                                        color: item.PORTFOLIO_QUALITY_CHART[5][0].RankAch == 100 ? '#65bb02' : '#f51100'
+                                                    }]} />
+                                                </div>
                                             </div>
                                         </div>
                                     </Layout>
@@ -1508,13 +1850,25 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
     }
 }
 
+const NotAxisTickButLabel = props => {
+    return (
+        <text x={props.x} y={props.y} dy={3} fontFamily="Kanit" fontSize="12px" textAnchor="end" fill={"#565656"}  >{props.payload.value}</text>)
+}
+
+const CustomizedDot = props => {
+    const { cx, cy, tickSize, ...custom } = props
+
+    console.log(props, custom)
+
+    return (<path d={`M${cx},${cy}L${cx - tickSize},${cy - tickSize}L${cx + tickSize},${cy - tickSize}Z`} {...custom} />)
+}
 
 const distanceBetweenPoints = (p1, p2) => {
     if (!p1 || !p2) {
         return 0;
     }
 
-    var R = 6371; // Radius of the Earth in km 
+    var R = 6371; // Radius of the Earth in km
     var dLat = (p2.lat() - p1.lat()) * Math.PI / 180;
     var dLon = (p2.lng() - p1.lng()) * Math.PI / 180;
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(p1.lat() * Math.PI / 180) * Math.cos(p2.lat() * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
@@ -1564,7 +1918,8 @@ class DragRadius extends Component {
     }
 
     componentDidMount() {
-        this.setState({ ref_circle: this.refs.circle, defalt_lng: parseFloat(this.refs.circle.getBounds().getNorthEast().lng()) })
+        if (!_.isEmpty(this.refs.circle))
+            this.setState({ ref_circle: this.refs.circle, defalt_lng: parseFloat(this.refs.circle.getBounds().getNorthEast().lng()) })
     }
 
     render() {
@@ -1675,15 +2030,17 @@ class PlanOpenBranchMarker extends Component {
 
         return (
             <div>
-                <Marker
-                    key={index}
-                    title={item.BranchName}
-                    onClick={() => setOpenPlanOpenBranch(item, RELATED_PLAN_OPEN_BRANCH_DATA, true)}
-                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                    icon={{
-                        url: '_'
-                    }}>
-                </Marker>
+                {
+                    <Marker
+                        key={index}
+                        title={item.BranchName}
+                        onClick={() => setOpenPlanOpenBranch(item, RELATED_PLAN_OPEN_BRANCH_DATA, true)}
+                        position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                        icon={{
+                            url: '_'
+                        }}>
+                    </Marker>
+                }
                 {
                     _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
                     <Circle
@@ -1703,8 +2060,7 @@ class PlanOpenBranchMarker extends Component {
                     _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
                     <Circle
                         center={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                        radius={item.Radius || this.state.default_radius}
-                        ref='circle'
+                        radius={this.state.default_radius}
                         options={{
                             strokeColor: '#656565',
                             strokeOpacity: 1,
@@ -1716,7 +2072,7 @@ class PlanOpenBranchMarker extends Component {
                 }
                 {
                     _.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'RA').length > 0 &&
-                    this.refs.circle &&
+                    this.state.ref_circle &&
                     <Marker
                         draggable={true}
                         onDrag={this.onDrag}

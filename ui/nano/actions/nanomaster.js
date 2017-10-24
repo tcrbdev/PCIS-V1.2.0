@@ -24,7 +24,9 @@ import {
     GET_EXITING_MARKET_MARKER_DATA_URL,
     GET_EXITING_MARKET_IMAGE_MARKER_URL,
 
-    INSERT_UPDATE_MARKER_NOTE_URL
+    INSERT_UPDATE_MARKER_NOTE_URL,
+
+    GET_PORTFOLIO_QUALITY_CHART_URL
 } from '../../common/constants/endpoints'
 
 import {
@@ -63,7 +65,11 @@ import {
     GET_CA_SUMMARY_ONLY_SUCCESS,
     GET_CA_SUMMARY_ONLY_FAILURE,
 
-    SET_OPEN_PLAN_OPEN_BRANCH_REQUEST
+    SET_OPEN_PLAN_OPEN_BRANCH_REQUEST,
+
+    GET_PORTFOLIO_QUALITY_CHART_REQUEST,
+    GET_PORTFOLIO_QUALITY_CHART_SUCCESS,
+    GET_PORTFOLIO_QUALITY_CHART_FAILURE
 } from '../../common/constants/actionsType'
 
 export const setOpenBranchMarkerMenu = (targetMarker, currentState, isOpen) => dispatch => {
@@ -254,11 +260,24 @@ export const setOpenExitingMarketSaleSummaryMarker = (targetMarker, currentState
         })
 }
 
-export const setOpenExitingMarketPortfolioMarker = (targetMarker, currentState, isOpen) => dispatch => {
+export const setOpenExitingMarketPortfolioMarker = (targetMarker, currentState, isOpen, criteria) => dispatch => {
 
-    const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
+    // 	@BranchCode NVARCHAR(MAX) = NULL ,
+    // @MktCode NVARCHAR(MAX) = NULL ,
+    // @CAID	 NVARCHAR(MAX) = NULL ,
+    // @EmpCode NVARCHAR(MAX) = NULL
 
-    fetch(URL)
+    // const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
+
+    fetch(GET_PORTFOLIO_QUALITY_CHART_URL, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(criteria),
+        timeout: 1500000
+    })
         .then(res => (res.json()))
         .then(res => {
             let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
@@ -272,6 +291,7 @@ export const setOpenExitingMarketPortfolioMarker = (targetMarker, currentState, 
             item.CA_INFORMATION = []
             item.NOTE = []
             item.MARKET_IMAGE = res
+            item.PORTFOLIO_QUALITY_CHART = res
 
             let newState = _.cloneDeep(currentState)
 
@@ -650,4 +670,16 @@ export const getCASummaryOnlyData = CAID => dispatch => {
     })
 }
 
+export const getPortfolioQualityChart = criteria => dispatch => dispatch({
+    [CALL_API]: {
+        endpoint: GET_PORTFOLIO_QUALITY_CHART_URL,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        method: 'PATCH',
+        body: JSON.stringify(criteria),
+        types: [GET_PORTFOLIO_QUALITY_CHART_REQUEST, GET_PORTFOLIO_QUALITY_CHART_SUCCESS, GET_PORTFOLIO_QUALITY_CHART_FAILURE]
+    }
+})
 

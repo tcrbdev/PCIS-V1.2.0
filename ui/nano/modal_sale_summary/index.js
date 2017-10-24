@@ -480,147 +480,147 @@ class ModalSaleSummary extends Component {
         const ca_name = !_.isEmpty(find) ? find.CA_Name : ''
         const count_market = Object.keys(_.groupBy(this.props.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode')).length
         const os = _.find(this.props.CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
-        const branch = _.find(this.props.RELATED_EXITING_MARKET_DATA, { MarketCode: find.MarketCode })
+        const branch = _.find(this.props.RELATED_EXITING_MARKET_DATA, { MarketCode: find ? find.MarketCode : '' })
+        if (find)
+            return (
+                <div style={{ marginLeft: '0px' }}>
+                    {
+                        this.state.showAddNoteModal &&
+                        <Modal className={styles['modalComplititor']}
+                            title={(<div className={styles['modal-note-header']}><Icon type="edit" /><span>{`Edit Note (${ca_name})`}</span></div>)}
+                            visible={this.state.showAddNoteModal}
+                            onOk={false}
+                            onCancel={this.handleCancelNote}
+                            footer={null}
+                        >
+                            {
+                                <InsertNote caData={find} />
+                            }
+                        </Modal>
+                    }
 
-        return (
-            <div style={{ marginLeft: '0px' }}>
-                {
-                    this.state.showAddNoteModal &&
-                    <Modal className={styles['modalComplititor']}
-                        title={(<div className={styles['modal-note-header']}><Icon type="edit" /><span>{`Edit Note (${ca_name})`}</span></div>)}
-                        visible={this.state.showAddNoteModal}
+                    <Modal
+                        wrapClassName={`parent_salesummary ${styles['modalParentSaleSummary']}`}
+                        className={styles['modalSaleSummary']}
+                        visible={this.state.modalOpen}
                         onOk={false}
-                        onCancel={this.handleCancelNote}
+                        onCancel={this.handleCancel}
                         footer={null}
+                        closable={false}
+                        maskClosable={false}
+                        mask={false}
+                        getContainer={() => document.getElementById('modal-sale-summary')}
                     >
-                        {
-                            <InsertNote caData={find} />
-                        }
-                    </Modal>
-                }
-
-                <Modal
-                    wrapClassName={`parent_salesummary ${styles['modalParentSaleSummary']}`}
-                    className={styles['modalSaleSummary']}
-                    visible={this.state.modalOpen}
-                    onOk={false}
-                    onCancel={this.handleCancel}
-                    footer={null}
-                    closable={false}
-                    maskClosable={false}
-                    mask={false}
-                    getContainer={() => document.getElementById('modal-sale-summary')}
-                >
-                    <article className={styles['wrapper']}>
-                        <div className={styles['header-container']}>
-                            <div className={styles['ca-imgss']}>
-                                <Popover placement="left" content={
-                                    <div className={styles['marker-tm-picture']}>
-                                        <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
-                                        <span>{find.CA_NickName}</span>
-                                    </div>
-                                } >
-                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
-                                </Popover>
-                            </div>
-                            <div className={styles['title-imgs']}>
-                                <span>
-                                    {ca_name}&nbsp;
-                                    <span className={styles['title-wp']}>({work_date_format})</span>
-                                </span>
-                            </div>
-                            <Icon
-                                onClick={this.handleCancel}
-                                className={styles["trigger-close"]}
-                                type='close' />
-                        </div>
-                        <Layout>
-                            <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>
-                                <div className={styles['detail-container']}>
-                                    <div className={styles['detail-chart']}>
-                                        <div style={{ width: '160px', height: '160px' }}>
-                                            <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
-                                            <span>{parseFloat(os.Ach).toFixed(0)}%</span>
+                        <article className={styles['wrapper']}>
+                            <div className={styles['header-container']}>
+                                <div className={styles['ca-imgss']}>
+                                    <Popover placement="left" content={
+                                        <div className={styles['marker-tm-picture']}>
+                                            <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                                            <span>{find.CA_NickName}</span>
                                         </div>
-                                        <div>
-                                            <div className={styles['text-descrition']}>
-                                                <div>
-                                                    <span>{`${count_market} Market`}</span>
-                                                    <span>{` Out of ${_.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, { BranchCode: branch.BranchCode }).length} Markets From ${branch.BranchName}`}</span>
-                                                </div>
-                                                <span style={{ marginTop: '-5px' }}>
-                                                    {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
-                                                    <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
-                                                    <span>{`${find.CA_Tel}`}</span>
-                                                    {
-                                                        find.CA_Transfer &&
-                                                        <span> Transfer From {find.CA_Transfer} ({_.isEmpty(find.CA_TransferDate) ? '' : moment(find.CA_TransferDate).format('MMM-YY')})</span>
-                                                    }
-                                                    {
-                                                        _.isEmpty(find.CA_Transfer) &&
-                                                        <span> Original Branch</span>
-                                                    }
-                                                </span>
-                                                <div className={styles['note-icon']}>
-                                                    <Tooltip title='Note' placement="bottom">
-                                                        <FontAwesome name='comments' onClick={() => this.handleShowModal()} />
-                                                    </Tooltip>
-                                                </div>
-                                            </div>
-                                            <div className={styles['box-shadow']}>
-                                                <div className={`${styles['header']} ${styles['header-border']}`}>
-                                                    <Icon
-                                                        className="trigger"
-                                                        type='bars' />
-                                                    <span>O/S Contribution</span>
-                                                </div>
-                                                <Layout style={{ backgroundColor: '#FFF' }}>
-                                                    <Table
-                                                        className={styles['summary-table-not-odd']}
-                                                        dataSource={this.getCAPenetation()}
-                                                        columns={getMarketSummaryColumns()}
-                                                        pagination={false}
-                                                        bordered />
-                                                </Layout>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={styles['box-shadow']}>
-                                        <div className={`${styles['header']} ${styles['header-border']}`}>
-                                            <Icon
-                                                className="trigger"
-                                                type='bars' />
-                                            <span>CA Market Lists</span>
-                                        </div>
-                                        <Layout style={{ backgroundColor: '#FFF' }}>
-                                            <Table
-                                                className={styles['summary-table-aa']}
-                                                dataSource={this.getCAContribution()}
-                                                columns={getColumnCA(this.chartData())}
-                                                pagination={false}
-                                                bordered />
-                                        </Layout>
-                                    </div>
-                                    {
-                                        !_.isEmpty(canote) &&
-                                        canote.IsDefault &&
-                                        <div className={styles['note-container']}>
-                                            <span>Note *</span>
-                                            <span>{canote.Note}</span>
-                                        </div>
-                                    }
+                                    } >
+                                        <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                                    </Popover>
                                 </div>
+                                <div className={styles['title-imgs']}>
+                                    <span>
+                                        {ca_name}&nbsp;
+                                    <span className={styles['title-wp']}>({work_date_format})</span>
+                                    </span>
+                                </div>
+                                <Icon
+                                    onClick={this.handleCancel}
+                                    className={styles["trigger-close"]}
+                                    type='close' />
+                            </div>
+                            <Layout>
+                                <Layout style={{ backgroundColor: '#FFF', 'padding': '10px' }}>
+                                    <div className={styles['detail-container']}>
+                                        <div className={styles['detail-chart']}>
+                                            <div style={{ width: '160px', height: '160px' }}>
+                                                <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
+                                                <span>{parseFloat(os.Ach).toFixed(0)}%</span>
+                                            </div>
+                                            <div>
+                                                <div className={styles['text-descrition']}>
+                                                    <div>
+                                                        <span>{`${count_market} Market`}</span>
+                                                        <span>{` Out of ${_.filter(this.props.RELATED_EXITING_MARKET_DATA_BACKUP, { BranchCode: branch.BranchCode }).length} Markets From ${branch.BranchName}`}</span>
+                                                    </div>
+                                                    <span style={{ marginTop: '-5px' }}>
+                                                        {/* <Icon type="phone" style={{ marginRight: '5px' }} /> */}
+                                                        <i className={`flaticon flaticon-phone21 ${styles['marg_left_none']}`} />
+                                                        <span>{`${find.CA_Tel}`}</span>
+                                                        {
+                                                            find.CA_Transfer &&
+                                                            <span> Transfer From {find.CA_Transfer} ({_.isEmpty(find.CA_TransferDate) ? '' : moment(find.CA_TransferDate).format('MMM-YY')})</span>
+                                                        }
+                                                        {
+                                                            _.isEmpty(find.CA_Transfer) &&
+                                                            <span> Original Branch</span>
+                                                        }
+                                                    </span>
+                                                    <div className={styles['note-icon']}>
+                                                        <Tooltip title='Note' placement="bottom">
+                                                            <FontAwesome name='comments' onClick={() => this.handleShowModal()} />
+                                                        </Tooltip>
+                                                    </div>
+                                                </div>
+                                                <div className={styles['box-shadow']}>
+                                                    <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                        <Icon
+                                                            className="trigger"
+                                                            type='bars' />
+                                                        <span>O/S Contribution</span>
+                                                    </div>
+                                                    <Layout style={{ backgroundColor: '#FFF' }}>
+                                                        <Table
+                                                            className={styles['summary-table-not-odd']}
+                                                            dataSource={this.getCAPenetation()}
+                                                            columns={getMarketSummaryColumns()}
+                                                            pagination={false}
+                                                            bordered />
+                                                    </Layout>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={styles['box-shadow']}>
+                                            <div className={`${styles['header']} ${styles['header-border']}`}>
+                                                <Icon
+                                                    className="trigger"
+                                                    type='bars' />
+                                                <span>CA Market Lists</span>
+                                            </div>
+                                            <Layout style={{ backgroundColor: '#FFF' }}>
+                                                <Table
+                                                    className={styles['summary-table-aa']}
+                                                    dataSource={this.getCAContribution()}
+                                                    columns={getColumnCA(this.chartData())}
+                                                    pagination={false}
+                                                    bordered />
+                                            </Layout>
+                                        </div>
+                                        {
+                                            !_.isEmpty(canote) &&
+                                            canote.IsDefault &&
+                                            <div className={styles['note-container']}>
+                                                <span>Note *</span>
+                                                <span>{canote.Note}</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </Layout>
                             </Layout>
-                        </Layout>
-                    </article>
-                </Modal>
+                        </article>
+                    </Modal>
 
-                <Tooltip title="Market Penatation"><FontAwesome style={{ color: '#E91E63' }} name="table" onClick={this.handleModal} /></Tooltip>
+                    <Tooltip title="Market Penatation"><FontAwesome style={{ color: '#E91E63' }} name="table" onClick={this.handleModal} /></Tooltip>
 
-            </div>
-
-
-        )
+                </div>
+            )
+        else
+            return (<div style={{ marginLeft: '0px' }}></div>)
     }
 }
 
