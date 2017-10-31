@@ -8,7 +8,7 @@ import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
 
 import { MAP } from 'react-google-maps/lib/constants';
 
-import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination } from 'antd';
+import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination, Card } from 'antd';
 import FontAwesome from 'react-fontawesome'
 import {
     Sector,
@@ -34,6 +34,7 @@ import Scrollbar from 'react-smooth-scrollbar';
 
 import InsertNote from './insertnote'
 import StreetViewMap from './streetview'
+import PortfolioChart from './portfolio_chart'
 // import NewNote from './newnote'
 // import NoteTable from './notetable'
 
@@ -53,6 +54,7 @@ import {
     setOpenBranchMarker,
     setOpenBranchMarkerMenu,
     setOpenBranchImageMarker,
+    setOpenBranchPortfolioMarker,
     setOpenExitingMarketMarker,
     setOpenExitingMarketMarkerMenu,
     setOpenTargetMarketMarker,
@@ -68,288 +70,6 @@ import styles from './index.scss'
 
 const { Header } = Layout
 const TabPane = Tabs.TabPane;
-
-const renderActiveShape = (props) => {
-    const RADIAN = Math.PI / 180;
-    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
-        fill, payload, percent, value } = props;
-    const sin = Math.sin(-RADIAN * midAngle);
-    const cos = Math.cos(-RADIAN * midAngle);
-    const sx = cx + (outerRadius + 10) * cos;
-    const sy = cy + (outerRadius + 10) * sin;
-    const mx = cx + (outerRadius + 30) * cos;
-    const my = cy + (outerRadius + 30) * sin;
-    const ex = mx + (cos >= 0 ? 1 : -1) * 22;
-    const ey = my;
-    const textAnchor = cos >= 0 ? 'start' : 'end';
-
-    return (
-        <g>
-            <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>{payload.name}</text>
-            <Sector
-                cx={cx}
-                cy={cy}
-                innerRadius={innerRadius}
-                outerRadius={outerRadius}
-                startAngle={startAngle}
-                endAngle={endAngle}
-                fill={fill}
-            />
-            <Sector
-                cx={cx}
-                cy={cy}
-                startAngle={startAngle}
-                endAngle={endAngle}
-                innerRadius={outerRadius + 6}
-                outerRadius={outerRadius + 10}
-                fill={fill}
-            />
-            <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
-            <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-            <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`PV ${value}`}</text>
-            <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
-                {`(Rate ${(percent * 100).toFixed(2)}%)`}
-            </text>
-        </g>
-    );
-}
-
-const GaugeChart = (props) => {
-
-    const { data, colorData } = props
-
-    const width = 140;
-    const height = 117;
-    const chartValue = 100//data.FirstPinAch;
-
-
-    const activeSectorIndex = colorData.map((cur, index, arr) => {
-        const curMax = [...arr]
-            .splice(0, index + 1)
-            .reduce((a, b) => ({ value: a.value + b.value }))
-            .value;
-        return (chartValue > (curMax - cur.value)) && (chartValue <= curMax);
-    })
-        .findIndex(cur => cur);
-
-    const sumValues = colorData
-        .map(cur => cur.value)
-        .reduce((a, b) => a + b);
-
-    const arrowData = [
-        { value: data.FirstPinAch < 0 ? 0 : data.FirstPinAch },
-        { value: 0 },
-        { value: sumValues - (data.FirstPinAch < 0 ? 0 : data.FirstPinAch) }
-    ];
-
-    const arrowData2 = [
-        { value: data.SecondPinAch < 0 ? 0 : data.SecondPinAch },
-        { value: 0 },
-        { value: sumValues - (data.SecondPinAch < 0 ? 0 : data.SecondPinAch) }
-    ];
-
-    const pieProps = {
-        startAngle: 225,
-        endAngle: -45,
-        cy: height - 25
-    };
-
-    const pieRadius = {
-        innerRadius: (width) * 0.35,
-        outerRadius: (width) * 0.4
-    };
-
-    const Arrow = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
-        const RADIAN = Math.PI / 180;
-        const sin = Math.sin(-RADIAN * midAngle);
-        const cos = Math.cos(-RADIAN * midAngle);
-        const mx = cx + (outerRadius + width * 0.03) * cos;
-        const my = cy + (outerRadius + width * 0.03) * sin;
-        return (
-            <g>
-                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#000" fill="none" strokeLinecap="round" />
-                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" stroke="none" />
-            </g>
-        );
-    };
-
-    const Arrow2 = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
-        const RADIAN = Math.PI / 180;
-        const sin = Math.sin(-RADIAN * midAngle);
-        const cos = Math.cos(-RADIAN * midAngle);
-        const mx = cx + (outerRadius + width * 0.03) * cos;
-        const my = cy + (outerRadius + width * 0.03) * sin;
-        return (
-            <g>
-                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#ff7300" fill="none" strokeLinecap="round" />
-                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" />
-            </g>
-        );
-    };
-
-    const ActiveSectorMark = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill }) => { //eslint-disable-line react/no-multi-comp
-        return (
-            <g>
-                <Sector
-                    cx={cx}
-                    cy={cy}
-                    innerRadius={innerRadius}
-                    outerRadius={outerRadius * 1.2}
-                    startAngle={startAngle}
-                    endAngle={endAngle}
-                    fill={fill}
-                />
-            </g>
-        );
-    };
-
-    return (
-        <PieChart width={width} height={height} margin={{ top: -25, right: 0, left: -10, bottom: 0 }}>
-            <Pies
-                activeIndex={activeSectorIndex}
-                data={colorData}
-                innerRadius={(width) * 0.23}
-                { ...pieProps }
-                strokeWidth={0}>
-                {
-                    colorData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={colorData[index].color} />
-                    ))
-                }
-            </Pies>
-            <Pies
-                stroke="none"
-                activeIndex={1}
-                activeShape={Arrow}
-                data={arrowData}
-                outerRadius={pieRadius.innerRadius}
-                fill="none"
-                { ...pieProps }
-            />
-            <Pies
-                stroke="none"
-                activeIndex={1}
-                activeShape={Arrow2}
-                data={arrowData2}
-                outerRadius={pieRadius.innerRadius}
-                fill="none"
-                { ...pieProps }
-            />
-            <Tooltips />
-        </PieChart>
-    );
-}
-
-const GaugeChart1Needle = (props) => {
-
-    const { data, colorData } = props
-
-    const width = 140;
-    const height = 117;
-    const chartValue = 100//data.FirstPinAch;
-
-
-    const activeSectorIndex = colorData.map((cur, index, arr) => {
-        const curMax = [...arr]
-            .splice(0, index + 1)
-            .reduce((a, b) => ({ value: a.value + b.value }))
-            .value;
-        return (chartValue > (curMax - cur.value)) && (chartValue <= curMax);
-    })
-        .findIndex(cur => cur);
-
-    const sumValues = colorData
-        .map(cur => cur.value)
-        .reduce((a, b) => a + b);
-
-    const arrowData = [
-        { value: data.RankAch < 0 ? 0 : data.RankAch },
-        { value: 0 },
-        { value: sumValues - (data.RankAch < 0 ? 0 : data.RankAch) }
-    ];
-
-    const pieProps = {
-        startAngle: 225,
-        endAngle: -45,
-        cy: height - 25
-    };
-
-    const pieRadius = {
-        innerRadius: (width) * 0.35,
-        outerRadius: (width) * 0.4
-    };
-
-    const Arrow = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
-        const RADIAN = Math.PI / 180;
-        const sin = Math.sin(-RADIAN * midAngle);
-        const cos = Math.cos(-RADIAN * midAngle);
-        const mx = cx + (outerRadius + width * 0.03) * cos;
-        const my = cy + (outerRadius + width * 0.03) * sin;
-        return (
-            <g>
-                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#000" fill="none" strokeLinecap="round" />
-                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" stroke="none" />
-            </g>
-        );
-    };
-
-    const Arrow2 = ({ cx, cy, midAngle, outerRadius }) => { //eslint-disable-line react/no-multi-comp
-        const RADIAN = Math.PI / 180;
-        const sin = Math.sin(-RADIAN * midAngle);
-        const cos = Math.cos(-RADIAN * midAngle);
-        const mx = cx + (outerRadius + width * 0.03) * cos;
-        const my = cy + (outerRadius + width * 0.03) * sin;
-        return (
-            <g>
-                <path d={`M${cx},${cy}L${mx},${my}`} strokeWidth="4" stroke="#ff7300" fill="none" strokeLinecap="round" />
-                <circle cx={cx} cy={cy} r={width * 0.05} fill="#666" />
-            </g>
-        );
-    };
-
-    const ActiveSectorMark = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill }) => { //eslint-disable-line react/no-multi-comp
-        return (
-            <g>
-                <Sector
-                    cx={cx}
-                    cy={cy}
-                    innerRadius={innerRadius}
-                    outerRadius={outerRadius * 1.2}
-                    startAngle={startAngle}
-                    endAngle={endAngle}
-                    fill={fill}
-                />
-            </g>
-        );
-    };
-
-    return (
-        <PieChart width={width} height={height} margin={{ top: -25, right: 0, left: -10, bottom: 0 }}>
-            <Pies
-                activeIndex={activeSectorIndex}
-                data={colorData}
-                innerRadius={(width) * 0.23}
-                { ...pieProps }
-                strokeWidth={0}>
-                {
-                    colorData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={colorData[index].color} />
-                    ))
-                }
-            </Pies>
-            <Pies
-                stroke="none"
-                activeIndex={1}
-                activeShape={Arrow}
-                data={arrowData}
-                outerRadius={pieRadius.innerRadius}
-                fill="none"
-                { ...pieProps }
-            />
-            <Tooltips />
-        </PieChart>
-    );
-}
 
 const onDomReady = (isImage) => {
     let iwOuter = $('.gm-style-iw');
@@ -948,6 +668,13 @@ const getBranchMarkerMenu = (props) => {
                         break;
                 }
 
+                const criteria = {
+                    BranchCode: item.BranchCode,
+                    MktCode: null,
+                    CAID: null,
+                    EmpCode: null
+                }
+
                 return (
                     <OverlayView
                         key={item.BranchCode}
@@ -972,7 +699,7 @@ const getBranchMarkerMenu = (props) => {
                                         <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
                                         <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
-                                        <li><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenBranchPortfolioMarker(item, props.RELATED_BRANCH_DATA, true, criteria)}><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
                                     </ul>
                                 </div>
                             </div>
@@ -1154,6 +881,14 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                                     </Layout>
                                 </InfoWindow>
                             )
+                        }
+                        {
+                            item.showPortfolio &&
+                            <InfoWindow
+                                title={item.BranchName}
+                                onDomReady={() => onDomReady('chart')}>
+                                <PortfolioChart item={item} ON_CLOSE_MARKER={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, false)} />
+                            </InfoWindow>
                         }
                     </Marker>
                 </div>
@@ -1461,277 +1196,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                             <InfoWindow
                                 title={item.MarketName}
                                 onDomReady={() => onDomReady('chart')}>
-                                <Layout style={{ width: '650px', overflow: 'hidden' }}>
-                                    <div className={styles['headers']}>
-                                        <FontAwesome className="trigger" name='dollar' />
-                                        <span>
-                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
-                                        </span>
-                                        <Icon
-                                            onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
-                                            className="trigger"
-                                            type='close' />
-                                    </div>
-                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <div className={`${styles['chart-card']} ${styles['card-blue']}`}>
-                                                <div className={styles['chart-header']}>
-                                                    <span>Portfolio Quality</span>
-                                                </div>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ fontSize: '25px', marginLeft: '5px', marginTop: '5px' }}>80%</span>
-                                                    <div style={{ width: '120px', height: '30px', marginLeft: '7px' }}>
-                                                        <Bar
-                                                            data={{
-                                                                datasets: [{
-                                                                    data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
-                                                                    type: 'line',
-                                                                    fill: false,
-                                                                    borderColor: '#EC932F',
-                                                                    backgroundColor: '#EC932F',
-                                                                    pointBorderColor: '#EC932F',
-                                                                    pointBackgroundColor: '#EC932F',
-                                                                    pointHoverBackgroundColor: '#EC932F',
-                                                                    pointHoverBorderColor: '#EC932F',
-                                                                    yAxisID: 'y-axis-1'
-                                                                }, {
-                                                                    data: [30, 10, 60, 75, 45, 20, 60, 75, 45],
-                                                                    fill: false,
-                                                                    borderColor: '#FFF',
-                                                                    backgroundColor: '#FFF',
-                                                                }, {
-                                                                    data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
-                                                                    fill: false,
-                                                                    borderColor: '#607d8b',
-                                                                    backgroundColor: '#607d8b',
-                                                                    yAxisID: 'y-axis-2'
-                                                                }],
-                                                                labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2', 'xx', 'xxx', 'xxxx']
-                                                            }}
-                                                            options={{
-                                                                legend: { display: false },
-                                                                maintainAspectRatio: false,
-                                                                tooltips: {
-                                                                    mode: 'point'
-                                                                },
-                                                                scales: {
-                                                                    xAxes: [{
-                                                                        display: false,
-                                                                        stacked: true,
-                                                                        barPercentage: 0.6,
-                                                                    }],
-                                                                    yAxes: [{
-                                                                        display: false,
-                                                                        stacked: true,
-                                                                        position: 'left',
-                                                                        id: 'y-axis-2',
-                                                                    }, {
-                                                                        type: 'linear',
-                                                                        display: false,
-                                                                        position: 'left',
-                                                                        id: 'y-axis-1',
-                                                                        gridLines: {
-                                                                            display: false
-                                                                        },
-                                                                        labels: {
-                                                                            show: true
-                                                                        }
-                                                                    }]
-                                                                }
-                                                            }} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={`${styles['chart-card']} ${styles['card-pink']}`}>
-                                                <div className={styles['chart-header']}>
-                                                    <span>% Collection Succ.</span>
-                                                </div>
-                                                <div style={{ marginLeft: '10px', display: 'flex' }}>
-                                                    <span style={{ fontSize: '25px', marginLeft: '20px' }}>{item.PORTFOLIO_QUALITY_CHART[3][0].SuccessRate}%</span>
-                                                    <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column', marginLeft: '20px', color: '#FFF', justifyContent: 'center' }}>
-                                                        <span>- {item.PORTFOLIO_QUALITY_CHART[3][0].TotalAct}.</span>
-                                                        <span>- {item.PORTFOLIO_QUALITY_CHART[3][0].TotalAmt}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={`${styles['chart-card']} ${styles['card-orange']}`} style={{ display: 'flex', flexDirection: 'column' }}>
-                                                <div className={styles['chart-header']}>
-                                                    <span>Trend</span>
-                                                </div>
-                                                <div style={{ width: '180px', height: '30px', marginTop: '10px', marginLeft: '5px' }}>
-                                                    <Line
-                                                        data={{
-                                                            datasets: [{
-                                                                data: [30, 10, 60, 75, 45, 20],
-                                                                fill: false,
-                                                                borderColor: '#FFF',
-                                                                backgroundColor: '#FFF',
-                                                            }, {
-                                                                data: [80, 40, 15, 20, 90, 50],
-                                                                fill: false,
-                                                                borderColor: '#607d8b',
-                                                                backgroundColor: '#607d8b',
-                                                            }, {
-                                                                data: [0, 100, 50, 45, 20, 30],
-                                                                fill: false,
-                                                                borderColor: '#2196F3',
-                                                                backgroundColor: '#2196F3',
-                                                            }],
-                                                            labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2']
-                                                        }}
-                                                        options={{
-                                                            legend: { display: false },
-                                                            maintainAspectRatio: false,
-                                                            tooltips: {
-                                                                mode: 'point'
-                                                            },
-                                                            scales: {
-                                                                xAxes: [{
-                                                                    display: false
-                                                                }],
-                                                                yAxes: [{
-                                                                    display: false
-                                                                }]
-                                                            }
-                                                        }} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
-                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
-                                                <div>
-                                                    <span className={styles['header-other-chart']}>Collection Movement Trend</span>
-                                                </div>
-                                                <div id="my-chart" style={{ flex: '1', width: '100%', height: '100px' }}>
-                                                    <ComposedChart layout="vertical" width={178} height={170}
-                                                        margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
-                                                        data={
-                                                            [{ name: 'NPL', red: item.PORTFOLIO_QUALITY_CHART[0][0].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][0].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][0].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][0].RankAch },
-                                                            { name: 'M1-2', red: item.PORTFOLIO_QUALITY_CHART[0][1].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][1].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][1].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][1].RankAch },
-                                                            { name: 'X Day', red: item.PORTFOLIO_QUALITY_CHART[0][2].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][2].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][2].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][2].RankAch },
-                                                            { name: 'W3-4', red: item.PORTFOLIO_QUALITY_CHART[0][3].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][3].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][3].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][3].RankAch },
-                                                            { name: 'W1-2', red: item.PORTFOLIO_QUALITY_CHART[0][4].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][4].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][4].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][4].RankAch }]
-                                                        }>
-                                                        <XAxis type="number" tick={false} domain={['dataMin', '100']} />
-                                                        <YAxis dataKey="name" type="category" tick={<NotAxisTickButLabel />} />
-                                                        <Bars dataKey="red" barSize={10} stackId="a" fill="#f51100" />
-                                                        <Bars dataKey="yellow" stackId="a" fill="#ffc925" />
-                                                        <Bars dataKey="green" stackId="a" fill="#65bb02" />
-                                                        <Lines dataKey='actual' stroke='#ff7300' dot={<CustomizedDot tickSize={8} fill="#2196f3" stroke="#1672bc" />} activeDot={false} stroke={false} />
-                                                        <Tooltips />
-                                                    </ComposedChart>
-                                                </div>
-                                            </div>
-                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
-                                                <div>
-                                                    <span className={styles['header-other-chart']}>Current (W0)</span>
-                                                </div>
-                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                                    <Pie
-                                                        data={{
-                                                            datasets: [{
-                                                                data: [item.PORTFOLIO_QUALITY_CHART[1][0].TotalAch, parseFloat(100 - item.PORTFOLIO_QUALITY_CHART[1][0].TotalAch).toFixed(2)],
-                                                                backgroundColor: ['#607d8b', '#795548'],
-                                                            }],
-                                                            labels: ['W0', 'DPD']
-                                                        }}
-                                                        options={{
-                                                            legend: { display: false },
-                                                            maintainAspectRatio: false
-                                                        }} />
-                                                </div>
-                                            </div>
-                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
-                                                <div style={{ marginBottom: '5px' }}>
-                                                    <span className={styles['header-other-chart']}>Wkcycle Due Plan</span>
-                                                </div>
-                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                                    <Bar
-                                                        data={{
-                                                            datasets: [{
-                                                                data: [
-                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Mon,
-                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Tue,
-                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Wed,
-                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Thu,
-                                                                    item.PORTFOLIO_QUALITY_CHART[2][0].Fri],
-                                                                backgroundColor: ['#f7d827', '#ef3ecf', '#17b21e', '#d64713', '#12c0e8'],
-                                                            }],
-                                                            labels: ['จ', 'อ', 'พ', 'พฤ', 'ศ']
-                                                        }}
-                                                        options={{
-                                                            legend: { display: false },
-                                                            maintainAspectRatio: false
-                                                        }} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
-                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
-                                                <div style={{ marginBottom: '5px' }}>
-                                                    <span className={styles['header-other-chart']}>%Flow Rate 0 MDPD</span>
-                                                </div>
-                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                                    <GaugeChart data={item.PORTFOLIO_QUALITY_CHART[4][0]} colorData={[{
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][0].RankG, // span 140 to 190
-                                                        color: '#65bb02'
-                                                    }, {
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][0].RankY, // span 40 to 140
-                                                        color: '#ffc925'
-                                                    }, {
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][0].RankR, // Meaning span is 0 to 40
-                                                        color: '#f51100'
-                                                    }]} />
-                                                </div>
-                                            </div>
-                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
-                                                <div style={{ marginBottom: '5px' }}>
-                                                    <span className={styles['header-other-chart']}>%Flow Rate 1-30 MDPD</span>
-                                                </div>
-                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                                    <GaugeChart data={item.PORTFOLIO_QUALITY_CHART[4][1]} colorData={[{
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][1].RankG, // span 140 to 190
-                                                        color: '#65bb02'
-                                                    }, {
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][1].RankY, // span 40 to 140
-                                                        color: '#ffc925'
-                                                    }, {
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][1].RankR, // Meaning span is 0 to 40
-                                                        color: '#f51100'
-                                                    }]} />
-                                                </div>
-                                            </div>
-                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
-                                                <div style={{ marginBottom: '5px' }}>
-                                                    <span className={styles['header-other-chart']}>%Flow Rate 31-60 MDPD</span>
-                                                </div>
-                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                                    <GaugeChart data={item.PORTFOLIO_QUALITY_CHART[4][2]} colorData={[{
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][2].RankR, // Meaning span is 0 to 40
-                                                        color: '#f51100'
-                                                    }, {
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][2].RankY, // span 40 to 140
-                                                        color: '#ffc925'
-                                                    }, {
-                                                        value: item.PORTFOLIO_QUALITY_CHART[4][2].RankG, // span 140 to 190
-                                                        color: '#65bb02'
-                                                    }]} />
-                                                </div>
-                                            </div>
-                                            <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '150px', padding: '5px' }}>
-                                                <div style={{ marginBottom: '5px' }}>
-                                                    <span className={styles['header-other-chart']}>% 0 WDPD of New Cust.</span>
-                                                </div>
-                                                <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                                    <GaugeChart1Needle data={item.PORTFOLIO_QUALITY_CHART[5][0]} colorData={[{
-                                                        value: 100, // Meaning span is 0 to 40
-                                                        color: item.PORTFOLIO_QUALITY_CHART[5][0].RankAch == 100 ? '#65bb02' : '#f51100'
-                                                    }]} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Layout>
-                                </Layout>
+                                <PortfolioChart item={item} ON_CLOSE_MARKER={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)} />
                             </InfoWindow>
                         }
                         {
@@ -1850,19 +1315,6 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
     }
 }
 
-const NotAxisTickButLabel = props => {
-    return (
-        <text x={props.x} y={props.y} dy={3} fontFamily="Kanit" fontSize="12px" textAnchor="end" fill={"#565656"}  >{props.payload.value}</text>)
-}
-
-const CustomizedDot = props => {
-    const { cx, cy, tickSize, ...custom } = props
-
-    console.log(props, custom)
-
-    return (<path d={`M${cx},${cy}L${cx - tickSize},${cy - tickSize}L${cx + tickSize},${cy - tickSize}Z`} {...custom} />)
-}
-
 const distanceBetweenPoints = (p1, p2) => {
     if (!p1 || !p2) {
         return 0;
@@ -1882,12 +1334,20 @@ const getBranchDrableCircle = (props) => {
     const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
 
     return RELATED_BRANCH_DATA.map((item, index) => {
-        return (
-            <DragRadius
-                item={item}
-                index={index}
-                NANO_FILTER_CRITERIA={NANO_FILTER_CRITERIA} />
-        )
+
+        const circle = <DragRadius
+            item={item}
+            index={index}
+            NANO_FILTER_CRITERIA={NANO_FILTER_CRITERIA} />
+
+        if (item.BranchType == "K") {
+            if (_.isEmpty(_.find(props.RELATED_BRANCH_DATA, { BranchCode: item.OriginBranchCode }))) {
+                return circle
+            }
+        }
+        else {
+            return circle
+        }
     })
 }
 
@@ -2783,6 +2243,7 @@ export default connect(
         setOpenTargetMarketMarker: setOpenTargetMarketMarker,
         setOpenExitingMarketImageMarker: setOpenExitingMarketImageMarker,
         setOpenBranchImageMarker: setOpenBranchImageMarker,
+        setOpenBranchPortfolioMarker: setOpenBranchPortfolioMarker,
         setOpenExitingMarketShopLayoutMarker: setOpenExitingMarketShopLayoutMarker,
         setOpenExitingMarketSaleSummaryMarker: setOpenExitingMarketSaleSummaryMarker,
         setOpenExitingMarketPortfolioMarker: setOpenExitingMarketPortfolioMarker,

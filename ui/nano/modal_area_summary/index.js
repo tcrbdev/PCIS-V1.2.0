@@ -608,15 +608,10 @@ class ModalSaleSummary extends Component {
 
                     <article className={styles['wrapper']}>
                         <div className={styles['header-container']}>
-                            <div className={styles['ca-imgs']}>
-                                <Popover placement="left" content={<img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${58385}`} />} >
-                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${58385}`} />
-                                </Popover>
-                            </div>
+                            <FontAwesome style={{ marginLeft: '10px', fontSize: '14px' }} name="table" />
                             <div className={styles['title-img']}>
-                                <span>
-                                    {ca_name}&nbsp;
-                                         <span className={styles['title-wp']}>({work_date_format})</span>
+                                <span style={{ marginLeft: '5px' }}>
+                                    Market Penatation
                                 </span>
                             </div>
                             <Icon

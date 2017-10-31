@@ -121,7 +121,7 @@ class Index extends Component {
         else {
             return (
                 <div className='info-container'>
-                    <BranchSummary />
+                    <BranchSummary hiddenPanel={this.state.collapsed} />
                     <Scrollbar overscrollEffect="bounce" style={{ padding: '10px' }}>
                         {
                             <SummaryTable />
@@ -191,6 +191,9 @@ class Index extends Component {
                 </Draggable>
                 <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
                     <div id="direction-info" className={styles['multiple-window']}></div>
+                </Draggable>
+                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div id="add-portfolio-chart" className={styles['multiple-window']}></div>
                 </Draggable>
             </Layout>
         )

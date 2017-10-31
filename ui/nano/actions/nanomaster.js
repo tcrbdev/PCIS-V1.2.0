@@ -94,12 +94,14 @@ export const setOpenBranchMarker = (targetMarker, currentState, isOpen) => dispa
             item.showInfo = isOpen
             item.showImage = false
             item.showMenu = false
+            item.showPortfolio = false
             item.BRANCH_INFORMATION = res[0]
             item.CA_BRANCH_INFORMATION = res[1]
             item.BRANCH_DESCRIPTION = res[2]
             item.BRANCH_RADIUS = res[3]
             item.NOTE = res[4]
             item.BRANCH_IMAGE = []
+            item.PORTFOLIO_QUALITY_CHART = []
 
             let newState = _.cloneDeep(currentState)
 
@@ -120,12 +122,49 @@ export const setOpenBranchImageMarker = (targetMarker, currentState, isOpen) => 
             item.showInfo = false
             item.showImage = isOpen
             item.showMenu = false
+            item.showPortfolio = false
             item.BRANCH_INFORMATION = []
             item.CA_BRANCH_INFORMATION = []
             item.BRANCH_DESCRIPTION = []
             item.BRANCH_RADIUS = []
             item.NOTE = []
             item.BRANCH_IMAGE = res
+            item.PORTFOLIO_QUALITY_CHART = []
+
+            let newState = _.cloneDeep(currentState)
+
+            dispatch({
+                type: SET_OPEN_BRANCH_MARKER_REQUEST,
+                payload: newState
+            })
+        })
+}
+
+export const setOpenBranchPortfolioMarker = (targetMarker, currentState, isOpen, criteria) => dispatch => {
+
+    fetch(GET_PORTFOLIO_QUALITY_CHART_URL, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(criteria),
+        timeout: 1500000
+    })
+        .then(res => (res.json()))
+        .then(res => {
+            let item = _.find(currentState, { BranchCode: targetMarker.BranchCode })
+            item.showInfo = false
+            item.showImage = false
+            item.showMenu = false
+            item.showPortfolio = isOpen
+            item.BRANCH_INFORMATION = []
+            item.CA_BRANCH_INFORMATION = []
+            item.BRANCH_DESCRIPTION = []
+            item.BRANCH_RADIUS = []
+            item.NOTE = []
+            item.BRANCH_IMAGE = []
+            item.PORTFOLIO_QUALITY_CHART = res
 
             let newState = _.cloneDeep(currentState)
 

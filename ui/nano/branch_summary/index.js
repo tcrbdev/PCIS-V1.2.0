@@ -14,6 +14,7 @@ import {
 } from '../actions/nanomaster'
 
 import ModalAreaSummary from '../modal_area_summary'
+import ModalPortfolioChart from '../modal_portfolio_chart'
 
 import styles from '../app/index.scss'
 
@@ -385,7 +386,7 @@ class BranchSummary extends Component {
         else {
             auth_pass = true
         }
-
+        console.log(this.props.hiddenPanel)
         return (
             <div className={`${styles['show-sm']} ${collapsedSummary}`}>
                 <div>
@@ -398,7 +399,7 @@ class BranchSummary extends Component {
                 </div>
                 <div>
                     <div className={styles['icon-header-container']}>
-                        <div className={`${this.state.collapsed && styles['hide']} ${(!auth_pass) && styles['hide']}`}>
+                        <div className={`${this.state.collapsed && styles['hide']} ${(!auth_pass) && styles['hide']}`} style={{ opacity: this.props.hiddenPanel ? 0 : 1 }}>
                             <Tooltip title="View">
                                 <Dropdown overlay={this.getMenuGroupBy()} placement="bottomCenter">
                                     <div className={styles['icon-split']}>
@@ -409,8 +410,8 @@ class BranchSummary extends Component {
                             </Tooltip>
                             <div className={styles['ca-icon-lists']}>
                                 <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
-                                <ModalAreaSummary />
-                                <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
+                                < ModalAreaSummary />
+                                <ModalPortfolioChart />
                             </div>
                         </div>
                     </div>
