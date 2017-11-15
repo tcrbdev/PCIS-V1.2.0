@@ -15,7 +15,8 @@ import {
     SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS,
     SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE,
 
-    CHANGE_MAP_MARKER_BY_CA,
+    CHANGE_MAP_MARKER_BY_CA_REQUEST,
+    CHANGE_MAP_MARKER_BY_CA_SUCCESS,
 
     INSERT_MARKER_NOTE_REQUEST,
     INSERT_MARKER_NOTE_SUCCESS,
@@ -117,8 +118,32 @@ export const NANO_FILTER_CRITERIA = (state = initialStateObj, action) => {
 
 export const SELECTED_CA_MAP = (state = initialStateArray, action) => {
     switch (action.type) {
-        case CHANGE_MAP_MARKER_BY_CA:
+        case CHANGE_MAP_MARKER_BY_CA_SUCCESS:
             return action.selectedCA
+            break;
+        default:
+            return state
+            break;
+
+    }
+}
+
+export const CHART_PORTFOLIO_QUALITY_BY_CA = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case CHANGE_MAP_MARKER_BY_CA_SUCCESS:
+            return action.chartPortFolio
+            break;
+        default:
+            return state
+            break;
+
+    }
+}
+
+export const CHART_SALE_SUMMARY_BY_CA = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case CHANGE_MAP_MARKER_BY_CA_SUCCESS:
+            return action.chartSaleSummary
             break;
         default:
             return state
@@ -135,7 +160,7 @@ export const DO_BOUNDS_MAP = (state = initialStateBoolean, action) => {
         case SET_OPEN_PLAN_OPEN_BRANCH_REQUEST:
             return false
             break;
-        case CHANGE_MAP_MARKER_BY_CA:
+        case CHANGE_MAP_MARKER_BY_CA_SUCCESS:
         case SEARCH_NANO_DATA_REQUEST:
             return true
             break;
@@ -166,7 +191,7 @@ export const RELATED_BRANCH_DATA = (state = initialStateArray, action) => {
 export const RELATED_EXITING_MARKET_DATA = (state = initialStateArray, action) => {
     switch (action.type) {
         case SET_OPEN_EXITING_MARKET_MARKER_REQUEST:
-        case CHANGE_MAP_MARKER_BY_CA:
+        case CHANGE_MAP_MARKER_BY_CA_SUCCESS:
             return action.payload
             break;
         case SEARCH_NANO_DATA_SUCCESS:
@@ -309,6 +334,34 @@ export const RELATED_GROUP_BY_MARKET_SUMMARY_DATA = (state = initialStateArray, 
             break;
         case SEARCH_NANO_DATA_SUCCESS:
             return action.payload.groupBYMarketSummary
+            break;
+        case SEARCH_NANO_DATA_FAILURE:
+            return [action.payload]
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const RELATED_CHART_PORTFOLIO_QUALITY = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case SEARCH_NANO_DATA_SUCCESS:
+            return action.payload.chartPortFolio
+            break;
+        case SEARCH_NANO_DATA_FAILURE:
+            return [action.payload]
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const RELATED_CHART_SALE_SUMMARY = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case SEARCH_NANO_DATA_SUCCESS:
+            return action.payload.chartSaleSummary
             break;
         case SEARCH_NANO_DATA_FAILURE:
             return [action.payload]

@@ -26,7 +26,8 @@ import {
 
     INSERT_UPDATE_MARKER_NOTE_URL,
 
-    GET_PORTFOLIO_QUALITY_CHART_URL
+    GET_PORTFOLIO_QUALITY_CHART_URL,
+    GET_SALE_SUMMARY_CHART_URL
 } from '../../common/constants/endpoints'
 
 import {
@@ -46,7 +47,8 @@ import {
     SEARCH_NANO_CHANGE_VIEW_DATA_SUCCESS,
     SEARCH_NANO_CHANGE_VIEW_DATA_FAILURE,
 
-    CHANGE_MAP_MARKER_BY_CA,
+    CHANGE_MAP_MARKER_BY_CA_REQUEST,
+    CHANGE_MAP_MARKER_BY_CA_SUCCESS,
 
     INSERT_MARKER_NOTE_REQUEST,
     INSERT_MARKER_NOTE_SUCCESS,
@@ -95,6 +97,7 @@ export const setOpenBranchMarker = (targetMarker, currentState, isOpen) => dispa
             item.showImage = false
             item.showMenu = false
             item.showPortfolio = false
+            item.showSaleSummary = false
             item.BRANCH_INFORMATION = res[0]
             item.CA_BRANCH_INFORMATION = res[1]
             item.BRANCH_DESCRIPTION = res[2]
@@ -102,6 +105,7 @@ export const setOpenBranchMarker = (targetMarker, currentState, isOpen) => dispa
             item.NOTE = res[4]
             item.BRANCH_IMAGE = []
             item.PORTFOLIO_QUALITY_CHART = []
+            item.SALE_SUMMARY_CHART = []
 
             let newState = _.cloneDeep(currentState)
 
@@ -123,6 +127,7 @@ export const setOpenBranchImageMarker = (targetMarker, currentState, isOpen) => 
             item.showImage = isOpen
             item.showMenu = false
             item.showPortfolio = false
+            item.showSaleSummary = false
             item.BRANCH_INFORMATION = []
             item.CA_BRANCH_INFORMATION = []
             item.BRANCH_DESCRIPTION = []
@@ -130,6 +135,7 @@ export const setOpenBranchImageMarker = (targetMarker, currentState, isOpen) => 
             item.NOTE = []
             item.BRANCH_IMAGE = res
             item.PORTFOLIO_QUALITY_CHART = []
+            item.SALE_SUMMARY_CHART = []
 
             let newState = _.cloneDeep(currentState)
 
@@ -158,6 +164,7 @@ export const setOpenBranchPortfolioMarker = (targetMarker, currentState, isOpen,
             item.showImage = false
             item.showMenu = false
             item.showPortfolio = isOpen
+            item.showSaleSummary = false
             item.BRANCH_INFORMATION = []
             item.CA_BRANCH_INFORMATION = []
             item.BRANCH_DESCRIPTION = []
@@ -165,6 +172,44 @@ export const setOpenBranchPortfolioMarker = (targetMarker, currentState, isOpen,
             item.NOTE = []
             item.BRANCH_IMAGE = []
             item.PORTFOLIO_QUALITY_CHART = res
+            item.SALE_SUMMARY_CHART = []
+
+            let newState = _.cloneDeep(currentState)
+
+            dispatch({
+                type: SET_OPEN_BRANCH_MARKER_REQUEST,
+                payload: newState
+            })
+        })
+}
+
+export const setOpenBranchSaleSummaryMarker = (targetMarker, currentState, isOpen, criteria) => dispatch => {
+
+    fetch(GET_SALE_SUMMARY_CHART_URL, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(criteria),
+        timeout: 1500000
+    })
+        .then(res => (res.json()))
+        .then(res => {
+            let item = _.find(currentState, { BranchCode: targetMarker.BranchCode })
+            item.showInfo = false
+            item.showImage = false
+            item.showMenu = false
+            item.showPortfolio = false
+            item.showSaleSummary = isOpen
+            item.BRANCH_INFORMATION = []
+            item.CA_BRANCH_INFORMATION = []
+            item.BRANCH_DESCRIPTION = []
+            item.BRANCH_RADIUS = []
+            item.NOTE = []
+            item.BRANCH_IMAGE = []
+            item.PORTFOLIO_QUALITY_CHART = []
+            item.SALE_SUMMARY_CHART = res
 
             let newState = _.cloneDeep(currentState)
 
@@ -205,6 +250,8 @@ export const setOpenExitingMarketMarker = (targetMarker, currentState, isOpen) =
             item.CA_INFORMATION = res[1]
             item.NOTE = res[2]
             item.MARKET_IMAGE = []
+            item.PORTFOLIO_QUALITY_CHART = []
+            item.SALE_SUMMARY_CHART = []
 
             let newState = _.cloneDeep(currentState)
 
@@ -233,6 +280,8 @@ export const setOpenExitingMarketImageMarker = (targetMarker, currentState, isOp
             item.CA_INFORMATION = []
             item.NOTE = []
             item.MARKET_IMAGE = res
+            item.PORTFOLIO_QUALITY_CHART = []
+            item.SALE_SUMMARY_CHART = []
 
             let newState = _.cloneDeep(currentState)
 
@@ -261,6 +310,8 @@ export const setOpenExitingMarketShopLayoutMarker = (targetMarker, currentState,
             item.CA_INFORMATION = []
             item.NOTE = []
             item.MARKET_IMAGE = res
+            item.PORTFOLIO_QUALITY_CHART = []
+            item.SALE_SUMMARY_CHART = []
 
             let newState = _.cloneDeep(currentState)
 
@@ -271,11 +322,19 @@ export const setOpenExitingMarketShopLayoutMarker = (targetMarker, currentState,
         })
 }
 
-export const setOpenExitingMarketSaleSummaryMarker = (targetMarker, currentState, isOpen) => dispatch => {
+export const setOpenExitingMarketSaleSummaryMarker = (targetMarker, currentState, isOpen, criteria) => dispatch => {
 
     const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
 
-    fetch(URL)
+    fetch(GET_SALE_SUMMARY_CHART_URL, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(criteria),
+        timeout: 1500000
+    })
         .then(res => (res.json()))
         .then(res => {
             let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
@@ -289,6 +348,8 @@ export const setOpenExitingMarketSaleSummaryMarker = (targetMarker, currentState
             item.CA_INFORMATION = []
             item.NOTE = []
             item.MARKET_IMAGE = res
+            item.PORTFOLIO_QUALITY_CHART = []
+            item.SALE_SUMMARY_CHART = res
 
             let newState = _.cloneDeep(currentState)
 
@@ -331,6 +392,7 @@ export const setOpenExitingMarketPortfolioMarker = (targetMarker, currentState, 
             item.NOTE = []
             item.MARKET_IMAGE = res
             item.PORTFOLIO_QUALITY_CHART = res
+            item.SALE_SUMMARY_CHART = []
 
             let newState = _.cloneDeep(currentState)
 
@@ -378,12 +440,83 @@ export const setOpenTargetMarketMarker = (targetMarker, currentState, isOpen) =>
 }
 
 
-export const selectMarkerByCA = (newState, value) => dispatch => {
+export const selectMarkerByCA = (newState, value, filter) => dispatch => {
     dispatch({
-        type: CHANGE_MAP_MARKER_BY_CA,
-        payload: newState,
-        selectedCA: value
+        type: CHANGE_MAP_MARKER_BY_CA_REQUEST,
+        payload: {}
     })
+
+    let api = [
+        fetch(GET_PORTFOLIO_QUALITY_CHART_URL, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                CAID: value ? value.join(',') : filter.CAID
+            }),
+            timeout: 1500000
+        }).then(res => (res.json())),
+        fetch(GET_SALE_SUMMARY_CHART_URL, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                CAID: value ? value.join(',') : filter.CAID
+            }),
+            timeout: 1500000
+        }).then(res => (res.json()))
+    ]
+
+    bluebird.all(api)
+        .spread((chartPortFolio, chartSaleSummary) => {
+            const res = {
+                chartPortFolio,
+                chartSaleSummary
+            }
+            dispatch({
+                type: CHANGE_MAP_MARKER_BY_CA_SUCCESS,
+                payload: newState,
+                selectedCA: value,
+                chartPortFolio,
+                chartSaleSummary
+            })
+        })
+        .catch(e => {
+            if (!e.response) {
+                dispatch({
+                    type: SEARCH_NANO_DATA_FAILURE,
+                    payload: {
+                        status: "Error",
+                        statusText: e.response
+                    }
+                })
+            }
+        })
+
+    // fetch(GET_PORTFOLIO_QUALITY_CHART_URL, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         CAID: value ? value.join(',') : filter.CAID
+    //     }),
+    //     timeout: 1500000
+    // })
+    //     .then(res => (res.json()))
+    //     .then(res => {
+    //         dispatch({
+    //             type: CHANGE_MAP_MARKER_BY_CA_SUCCESS,
+    //             payload: newState,
+    //             selectedCA: value,
+    //             data: res
+    //         })
+    //     })
 }
 
 export const getNanoMasterData = (auth = {}) => ((dispatch) => {
@@ -549,18 +682,38 @@ export const searchNanoData = criteria => (
                 },
                 body: JSON.stringify(criteria),
                 timeout: 1500000
+            }).then(res => (res.json())),
+            fetch(GET_PORTFOLIO_QUALITY_CHART_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(criteria),
+                timeout: 1500000
+            }).then(res => (res.json())),
+            fetch(GET_SALE_SUMMARY_CHART_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(criteria),
+                timeout: 1500000
             }).then(res => (res.json()))
         ]
 
         bluebird.all(api)
-            .spread((nanoMarker, complititorMarker, productPerformance, totalSummary, groupBYSummary, groupBYMarketSummary) => {
+            .spread((nanoMarker, complititorMarker, productPerformance, totalSummary, groupBYSummary, groupBYMarketSummary, chartPortFolio, chartSaleSummary) => {
                 const res = {
                     nanoMarker,
                     complititorMarker,
                     productPerformance,
                     totalSummary,
                     groupBYSummary,
-                    groupBYMarketSummary
+                    groupBYMarketSummary,
+                    chartPortFolio,
+                    chartSaleSummary
                 }
                 dispatch({
                     type: SEARCH_NANO_DATA_SUCCESS,

@@ -365,6 +365,11 @@
     }
 }
 
+.sm-paddings
+{
+    padding: 3px !important;
+}
+
 .summary-table
 {
     margin-bottom: 0px;
@@ -377,6 +382,15 @@
     & > div > div > div
     {
         border-radius: 0px;
+    }
+
+    & [class*=ant-table-small] table
+    {
+        padding: 0 !important;
+
+        & > thead > tr > th {
+            background-color: #aac789;
+        }
     }
 
     & table
@@ -530,9 +544,19 @@
             flex:1;
     }
 
-    .text-ellipsis
+    .text-ellipsis-map
     {
-        width: 100px;
+        width: 110px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        overflow: hidden;
+        flex: 1;
+    }
+
+    .text-ellipsis-detail
+    {
+        width: 470px;
         text-overflow: ellipsis;
         white-space: nowrap;
         display: block;
@@ -822,11 +846,90 @@
 		height: 146px;
 		padding: 10px 0 10px 5px;
 /*background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);*/
-    background-color: white;
-    border: 1px solid #cecece;
+    background-color: #FFF;
+    border: 1px solid rgba(206, 206, 206, 0.25);
         border-radius: 3px;
         
         
+}
+
+.chart-container
+{
+    background-color: #FFF;
+    border: 1px solid rgba(206, 206, 206, 0.25);
+    margin:5px;
+    padding: 5px;
+    font-size: 11px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between
+}
+
+.app-daily-overlay
+{
+    position: absolute;
+    background-color: rgba(183, 183, 183, 0.7);
+    border-radius: 5px;
+    left: 10px;
+    top: 10px;
+    z-index: 1;
+    padding: 0 2px;
+
+    & > div > span:first-child
+    {
+        width: 45px;
+    }
+
+    & > div > span:nth-child(2) 
+    {
+        text-align: right;
+        width: 60px;
+    }
+
+    & > div > span:nth-child(3) , span:nth-child(4)
+    {
+        text-align: right;
+        width: 30px;
+    }
+
+    & > div > span
+    {
+        display: inline-block;
+        margin: 2px;
+        color: rgba(31, 31, 31, 0.71);
+    }
+}
+
+.chart-row
+{
+display: flex;
+flex-direction: row;
+}
+
+.color-dot-container
+{
+    & > span
+    {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+.color-dot
+{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.no-padding-bottom-chart
+{
+    & > [class*=ant-timeline-item-content]
+    {
+        padding-bottom: 0px;
+    }
 }
 
 .modal-note-header

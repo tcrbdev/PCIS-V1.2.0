@@ -15,6 +15,7 @@ import {
 
 import ModalAreaSummary from '../modal_area_summary'
 import ModalPortfolioChart from '../modal_portfolio_chart'
+import ModalSaleSummaryChart from '../modal_sale_summary_chart'
 
 import styles from '../app/index.scss'
 
@@ -37,7 +38,7 @@ const columnsBranchPerformance = [
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
             render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}`)
         }, {
-            title: (<div className={styles['div-center']}><span>Unit</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'OS_Unit',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} os-balance`,
@@ -63,7 +64,7 @@ const columnsBranchPerformance = [
             render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1))
         },
         {
-            title: (<div className={styles['div-center']}><span>Unit</span></div>),
+            title: (<div className={styles['div-center']}><span>CIF</span></div>),
             dataIndex: 'TOTAL_Unit',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
@@ -93,7 +94,7 @@ const columnsBranchPerformance = [
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
             render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1))
         }, {
-            title: (<div className={styles['div-center']}><span>Unit</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'CUR_Unit',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} current-month`,
@@ -118,7 +119,7 @@ const columnsTotalSummary = [{
     dataIndex: "Kpi",
     width: '9%',
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} os-balance`,
-    render: (text, record, index) => (text == 'Ach' ? '%Ach.' : text)
+    render: (text, record, index) => (text == 'Ach' ? '%Ach.' : text == 'Unit' ? 'Cust' : text)
 }, {
     title: (<div className={styles['div-center']}><span>OS</span><span>Bal.</span></div>),
     dataIndex: "OS",
@@ -235,12 +236,7 @@ class BranchSummary extends Component {
             obj.push(temp)
         })
 
-        // if (this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.ca) {
-        //     obj = _.orderBy(obj, ['GroupName', 'OrderByOS'], ['asc', 'desc'])
-        // }
-        // else {
         obj = _.orderBy(obj, ['BranchCode', 'GroupName', 'OrderByOS'], ['asc', 'asc', 'desc'])
-        // }
 
         if (obj.length > 0) {
             return obj.map((item, index) => {
@@ -409,8 +405,8 @@ class BranchSummary extends Component {
                                 </Dropdown>
                             </Tooltip>
                             <div className={styles['ca-icon-lists']}>
-                                <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
-                                < ModalAreaSummary />
+                                <ModalSaleSummaryChart />
+                                <ModalAreaSummary />
                                 <ModalPortfolioChart />
                             </div>
                         </div>
@@ -483,96 +479,6 @@ class BranchSummary extends Component {
             </div>
         )
     }
-
-    /*render() {
-        return
-                (
-            <div>
-                    <div className={styles['icon-header-container']}>
-                        <div className={`${this.state.collapsed && styles['hide']} ${(!auth_pass) && styles['hide']}`}>
-                            <Tooltip title="View">
-                                <Dropdown overlay={this.getMenuGroupBy()} placement="bottomCenter">
-                                    <div className={styles['icon-split']}>
-                                        <Icon type="caret-up" />
-                                        <Icon type="caret-down" />
-                                    </div>
-                                </Dropdown>
-                            </Tooltip>
-
-                            <div className={styles['ca-icon-lists']}>
-                                <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
-                                <ModalAreaSummary />
-                                <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
-                            </div>
-                        </div>
-                    </div>
-                    <Collapse bordered={false} onChange={this.onCollapsedChange} className={styles['no-padding-lef-right']} activeKey={this.state.openFilterCollapsed}>
-                        <Panel
-                            key={"1"}
-                            header={
-                                <div className={styles['panel-header']}>
-                                    <Icon type="area-chart" />
-                                    <span>Branch Summary</span>
-                                </div>
-                            }
-                        >
-                            <Scrollbar overscrollEffect="bounce">
-                                <div>
-                                    {
-                                        (_.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "YTD") > 0 && _.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "OS") > 0) ?
-                                            <div className="rotate-total">
-                                                <div>
-                                                    <div>TOTAL</div>
-                                                </div>
-                                                <div>
-                                                    <Table
-                                                        className={styles['summary-table-hilight']}
-                                                        dataSource={this.props.RELATED_OVERALL_SUMMARY_DATA}
-                                                        columns={columnsTotalSummary}
-                                                        pagination={false}
-                                                        bordered />
-                                                </div>
-                                            </div>
-                                            :
-                                            <div className="rotate-total">
-                                                <div>
-                                                    <div>TOTAL</div>
-                                                </div>
-                                                <div>
-                                                    <Table
-                                                        className={styles['summary-table-hilight']}
-                                                        dataSource={[]}
-                                                        columns={columnsTotalSummary}
-                                                        pagination={false}
-                                                        bordered />
-                                                </div>
-                                            </div>
-                                    }
-                                    {
-                                        this.getGroupBySummary()
-                                    }
-                                    {
-                                        this.props.ON_NANO_CHANGE_VIEW_SEARCHING_DATA &&
-                                        (
-                                            <div className={styles['view-change']}>
-                                                <div className={styles['loading-containers']} >
-                                                    <FontAwesome name="circle-o-notch" size='5x' spin />
-                                                    <span className={styles['loading-text']}>Loading...</span>
-                                                </div>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            </Scrollbar>
-                            <span onClick={this.collapsedSummaryClick} style={{ marginTop: '5px' }}>
-                                <Icon type="double-right" style={{ transition: '.4s all', transform: `rotate(${this.state.collapsedSummary ? '-' : ''}90deg)`, marginRight: '5px' }} />
-                                <a>Show all</a>
-                            </span>
-                        </Panel>
-                    </Collapse>
-                </div>
-                )
-    }*/
 }
 
 const CookiesBranchSummary = withCookies(BranchSummary)

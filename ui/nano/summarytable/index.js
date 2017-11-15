@@ -6,11 +6,15 @@ import _ from 'lodash'
 import FontAwesome from 'react-fontawesome'
 
 import ModalSaleSummary from '../modal_sale_summary'
+import ModalPortfolioChart from '../modal_portfolio_chart'
+import ModalSaleSummaryChart from '../modal_sale_summary_chart'
 
 import {
     setOpenExitingMarketMarker,
     selectMarkerByCA
 } from '../actions/nanomaster'
+
+import moment from 'moment'
 
 const FormItem = Form.Item
 const { Option, OptGroup } = Select;
@@ -87,7 +91,21 @@ class SummaryTable extends Component {
         })
 
 
-        const { getFieldDecorator } = this.props.form
+        const { getFieldDecorator, getFieldValue } = this.props.form
+
+        const ca_code = _.isArray(getFieldValue("select_ca")) ? getFieldValue("select_ca") : [getFieldValue("select_ca")]
+        const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, o => !_.isEmpty(_.find(ca_code, f => f == o.CA_Code)))
+        const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
+        const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+        const ca_name = !_.isEmpty(find) ? find.CA_Name : ''
+        const ca_nickname = !_.isEmpty(find) ? find.CA_NickName : ''
+        const type = {
+            ca_code,
+            ca_name,
+            ca_nickname,
+            work_date_format
+        }
+
 
         return (
             <div id="ca_tools" className={`${styles['ca-icon-list']}`}>
@@ -123,9 +141,9 @@ class SummaryTable extends Component {
                 {
                     this.checkDisable() &&
                     <div>
-                        <Tooltip title="Sale Summary"><FontAwesome name="line-chart" /></Tooltip>
+                        <ModalSaleSummaryChart type={type} />
                         <ModalSaleSummary form={this.props.form} />
-                        <Tooltip title="Portfolio Quality" placement="topRight"><FontAwesome name="dollar" /></Tooltip>
+                        <ModalPortfolioChart type={type} />
                     </div>
                 }
             </div >
@@ -218,114 +236,105 @@ class SummaryTable extends Component {
         }
     }]
 
-    columnsBodyRight = () => [
-        //     {
-        //     title: (<Tooltip title={'Radius to kiosk'} placement="left" ><div className={styles['div-center']}><Icon type="environment" style={{ marginBottom: '5px' }} /><span>Km</span></div></Tooltip>),
-        //     dataIndex: 'Radius',
-        //     key: 'Radius',
-        //     className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-        //     width: '5%',
-        //     render: (text, record, index) => (parseFloat(record.Radius).toFixed(parseInt(text) >= 100 ? 0 : 1))
-        // }, 
-        {
-            title: (<Tooltip title={'Radius to Branch'} placement="left" ><div className={styles['div-center']}><Icon type="environment" style={{ marginBottom: '5px' }} /><span>Km</span></div></Tooltip>),
-            dataIndex: 'RadiusToPure',
-            key: 'RadiusToPure',
-            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-            width: '5%',
-            render: (text, record, index) => {
-                if (this.props.NANO_FILTER_CRITERIA.CAName) {
-                    return parseFloat(record.RadiusToPure).toFixed(parseInt(text) >= 100 ? 0 : 1)
+    columnsBodyRight = () => [{
+        title: (<Tooltip title={'Radius to Branch'} placement="left" ><div className={styles['div-center']}><Icon type="environment" style={{ marginBottom: '5px' }} /><span>Km</span></div></Tooltip>),
+        dataIndex: 'RadiusToPure',
+        key: 'RadiusToPure',
+        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+        width: '5%',
+        render: (text, record, index) => {
+            if (this.props.NANO_FILTER_CRITERIA.CAName) {
+                return parseFloat(record.RadiusToPure).toFixed(parseInt(text) >= 100 ? 0 : 1)
+            }
+            else {
+                return parseFloat(record.Radius).toFixed(parseInt(text) >= 100 ? 0 : 1)
+            }
+        }
+    }, {
+        title: (<div className={styles['div-center']}><span>#</span><span>Shop</span></div>),
+        dataIndex: 'MarketShop',
+        key: 'MarketShop',
+        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+        width: '6%',
+    }, {
+        title: (<div className={styles['div-center']}><span>PMT</span><span>Succ.</span></div>),
+        dataIndex: 'SuccessRate',
+        key: 'SuccessRate',
+        width: '7%',
+        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+        render: (text, record, index) => {
+            return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+        }
+    }, {
+        title: (<div className={styles['div-center']}><span>#</span><span>OS</span></div>),
+        dataIndex: 'OS',
+        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+        width: '6%',
+        render: (text, record, index) => {
+            return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
+        }
+    }, {
+        title: (<div className={styles['div-center']}><span>Market Penetration</span></div>),
+        children: [
+            {
+                title: (<div className={styles['div-center']}><span>Pot.</span></div>),
+                width: '5%',
+                dataIndex: 'Potential',
+                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                render: (text, record, index) => {
+                    return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
                 }
-                else {
-                    return parseFloat(record.Radius).toFixed(parseInt(text) >= 100 ? 0 : 1)
-                }
-            }
-        }, {
-            title: (<div className={styles['div-center']}><span>#</span><span>Shop</span></div>),
-            dataIndex: 'MarketShop',
-            key: 'MarketShop',
-            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-            width: '6%',
-        }, {
-            title: (<div className={styles['div-center']}><span>PMT</span><span>Succ.</span></div>),
-            dataIndex: 'SuccessRate',
-            key: 'SuccessRate',
-            width: '7%',
-            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-            render: (text, record, index) => {
-                return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
-            }
-        }, {
-            title: (<div className={styles['div-center']}><span>#</span><span>OS</span></div>),
-            dataIndex: 'OS',
-            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-            width: '6%',
-            render: (text, record, index) => {
-                return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
-            }
-        }, {
-            title: (<div className={styles['div-center']}><span>Market Penetration</span></div>),
-            children: [
-                {
-                    title: (<div className={styles['div-center']}><span>Pot.</span></div>),
-                    width: '5%',
-                    dataIndex: 'Potential',
-                    className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                    render: (text, record, index) => {
-                        return <span className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+            },
+            {
+                title: (<div className={styles['div-center']}><span>Setup</span></div>),
+                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                children: [
+                    {
+                        dataIndex: 'SetupTotal',
+                        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                        //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                        width: '5%',
+                        render: (text, record, index) => {
+                            return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
+                        }
+                    },
+                    {
+                        dataIndex: 'SetupAch',
+                        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                        //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                        width: '5%',
+                        render: (text, record, index) => {
+                            return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
+                        }
                     }
-                },
-                {
-                    title: (<div className={styles['div-center']}><span>Setup</span></div>),
-                    className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                    children: [
-                        {
-                            dataIndex: 'SetupTotal',
-                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                            //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                            width: '5%',
-                            render: (text, record, index) => {
-                                return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}</span>
-                            }
-                        },
-                        {
-                            dataIndex: 'SetupAch',
-                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                            //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                            width: '5%',
-                            render: (text, record, index) => {
-                                return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
-                            }
+                ]
+            },
+            {
+                title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
+                className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                children: [
+                    {
+                        dataIndex: 'TopContributeName',
+                        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                        //className: `${styles['header-hide']} ${styles['align-left']} ${styles['vertical-bottom']}`,
+                        width: '10%',
+                        render: (text, record, index) => {
+                            return <span style={{ padding: '3px' }}>{text}</span>
                         }
-                    ]
-                },
-                {
-                    title: (<div className={styles['div-center']}><span>Top OS Contribute</span></div>),
-                    className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                    children: [
-                        {
-                            dataIndex: 'TopContributeName',
-                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                            //className: `${styles['header-hide']} ${styles['align-left']} ${styles['vertical-bottom']}`,
-                            width: '10%',
-                            render: (text, record, index) => {
-                                return <span style={{ padding: '3px' }}>{text}</span>
-                            }
-                        },
-                        {
-                            dataIndex: 'TopContributeValue',
-                            className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                            //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                            width: '7%',
-                            render: (text, record, index) => {
-                                return <span style={{ padding: '3px 5px' }} className={text < 0 && styles['red-font']}>{parseFloat(text ? text : 0).toFixed(0)}%</span>
-                            }
+                    },
+                    {
+                        dataIndex: 'TopContributeValue',
+                        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
+                        //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
+                        width: '7%',
+                        render: (text, record, index) => {
+                            return <span style={{ padding: '3px 5px' }} className={text < 0 && styles['red-font']}>{parseFloat(text ? text : 0).toFixed(0)}%</span>
                         }
-                    ]
-                }
-            ]
-        }]
+                    }
+                ]
+            }
+        ]
+    }]
 
     getTableColumns() {
         if (this.props.RELATED_BRANCH_DATA.length > 0) {
@@ -370,7 +379,7 @@ class SummaryTable extends Component {
             filter = this.props.RELATED_EXITING_MARKET_DATA_BACKUP
         }
 
-        this.props.selectMarkerByCA(filter, value_find)
+        this.props.selectMarkerByCA(filter, value_find, this.props.NANO_FILTER_CRITERIA)
 
         return _.orderBy(filter, ['RadiusToPure', 'Radius'], ['asc', 'asc'])
     }

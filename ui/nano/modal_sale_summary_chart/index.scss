@@ -1,0 +1,71 @@
+.modalParentSaleSummaryChart {
+    background-color: transparent !important;
+    visibility: visible;
+    position: relative;
+    overflow: hidden;
+
+    .wrapper {
+        width: 100%;
+    }
+
+    .header-container
+    {
+        display:  flex;
+        flex-direction: row;
+        align-items: center;
+        background: #03a9f4;
+        height: 35px;
+        min-width: 100%;
+        position: relative;
+        
+        & > div
+        {
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    & .ant-modal-content {
+        background-color: transparent !important;
+        box-shadow: unset;
+    }
+
+}
+.modalParentSaleSummaryChart:hover { cursor: pointer; }
+
+.modalSaleSummaryChart
+    {
+        width: 600px !important;
+        top: 0px;
+        padding-bottom: 0px;
+
+        & [class*=ant-modal-body]
+        {
+            padding: 0;
+        }
+
+        & [class*=ant-modal-header]
+        {
+            padding: 0;
+                background: #03a9f4;
+                color: #FFF;
+                height: 35px;
+        }
+
+        & [class*=ant-modal-close-x]
+        {
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            color: #FFF;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all .3s;
+
+            &:hover
+            {
+                transform: scale(1.1);
+            }
+        }
+    }

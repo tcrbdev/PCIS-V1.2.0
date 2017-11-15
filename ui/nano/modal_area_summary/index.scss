@@ -392,69 +392,6 @@
     & table tbody tr:hover { color: red; }
 }
 
-/*[class*=ant-table-tbody]
-{
-    & > [class*=ant-table-row-level-0]:nth-child(odd)
-    {
-        background: #FFF;
-    }
-
-    & > [class*=ant-table-row-level-0]:nth-child(even)
-    {
-        background: #dcdcdc;
-    }
-
-    & > [class*=ant-table-row-level-1]:nth-child(odd)
-    {
-        background: #FFF;
-    }
-
-    & > [class*=ant-table-row-level-1]:nth-child(even)
-    {
-        background: #dcdcdc;
-    }
-
-    & > [class*=ant-table-row-level-2]:nth-child(odd)
-    {
-        background: #FFF;
-    }
-
-    & > [class*=ant-table-row-level-2]:nth-child(even)
-    {
-        background: #dcdcdc;
-    }
-
-    & > [class*=ant-table-row-level-3]:nth-child(odd)
-    {
-        background: #FFF;
-    }
-
-    & > [class*=ant-table-row-level-3]:nth-child(even)
-    {
-        background: #dcdcdc;
-    }
-
-    & > [class*=ant-table-row-level-4]:nth-child(odd)
-    {
-        background: #FFF;
-    }
-
-    & > [class*=ant-table-row-level-4]:nth-child(even)
-    {
-        background: #dcdcdc;
-    }
-
-    & > [class*=ant-table-row-level-5]:nth-child(odd)
-    {
-        background: #FFF;
-    }
-
-    & > [class*=ant-table-row-level-5]:nth-child(even)
-    {
-        background: #dcdcdc;
-    }
-}*/
-
 .modalParentSaleSummary {
     background-color: transparent !important;
     visibility: visible;

@@ -381,7 +381,7 @@ class ModalSaleSummary extends Component {
             const cancel = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'CANCELLED' }) || { Total: 0, Ach: 0 }
             const potential = _.find(CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'TOTAL' }) || { Total: 0, Ach: 0 }
             const sum_penatation = setup.Ach + reject.Ach + cancel.Ach
-            console.log(CA_SUMMARY_ONLY_MARKET_PENETRATION)
+
             return [
                 {
                     Detail: 'Total App',

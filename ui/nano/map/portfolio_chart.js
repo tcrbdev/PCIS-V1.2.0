@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {
-    setOpenExitingMarketMarker,
-} from '../actions/nanomaster'
-
 import { Layout, Icon, Tooltip, Popover, Card } from 'antd';
 import {
     Sector,
@@ -23,7 +19,9 @@ import {
     Scatter,
     ComposedChart,
     ReferenceDot,
-    Text
+    Text,
+    AreaChart,
+    linearGradient
 } from 'recharts'
 import { Doughnut, HorizontalBar, Bar, Pie, Line } from 'react-chartjs-2'
 import FontAwesome from 'react-fontawesome'
@@ -45,7 +43,39 @@ const CustomizedDot = props => {
 const CustomizeLabel = props => {
     const { x, y, stroke, value, index, dataItem, ...custom } = props
 
-    return <text x={x} y={y} dy={-10} {...custom}>{`${parseFloat(dataItem[index].TotalAch).toFixed(1)}%`}</text>
+    return <text x={x} y={y} dy={-10} {...custom}>{`${parseFloat(dataItem[index].TotalAmtAch).toFixed(1)}%`}</text>
+}
+
+const CustomizeLabelCurve = props => {
+    const { x, y, stroke, value, index, dataItem, ...custom } = props
+
+    let category = ""
+    let mx = x, my = y
+
+    switch (index) {
+        case 4:
+            category = 'NPL'
+            mx -= 12
+            break;
+        case 3:
+            category = 'M1-2'
+            mx += 5
+            break;
+        case 2:
+            category = 'X Day'
+            mx += 5
+            break;
+        case 1:
+            category = 'W3-4'
+            mx += 5
+            break;
+        case 0:
+            category = 'W1-2'
+            mx += 12
+            break;
+    }
+
+    return <text x={mx} y={my} {...custom}><tspan x={mx} y={my - 12}>{`${category}`}</tspan><tspan x={mx} y={my - 1}>{`< ${value}%`}</tspan></text>
 }
 
 
@@ -64,7 +94,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
         return (
             <g>
                 <text x={x - 8} y={y - 12} fill="white" style={{ fontSize: '12px', fill: '#134973' }} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-                    {`${custom.payload.act} Unit`}
+                    {`${custom.payload.act} Cust`}
                 </text>
                 <text x={x - 8} y={y} fill="white" style={{ fontSize: '12px', fill: '#134973' }} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
                     {`${custom.payload.TotalAmt}`}
@@ -378,6 +408,97 @@ const GaugeChart1Needle = (props) => {
 // }
 
 class PortfolioChart extends Component {
+    getHeaderTitle = (props) => {
+        const { item, ON_CLOSE_MARKER, custom_width } = props
+
+        if (item.MarketCode) {
+            return (
+                <div className={styles['headers']}>
+                    <FontAwesome className="trigger" name='dollar' />
+                    <span>
+                        {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                    </span>
+                    <Icon
+                        onClick={() => ON_CLOSE_MARKER()}
+                        className="trigger"
+                        type='close' />
+                </div>
+            )
+        }
+        else {
+            if (item.TM_Name) {
+                return (
+                    <div className={styles['headers']}>
+                        {
+                            <div className={styles['ca-imgs']}>
+                                <Popover placement="left" content={
+                                    <div className={styles['marker-tm-picture']}>
+                                        <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                        <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
+                                        <span>{`${item.work_date_format}`}</span>
+                                        <span>{`${item.TM_Tel}`}</span>
+                                    </div>
+                                } >
+                                    <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
+                                </Popover>
+                            </div>
+                        }
+                        <span className={styles['title-img']}>
+                            {`${item.BranchName}`}
+                        </span>
+                        <Icon
+                            onClick={() => ON_CLOSE_MARKER()}
+                            className="trigger"
+                            type='close' />
+                    </div>
+                )
+            }
+            else {
+                if (this.props.type) {
+                    const { ca_code, ca_name, ca_nickname, work_date_format } = this.props.type
+                    return (
+                        <div className={styles['headers']}>
+                            {
+                                <div className={styles['ca-imgs']}>
+                                    <Popover placement="left" content={
+                                        <div className={styles['marker-tm-picture']}>
+                                            <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                                            <span>{`${ca_name}`} {`(${ca_nickname})`}</span>
+                                            <span>{`${work_date_format}`}</span>
+                                        </div>
+                                    } >
+                                        <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${ca_code}`} />
+                                    </Popover>
+                                </div>
+                            }
+                            <span className={styles['title-img']}>
+                                {
+                                    `${ca_name} (${work_date_format}) Portfolio Quality`
+                                }
+                            </span>
+                            <Icon
+                                onClick={() => ON_CLOSE_MARKER()}
+                                className="trigger"
+                                type='close' />
+                        </div>
+                    )
+                }
+                else {
+                    return (
+                        <div className={styles['headers']}>
+                            <FontAwesome className="trigger" name='dollar' />
+                            <span>Portfolio Quality</span>
+                            <Icon
+                                onClick={() => ON_CLOSE_MARKER()}
+                                className="trigger"
+                                type='close' />
+                        </div>
+                    )
+                }
+            }
+        }
+    }
+
     render() {
         const { item, ON_CLOSE_MARKER, custom_width } = this.props
 
@@ -390,173 +511,10 @@ class PortfolioChart extends Component {
         return (
             <Layout style={{ width: custom_width ? custom_width : '650px', overflow: 'hidden' }}>
                 {
-                    item.MarketCode ?
-                        (
-                            <div className={styles['headers']}>
-                                <FontAwesome className="trigger" name='dollar' />
-                                <span>
-                                    {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
-                                </span>
-                                <Icon
-                                    onClick={() => ON_CLOSE_MARKER()}
-                                    className="trigger"
-                                    type='close' />
-                            </div>
-                        )
-                        :
-                        (
-                            <div className={styles['headers']}>
-                                {
-                                    <div className={styles['ca-imgs']}>
-                                        <Popover placement="left" content={
-                                            <div className={styles['marker-tm-picture']}>
-                                                <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
-                                                <span>{`${item.TM_Name}`} {`(${item.TM_NickName})`}</span>
-                                                <span>{`${work_date_format}`}</span>
-                                                <span>{`${item.TM_Tel}`}</span>
-                                            </div>
-                                        } >
-                                            <img src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${item.TM_Code}`} />
-                                        </Popover>
-                                    </div>
-                                }
-                                <span className={styles['title-img']}>
-                                    {`${item.BranchName}`}
-                                </span>
-                                <Icon
-                                    onClick={() => ON_CLOSE_MARKER()}
-                                    className="trigger"
-                                    type='close' />
-                            </div>
-                        )
+                    this.getHeaderTitle(this.props)
                 }
-                <Layout style={{ backgroundColor: '#FFF', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <div className={`${styles['chart-card']} ${styles['card-orange']}`} style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div className={styles['chart-header']}>
-                                <span>Trend</span>
-                            </div>
-                            <div style={{ width: '180px', height: '30px', marginTop: '10px', marginLeft: '5px' }}>
-                                <Line
-                                    data={{
-                                        datasets: [{
-                                            data: [30, 10, 60, 75, 45, 20],
-                                            fill: false,
-                                            borderColor: '#FFF',
-                                            backgroundColor: '#FFF',
-                                        }, {
-                                            data: [80, 40, 15, 20, 90, 50],
-                                            fill: false,
-                                            borderColor: '#607d8b',
-                                            backgroundColor: '#607d8b',
-                                        }, {
-                                            data: [0, 100, 50, 45, 20, 30],
-                                            fill: false,
-                                            borderColor: '#2196F3',
-                                            backgroundColor: '#2196F3',
-                                        }],
-                                        labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2']
-                                    }}
-                                    options={{
-                                        legend: { display: false },
-                                        maintainAspectRatio: false,
-                                        tooltips: {
-                                            mode: 'point'
-                                        },
-                                        scales: {
-                                            xAxes: [{
-                                                display: false
-                                            }],
-                                            yAxes: [{
-                                                display: false
-                                            }]
-                                        }
-                                    }} />
-                            </div>
-                        </div>
-                        <div className={`${styles['chart-card']} ${styles['card-blue']}`}>
-                            <div className={styles['chart-header']}>
-                                <span>Portfolio Quality</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ fontSize: '25px', marginLeft: '5px', marginTop: '5px' }}>80%</span>
-                                <div style={{ width: '120px', height: '30px', marginLeft: '7px' }}>
-                                    <Bar
-                                        data={{
-                                            datasets: [{
-                                                data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
-                                                type: 'line',
-                                                fill: false,
-                                                borderColor: '#EC932F',
-                                                backgroundColor: '#EC932F',
-                                                pointBorderColor: '#EC932F',
-                                                pointBackgroundColor: '#EC932F',
-                                                pointHoverBackgroundColor: '#EC932F',
-                                                pointHoverBorderColor: '#EC932F',
-                                                yAxisID: 'y-axis-1'
-                                            }, {
-                                                data: [30, 10, 60, 75, 45, 20, 60, 75, 45],
-                                                fill: false,
-                                                borderColor: '#FFF',
-                                                backgroundColor: '#FFF',
-                                            }, {
-                                                data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
-                                                fill: false,
-                                                borderColor: '#607d8b',
-                                                backgroundColor: '#607d8b',
-                                                yAxisID: 'y-axis-2'
-                                            }],
-                                            labels: ['NPL', 'M2', 'M1', 'X Day', 'W3-4', 'W1-2', 'xx', 'xxx', 'xxxx']
-                                        }}
-                                        options={{
-                                            legend: { display: false },
-                                            maintainAspectRatio: false,
-                                            tooltips: {
-                                                mode: 'point'
-                                            },
-                                            scales: {
-                                                xAxes: [{
-                                                    display: false,
-                                                    stacked: true,
-                                                    barPercentage: 0.6,
-                                                }],
-                                                yAxes: [{
-                                                    display: false,
-                                                    stacked: true,
-                                                    position: 'left',
-                                                    id: 'y-axis-2',
-                                                }, {
-                                                    type: 'linear',
-                                                    display: false,
-                                                    position: 'left',
-                                                    id: 'y-axis-1',
-                                                    gridLines: {
-                                                        display: false
-                                                    },
-                                                    labels: {
-                                                        show: true
-                                                    }
-                                                }]
-                                            }
-                                        }} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className={`${styles['chart-card']} ${styles['card-pink']}`}>
-                            <div className={styles['chart-header']}>
-                                <span>% Collection Succ.</span>
-                            </div>
-                            <div style={{ marginLeft: '10px', display: 'flex' }}>
-                                <span style={{ fontSize: '25px', marginLeft: '20px' }}>{item.PORTFOLIO_QUALITY_CHART[3][0].SuccessRate}%</span>
-                                <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column', marginLeft: '20px', color: '#FFF', justifyContent: 'center' }}>
-                                    <span>- {item.PORTFOLIO_QUALITY_CHART[3][0].TotalAct}.</span>
-                                    <span>- {item.PORTFOLIO_QUALITY_CHART[3][0].TotalAmt}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
+                <Layout style={{ backgroundColor: '#FFF', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'center', backgroundColor: '#f0f2f5' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '0px' }}>
                         <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
                             <div>
                                 <span className={styles['header-other-chart']}>Collection Movement Trend</span>
@@ -592,7 +550,7 @@ class PortfolioChart extends Component {
                                 <CurrentPieChart
                                     data={item.PORTFOLIO_QUALITY_CHART[1][0].TotalAch}
                                     act={item.PORTFOLIO_QUALITY_CHART[1][0].TotalAct}
-                                    unit={item.PORTFOLIO_QUALITY_CHART[1][0].TotalAch}
+                                    unit={item.PORTFOLIO_QUALITY_CHART[1][0].TotalAmtAch}
                                     TotalAmt={item.PORTFOLIO_QUALITY_CHART[1][0].TotalAmt} />
                             </div>
                         </div>
@@ -601,28 +559,32 @@ class PortfolioChart extends Component {
                                 <span className={styles['header-other-chart']}>Wkcycle Due Plan</span>
                             </div>
                             <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                <Bar
-                                    data={{
-                                        datasets: [{
-                                            data: [
-                                                item.PORTFOLIO_QUALITY_CHART[2][0].Mon,
-                                                item.PORTFOLIO_QUALITY_CHART[2][0].Tue,
-                                                item.PORTFOLIO_QUALITY_CHART[2][0].Wed,
-                                                item.PORTFOLIO_QUALITY_CHART[2][0].Thu,
-                                                item.PORTFOLIO_QUALITY_CHART[2][0].Fri],
-                                            backgroundColor: ['#f7d827', '#ef3ecf', '#17b21e', '#d64713', '#12c0e8'],
-                                        }],
-                                        labels: ['จ', 'อ', 'พ', 'พฤ', 'ศ']
-                                    }}
-                                    options={{
-                                        legend: { display: false },
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            yAxes: [{
-                                                display: true
-                                            }]
+                                <BarChart width={178} height={137} data={[
+                                    { name: 'จ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Mon, color: '#f7d827' },
+                                    { name: 'อ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Tue, color: '#ef3ecf' },
+                                    { name: 'พ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Wed, color: '#17b21e' },
+                                    { name: 'พฤ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Thu, color: '#d64713' },
+                                    { name: 'ศ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Fri, color: '#12c0e8' }
+                                ]}
+                                    margin={{ top: 5, right: 0, left: -30, bottom: -15 }}>
+                                    <XAxis dataKey="name" tick={{ style: { fontSize: '11px' } }} />
+                                    <YAxis dataKey="value" tick={{ style: { fontSize: '11px' } }} />
+                                    <Tooltip />
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <Bars dataKey="value" label={{ position: 'insideBottom', fill: '#000', style: { fontSize: '11px', fontWeight: 'bold' } }} >
+                                        {
+                                            [
+                                                { name: 'จ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Mon, color: '#f7d827' },
+                                                { name: 'อ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Tue, color: '#ef3ecf' },
+                                                { name: 'พ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Wed, color: '#17b21e' },
+                                                { name: 'พฤ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Thu, color: '#d64713' },
+                                                { name: 'ศ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Fri, color: '#12c0e8' }
+                                            ].map((item, index) => {
+                                                return <Cell key={`cell-${index}`} fill={item.color} />
+                                            })
                                         }
-                                    }} />
+                                    </Bars>
+                                </BarChart>
                             </div>
                         </div>
                     </div>
@@ -733,6 +695,68 @@ class PortfolioChart extends Component {
                             </div>
                         </div>
                     </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <div className={styles['bg-chart']} style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '598px',
+                            height: '60px',
+                            marginLeft: '-10px',
+                            padding: '0',
+                            border: 'none',
+                            backgroundColor: 'rgba(255,255,255,0)'
+                        }}>
+                            <div id="my-chart" style={{ flex: '1', width: '100%', height: '100px' }}>
+                                <AreaChart
+                                    margin={{ top: 12, left: 5, bottom: 5, right: 5 }}
+                                    width={598}
+                                    height={72}
+                                    data={[
+                                        {
+                                            type: 'W1-2',
+                                            target: item.PORTFOLIO_QUALITY_CHART[6][0]["W1-2"],
+                                            actual: item.PORTFOLIO_QUALITY_CHART[6][1]["W1-2"],
+                                        }, {
+                                            type: 'W3-4',
+                                            target: item.PORTFOLIO_QUALITY_CHART[6][0]["W3-4"],
+                                            actual: item.PORTFOLIO_QUALITY_CHART[6][1]["W3-4"],
+                                        }, {
+                                            type: 'X Day',
+                                            target: item.PORTFOLIO_QUALITY_CHART[6][0]["X day"],
+                                            actual: item.PORTFOLIO_QUALITY_CHART[6][1]["X day"],
+                                        }, {
+                                            type: 'M1-2',
+                                            target: item.PORTFOLIO_QUALITY_CHART[6][0]["M1-2"],
+                                            actual: item.PORTFOLIO_QUALITY_CHART[6][1]["M1-2"],
+                                        },
+                                        {
+                                            type: 'NPL',
+                                            target: item.PORTFOLIO_QUALITY_CHART[6][0]["NPL"],
+                                            actual: item.PORTFOLIO_QUALITY_CHART[6][1]["NPL"],
+                                        }
+                                    ]}>
+                                    <defs>
+                                        <linearGradient id="colorTarget" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#FF9800" stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor="#ea9e2e" stopOpacity={0.5} />
+                                        </linearGradient>
+                                        <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#03a9f4" stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor="#0786bf" stopOpacity={0.3} />
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis hide />
+                                    <YAxis type="number" domain={['auto', 4]} hide />
+                                    <Area type='monotone' dataKey='actual' stroke='#03a9f4' fill="url(#colorActual)" dot={<CustomizedCurveDot />} />
+                                    <Area type='monotone' dataKey='target' stroke='#FF9800'
+                                        fill="url(#colorTarget)"
+                                        label={<CustomizeLabelCurve fontSize={11} dataItem={item.PORTFOLIO_QUALITY_CHART[6][0]} style={{ fill: '#565656', fontWeight: '600' }} textAnchor="middle" />}
+                                        strokeDasharray="5 5" />
+                                    <Tooltips content={<CurveTooltip />} />
+                                </AreaChart>
+                            </div>
+                        </div>
+                    </div>
                 </Layout>
             </Layout>
         )
@@ -745,12 +769,12 @@ class CurrentPieChart extends Component {
         const data = [{
             name: 'W0',
             value: parseFloat(parseFloat(this.props.data).toFixed(0)),
-            act: parseFloat(parseFloat(this.props.act).toFixed(0)),
+            act: parseFloat(this.props.act).toFixed(1),
             TotalAmt: this.props.TotalAmt
         }, {
             name: 'DPD',
             value: parseFloat(parseFloat(100 - this.props.data).toFixed(0)),
-            act: parseFloat(parseFloat(this.props.act).toFixed(0)),
+            act: parseFloat(this.props.act).toFixed(1),
             TotalAmt: this.props.TotalAmt
         }]
 
@@ -770,8 +794,7 @@ class CurrentPieChart extends Component {
 
             return (
                 <g>
-                    <text x={cx} y={cy - 4} dy={8} textAnchor="middle" fontFamily="Kanit" fontSize="13px" style={{ fontWeight: 'bold' }} fill={'#0a67b1'}>{parseInt(this.props.unit)}%</text>
-                    {/* <text x={cx} y={cy + 3} dy={8} textAnchor="middle" fontFamily="Kanit" fontSize="9px" fill={'#313131'}>Unit.</text> */}
+                    <text x={cx} y={cy - 4} dy={8} textAnchor="middle" fontFamily="Kanit" fontSize="13px" style={{ fontWeight: 'bold' }} fill={'#0a67b1'}>{parseFloat(this.props.unit).toFixed(0)}%</text>
                     <Sector
                         cx={cx}
                         cy={cy}
@@ -793,7 +816,7 @@ class CurrentPieChart extends Component {
                     <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
                     <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
                     <text x={ex + (cos >= 0 ? 1 : -1)} y={ey - 4} textAnchor={textAnchor} fill="white" style={{ fontSize: '11px', fill: '#134973' }}  >
-                        {`${custom.act} Unit`}
+                        {`${custom.act} Cust`}
                     </text>
                     <text x={ex + (cos >= 0 ? 1 : -1) - 7} y={ey + 14} textAnchor={textAnchor} style={{ fontSize: '11px', fill: '#134973' }} >
                         {`${custom.TotalAmt}`}
@@ -824,7 +847,6 @@ class CurrentPieChart extends Component {
 class CollectionMovementTooltip extends Component {
     render() {
         const { active, payload } = this.props
-        console.log(payload)
         if (active) {
             const { payload, label, coordinate } = this.props
             return <div key={`${label}_${coordinate.x}_${coordinate.y}`} className={styles['custom-tooltip']}>{payload[0].payload.max}%</div>
@@ -835,8 +857,42 @@ class CollectionMovementTooltip extends Component {
     }
 }
 
+class CurveTooltip extends Component {
+    render() {
+        const { active, payload } = this.props
+        if (active) {
+            const { payload, label, coordinate } = this.props
+            return <div key={`${label}_${coordinate.x}_${coordinate.y}`} className={styles['custom-tooltip']}>Actual {payload[0].payload.actual}%</div>
+        }
+        else {
+            return <div></div>
+        }
+    }
+}
+
+const CustomizedCurveDot = React.createClass({
+    render() {
+        const { cx, cy, stroke, payload, value } = this.props;
+        let sx = cx
+
+        if (payload.type == 'W1-2') {
+            sx += 45
+        }
+
+        if (payload.actual > payload.target) {
+            return (
+                <svg x={sx - 27} y={cy - 10} width={15} height={15} fill="red" viewBox="0 0 1024 1024">
+                    <path d="M517.12 53.248q95.232 0 179.2 36.352t145.92 98.304 98.304 145.92 36.352 179.2-36.352 179.2-98.304 145.92-145.92 98.304-179.2 36.352-179.2-36.352-145.92-98.304-98.304-145.92-36.352-179.2 36.352-179.2 98.304-145.92 145.92-98.304 179.2-36.352zM663.552 261.12q-15.36 0-28.16 6.656t-23.04 18.432-15.872 27.648-5.632 33.28q0 35.84 21.504 61.44t51.2 25.6 51.2-25.6 21.504-61.44q0-17.408-5.632-33.28t-15.872-27.648-23.04-18.432-28.16-6.656zM373.76 261.12q-29.696 0-50.688 25.088t-20.992 60.928 20.992 61.44 50.688 25.6 50.176-25.6 20.48-61.44-20.48-60.928-50.176-25.088zM520.192 602.112q-51.2 0-97.28 9.728t-82.944 27.648-62.464 41.472-35.84 51.2q-1.024 1.024-1.024 2.048-1.024 3.072-1.024 8.704t2.56 11.776 7.168 11.264 12.8 6.144q25.6-27.648 62.464-50.176 31.744-19.456 79.36-35.328t114.176-15.872q67.584 0 116.736 15.872t81.92 35.328q37.888 22.528 63.488 50.176 17.408-5.12 19.968-18.944t0.512-18.944-3.072-7.168-1.024-3.072q-26.624-55.296-100.352-88.576t-176.128-33.28z" />
+                </svg>
+            )
+        }
+        else {
+            return null
+        }
+    }
+});
+
 export default connect(
     (state) => ({
     }), {
-        setOpenExitingMarketMarker: setOpenExitingMarketMarker,
     })(PortfolioChart)

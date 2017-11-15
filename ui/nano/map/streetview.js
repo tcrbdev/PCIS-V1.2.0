@@ -12,15 +12,6 @@ class StreetMap extends Component {
 
             const mapInstance = map && map.context[MAP];
             setTimeout(() => { google.maps.event.trigger(mapInstance, "resize") }, 200)
-
-            // let bounds = new google.maps.LatLngBounds()
-            // let marker = new google.maps.Marker({
-            //     position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-            // })
-
-            // bounds.extend(marker.position)
-
-            // map.fitBounds(bounds)
         }
     }
 

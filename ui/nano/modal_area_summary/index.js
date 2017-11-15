@@ -34,6 +34,9 @@ const getMarketSummaryColumns = () => {
         key: 'Detail',
         width: '15%',
         className: `${styles['align-left']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
+        render: (text, record, index) => {
+            return <span>{text == 'Total App' ? 'Total Cust' : text}</span>
+        }
     }, {
         title: (<div className={styles['div-center']}><span>OS Bal.</span></div>),
         className: `${styles['align-right-hightlight']} ${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
@@ -157,7 +160,7 @@ const getColumnCA = (data) => {
         title: (<span className={styles['align-center']}>OS Bal.</span>),
         className: `${styles['hight-light']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'OS',
             key: 'OS',
             width: '4.5%',
@@ -179,7 +182,7 @@ const getColumnCA = (data) => {
         title: 'Setup',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'APPROVED',
             key: 'APPROVED',
             width: '4.5%',
@@ -201,7 +204,7 @@ const getColumnCA = (data) => {
         title: 'Reject',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'REJECTED',
             key: 'REJECTED',
             width: '4.5%',
@@ -223,7 +226,7 @@ const getColumnCA = (data) => {
         title: 'Cancel',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'CANCELLED',
             key: 'CANCELLED',
             width: '4.5%',
@@ -245,7 +248,7 @@ const getColumnCA = (data) => {
         title: 'Total',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'TOTAL',
             key: 'TOTAL',
             width: '4.5%',
@@ -578,17 +581,9 @@ class ModalSaleSummary extends Component {
     }
 
     render() {
-        // const { getFieldValue } = this.props.form
+
         const { modalSelectData } = this.state
-        // const ca_code = ""//getFieldValue("select_ca")
-        // const find = _.find(this.props.RELATED_CA_IN_MARKET_DATA, { CA_Code: ca_code })
-        // const canote = _.find(this.props.RELATED_CA_NOTE_DATA, { BranchCode: ca_code })
-        // const start_work_date = !_.isEmpty(find) ? moment.duration(moment(new Date()).diff(moment(find.StartWork)))._data : ''
-        const work_date_format = 'Working Period: 0.0.0'// `Working Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
-        const ca_name = 'TESTER' // !_.isEmpty(find) ? find.CA_Name : ''
-        // const count_market = Object.keys(_.groupBy(this.props.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode')).length
-        // const os = _.find(this.props.CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
-        // const branch = _.find(this.props.RELATED_EXITING_MARKET_DATA, { MarketCode: find.MarketCode })
+        const ca_name = 'TESTER'
         const TotalData = this.getCAPenetation()
 
         return (

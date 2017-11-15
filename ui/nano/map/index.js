@@ -35,6 +35,7 @@ import Scrollbar from 'react-smooth-scrollbar';
 import InsertNote from './insertnote'
 import StreetViewMap from './streetview'
 import PortfolioChart from './portfolio_chart'
+import SaleSummaryChart from './sale_summary_chart'
 // import NewNote from './newnote'
 // import NoteTable from './notetable'
 
@@ -55,6 +56,7 @@ import {
     setOpenBranchMarkerMenu,
     setOpenBranchImageMarker,
     setOpenBranchPortfolioMarker,
+    setOpenBranchSaleSummaryMarker,
     setOpenExitingMarketMarker,
     setOpenExitingMarketMarkerMenu,
     setOpenTargetMarketMarker,
@@ -487,14 +489,14 @@ const getColumnCA = [{
                         <span>{`${'Mobile'}`}</span>
                     </div>
                 } >
-                    <span className={styles['text-ellipsis']}>{text}</span>
+                    <span className={styles['text-ellipsis-map']}>{text}</span>
                 </Popover>
             )
         }
         else {
             return (
                 <Tooltip title={text} placement="top" >
-                    <span className={styles['text-ellipsis']}>{text}</span>
+                    <span className={styles['text-ellipsis-map']}>{text}</span>
                 </Tooltip>
             )
         }
@@ -658,6 +660,7 @@ const getBranchMarkerMenu = (props) => {
         return RELATED_BRANCH_DATA.map((item, index) => {
             if (item.showMenu) {
                 let icon = icon_full_branch
+                let branchCodeCriteria = item.BranchCode
 
                 switch (item.BranchType) {
                     case 'K':
@@ -665,11 +668,12 @@ const getBranchMarkerMenu = (props) => {
                         break;
                     case 'P':
                         icon = icon_Nano
+                        branchCodeCriteria = _.filter(RELATED_BRANCH_DATA, { OriginBranchCode: item.BranchCode }).map(i => i.BranchCode).join(',')
                         break;
                 }
 
                 const criteria = {
-                    BranchCode: item.BranchCode,
+                    BranchCode: branchCodeCriteria,
                     MktCode: null,
                     CAID: null,
                     EmpCode: null
@@ -697,7 +701,7 @@ const getBranchMarkerMenu = (props) => {
                                     <ul>
                                         <li onClick={() => props.setOpenBranchImageMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Picture"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
                                         <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
-                                        <li><Tooltip title="Sale Summary"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenBranchSaleSummaryMarker(item, props.RELATED_BRANCH_DATA, true, criteria)}><Tooltip title="Sale Summary"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenBranchPortfolioMarker(item, props.RELATED_BRANCH_DATA, true, criteria)}><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
                                     </ul>
@@ -890,8 +894,16 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                                 <PortfolioChart item={item} ON_CLOSE_MARKER={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, false)} />
                             </InfoWindow>
                         }
+                        {
+                            item.showSaleSummary &&
+                            <InfoWindow
+                                title={item.MarketName}
+                                onDomReady={() => onDomReady('chart')}>
+                                <SaleSummaryChart item={item} ON_CLOSE_MARKER={() => props.setOpenBranchMarker(item, RELATED_BRANCH_DATA, false)} />
+                            </InfoWindow>
+                        }
                     </Marker>
-                </div>
+                </div >
             )
         })
     }
@@ -1015,7 +1027,7 @@ const getExitingMarkerMenu = props => {
                                     <ul>
                                         <li onClick={() => props.setOpenExitingMarketImageMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Picture"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenExitingMarketShopLayoutMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Shop Layout"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
-                                        <li onClick={() => props.setOpenExitingMarketSaleSummaryMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenExitingMarketSaleSummaryMarker(item, props.RELATED_EXITING_MARKET_DATA, true, criteria)}><Tooltip title="Sale Summary"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenExitingMarketMarker(item, props.RELATED_EXITING_MARKET_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenExitingMarketPortfolioMarker(item, props.RELATED_EXITING_MARKET_DATA, true, criteria)}><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button-exiting_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
                                     </ul>
@@ -1050,7 +1062,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
             if (item.showMenu) {
                 icon = '_blanks'
             }
-            if (NANO_FILTER_CRITERIA.CAName && !item.showMenu && !item.showInfo && !item.showImage) {
+            if (NANO_FILTER_CRITERIA.CAName && !item.showMenu && !item.showInfo && !item.showImage && !item.showPortfolio && !item.showSaleSummary) {
                 return (
                     <OverlayView
                         key={index}
@@ -1113,82 +1125,8 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                             item.showSaleSummary &&
                             <InfoWindow
                                 title={item.MarketName}
-                                onDomReady={onDomReady}>
-                                <Layout>
-                                    <div className={styles['headers']}>
-                                        <FontAwesome className="trigger" name='line-chart' />
-                                        <span>
-                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
-                                        </span>
-                                        <Icon
-                                            onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
-                                            className="trigger"
-                                            type='close' />
-                                    </div>
-                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
-                                        <div style={{ width: '300px', height: '100px', marginLeft: '7px' }}>
-                                            <Bar
-                                                data={{
-                                                    datasets: [{
-                                                        data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
-                                                        type: 'line',
-                                                        fill: false,
-                                                        borderColor: '#EC932F',
-                                                        backgroundColor: '#EC932F',
-                                                        pointBorderColor: '#EC932F',
-                                                        pointBackgroundColor: '#EC932F',
-                                                        pointHoverBackgroundColor: '#EC932F',
-                                                        pointHoverBorderColor: '#EC932F',
-                                                        yAxisID: 'y-axis-1'
-                                                    }, {
-                                                        data: [30, 10, 60, 75, 45, 20, 60, 75, 45],
-                                                        fill: false,
-                                                        borderColor: '#FFF',
-                                                        backgroundColor: '#FFF',
-                                                    }, {
-                                                        data: [80, 40, 15, 20, 90, 50, 60, 75, 45],
-                                                        fill: false,
-                                                        borderColor: '#607d8b',
-                                                        backgroundColor: '#607d8b',
-                                                        yAxisID: 'y-axis-2'
-                                                    }],
-                                                    labels: month.map((item, index) => moment(item).format('MMM'))
-                                                }}
-                                                options={{
-                                                    legend: { display: false },
-                                                    maintainAspectRatio: false,
-                                                    tooltips: {
-                                                        mode: 'point'
-                                                    },
-                                                    scales: {
-                                                        xAxes: [{
-                                                            stacked: true,
-                                                            barPercentage: 0.6,
-                                                            gridLines: {
-                                                                display: false
-                                                            }
-                                                        }],
-                                                        yAxes: [{
-                                                            stacked: true,
-                                                            position: 'left',
-                                                            id: 'y-axis-2',
-                                                        }, {
-                                                            type: 'linear',
-                                                            display: false,
-                                                            position: 'left',
-                                                            id: 'y-axis-1',
-                                                            gridLines: {
-                                                                display: false
-                                                            },
-                                                            labels: {
-                                                                show: true
-                                                            }
-                                                        }]
-                                                    }
-                                                }} />
-                                        </div>
-                                    </Layout>
-                                </Layout>
+                                onDomReady={() => onDomReady('chart')}>
+                                <SaleSummaryChart item={item} ON_CLOSE_MARKER={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)} />
                             </InfoWindow>
                         }
                         {
@@ -1251,9 +1189,11 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                                                     }
                                                                 </span>
                                                             </div>
-                                                            <span>
-                                                                {` ${item.MarketType} Work Hour ${item.OpenTime} (${item.MarketOpenDay}) `}
-                                                            </span>
+                                                            <Tooltip title={` ${item.MarketType} Work Hour ${item.OpenTime} (${item.MarketOpenDay}) `} placement="top">
+                                                                <span className={styles['text-ellipsis-detail']}>
+                                                                    {` ${item.MarketType} Work Hour ${item.OpenTime} (${item.MarketOpenDay}) `}
+                                                                </span>
+                                                            </Tooltip>
                                                             <div className={styles['note-icon']}>
                                                                 <Tooltip title='Note' placement="bottom">
                                                                     <FontAwesome name='comments' onClick={() => handleShowModal(item)} />
@@ -2244,6 +2184,7 @@ export default connect(
         setOpenExitingMarketImageMarker: setOpenExitingMarketImageMarker,
         setOpenBranchImageMarker: setOpenBranchImageMarker,
         setOpenBranchPortfolioMarker: setOpenBranchPortfolioMarker,
+        setOpenBranchSaleSummaryMarker: setOpenBranchSaleSummaryMarker,
         setOpenExitingMarketShopLayoutMarker: setOpenExitingMarketShopLayoutMarker,
         setOpenExitingMarketSaleSummaryMarker: setOpenExitingMarketSaleSummaryMarker,
         setOpenExitingMarketPortfolioMarker: setOpenExitingMarketPortfolioMarker,

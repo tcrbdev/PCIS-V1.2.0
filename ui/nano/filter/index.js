@@ -387,6 +387,7 @@ class Filter extends Component {
                     BranchCode: !_.isEmpty(values.BranchCode) ? values.BranchCode.join(',') : null,
                     BranchType: !_.isEmpty(values.BranchType) ? values.BranchType.join(',') : null,
                     CAName: !_.isEmpty(values.CAName) ? values.CAName.join(',') : null,
+                    CAID: !_.isEmpty(values.CAName) ? values.CAName.join(',') : null,
                     MarketName: !_.isEmpty(values.MarketName) ? values.MarketName : null,
                     IncludeExitingMarket: values.IncludeExitingMarket,
                     IncludeKioskMarket: values.IncludeKioskMarket,
@@ -449,56 +450,6 @@ class Filter extends Component {
             result = constantQueryType.ca
         }
 
-        // if (CAName.length > 0) {
-        //     if (CAName.length == 1) {
-        //         result = constantQueryType.ca
-        //     }
-        //     else {
-        //         const ca_branch = _.filter(MASTER_CALIST_DATA, o => !_.isEmpty(_.find(CAName, f => f == o.CA_Code)))
-        //         const branch = _.filter(MASTER_BRANCH_DATA, o => !_.isEmpty(_.find(ca_branch, { BranchCode: o.OriginBranchCode })))
-        //         console.log(branch, ca_branch)
-        //         if (Object.keys(_.groupBy(branch, 'OriginBranchCode')).length > 1) {
-        //             result = constantQueryType.branch
-        //         }
-        //         else {
-        //             result = constantQueryType.ca
-        //         }
-        //     }
-        // }
-        // else if (KioskBranch.length > 0) {
-        //     result = constantQueryType.branch_kiosk
-        // }
-        // else if (Branch.length > 0) {
-        //     result = constantQueryType.branch
-        // }
-        // else if (Zone.length > 0) {
-        //     result = constantQueryType.zone
-        // }
-        // else if (Area.length > 0) {
-        //     result = constantQueryType.area
-        // }
-        // else {
-        //     result = constantQueryType.region
-        // }
-
-        // let result = "";
-        // if (CAName.length > 0) {
-        //     result = constantQueryType.ca
-        // }
-        // else if (Branch.length > 1 && KioskBranch.length > 1) {
-        //     result = constantQueryType.branch_kiosk
-        // }
-        // else if (Branch.length >= 2 && Branch.length <= 4) {
-        //     result = constantQueryType.branch
-        // }
-        // else if (Area.length == 1 && (Zone.length > 0)) {
-        //     result = constantQueryType.zone
-        // }
-        // else {
-        //     result = constantQueryType.area
-        // }
-
-        console.log(result)
         return result
     }
 

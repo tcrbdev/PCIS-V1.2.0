@@ -58,4 +58,5 @@ export const GET_EXITING_MARKET_IMAGE_MARKER_URL = `${urlPcis}/nano/market/image
 export const INSERT_UPDATE_MARKER_NOTE_URL = `${url}/nano/marker/note`
 
 export const GET_PORTFOLIO_QUALITY_CHART_URL = `${url}/nano/portfolioquality/chart`
+export const GET_SALE_SUMMARY_CHART_URL = `${url}/nano/salesummary/chart`
 
