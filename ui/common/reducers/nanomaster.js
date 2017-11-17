@@ -27,7 +27,9 @@ import {
     GET_CA_SUMMARY_ONLY_SUCCESS,
     GET_CA_SUMMARY_ONLY_FAILURE,
 
-    SET_OPEN_PLAN_OPEN_BRANCH_REQUEST
+    SET_OPEN_PLAN_OPEN_BRANCH_REQUEST,
+
+    SET_LOCATION_DIRECTION_MARKER_CHANGE
 } from '../constants/actionsType'
 
 const initialStateObj = {}
@@ -158,6 +160,7 @@ export const DO_BOUNDS_MAP = (state = initialStateBoolean, action) => {
         case SET_OPEN_EXITING_MARKET_MARKER_REQUEST:
         case SET_OPEN_TARGET_MARKET_MARKER_REQUEST:
         case SET_OPEN_PLAN_OPEN_BRANCH_REQUEST:
+        case SET_LOCATION_DIRECTION_MARKER_CHANGE:
             return false
             break;
         case CHANGE_MAP_MARKER_BY_CA_SUCCESS:

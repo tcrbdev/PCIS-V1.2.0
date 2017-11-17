@@ -71,9 +71,16 @@ import {
 
     GET_PORTFOLIO_QUALITY_CHART_REQUEST,
     GET_PORTFOLIO_QUALITY_CHART_SUCCESS,
-    GET_PORTFOLIO_QUALITY_CHART_FAILURE
+    GET_PORTFOLIO_QUALITY_CHART_FAILURE,
+
+    SET_LOCATION_DIRECTION_MARKER_CHANGE
 } from '../../common/constants/actionsType'
 
+export const setLocationDirectionMarker = () => dispatch => {
+    dispatch({
+        type: SET_LOCATION_DIRECTION_MARKER_CHANGE
+    })
+}
 export const setOpenBranchMarkerMenu = (targetMarker, currentState, isOpen) => dispatch => {
     let item = _.find(currentState, { BranchCode: targetMarker.BranchCode })
     item.showMenu = isOpen

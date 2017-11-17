@@ -50,6 +50,10 @@ import icon_Mtls from '../../../image/icon_Mtls.png'
 import pinpao from '../../../image/pinpao.png'
 import icon_Plan_Branch_Nano from '../../../image/i_Nano.png'
 import resize_radius from '../../../image/resize-radius.png'
+import icon_destination_a from '../../../image/icon_destination_a.png'
+import icon_destination_b from '../../../image/icon_destination_b.png'
+import icon_destination_a2 from '../../../image/icon_destination_a2.png'
+import icon_destination_b2 from '../../../image/icon_destination_b2.png'
 
 import {
     setOpenBranchMarker,
@@ -65,7 +69,8 @@ import {
     setOpenExitingMarketSaleSummaryMarker,
     setOpenExitingMarketPortfolioMarker,
     setOpenPlanOpenBranch,
-    insertUpdateMarkerNote
+    insertUpdateMarkerNote,
+    setLocationDirectionMarker
 } from '../actions/nanomaster'
 
 import styles from './index.scss'
@@ -280,7 +285,7 @@ const getMarketSummaryData = (item) => {
 
         return [
             {
-                Detail: 'Total App',
+                Detail: 'Total Cust',
                 Amt: Amt.Amt ? Amt.Amt : '',
                 OS: os.Total,
                 SETUP: setup.Total,
@@ -1970,7 +1975,12 @@ class Map extends Component {
     state = {
         showAddNoteModal: false,
         modalSelectData: null,
-        directions: null
+        directions: null,
+        notRenderDirection: false,
+        location_direction: {
+            a: null,
+            b: null
+        }
     }
 
     handleShowModal = (item) => {
@@ -1982,7 +1992,7 @@ class Map extends Component {
     }
 
     closeDirection = () => {
-        this.setState({ directions: null })
+        this.setState({ directions: null, location_direction: { a: null, b: null }, notRenderDirection: false })
     }
 
     getDirection = (origin, destination) => {
@@ -1996,7 +2006,7 @@ class Map extends Component {
             if (status === google.maps.DirectionsStatus.OK) {
                 result.from = origin
                 result.to = destination
-                this.setState({ directions: result })
+                this.setState({ directions: result, notRenderDirection: true })
             } else {
                 console.error(`error fetching directions ${result}`);
             }
@@ -2007,8 +2017,71 @@ class Map extends Component {
         //this.getDirection()
     }
 
+    componentWillUpdate(nextProps, nextState) {
+        const { location_direction, notRenderDirection } = nextState
+        if (location_direction.a && location_direction.b && !notRenderDirection) {
+            this.getDirection(location_direction.a, location_direction.b)
+        }
+    }
+
     onPolylineComplete = (a, b, c, d) => {
         console.log(a, b, c, d, this)
+    }
+
+    setLocationDirection(event) {
+        let location_direction = this.state.location_direction
+
+        if (this.props.DO_BOUNDS_MAP) {
+            this.props.setLocationDirectionMarker()
+        }
+
+        if (!this.state.location_direction.a || !this.state.location_direction.b) {
+            if (this.state.location_direction.a) {
+                location_direction.b = { name: 'point b', Latitude: event.latLng.lat(), Longitude: event.latLng.lng() }
+            }
+            else {
+                location_direction.a = { name: 'point a', Latitude: event.latLng.lat(), Longitude: event.latLng.lng() }
+            }
+
+            this.setState({ location_direction })
+        }
+    }
+
+    changeLocationDirection(event, point) {
+        let location_direction = this.state.location_direction
+
+        if (point == "a") {
+            location_direction.a.Latitude = event.latLng.lat()
+            location_direction.a.Longitude = event.latLng.lng()
+        }
+        else {
+            location_direction.b.Latitude = event.latLng.lat()
+            location_direction.b.Longitude = event.latLng.lng()
+        }
+
+        this.setState({ location_direction, notRenderDirection: false })
+    }
+
+    getLocationDirectionMarker() {
+        return Object.keys(this.state.location_direction).map((key, index) => {
+            if (!_.isEmpty(this.state.location_direction[key])) {
+                let icon = icon_destination_a2
+                if (key == "b") {
+                    icon = icon_destination_b2
+                }
+                return <Marker
+                    key={`location_${index}`}
+                    title={this.state.location_direction[key].name}
+                    position={{ lat: parseFloat(this.state.location_direction[key].Latitude), lng: parseFloat(this.state.location_direction[key].Longitude) }}
+                    icon={{
+                        url: icon
+                    }}
+                    draggable={true}
+                    onDragEnd={(event) => this.changeLocationDirection(event, key)}>
+                </Marker>
+            }
+        })
+
     }
 
     render() {
@@ -2038,7 +2111,8 @@ class Map extends Component {
                     defaultZoom={8}
                     defaultCenter={options.center}
                     disableDoubleClickZoom={true}
-                    ref={(map) => (handleBounds(props, map))}>
+                    ref={(map) => (handleBounds(props, map))}
+                    onRightClick={(event) => this.setLocationDirection(event)}>
                     {
                         getBranchMarkerMenu(props)
                     }
@@ -2156,6 +2230,9 @@ class Map extends Component {
                             }}
                         />*/
                     }
+                    {
+                        this.getLocationDirectionMarker()
+                    }
                 </GoogleMap>
             </div>
         )
@@ -2188,5 +2265,6 @@ export default connect(
         setOpenExitingMarketShopLayoutMarker: setOpenExitingMarketShopLayoutMarker,
         setOpenExitingMarketSaleSummaryMarker: setOpenExitingMarketSaleSummaryMarker,
         setOpenExitingMarketPortfolioMarker: setOpenExitingMarketPortfolioMarker,
-        setOpenPlanOpenBranch: setOpenPlanOpenBranch
+        setOpenPlanOpenBranch: setOpenPlanOpenBranch,
+        setLocationDirectionMarker: setLocationDirectionMarker
     })(wrapMap)

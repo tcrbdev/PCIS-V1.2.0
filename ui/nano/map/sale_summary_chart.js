@@ -78,7 +78,7 @@ const CustomizeLabelPerformance = props => {
     const date = new Date()
     const month = moment(new Date(date.getFullYear(), index, 1)).format('MMM')
 
-    return <text x={x - 5} y={y + 5} {...custom}>{`${parseFloat(data[month]).toFixed(0)}%`}</text>
+    return <text x={x - 5} y={y - 5} {...custom}>{`${parseFloat(data[month]).toFixed(0)}%`}</text>
 }
 
 class SaleSummaryChart extends Component {
@@ -179,6 +179,11 @@ class SaleSummaryChart extends Component {
         const { SALE_SUMMARY_CHART } = item
 
         const NEW_VOLUME_PERFORMANCE = SALE_SUMMARY_CHART[1]
+        const APP_ON_HAND_BEFORE_OPER = SALE_SUMMARY_CHART[2]
+        const MICRO_SHARE = [
+            { name: 'Nano', value: SALE_SUMMARY_CHART[3][0].TotalAVG, ach: SALE_SUMMARY_CHART[3][0].TotalAVG, color: '#023852' },
+            { name: 'Micro', value: SALE_SUMMARY_CHART[3][1].TotalAVG, ach: SALE_SUMMARY_CHART[3][1].TotalAVG, color: '#03a694' }
+        ]
 
         const MAX_VOLUME_PERFORMANCE = Math.ceil((NEW_VOLUME_PERFORMANCE[1].Max + NEW_VOLUME_PERFORMANCE[2].Max) < NEW_VOLUME_PERFORMANCE[0].Max ? NEW_VOLUME_PERFORMANCE[0].Max : (NEW_VOLUME_PERFORMANCE[1].Max + NEW_VOLUME_PERFORMANCE[2].Max)).toFixed(0)
 
@@ -208,7 +213,7 @@ class SaleSummaryChart extends Component {
                                     <span>New Volumne Performance</span>
                                 </div>
                                 <div>
-                                    <ComposedChart width={320} height={195} data={[
+                                    <ComposedChart width={320} height={205} data={[
                                         { name: 'J', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Jan, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Jan, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Jan, Max: MAX_VOLUME_PERFORMANCE },
                                         { name: 'F', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Feb, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Feb, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Feb, Max: MAX_VOLUME_PERFORMANCE },
                                         { name: 'M', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Mar, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Mar, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Mar, Max: MAX_VOLUME_PERFORMANCE },
@@ -223,7 +228,7 @@ class SaleSummaryChart extends Component {
                                         { name: 'D', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Dec, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Dec, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Dec, Max: MAX_VOLUME_PERFORMANCE }
 
                                     ]}
-                                        margin={{ top: 5, right: 5, bottom: -13, left: -30 }}>
+                                        margin={{ top: 15, right: 5, bottom: -13, left: -30 }}>
                                         <XAxis dataKey="name" tickLine={false} axisLine={true} style={{ fontSize: '9px' }} />
                                         <YAxis domain={['dataMin', MAX_VOLUME_PERFORMANCE]} />
                                         <Tooltips />
@@ -249,22 +254,16 @@ class SaleSummaryChart extends Component {
                                                     <PieChart
                                                         width={216}
                                                         height={75}
-                                                        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                                                        margin={{ top: 0, right: 0, bottom: 8, left: 0 }}>
                                                         <Pie
-                                                            data={[
-                                                                { name: 'Nano', value: 100, ach: 10, color: '#023852' },
-                                                                { name: 'Micro', value: 80, ach: 10, color: '#03a694' }
-                                                            ]}
+                                                            data={MICRO_SHARE}
                                                             startAngle={450}
                                                             endAngle={-90}
                                                             innerRadius={0}
                                                             activeIndex={0}
                                                             activeShape={renderActiveShape}>
                                                             {
-                                                                [
-                                                                    { name: 'Nano', value: 400, ach: 10, color: '#023852' },
-                                                                    { name: 'Micro', value: 300, ach: 10, color: '#03a694' }
-                                                                ].map((entry, index) => <Cell fill={entry.color} />)
+                                                                MICRO_SHARE.map((entry, index) => <Cell fill={entry.color} />)
                                                             }
                                                         </Pie>
                                                     </PieChart>
@@ -369,44 +368,28 @@ class SaleSummaryChart extends Component {
                                     <Table columns={[{
                                         title: 'Type',
                                         className: `${styles['align-left']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                                        dataIndex: 'type',
-                                        key: 'type',
+                                        dataIndex: 'GroupName',
+                                        key: 'GroupName',
                                         render: (text, record, index) => {
                                             return <span>{text}</span>
                                         }
                                     }, {
                                         title: 'MB',
                                         className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                                        dataIndex: 'act',
-                                        key: 'act',
+                                        dataIndex: 'CreditAmount',
+                                        key: 'CreditAmount',
                                         render: (text, record, index) => {
                                             return <span>{text}</span>
                                         }
                                     }, {
                                         title: '%',
                                         className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                                        dataIndex: 'ach',
-                                        key: 'ach',
+                                        dataIndex: 'AccAch',
+                                        key: 'AccAch',
                                         render: (text, record, index) => {
                                             return <span>{text}%</span>
                                         }
-                                    }]} dataSource={[{
-                                        type: 'CA',
-                                        ach: '10',
-                                        act: '50'
-                                    }, {
-                                        type: 'FC',
-                                        ach: '10',
-                                        act: '50'
-                                    }, {
-                                        type: 'ZM',
-                                        ach: '10',
-                                        act: '50'
-                                    }, {
-                                        type: 'BM-TM',
-                                        ach: '10',
-                                        act: '50'
-                                    }]}
+                                    }]} dataSource={APP_ON_HAND_BEFORE_OPER}
                                         pagination={false}
                                         size='small'
                                         className={styles['summary-table']}

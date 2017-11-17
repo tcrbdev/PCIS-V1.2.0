@@ -384,7 +384,7 @@ class ModalSaleSummary extends Component {
 
             return [
                 {
-                    Detail: 'Total App',
+                    Detail: 'Total Cust',
                     Amt: Amt.Amt ? Amt.Amt : '',
                     OS: os.Total,
                     SETUP: setup.Total,
