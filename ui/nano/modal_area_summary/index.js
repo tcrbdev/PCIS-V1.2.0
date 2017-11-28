@@ -592,7 +592,6 @@ class ModalSaleSummary extends Component {
                     wrapClassName={`parent_salesummary ${styles['modalParentSaleSummary']}`}
                     className={styles['modalSaleSummary']}
                     visible={this.state.modalOpen}
-                    onOk={false}
                     onCancel={this.handleCancel}
                     footer={null}
                     closable={false}
@@ -625,7 +624,7 @@ class ModalSaleSummary extends Component {
                                         <div>
                                             <div className={styles['text-descrition']}>
                                                 <div>
-                                                    <span>{`${TotalData.length > 0 ? TotalData[0].total_shop : 0} Shop`}</span>
+                                                    <span style={{ position: 'relative' }}>{`${TotalData.length > 0 ? TotalData[0].total_shop : 0} Shop`}<span style={{ position: 'absolute', color: '#000', textAlign: 'right', left: '0', width: '100%', fontSize: '8px' }}></span></span>
                                                     <span>{` From ${TotalData.length > 0 ? TotalData[0].total_market : 0} Markets`}</span>
                                                 </div>
                                                 <span>

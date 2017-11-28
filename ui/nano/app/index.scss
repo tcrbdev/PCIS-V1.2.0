@@ -530,7 +530,7 @@
          display: flex;
          margin-left: 10px;
 
-         & span
+         & > span , > div
          {
             position: relative;
             display: flex;
@@ -539,18 +539,32 @@
             cursor: pointer;
             margin: 0 10px;
             font-size: 15px;
-            &:hover
+         }
+
+         & > span:hover , > div:hover
+         {
+            & > [class*=fa]
+            {
+                color: #FFF !important;
+            } 
+
+            & > span > [class*=fa]
+            {
+                color: #FFF !important;
+            }
+
+            & > span > span > [class*=fa]
             {
                 color: #FFF !important;
             }
          }
 
-         & span:before
+         & > span > span  , > div > span
          {
             z-index: 2;
          }
 
-         & span:after
+         & > span:after , > div:after
          {
              content: '';
              position: absolute;
@@ -562,37 +576,42 @@
              z-index: 1;
          }
 
-         & span:hover:after
+         & > span:hover:after , > div:hover:after
          {
             transform: scale(1);
          }
 
-        & span:nth-child(1)
+        & > span:nth-child(1) [class*=fa] , > div:nth-child(1) > span
          {
              color: #03A9F4;
          }
 
-        & span:nth-child(2)
+        &  > span:nth-child(2) [class*=fa] , > div:nth-child(2) > span
          {
              color: #E91E63;
          }
 
-        & span:nth-child(3)
+        &  > span:nth-child(3) [class*=fa] , > div:nth-child(3) > span
          {
              color: #64a717;
          }
 
-         & span:nth-child(1):after
+         & > [class*=stop-approval]:after
+         {
+             background-color: #FF9800;
+         }
+
+         &  > span:nth-child(1):after , > div:nth-child(1):after
          {
              background-color: #03A9F4;
          }
 
-        & span:nth-child(2):after
+        &  > span:nth-child(2):after , > div:nth-child(2):after
          {
              background-color: #E91E63;
          }
 
-        & span:nth-child(3):after
+        &  > span:nth-child(3):after , > div:nth-child(3):after
          {
              background-color: #64a717;
          }
@@ -660,4 +679,14 @@
     .top-layer
     {
         z-index: 4;
+    }
+
+    .visit-modal
+    {
+        width: 640px !important;
+
+        & [class*=ant-tabs-tab-prev] , [class*=ant-tabs-tab-next]
+        {
+            display: none;
+        }
     }

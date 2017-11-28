@@ -54,7 +54,6 @@ class ModalSaleSummary extends Component {
                     wrapClassName={`parent_salesummary ${styles['modalParentSaleSummaryChart']}`}
                     className={styles['modalSaleSummaryChart']}
                     visible={this.state.modalOpen}
-                    onOk={false}
                     onCancel={this.handleCancel}
                     footer={null}
                     closable={false}
@@ -65,7 +64,7 @@ class ModalSaleSummary extends Component {
                     <article className={styles['wrapper']}>
                         <SaleSummaryChart
                             item={{ SALE_SUMMARY_CHART: this.props.type ? this.props.CHART_SALE_SUMMARY_BY_CA : this.props.RELATED_CHART_SALE_SUMMARY }}
-                            custom_width="600px"
+                            custom_width="610px"
                             ON_CLOSE_MARKER={this.handleCancel}
                             type={this.props.type}/>
                     </article>

@@ -335,7 +335,7 @@
         background-color: #dcdcdc !important;
     }
 
-    & table tbody tr > [class*=sm-padding]
+    & table tbody tr > [class=sm-padding]
     {
         padding: 3px 3px !important;
     }
@@ -370,7 +370,17 @@
     padding: 3px !important;
 }
 
-.summary-table
+.xsm-padding
+{
+    padding: 0 3px !important;
+}
+
+.sm-paddingss
+{
+    padding: 3px 3px !important;
+}
+
+.summary-table-sale
 {
     margin-bottom: 0px;
 
@@ -390,6 +400,12 @@
 
         & > thead > tr > th {
             background-color: #aac789;
+            text-align: center !important;
+        }
+
+        & tbody tr > [class=sm-padding]
+        {
+            padding: 0 3px !important;
         }
     }
 
@@ -423,7 +439,89 @@
         border-bottom: 1px solid transparent;
     }
 
-    & table tbody tr > [class*=sm-padding]
+    & table tbody tr > [class=sm-padding]
+    {
+        padding: 3px 3px !important;
+    }
+    
+    & table thead tr > [class*=header-hide]
+    {
+        border-top: 0px !important;
+        border-bottom: 0px !important;
+    }
+
+    & table tbody tr:nth-child(odd)
+    {
+        background: #FFF;
+    }
+
+    & table tbody tr:nth-child(even)
+    {
+        background: #FFF;
+    }
+}
+
+.summary-table
+{
+    margin-bottom: 0px;
+
+    &  table tbody tr
+    {
+        cursor: pointer;
+    }
+
+    & > div > div > div
+    {
+        border-radius: 0px;
+    }
+
+    & [class*=ant-table-small] table
+    {
+        padding: 0 !important;
+        border:0 !important;
+
+        & > thead > tr > th {
+            background-color: #aac789;
+            text-align: center !important;
+        }
+
+        & tbody tr > [class=sm-padding]
+        {
+            padding: 0 3px !important;
+        }
+    }
+
+    & table
+    {
+        border-radius: 0 0 0 0;
+        border: 1px solid #b1b1b1 !important;
+    }
+
+    & thead > tr > th {
+        border-right: 1px solid #b1b1b1 !important;
+        border-bottom: 1px solid #b1b1b1 !important;
+        background-color: #dcdcdc;
+    }
+
+    & thead > tr > th:last-child {
+        border-right: 0px solid transparent !important;
+    }
+
+    & tbody > tr > td {
+        border-right: 1px solid #b1b1b1 !important;
+        border-bottom: 1px solid #b1b1b1;
+    }
+
+    & tbody > tr > td:last-child {
+        border-right: 0px solid transparent !important;
+    }
+
+    & table tbody tr:last-child td
+    {
+        border-bottom: 1px solid transparent;
+    }
+
+    & table tbody tr > [class=sm-padding]
     {
         padding: 3px 3px !important;
     }
@@ -563,6 +661,16 @@
         overflow: hidden;
         flex: 1;
     }
+
+    .text-ellipsis
+{
+    width: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+        flex: 1;
+}
 
     .title-img-direction
     {
@@ -869,10 +977,10 @@
 .app-daily-overlay
 {
     position: absolute;
-    background-color: rgba(183, 183, 183, 0.7);
+    background-color: rgba(183, 183, 183, 0.28);
     border-radius: 5px;
-    left: 10px;
-    top: 10px;
+    right: 10px;
+    top: 7px;
     z-index: 1;
     padding: 0 2px;
 
@@ -884,13 +992,19 @@
     & > div > span:nth-child(2) 
     {
         text-align: right;
-        width: 60px;
+        width: 40px;
     }
 
-    & > div > span:nth-child(3) , span:nth-child(4)
+    & > div > span:nth-child(3)
     {
         text-align: right;
-        width: 30px;
+        width: 38px;
+    }
+
+    & > div > span:nth-child(4)
+    {
+        text-align: right;
+        width: 33px;
     }
 
     & > div > span
@@ -916,12 +1030,29 @@ flex-direction: row;
     }
 }
 
+    .color-point
+{
+    width:10px; 
+    height:10px; 
+    border-radius: 50%; 
+    margin: 0 5px;
+}
+
 .color-dot
 {
     width: 10px;
     height: 10px;
     border-radius: 50%;
     margin-right: 5px;
+}
+
+.color-dot-border
+{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    border:1px solid #FFF;
 }
 
 .no-padding-bottom-chart
@@ -1211,6 +1342,13 @@ background-image: linear-gradient(-225deg, #A445B2 0%, #D41872 52%, #FF0066 100%
         width: 600px !important;
         max-width: 650px !important;
     }
+
+    .sale-chart
+    {
+        width: 610px !important;
+        max-width: 610px !important;
+    }
+
 
 .image-preview
 {

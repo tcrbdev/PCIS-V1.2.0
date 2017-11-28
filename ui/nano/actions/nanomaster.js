@@ -27,7 +27,8 @@ import {
     INSERT_UPDATE_MARKER_NOTE_URL,
 
     GET_PORTFOLIO_QUALITY_CHART_URL,
-    GET_SALE_SUMMARY_CHART_URL
+    GET_SALE_SUMMARY_CHART_URL,
+    GET_NANO_STOP_APPROVAL_URL
 } from '../../common/constants/endpoints'
 
 import {
@@ -73,7 +74,11 @@ import {
     GET_PORTFOLIO_QUALITY_CHART_SUCCESS,
     GET_PORTFOLIO_QUALITY_CHART_FAILURE,
 
-    SET_LOCATION_DIRECTION_MARKER_CHANGE
+    SET_LOCATION_DIRECTION_MARKER_CHANGE,
+
+    GET_NANO_VISIT_POPUP_INFO_REQUEST,
+    GET_NANO_VISIT_POPUP_INFO_SUCCESS,
+    GET_NANO_VISIT_POPUP_INFO_FAILURE
 } from '../../common/constants/actionsType'
 
 export const setLocationDirectionMarker = () => dispatch => {
@@ -544,7 +549,7 @@ export const getNanoMasterData = (auth = {}) => ((dispatch) => {
         fetch(`${MASTER_BRANCH_URL}/${token}`).then(res => (res.json())),
         fetch(`${MASTER_TARGET_MARKET_PROVINCE_URL}/${token}`).then(res => (res.json())),
         fetch(`${MASTER_CALIST_URL}/${token}`).then(res => (res.json())),
-        fetch(`${MASTER_COMPLITITOR_PROVINCE_URL}/${token}`).then(res => (res.json()))
+        fetch(`${MASTER_COMPLITITOR_PROVINCE_URL}/${token}`).then(res => (res.json())),
     ]
 
     bluebird.all(api).spread((
@@ -577,6 +582,49 @@ export const getNanoMasterData = (auth = {}) => ((dispatch) => {
         })
     })
 })
+
+export const getNanoVisitPopupInformation = criteria => (
+    dispatch => {
+
+        dispatch({ type: GET_NANO_VISIT_POPUP_INFO_REQUEST })
+
+        let api = [
+            fetch(GET_NANO_STOP_APPROVAL_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(criteria),
+                timeout: 1500000
+            }).then(res => (res.json()))
+        ]
+
+        bluebird.all(api)
+            .spread((nanoStopApproval) => {
+                const res = {
+                    nanoStopApproval
+                }
+                dispatch({
+                    type: GET_NANO_VISIT_POPUP_INFO_SUCCESS,
+                    payload: res
+                })
+            })
+            .catch(e => {
+                if (!e.response) {
+                    dispatch({
+                        type: GET_NANO_VISIT_POPUP_INFO_FAILURE,
+                        payload: {
+                            status: "Error",
+                            statusText: e.response
+                        }
+                    })
+                }
+            })
+
+    }
+
+)
 
 export const searchNanoChangeViewByData = criteria => dispatch => {
 

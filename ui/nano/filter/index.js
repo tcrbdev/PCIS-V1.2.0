@@ -272,8 +272,8 @@ class Filter extends Component {
 
             return [{
                 label: 'Select All',
-                value: CALIST_DATA.map(item => item.CA_Code).join(','),
-                key: CALIST_DATA.map(item => item.CA_Code).join(','),
+                value: _.uniq(CALIST_DATA.map(item => item.CA_Code)).join(','),
+                key: _.uniq(CALIST_DATA.map(item => item.CA_Code)).join(','),
                 children: group
             }]
         }
@@ -1048,6 +1048,7 @@ export default connect(
     (state) => ({
         AUTH_NANO_USER: state.AUTH_NANO_USER,
         NANO_MASTER_ALL: state.NANO_MASTER_ALL,
+        NANO_VISIT_POPUP_INFO: state.NANO_VISIT_POPUP_INFO,
         ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA,
         RELATED_BRANCH_DATA: state.RELATED_BRANCH_DATA,
         RELATED_EXITING_MARKET_DATA: state.RELATED_EXITING_MARKET_DATA,

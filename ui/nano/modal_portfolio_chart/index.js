@@ -54,7 +54,6 @@ class ModalPortfolioChart extends Component {
                     wrapClassName={`parent_salesummary ${styles['modalParentProfolioChart']}`}
                     className={styles['modalProfolioChart']}
                     visible={this.state.modalOpen}
-                    onOk={false}
                     onCancel={this.handleCancel}
                     footer={null}
                     closable={false}

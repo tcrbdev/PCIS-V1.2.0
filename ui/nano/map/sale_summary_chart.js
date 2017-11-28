@@ -67,7 +67,7 @@ const renderActiveShape = (props) => {
             <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
             <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
             <text x={ex + 3 + (cos >= 0 ? 1 : -1)} y={ey} textAnchor={textAnchor} fill="white" style={{ fontSize: '11px', fill: '#134973' }}  >
-                {`${custom.ach} %`}
+                {`${parseFloat(custom.Share).toFixed(2)} %`}
             </text>
         </g>
     );
@@ -78,7 +78,89 @@ const CustomizeLabelPerformance = props => {
     const date = new Date()
     const month = moment(new Date(date.getFullYear(), index, 1)).format('MMM')
 
-    return <text x={x - 5} y={y - 5} {...custom}>{`${parseFloat(data[month]).toFixed(0)}%`}</text>
+    return <text x={x} y={y - 5} {...custom}>{`${parseFloat(data[month]).toFixed(0) > 0 ? parseFloat(data[month]).toFixed(0) + '%' : ''}`}</text>
+}
+
+class NewVolumnePerformanceTooltip extends Component {
+    render() {
+        const { active, payload } = this.props
+        if (active) {
+            const { payload, label, coordinate } = this.props
+
+            return (
+                <div key={`${label}_${coordinate.x}_${coordinate.y}`} className={styles['custom-tooltip']}>
+                    <div className={styles['color-dot-container']}>
+                        <span className={styles['color-dot-border']} style={{ backgroundColor: payload[2].color }}></span>
+                        <span>Target {`${payload[2].value}`}</span>
+                    </div>
+                    <div className={styles['color-dot-container']}>
+                        <span className={styles['color-dot-border']} style={{ backgroundColor: payload[0].color }}></span>
+                        <span>Nano {`${payload[0].value}`}</span>
+                    </div>
+                    <div className={styles['color-dot-container']}>
+                        <span className={styles['color-dot-border']} style={{ backgroundColor: payload[1].color }}></span>
+                        <span>Micro {`${payload[1].value}`}</span>
+                    </div>
+                </div>
+            )
+        }
+        else {
+            return <div></div>
+        }
+    }
+}
+
+class DailyCustAtOperTooltip extends Component {
+    render() {
+        const { active, payload } = this.props
+        if (active) {
+            const { payload, label, coordinate } = this.props
+            return (
+                <div key={`${label}_${coordinate.x}_${coordinate.y}`} className={styles['custom-tooltip']}>
+                    <span>Date {`${payload[0].payload.day} (${payload[0].payload.date})`}</span>
+                    <div className={styles['color-dot-container']}>
+                        <span className={styles['color-dot-border']} style={{ backgroundColor: payload[1].color }}></span>
+                        <span>Confirm {`${payload[1].value}`}</span>
+                    </div>
+                    <div className={styles['color-dot-container']}>
+                        <span className={styles['color-dot-border']} style={{ backgroundColor: payload[0].color }}></span>
+                        <span>App at Oper {`${payload[0].value}`}</span>
+                    </div>
+                </div>
+            )
+        }
+        else {
+            return <div></div>
+        }
+    }
+}
+
+class ProductivityTooltip extends Component {
+    render() {
+        const { active, payload } = this.props
+        if (active) {
+            const { payload, label, coordinate } = this.props
+            return (
+
+                <div key={`${label}_${coordinate.x}_${coordinate.y}`} className={styles['custom-tooltip']}>
+                    <div className={styles['color-dot-container']}>
+                        <span>{`${payload[0].payload.text} (CA HC ${payload[0].payload.TotalEmp})`}</span>
+                    </div>
+                    <div className={styles['color-dot-container']}>
+                        <span className={styles['color-dot-border']} style={{ backgroundColor: payload[1].color }}></span>
+                        <span>{`Br. ${payload[1].value} MB`}</span>
+                    </div>
+                    <div className={styles['color-dot-container']}>
+                        <span className={styles['color-dot-border']} style={{ backgroundColor: payload[0].color }}></span>
+                        <span>{`CA ${payload[0].value} MB`}</span>
+                    </div>
+                </div>
+            )
+        }
+        else {
+            return <div></div>
+        }
+    }
 }
 
 class SaleSummaryChart extends Component {
@@ -160,7 +242,7 @@ class SaleSummaryChart extends Component {
                 else {
                     return (
                         <div className={styles['headers']}>
-                            <FontAwesome className="trigger" name='dollar' />
+                            <FontAwesome className="trigger" name='line-chart' />
                             <span>Sale Summary</span>
                             <Icon
                                 onClick={() => ON_CLOSE_MARKER()}
@@ -173,164 +255,264 @@ class SaleSummaryChart extends Component {
         }
     }
 
+    getDailyAppOper = data => {
+        const today = new Date()
+        const dayInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
+
+        let result = []
+        for (let i = 1; i <= dayInMonth; i++) {
+            const date = new Date(today.getFullYear(), today.getMonth(), i)
+            const day = date.getDay()
+            const isWeekends = (day == 0 || day == 6 ? true : false)
+
+            if (!isWeekends) {
+                result.push({
+                    date: moment(date).format('ddd'),
+                    day: i,
+                    cust: data[0][_.padStart(i, 2, '0')],
+                    confirm: data[1][_.padStart(i, 2, '0')]
+                })
+            }
+        }
+
+        return result
+    }
+
+    numberWithCommas = (x) => {
+        var parts = x.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    }
+
     render() {
         const { item, ON_CLOSE_MARKER, custom_width } = this.props
 
         const { SALE_SUMMARY_CHART } = item
-
-        const NEW_VOLUME_PERFORMANCE = SALE_SUMMARY_CHART[1]
-        const APP_ON_HAND_BEFORE_OPER = SALE_SUMMARY_CHART[2]
-        const MICRO_SHARE = [
-            { name: 'Nano', value: SALE_SUMMARY_CHART[3][0].TotalAVG, ach: SALE_SUMMARY_CHART[3][0].TotalAVG, color: '#023852' },
-            { name: 'Micro', value: SALE_SUMMARY_CHART[3][1].TotalAVG, ach: SALE_SUMMARY_CHART[3][1].TotalAVG, color: '#03a694' }
-        ]
-
-        const MAX_VOLUME_PERFORMANCE = Math.ceil((NEW_VOLUME_PERFORMANCE[1].Max + NEW_VOLUME_PERFORMANCE[2].Max) < NEW_VOLUME_PERFORMANCE[0].Max ? NEW_VOLUME_PERFORMANCE[0].Max : (NEW_VOLUME_PERFORMANCE[1].Max + NEW_VOLUME_PERFORMANCE[2].Max)).toFixed(0)
-
+        let NEW_VOLUME_PERFORMANCE = []
+        let APP_ON_HAND_BEFORE_OPER = []
+        let MICRO_SHARE = []
+        let DAILY_APP_AT_OPER = []
+        let DAILY_APP_AT_OPER_CONFIRM = []
+        let PRODUCTIVITY_LINE = []
+        let PRODUCTIVITY_TABLE = []
+        let MAX_VOLUME_PERFORMANCE = []
         let start_work_date, work_date_format
-        if (!item.MarketCode) {
-            start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
-            work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
-        }
 
-        const testData = []
-
-        for (let i = 1; i <= 31; i++) {
-            let num = Math.floor((Math.random() * 10) + i)
-            testData.push({ name: `${i}`, uv: Math.random() * num, pv: Math.random() * num, amt: Math.random() * num, av: Math.random() * num })
-        }
-
-        return (
-            <Layout style={{ width: custom_width ? custom_width : '650px', overflow: 'hidden' }}>
+        if (!_.isEmpty(SALE_SUMMARY_CHART) && SALE_SUMMARY_CHART.length > 1) {
+            NEW_VOLUME_PERFORMANCE = SALE_SUMMARY_CHART[1]
+            APP_ON_HAND_BEFORE_OPER = SALE_SUMMARY_CHART[2]
+            MICRO_SHARE = [
                 {
-                    this.getHeaderTitle(this.props)
+                    name: 'Micro',
+                    value: SALE_SUMMARY_CHART[3][1].TotalAVG,
+                    ach: SALE_SUMMARY_CHART[3][1].TotalAVG,
+                    color: '#03a694',
+                    Vol: SALE_SUMMARY_CHART[3][1].TotalVol,
+                    Cust: SALE_SUMMARY_CHART[3][1].TotalUnit,
+                    Share: SALE_SUMMARY_CHART[3][2].TotalAVG
+                },
+                {
+                    name: 'Nano', value: SALE_SUMMARY_CHART[3][0].TotalAVG,
+                    ach: SALE_SUMMARY_CHART[3][0].TotalAVG,
+                    color: '#023852',
+                    Vol: SALE_SUMMARY_CHART[3][0].TotalVol,
+                    Cust: SALE_SUMMARY_CHART[3][0].TotalUnit,
+                    Share: parseFloat(100 - SALE_SUMMARY_CHART[3][2].TotalAVG).toFixed(2)
                 }
-                <Layout style={{ backgroundColor: '#FFF', margin: '10px 10px 5px 10px', backgroundColor: '#f0f2f5' }}>
-                    <div style={{ marginLeft: '-5px', marginRight: '-5px', backgroundColor: '#f0f2f5' }}>
-                        <div className={styles['chart-row']}>
-                            <div className={styles['chart-container']} style={{ width: '330px', height: '237px', marginTop: '0px' }}>
-                                <div>
-                                    <span>New Volumne Performance</span>
-                                </div>
-                                <div>
-                                    <ComposedChart width={320} height={205} data={[
-                                        { name: 'J', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Jan, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Jan, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Jan, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'F', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Feb, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Feb, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Feb, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'M', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Mar, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Mar, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Mar, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'A', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Apr, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Apr, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Apr, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'M', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].May, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].May, TotalTarget: NEW_VOLUME_PERFORMANCE[0].May, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'J', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Jun, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Jun, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Jun, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'J', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Jul, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Jul, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Jul, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'A', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Aug, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Aug, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Aug, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'S', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Sep, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Sep, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Sep, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'O', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Oct, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Oct, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Oct, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'N', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Nov, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Nov, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Nov, Max: MAX_VOLUME_PERFORMANCE },
-                                        { name: 'D', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Dec, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Dec, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Dec, Max: MAX_VOLUME_PERFORMANCE }
+            ]
+            DAILY_APP_AT_OPER = this.getDailyAppOper(SALE_SUMMARY_CHART[4])
+            DAILY_APP_AT_OPER_CONFIRM = SALE_SUMMARY_CHART[5]
+            PRODUCTIVITY_LINE = SALE_SUMMARY_CHART[6]
+            PRODUCTIVITY_TABLE = SALE_SUMMARY_CHART[7]
 
-                                    ]}
-                                        margin={{ top: 15, right: 5, bottom: -13, left: -30 }}>
-                                        <XAxis dataKey="name" tickLine={false} axisLine={true} style={{ fontSize: '9px' }} />
-                                        <YAxis domain={['dataMin', MAX_VOLUME_PERFORMANCE]} />
-                                        <Tooltips />
-                                        <Bar dataKey='NanoTotalAct' barSize={15} stackId="a" fill='#023852' />
-                                        <Bar dataKey="MicroTotalAct" barSize={15} stackId="a" fill="#03a694" />
-                                        <Line dataKey="Max" dot={false} stroke='#FFF' label={<CustomizeLabelPerformance data={NEW_VOLUME_PERFORMANCE[3]} style={{ fontSize: '9px' }} />} />
-                                        {
-                                            !item.MarketCode &&
-                                            <Line type='monotone' dataKey='TotalTarget' stroke='#851934' />
-                                        }
-                                    </ComposedChart>
+            MAX_VOLUME_PERFORMANCE = parseInt(Math.ceil((NEW_VOLUME_PERFORMANCE[1].Max + NEW_VOLUME_PERFORMANCE[2].Max) < NEW_VOLUME_PERFORMANCE[0].Max ? NEW_VOLUME_PERFORMANCE[0].Max : (NEW_VOLUME_PERFORMANCE[1].Max + NEW_VOLUME_PERFORMANCE[2].Max)).toFixed(0))
+            MAX_VOLUME_PERFORMANCE = MAX_VOLUME_PERFORMANCE % 2 == 0 ? MAX_VOLUME_PERFORMANCE + 2 : MAX_VOLUME_PERFORMANCE + 1
+
+
+            if (!item.MarketCode) {
+                start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
+                work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+            }
+        }
+
+        if (!_.isEmpty(SALE_SUMMARY_CHART) && SALE_SUMMARY_CHART.length > 1) {
+            return (
+                <Layout style={{ width: custom_width ? custom_width : '610px', overflow: 'hidden' }}>
+                    {
+                        this.getHeaderTitle(this.props)
+                    }
+                    <Layout style={{ backgroundColor: '#FFF', margin: '10px 10px 5px 10px', backgroundColor: '#f0f2f5' }}>
+                        <div style={{ marginLeft: '-5px', marginRight: '-5px', backgroundColor: '#f0f2f5' }}>
+                            <div className={styles['chart-row']}>
+                                <div className={styles['chart-container']} style={{ width: '310px', height: '270px', marginTop: '0px' }}>
+                                    <div>
+                                        <span>New Volumne Performance</span>
+                                    </div>
+                                    <div>
+                                        <ComposedChart width={290} height={245} data={[
+                                            { name: 'J', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Jan, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Jan, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Jan, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'F', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Feb, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Feb, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Feb, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'M', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Mar, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Mar, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Mar, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'A', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Apr, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Apr, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Apr, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'M', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].May, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].May, TotalTarget: NEW_VOLUME_PERFORMANCE[0].May, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'J', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Jun, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Jun, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Jun, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'J', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Jul, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Jul, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Jul, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'A', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Aug, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Aug, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Aug, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'S', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Sep, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Sep, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Sep, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'O', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Oct, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Oct, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Oct, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'N', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Nov, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Nov, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Nov, Max: MAX_VOLUME_PERFORMANCE },
+                                            { name: 'D', MicroTotalAct: NEW_VOLUME_PERFORMANCE[2].Dec, NanoTotalAct: NEW_VOLUME_PERFORMANCE[1].Dec, TotalTarget: NEW_VOLUME_PERFORMANCE[0].Dec, Max: MAX_VOLUME_PERFORMANCE }
+
+                                        ]}
+                                            margin={{ top: 15, right: 5, bottom: -13, left: -30 }}>
+                                            <XAxis dataKey="name" tickLine={false} axisLine={true} style={{ fontSize: '9px' }} />
+                                            <YAxis domain={['dataMin', MAX_VOLUME_PERFORMANCE]} />
+                                            <Tooltips content={<NewVolumnePerformanceTooltip />} />
+                                            <Bar dataKey='NanoTotalAct' barSize={15} stackId="a" fill='#023852' />
+                                            <Bar dataKey="MicroTotalAct" barSize={15} stackId="a" fill="#03a694" label={<CustomizeLabelPerformance data={NEW_VOLUME_PERFORMANCE[3]} style={{ fontSize: '9px' }} />} />
+                                            {/* <Line type='monotone' dataKey='Max' stroke='#FFF' label={<CustomizeLabelPerformance data={NEW_VOLUME_PERFORMANCE[3]} style={{ fontSize: '9px' }} />} /> */}
+                                            {
+                                                !item.MarketCode &&
+                                                <Line type='monotone' dataKey='TotalTarget' stroke='#f24738' dot={false} />
+                                            }
+                                        </ComposedChart>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <Timeline>
-                                    <Timeline.Item style={{ paddingBottom: '0px' }} className={styles['no-padding-bottom-chart']}>
-                                        <div className={styles['chart-container']} style={{ width: '228px', height: '95px', marginLeft: '-6px', marginTop: '3px' }}>
-                                            <div>
-                                                <span>% of Micro Share</span>
-                                            </div>
-                                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                                                <div>
-                                                    <PieChart
-                                                        width={216}
-                                                        height={75}
-                                                        margin={{ top: 0, right: 0, bottom: 8, left: 0 }}>
-                                                        <Pie
-                                                            data={MICRO_SHARE}
-                                                            startAngle={450}
-                                                            endAngle={-90}
-                                                            innerRadius={0}
-                                                            activeIndex={0}
-                                                            activeShape={renderActiveShape}>
-                                                            {
-                                                                MICRO_SHARE.map((entry, index) => <Cell fill={entry.color} />)
-                                                            }
-                                                        </Pie>
-                                                    </PieChart>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Timeline.Item>
-                                    <Timeline.Item style={{ paddingBottom: '0px' }} className={styles['no-padding-bottom-chart']}>
-                                        <div className={styles['chart-container']} style={{ width: '228px', height: '137', marginLeft: '-6px', marginTop: '3px' }}>
-                                            <div style={{ border: '1px solid #024959' }}>
-                                                <div style={{ backgroundColor: '#024959', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff' }}>
-                                                    <span>YTD : 9,999,999 MB</span>
+                                <div>
+                                    <Timeline>
+                                        <Timeline.Item style={{ paddingBottom: '0px' }} className={styles['no-padding-bottom-chart']}>
+                                            <div className={styles['chart-container']} style={{ width: '258px', height: '105px', marginLeft: '-6px', marginTop: '3px' }}>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <span>% of Micro Share</span>
                                                 </div>
                                                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                                                     <div>
-                                                        {
-                                                            !this.props.type ?
-                                                                <ComposedChart width={210} height={106} data={[
-                                                                    { name: 'J', uv: 5, pv: 800, amt: 1400, av: 1200 },
-                                                                    { name: 'F', uv: 3, pv: 967, amt: 1506, av: 300 },
-                                                                    { name: 'M', uv: 10, pv: 1098, amt: 989, av: 600 },
-                                                                    { name: 'A', uv: 2, pv: 1200, amt: 1228, av: 400 },
-                                                                    { name: 'M', uv: 0.5, pv: 1108, amt: 1100, av: 890 },
-                                                                    { name: 'J', uv: 2, pv: 680, amt: 1700, av: 950 },
-                                                                    { name: 'J', uv: 2, pv: 680, amt: 1700, av: 950 },
-                                                                    { name: 'A', uv: 3, pv: 680, amt: 1700, av: 950 },
-                                                                    { name: 'S', uv: 1.5, pv: 680, amt: 1700, av: 950 },
-                                                                    { name: 'O', uv: 6, pv: 680, amt: 1700, av: 950 },
-                                                                    { name: 'N', uv: 8, pv: 680, amt: 1700, av: 950 },
-                                                                    { name: 'D', uv: 4, pv: 680, amt: 1700, av: 950 }
-
-                                                                ]}
-                                                                    margin={{ left: -38, right: 0, top: 10, bottom: -10 }}>
-                                                                    <XAxis dataKey="name" tickLine={false} style={{ fontSize: '9px' }} />
-                                                                    <YAxis />
-                                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                                                    <Line type='monotone' dataKey='uv' stroke='#f24738' />
-                                                                </ComposedChart>
-                                                                :
-                                                                <PieChart
-                                                                    width={130}
-                                                                    height={106}
-                                                                    margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-                                                                    <Pie
-                                                                        data={[
-                                                                            { name: 'M1', value: 400, ach: 10, color: '#7b2a3b' },
-                                                                            { name: 'M2', value: 300, ach: 10, color: '#e57661' },
-                                                                            { name: 'M3', value: 300, ach: 10, color: '#f8c58c' },
-                                                                            { name: 'M4', value: 200, ach: 10, color: '#f8e7a4' },
-                                                                            { name: 'M5', value: 200, ach: 10, color: '#86ddb2' },
-                                                                        ]}
-                                                                        fill="#8884d8"
-                                                                    >
-                                                                        {
-                                                                            [
-                                                                                { name: 'M1', value: 400, ach: 10, color: '#7b2a3b' },
-                                                                                { name: 'M2', value: 300, ach: 10, color: '#e57661' },
-                                                                                { name: 'M3', value: 300, ach: 10, color: '#f8c58c' },
-                                                                                { name: 'M4', value: 200, ach: 10, color: '#f8e7a4' },
-                                                                                { name: 'M5', value: 200, ach: 10, color: '#86ddb2' },
-                                                                            ].map((entry, index) => <Cell fill={entry.color} />)
-                                                                        }
-                                                                    </Pie>
-                                                                </PieChart>
-                                                        }
+                                                        <PieChart
+                                                            width={100}
+                                                            height={150}
+                                                            margin={{ top: -15, right: 0, bottom: 0, left: -10 }}>
+                                                            <Pie
+                                                                data={MICRO_SHARE}
+                                                                startAngle={450}
+                                                                endAngle={-90}
+                                                                innerRadius={0}
+                                                                activeIndex={0}>
+                                                                {
+                                                                    MICRO_SHARE.map((entry, index) => <Cell fill={entry.color} />)
+                                                                }
+                                                            </Pie>
+                                                        </PieChart>
                                                     </div>
                                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                        {
+                                                            <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '10px', justifyContent: 'center' }}>
+                                                                {
+                                                                    MICRO_SHARE.map(
+                                                                        (item, index) =>
+                                                                            <div className={styles['color-dot-container']}>
+                                                                                <span className={styles['color-dot']} style={{ backgroundColor: item.color }}></span>
+                                                                                <span>{`${item.name} ${item.Share}% `}</span>
+                                                                                <span style={{ marginLeft: '14px' }}>{`(Vol. ${item.Vol} Cust ${item.Cust})`}</span>
+                                                                                {index != MICRO_SHARE.length - 1 && <hr style={{ border: '0', borderTop: '1px solid #9c9c9c52' }} />}
+                                                                            </div>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Timeline.Item>
+                                        <Timeline.Item style={{ paddingBottom: '0px' }} className={styles['no-padding-bottom-chart']}>
+                                            <div className={styles['chart-container']} style={{ width: '258px', height: '160', marginLeft: '-6px', marginTop: '3px' }}>
+                                                <div style={{ border: '1px solid #024959' }}>
+                                                    <div style={{ backgroundColor: '#024959', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff' }}>
+                                                        {
+                                                            !this.props.type &&
+                                                            < div className={styles['color-dot-container']}>
+                                                                <span className={styles['color-dot-border']} style={{ backgroundColor: '#f24738' }}></span>
+                                                            </div>
+                                                        }
+                                                        <span>{!this.props.type ? `CA Productivity (YTD) : ${this.numberWithCommas(parseInt(PRODUCTIVITY_LINE[0].YTD))}` : `Top 5 Market`}</span>
+                                                    </div>
+                                                    <div>
+                                                        <div>
+                                                            {
+                                                                !this.props.type ?
+                                                                    <ComposedChart width={240} height={130} data={[
+                                                                        { name: 'J', text: 'Jan', ca: PRODUCTIVITY_LINE[1].Jan, br: PRODUCTIVITY_LINE[0].Jan, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'F', text: 'Feb', ca: PRODUCTIVITY_LINE[1].Feb, br: PRODUCTIVITY_LINE[0].Feb, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'M', text: 'Mar', ca: PRODUCTIVITY_LINE[1].Mar, br: PRODUCTIVITY_LINE[0].Mar, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'A', text: 'Apr', ca: PRODUCTIVITY_LINE[1].Apr, br: PRODUCTIVITY_LINE[0].Apr, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'M', text: 'May', ca: PRODUCTIVITY_LINE[1].May, br: PRODUCTIVITY_LINE[0].May, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'J', text: 'Jun', ca: PRODUCTIVITY_LINE[1].Jun, br: PRODUCTIVITY_LINE[0].Jun, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'J', text: 'Jul', ca: PRODUCTIVITY_LINE[1].Jul, br: PRODUCTIVITY_LINE[0].Jul, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'A', text: 'Aug', ca: PRODUCTIVITY_LINE[1].Aug, br: PRODUCTIVITY_LINE[0].Aug, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'S', text: 'Sep', ca: PRODUCTIVITY_LINE[1].Sep, br: PRODUCTIVITY_LINE[0].Sep, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'O', text: 'Oct', ca: PRODUCTIVITY_LINE[1].Oct, br: PRODUCTIVITY_LINE[0].Oct, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'N', text: 'Nov', ca: PRODUCTIVITY_LINE[1].Nov, br: PRODUCTIVITY_LINE[0].Nov, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
+                                                                        { name: 'D', text: 'Dec', ca: PRODUCTIVITY_LINE[1].Dec, br: PRODUCTIVITY_LINE[0].Dec, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp }
+
+                                                                    ]}
+                                                                        margin={{ left: -33, right: 0, top: 10, bottom: -10 }}>
+                                                                        <XAxis dataKey="name" tickLine={false} style={{ fontSize: '9px' }} />
+                                                                        <YAxis />
+                                                                        <Tooltips content={<ProductivityTooltip />} />
+                                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                                        <Line type='monotone' dataKey='ca' stroke='#f24738' />
+                                                                        <Line type='monotone' dataKey='br' stroke='#023852' />
+                                                                    </ComposedChart>
+                                                                    :
+                                                                    <Table columns={[{
+                                                                        title: 'MarketName',
+                                                                        className: `${styles['align-left']} ${styles['xsm-padding']} ${styles['vertical-bottom']}`,
+                                                                        dataIndex: 'MarketName',
+                                                                        key: 'MarketName',
+                                                                        width: '46%',
+                                                                        render: (text, record, index) => {
+                                                                            return (
+                                                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                                                    <Tooltip title={text} placement="left" >
+                                                                                        <span className={styles['text-ellipsis']}>{text}</span>
+                                                                                    </Tooltip>
+                                                                                </div>
+                                                                            )
+                                                                        }
+                                                                    }, {
+                                                                        title: 'OS',
+                                                                        className: `${styles['align-right']} ${styles['xsm-padding']} ${styles['vertical-bottom']}`,
+                                                                        dataIndex: 'OS',
+                                                                        key: 'OS',
+                                                                        width: '20%',
+                                                                        render: (text, record, index) => {
+                                                                            return <span>{text}</span>
+                                                                        }
+                                                                    }, {
+                                                                        title: 'Cust',
+                                                                        className: `${styles['align-right']} ${styles['xsm-padding']} ${styles['vertical-bottom']}`,
+                                                                        dataIndex: 'Cus',
+                                                                        key: 'Cus',
+                                                                        width: '17%',
+                                                                        render: (text, record, index) => {
+                                                                            return <span>{parseFloat(text).toFixed(0)}</span>
+                                                                        }
+                                                                    }, {
+                                                                        title: '%',
+                                                                        className: `${styles['align-right']} ${styles['xsm-padding']} ${styles['vertical-bottom']}`,
+                                                                        dataIndex: 'Ach',
+                                                                        key: 'Ach',
+                                                                        width: '17%',
+                                                                        render: (text, record, index) => {
+                                                                            return <span>{parseFloat(text).toFixed(0)}%</span>
+                                                                        }
+                                                                    }]} dataSource={PRODUCTIVITY_TABLE}
+                                                                        pagination={false}
+                                                                        size='small'
+                                                                        className={styles['summary-table']}
+                                                                        style={{ width: '100%', fontSize: '8px' }} />
+                                                            }
+                                                        </div>
+                                                        {/* <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                         {
                                                             this.props.type &&
                                                             <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '10px', justifyContent: 'center' }}>
@@ -351,85 +533,102 @@ class SaleSummaryChart extends Component {
                                                                 }
                                                             </div>
                                                         }
+                                                    </div> */}
                                                     </div>
                                                 </div>
                                             </div>
+                                        </Timeline.Item>
+                                    </Timeline>
+                                </div>
+                            </div>
+                            <div className={styles['chart-row']}>
+                                <div className={styles['chart-container']} style={{ width: '170px', height: '165px' }}>
+                                    <div>
+                                        <span>App On Hand (Before Oper)</span>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Table columns={[{
+                                            title: 'Type',
+                                            className: `${styles['align-left']} ${styles['sm-paddingss']} ${styles['vertical-bottom']}`,
+                                            dataIndex: 'GroupName',
+                                            key: 'GroupName',
+                                            width: '25%',
+                                            render: (text, record, index) => {
+                                                return <span>{text}</span>
+                                            }
+                                        }, {
+                                            title: 'Vol.',
+                                            className: `${styles['align-right']} ${styles['sm-paddingss']} ${styles['vertical-bottom']}`,
+                                            dataIndex: 'CreditAmount',
+                                            key: 'CreditAmount',
+                                            width: '27%',
+                                            render: (text, record, index) => {
+                                                return <span>{text}</span>
+                                            }
+                                        }, {
+                                            title: 'App',
+                                            className: `${styles['align-right']} ${styles['sm-paddingss']} ${styles['vertical-bottom']}`,
+                                            dataIndex: 'TotalAcc',
+                                            key: 'TotalAcc',
+                                            width: '24%',
+                                            render: (text, record, index) => {
+                                                return <span>{text}</span>
+                                            }
+                                        }, {
+                                            title: '%',
+                                            className: `${styles['align-right']} ${styles['sm-paddingss']} ${styles['vertical-bottom']}`,
+                                            dataIndex: 'AccAch',
+                                            key: 'AccAch',
+                                            width: '24%',
+                                            render: (text, record, index) => {
+                                                return <span>{parseFloat(text).toFixed(0)}%</span>
+                                            }
+                                        }]} dataSource={APP_ON_HAND_BEFORE_OPER}
+                                            pagination={false}
+                                            size='small'
+                                            className={styles['summary-table-sale']}
+                                            style={{ width: '100%', height: '125px', fontSize: '8px' }} />
+                                    </div>
+                                </div>
+                                <div className={styles['chart-container']}>
+                                    <div style={{ textAlign: 'left', paddingRight: '10px' }}>
+                                        <span>Daily App at Oper (Total {DAILY_APP_AT_OPER_CONFIRM[1].AllCus} App)</span>
+                                    </div>
+                                    <div className={styles['app-daily-overlay']}>
+                                        <div>
+                                            <span>Confirm</span>
+                                            <span>{DAILY_APP_AT_OPER_CONFIRM[1].TotalCus} App</span>
+                                            <span>{DAILY_APP_AT_OPER_CONFIRM[1].TotalAmt}</span>
+                                            <span>{DAILY_APP_AT_OPER_CONFIRM[1].TotalCusAch}%</span>
                                         </div>
-                                    </Timeline.Item>
-                                </Timeline>
-                            </div>
-                        </div>
-                        <div className={styles['chart-row']}>
-                            <div className={styles['chart-container']} style={{ width: '160px' }}>
-                                <div>
-                                    <span>App On Hand (Before Oper)</span>
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Table columns={[{
-                                        title: 'Type',
-                                        className: `${styles['align-left']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                                        dataIndex: 'GroupName',
-                                        key: 'GroupName',
-                                        render: (text, record, index) => {
-                                            return <span>{text}</span>
-                                        }
-                                    }, {
-                                        title: 'MB',
-                                        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                                        dataIndex: 'CreditAmount',
-                                        key: 'CreditAmount',
-                                        render: (text, record, index) => {
-                                            return <span>{text}</span>
-                                        }
-                                    }, {
-                                        title: '%',
-                                        className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
-                                        dataIndex: 'AccAch',
-                                        key: 'AccAch',
-                                        render: (text, record, index) => {
-                                            return <span>{text}%</span>
-                                        }
-                                    }]} dataSource={APP_ON_HAND_BEFORE_OPER}
-                                        pagination={false}
-                                        size='small'
-                                        className={styles['summary-table']}
-                                        style={{ width: '100%', fontSize: '8px' }} />
-                                </div>
-                            </div>
-                            <div className={styles['chart-container']}>
-                                <div style={{ textAlign: 'right', paddingRight: '10px' }}>
-                                    <span>Daily App At Oper (Total 10 App)</span>
-                                </div>
-                                <div className={styles['app-daily-overlay']}>
-                                    <div>
-                                        <span>Confirm</span>
-                                        <span>20 App</span>
-                                        <span>1.8K</span>
-                                        <span>10%</span>
+                                        <div>
+                                            <span>Return</span>
+                                            <span>{DAILY_APP_AT_OPER_CONFIRM[0].TotalCus} App</span>
+                                            <span>{DAILY_APP_AT_OPER_CONFIRM[0].TotalAmt}</span>
+                                            <span>{DAILY_APP_AT_OPER_CONFIRM[0].TotalCusAch}%</span>
+                                        </div>
                                     </div>
                                     <div>
-                                        <span>Return</span>
-                                        <span>10 App</span>
-                                        <span>2.3M</span>
-                                        <span>20%</span>
+                                        <ComposedChart width={400} height={105} data={DAILY_APP_AT_OPER}
+                                            margin={{ top: 0, right: 0, bottom: 2, left: 0 }}>
+                                            <XAxis hide={true} dataKey="day" tickLine={false} axisLine={true} style={{ fontSize: '9px' }} />
+                                            <YAxis hide={true} />
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <Tooltips content={<DailyCustAtOperTooltip />} />
+                                            <Bar dataKey='cust' barSize={10} stackId="a" fill='#08415a' />
+                                            <Line type='monotone' dataKey='confirm' stroke='#a72c0d' dot={false} />
+                                        </ComposedChart>
                                     </div>
-                                </div>
-                                <div>
-                                    <ComposedChart width={405} height={105} data={testData}
-                                        margin={{ top: 0, right: 0, bottom: -17, left: 0 }}>
-                                        <XAxis dataKey="name" tickLine={false} axisLine={true} style={{ fontSize: '9px' }} />
-                                        <YAxis hide={true} />
-                                        <Tooltip />
-                                        <Bar dataKey='pv' barSize={8} stackId="a" fill='#08415a' />
-                                        <Line type='monotone' dataKey='uv' stroke='#a72c0d' dot={false} />
-                                    </ComposedChart>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </Layout>
-            </Layout>
-        )
+                    </Layout>
+                </Layout >
+            )
+        }
+        else {
+            return null
+        }
     }
 }
 

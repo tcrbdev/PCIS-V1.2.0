@@ -29,7 +29,11 @@ import {
 
     SET_OPEN_PLAN_OPEN_BRANCH_REQUEST,
 
-    SET_LOCATION_DIRECTION_MARKER_CHANGE
+    SET_LOCATION_DIRECTION_MARKER_CHANGE,
+
+    GET_NANO_VISIT_POPUP_INFO_REQUEST,
+    GET_NANO_VISIT_POPUP_INFO_SUCCESS,
+    GET_NANO_VISIT_POPUP_INFO_FAILURE
 } from '../constants/actionsType'
 
 const initialStateObj = {}
@@ -55,6 +59,34 @@ export const NANO_MASTER_ALL = (state = initialStateObj, action) => {
             break;
         case LOAD_NANO_MASTER_ALL_FAILURE:
             return action.payload
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const NANO_VISIT_POPUP_INFO = (state = initialStateObj, action) => {
+    switch (action.type) {
+        case GET_NANO_VISIT_POPUP_INFO_SUCCESS:
+            return action.payload.nanoStopApproval
+            break;
+        case GET_NANO_VISIT_POPUP_INFO_FAILURE:
+            return action.payload
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const NANO_VISIT_POPUP_STATUS = (state = false, action) => {
+    switch (action.type) {
+        case GET_NANO_VISIT_POPUP_INFO_SUCCESS:
+            return true
+            break;
+        case GET_NANO_VISIT_POPUP_INFO_FAILURE:
+            return state
             break;
         default:
             return state

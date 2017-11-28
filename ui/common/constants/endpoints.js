@@ -59,4 +59,6 @@ export const INSERT_UPDATE_MARKER_NOTE_URL = `${url}/nano/marker/note`
 
 export const GET_PORTFOLIO_QUALITY_CHART_URL = `${url}/nano/portfolioquality/chart`
 export const GET_SALE_SUMMARY_CHART_URL = `${url}/nano/salesummary/chart`
+export const GET_NANO_STOP_APPROVAL_URL = `${url}/nano/nano/stopapproval`
+
 

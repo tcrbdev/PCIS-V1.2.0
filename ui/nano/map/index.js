@@ -92,6 +92,10 @@ const onDomReady = (isImage) => {
     if (isImage == 'chart') {
         iwOuter.addClass(styles['info-chart'])
     }
+    else if (isImage == 'sale') {
+        iwOuter.addClass(styles['sale-chart'])
+    }
+
     let iwCloseBtn = iwOuter.next();
     iwCloseBtn.remove()
     iwOuter.css({ opacity: 1 })
@@ -322,14 +326,14 @@ const getMarketSummaryColumns = () => {
         className: `${styles['align-right-hightlight']} ${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
             dataIndex: 'Amt',
-            width: '8%',
+            width: '9%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
                 return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `` : `${text}`}</span>
             }
         }, {
             dataIndex: 'OS',
-            width: '8%',
+            width: '9%',
             className: `${styles['header-hide']} ${styles['align-right-hightlight']} ${styles['align-center']} sm-padding`,
             render: (text, record, index) => {
                 return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
@@ -344,7 +348,7 @@ const getMarketSummaryColumns = () => {
         ),
         dataIndex: 'SETUP',
         key: 'SETUP',
-        width: '16%',
+        width: '15%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
@@ -358,7 +362,7 @@ const getMarketSummaryColumns = () => {
         ),
         dataIndex: 'REJECT',
         key: 'REJECT',
-        width: '16%',
+        width: '15%',
         className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return <span className={text < 0 && styles['red-font']}>{record.Detail == "Achive" ? `${parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1)}%` : text}</span>
@@ -522,7 +526,7 @@ const getColumnCA = [{
     title: (<span className={styles['align-center']}>OS Bal.</span>),
     className: `${styles['hight-light']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
+        title: (<div className={styles['div-center']}><span>Cust</span></div>),
         dataIndex: 'OS_App',
         key: 'OS_App',
         width: '4.5%',
@@ -544,7 +548,7 @@ const getColumnCA = [{
     title: 'Setup',
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
+        title: (<div className={styles['div-center']}><span>Cust</span></div>),
         dataIndex: 'Setup_App',
         key: 'Setup_App',
         width: '4.5%',
@@ -566,7 +570,7 @@ const getColumnCA = [{
     title: 'Reject',
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
+        title: (<div className={styles['div-center']}><span>Cust</span></div>),
         dataIndex: 'Reject_App',
         key: 'Reject_App',
         width: '4.5%',
@@ -588,7 +592,7 @@ const getColumnCA = [{
     title: 'Cancel',
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
+        title: (<div className={styles['div-center']}><span>Cust</span></div>),
         dataIndex: 'Cancel_App',
         key: 'Cancel_App',
         width: '4.5%',
@@ -610,7 +614,7 @@ const getColumnCA = [{
     title: 'Total',
     className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
     children: [{
-        title: (<div className={styles['div-center']}><span>App</span></div>),
+        title: (<div className={styles['div-center']}><span>Cust</span></div>),
         dataIndex: 'Total_App',
         key: 'Total_App',
         width: '4.5%',
@@ -634,18 +638,23 @@ const getLinkDetail = (obj, props, branch_radius, current, handleDirection) => {
     return obj.map((m, i) => {
         const item = _.find(props.RELATED_BRANCH_DATA, { BranchCode: m.BranchCode })
         const radius = parseFloat(_.find(branch_radius, { BranchCode: m.BranchCode }).Radius).toFixed(1)
-        return (
-            <span>
-                <a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{m.BranchName}</a>{
-                    <Tooltip title={`Direction To ${item.BranchName}`} placement="top">
-                        <FontAwesome className={styles['icon-direction']}
-                            name="road"
-                            onClick={() => handleDirection(
-                                { name: current.BranchName, Latitude: current.BranchLatitude, Longitude: current.BranchLongitude },
-                                { name: item.BranchName, Latitude: item.BranchLatitude, Longitude: item.BranchLongitude })} />
-                    </Tooltip>
-                } {radius}Km. {(i + 1) < obj.length && ' / '}
-            </span>)
+        if (item) {
+            return (
+                <span>
+                    <a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{m.BranchName}</a>{
+                        <Tooltip title={`Direction To ${item.BranchName ? item.BranchName : ''}`} placement="top">
+                            <FontAwesome className={styles['icon-direction']}
+                                name="road"
+                                onClick={() => handleDirection(
+                                    { name: current.BranchName, Latitude: current.BranchLatitude, Longitude: current.BranchLongitude },
+                                    { name: item.BranchName, Latitude: item.BranchLatitude, Longitude: item.BranchLongitude })} />
+                        </Tooltip>
+                    } {radius}Km. {(i + 1) < obj.length && ' / '}
+                </span>)
+        }
+        else {
+            return null
+        }
     })
 }
 
@@ -753,6 +762,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
 
             const start_work_date = !_.isEmpty(item.TM_WorkPeriod) ? moment.duration(moment(new Date()).diff(moment(item.TM_WorkPeriod)))._data : ''
             const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
+            item.work_date_format = work_date_format
 
             return (
                 <div>
@@ -820,7 +830,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                                                     <div>
                                                         <div className={styles['text-descrition']}>
                                                             <div>
-                                                                <span>{`${current_branch.MarketShop} Shop `}</span>
+                                                                <span style={{ position: 'relative' }}>{`${current_branch.MarketShop} Shop `}<span style={{ position: 'absolute', color: '#000', left: '0', textAlign: 'right', width: '100%', fontSize: '8px' }}></span></span>
                                                                 <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
                                                             </div>
                                                             <span>
@@ -903,7 +913,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                             item.showSaleSummary &&
                             <InfoWindow
                                 title={item.MarketName}
-                                onDomReady={() => onDomReady('chart')}>
+                                onDomReady={() => onDomReady('sale')}>
                                 <SaleSummaryChart item={item} ON_CLOSE_MARKER={() => props.setOpenBranchMarker(item, RELATED_BRANCH_DATA, false)} />
                             </InfoWindow>
                         }
@@ -1130,7 +1140,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                             item.showSaleSummary &&
                             <InfoWindow
                                 title={item.MarketName}
-                                onDomReady={() => onDomReady('chart')}>
+                                onDomReady={() => onDomReady('sale')}>
                                 <SaleSummaryChart item={item} ON_CLOSE_MARKER={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)} />
                             </InfoWindow>
                         }
@@ -1169,7 +1179,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                                     <div>
                                                         <div className={styles['text-descrition']}>
                                                             <div>
-                                                                <span>{`${item.MarketShop} Shop `}</span>
+                                                                <span style={{ position: 'relative' }}>{`${item.MarketShop} Shop `}<span style={{ position: 'absolute', color: '#000', left: '0', textAlign: 'right', width: '100%', fontSize: '8px' }}></span></span>
                                                                 <span>
                                                                     {`Distance `}
                                                                     {<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}
@@ -1189,7 +1199,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                                                     }
                                                                     {
                                                                         <span>
-                                                                            {` / Reg.${item.TelsCreateDate ? moment(item.TelsCreateDate).format("MMM-YY") : 'unknow'}`}
+                                                                            {` / Open ${item.TelsCreateDate ? moment(item.TelsCreateDate).format("MMM-YY") : 'unknow'}`}
                                                                         </span>
                                                                     }
                                                                 </span>
@@ -1529,7 +1539,7 @@ class PlanOpenBranchMarker extends Component {
     }
 }
 
-const getPlanOpenBranchMarker = (props, handleDirection) => {
+const getPlanOpenBranchMarker = (props, handleDirection, test) => {
 
     const { NANO_FILTER_CRITERIA, RELATED_PLAN_OPEN_BRANCH_DATA, setOpenPlanOpenBranch } = props
 

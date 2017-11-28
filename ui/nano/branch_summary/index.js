@@ -395,7 +395,7 @@ class BranchSummary extends Component {
                 </div>
                 <div>
                     <div className={styles['icon-header-container']}>
-                        <div className={`${this.state.collapsed && styles['hide']} ${(!auth_pass) && styles['hide']}`} style={{ opacity: this.props.hiddenPanel ? 0 : 1 }}>
+                        <div className={`${this.state.collapsed && styles['hide']} ${(!auth_pass) && styles['hide']}`} style={{ opacity: this.props.hiddenPanel ? 0 : 1, width: '120px', height: '100%' }}>
                             <Tooltip title="View">
                                 <Dropdown overlay={this.getMenuGroupBy()} placement="bottomCenter">
                                     <div className={styles['icon-split']}>
@@ -404,7 +404,7 @@ class BranchSummary extends Component {
                                     </div>
                                 </Dropdown>
                             </Tooltip>
-                            <div className={styles['ca-icon-lists']}>
+                            <div className={styles['ca-icon-lists']} style={{ height: '100%', justifyContent: 'space-around' }}>
                                 <ModalSaleSummaryChart />
                                 <ModalAreaSummary />
                                 <ModalPortfolioChart />

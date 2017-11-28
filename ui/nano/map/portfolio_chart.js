@@ -816,7 +816,7 @@ class CurrentPieChart extends Component {
                     <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
                     <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
                     <text x={ex + (cos >= 0 ? 1 : -1)} y={ey - 4} textAnchor={textAnchor} fill="white" style={{ fontSize: '11px', fill: '#134973' }}  >
-                        {`${custom.act} Cust`}
+                        {`${parseInt(custom.act)} Cust`}
                     </text>
                     <text x={ex + (cos >= 0 ? 1 : -1) - 7} y={ey + 14} textAnchor={textAnchor} style={{ fontSize: '11px', fill: '#134973' }} >
                         {`${custom.TotalAmt}`}

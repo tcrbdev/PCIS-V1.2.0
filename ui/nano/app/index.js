@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withCookies } from 'react-cookie';
 import Draggable from 'react-draggable'
 
-import { Icon, Button, Collapse, Layout, Table, Tooltip, Popover, Menu, Dropdown } from 'antd';
+import { Icon, Button, Collapse, Layout, Table, Tooltip, Popover, Menu, Dropdown, Modal } from 'antd';
 import Scrollbar from 'react-smooth-scrollbar';
 
 import SummaryTable from '../summarytable'
@@ -16,8 +16,13 @@ import moment from 'moment'
 
 import {
     getNanoMasterData,
-    searchNanoData
+    searchNanoData,
+    getNanoVisitPopupInformation
 } from '../actions/nanomaster'
+
+import VisitPopup from './visit-popup'
+import ModalNanoStopApproval from '../modal_nano_stop_approval'
+import ModalNanoNewsFeed from '../modal_nano_news_feed'
 
 import { constantQueryType } from '../../common/constants/constants'
 import styles from './index.scss'
@@ -52,12 +57,13 @@ class Index extends Component {
     }
 
     initData() {
-        const { getNanoMasterData, cookies } = this.props
+        const { getNanoMasterData, getNanoVisitPopupInformation, cookies } = this.props
         if (process.env.NODE_ENV === 'production') {
             console.log("Cookie : ", cookies.get('authen_info'))
             if (!_.isEmpty(cookies.get('authen_info'))) {
                 const auth = cookies.get('authen_info')
                 getNanoMasterData(auth);
+                getNanoVisitPopupInformation({ EmpCode: auth.Session.sess_empcode });
             }
             else {
                 window.location.href = 'http://tc001pcis1p/login/'
@@ -65,6 +71,7 @@ class Index extends Component {
         }
         else {
             getNanoMasterData();
+            getNanoVisitPopupInformation({});
         }
     }
 
@@ -165,6 +172,9 @@ class Index extends Component {
         const Coordinates = document.getElementById('app').getBoundingClientRect()
         return (
             <Layout style={{ overflow: 'hidden' }}>
+                {
+                    <VisitPopup />
+                }
                 <Layout>
                     <Content className={styles['map-container']}>
                         {
@@ -177,7 +187,16 @@ class Index extends Component {
                     trigger={null}
                     collapsible
                     collapsed={this.state.collapsed}>
-
+                    <div className={styles['icon-header-container']} style={{ zIndex: '4', right: '23%' }}>
+                        <div className={`${this.state.collapsed && styles['hide']}`} style={{ opacity: this.state.collapsed ? 0 : 1, height: '100%' }}>
+                            <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
+                                <ModalNanoStopApproval />
+                            </div>
+                            {/* <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
+                                <ModalNanoNewsFeed />
+                            </div> */}
+                        </div>
+                    </div>
                     <Filter
                         searchHandle={this.searchHandle}
                     />
@@ -207,6 +226,12 @@ class Index extends Component {
                 <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
                     <div id="add-sale-summary-chart2" className={styles['multiple-window']}></div>
                 </Draggable>
+                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div id="nano-stop-approval" className={styles['multiple-window']}></div>
+                </Draggable>
+                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div id="nano-news-feed" className={styles['multiple-window']}></div>
+                </Draggable>
             </Layout>
         )
     }
@@ -230,5 +255,6 @@ export default connect(
         ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA
     }),
     {
-        getNanoMasterData: getNanoMasterData
+        getNanoMasterData: getNanoMasterData,
+        getNanoVisitPopupInformation: getNanoVisitPopupInformation
     })(CookiesHomeForm)

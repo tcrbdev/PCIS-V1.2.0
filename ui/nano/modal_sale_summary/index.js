@@ -141,7 +141,7 @@ const getColumnCA = (data) => {
         title: (<span className={styles['align-center']}>OS Bal.</span>),
         className: `${styles['hight-light']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'OS_App',
             key: 'OS_App',
             width: '4.5%',
@@ -163,7 +163,7 @@ const getColumnCA = (data) => {
         title: 'Setup',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'Setup_App',
             key: 'Setup_App',
             width: '4.5%',
@@ -185,7 +185,7 @@ const getColumnCA = (data) => {
         title: 'Reject',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'Reject_App',
             key: 'Reject_App',
             width: '4.5%',
@@ -207,7 +207,7 @@ const getColumnCA = (data) => {
         title: 'Cancel',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'Cancel_App',
             key: 'Cancel_App',
             width: '4.5%',
@@ -229,7 +229,7 @@ const getColumnCA = (data) => {
         title: 'Total',
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']}`,
         children: [{
-            title: (<div className={styles['div-center']}><span>App</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'Total_App',
             key: 'Total_App',
             width: '4.5%',
@@ -481,7 +481,7 @@ class ModalSaleSummary extends Component {
         const count_market = Object.keys(_.groupBy(this.props.CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode')).length
         const os = _.find(this.props.CA_SUMMARY_ONLY_MARKET_PENETRATION, { Status: 'OS' }) || { Total: 0, Ach: 0 }
         const branch = _.find(this.props.RELATED_EXITING_MARKET_DATA, { MarketCode: find ? find.MarketCode : '' })
-        if (find)
+        if (find && branch)
             return (
                 <div style={{ marginLeft: '0px' }}>
                     {
@@ -489,7 +489,6 @@ class ModalSaleSummary extends Component {
                         <Modal className={styles['modalComplititor']}
                             title={(<div className={styles['modal-note-header']}><Icon type="edit" /><span>{`Edit Note (${ca_name})`}</span></div>)}
                             visible={this.state.showAddNoteModal}
-                            onOk={false}
                             onCancel={this.handleCancelNote}
                             footer={null}
                         >
@@ -503,7 +502,6 @@ class ModalSaleSummary extends Component {
                         wrapClassName={`parent_salesummary ${styles['modalParentSaleSummary']}`}
                         className={styles['modalSaleSummary']}
                         visible={this.state.modalOpen}
-                        onOk={false}
                         onCancel={this.handleCancel}
                         footer={null}
                         closable={false}
