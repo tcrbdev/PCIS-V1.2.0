@@ -286,42 +286,89 @@ class Filter extends Component {
 
             const region_select = getFieldValue("RegionID") && getFieldValue("RegionID").join(',').split(',')
 
-            const PROVINCE_DATA = _.filter(MASTER_TARGET_MARKET_PROVINCE_DATA, (o) => !_.isEmpty(_.find(region_select, (s) => (s == o.RegionID))))
+            const PROVINCE_DATA = _.filter(MASTER_TARGET_MARKET_PROVINCE_DATA, (o) => !_.isEmpty(_.find(region_select, (s) => (s == o.Region))))
 
-            const haveDistrict = _.filter(PROVINCE_DATA, o => !_.isEmpty(o.District))
-            const notHaveDistrict = _.filter(PROVINCE_DATA, o => _.isEmpty(o.District))
+            const haveDistrict = _.filter(PROVINCE_DATA, o => !_.isEmpty(o.Amphor))
+            const notHaveDistrict = _.filter(PROVINCE_DATA, o => _.isEmpty(o.Amphor))
 
             let result = []
 
-            _.mapKeys(_.groupBy(haveDistrict, "ProvinceName"), (value, key) => {
+            _.mapKeys(_.groupBy(PROVINCE_DATA, "Province"), (value, key) => {
+
                 let group = {
                     label: key,
-                    value: key,
-                    key: key,
-                    children: value.map(m => ({
-                        label: m.District,
-                        value: m.District,
-                        key: m.District
-                    }))
+                    value: value.map(o => o.PotentialMarketCode).join(","),
+                    key: value.map(o => o.PotentialMarketCode).join(","),
+                    children: []
                 }
+
+                let amphor_group = []
+
+                _.mapKeys(_.groupBy(value, "Amphor"), (a_value, a_key) => {
+                    let a_group = {
+                        label: a_key,
+                        value: a_value.map(o => o.PotentialMarketCode).join(","),
+                        key: a_value.map(o => o.PotentialMarketCode).join(",")
+                    }
+                    amphor_group.push(a_group)
+                })
+
+                group.children = amphor_group
 
                 result.push(group)
             })
 
-            _.forEach(notHaveDistrict, (item, key) => {
-                result.push({
-                    label: item.ProvinceName,
-                    value: item.ProvinceName,
-                    key: item.ProvinceName
-                })
-            })
+            // _.forEach(notHaveDistrict, (item, key) => {
+            //     result.push({
+            //         label: item.Province,
+            //         value: item.Province,
+            //         key: item.Province
+            //     })
+            // })
 
             return [{
                 label: 'Select All',
-                value: [...haveDistrict.map(item => item.District), ..._.uniqBy(PROVINCE_DATA, "ProvinceName").map(item => item.ProvinceName)].join(','),
-                key: [...haveDistrict.map(item => item.District), ..._.uniqBy(PROVINCE_DATA, "ProvinceName").map(item => item.ProvinceName)].join(','),
+                value: [..._.uniqBy(PROVINCE_DATA, "PotentialMarketCode").map(item => item.PotentialMarketCode)].join(','),
+                key: [..._.uniqBy(PROVINCE_DATA, "PotentialMarketCode").map(item => item.PotentialMarketCode)].join(','),
                 children: _.orderBy(result, 'key', 'asc')
             }]
+
+            // const PROVINCE_DATA = _.filter(MASTER_TARGET_MARKET_PROVINCE_DATA, (o) => !_.isEmpty(_.find(region_select, (s) => (s == o.RegionID))))
+
+            // const haveDistrict = _.filter(PROVINCE_DATA, o => !_.isEmpty(o.District))
+            // const notHaveDistrict = _.filter(PROVINCE_DATA, o => _.isEmpty(o.District))
+
+            // let result = []
+
+            // _.mapKeys(_.groupBy(haveDistrict, "ProvinceName"), (value, key) => {
+            //     let group = {
+            //         label: key,
+            //         value: key,
+            //         key: key,
+            //         children: value.map(m => ({
+            //             label: m.District,
+            //             value: m.District,
+            //             key: m.District
+            //         }))
+            //     }
+
+            //     result.push(group)
+            // })
+
+            // _.forEach(notHaveDistrict, (item, key) => {
+            //     result.push({
+            //         label: item.ProvinceName,
+            //         value: item.ProvinceName,
+            //         key: item.ProvinceName
+            //     })
+            // })
+
+            // return [{
+            //     label: 'Select All',
+            //     value: [...haveDistrict.map(item => item.District), ..._.uniqBy(PROVINCE_DATA, "ProvinceName").map(item => item.ProvinceName)].join(','),
+            //     key: [...haveDistrict.map(item => item.District), ..._.uniqBy(PROVINCE_DATA, "ProvinceName").map(item => item.ProvinceName)].join(','),
+            //     children: _.orderBy(result, 'key', 'asc')
+            // }]
         }
     }
 

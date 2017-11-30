@@ -1349,6 +1349,12 @@ background-image: linear-gradient(-225deg, #A445B2 0%, #D41872 52%, #FF0066 100%
         max-width: 610px !important;
     }
 
+    .potential-marker
+    {
+        width: 510px !important;
+        max-width: 510px !important;
+    }
+
 
 .image-preview
 {
@@ -1384,6 +1390,11 @@ background-image: linear-gradient(-225deg, #A445B2 0%, #D41872 52%, #FF0066 100%
     font-size: 14px;
     margin-left: 3px;
     cursor: pointer;
+}
+
+.icon-direction:hover
+{
+color: #03a9f4;
 }
 
 .modalDirectionInfo
@@ -1583,4 +1594,120 @@ color: #FFF;
             color: #FFF;
             font-size: 9px;
         }
+    }
+
+    .potential-info
+    {
+        display: flex;
+        flex-direction: row;
+        margin: 5px;
+
+        & > div:nth-child(odd)
+        {
+            margin-right: 5px;
+        }
+
+        & > div:nth-child(even)
+        {
+            margin-left: 5px;
+        }
+    }
+
+    .card-potential-img-padding
+    {
+        & > [class=ant-card-body]
+        {
+            width: 250px;
+            height: 150px;
+            padding: 5px;
+        }
+    }
+
+    .card-potential-padding-detail
+    {
+        & > [class=ant-card-head]
+        {
+            height: 35px;
+            padding-left: 5px;
+
+            & > div
+            {
+                font-size: 12px;
+                line-height: 35px;
+            }
+        }
+
+        & > [class=ant-card-body]
+        {
+            padding: 8px;
+            height: 80%;
+
+            & > section
+            {
+                height: 100%;
+            }
+        }
+    }
+
+    .card-potential-padding
+    {
+        & > [class=ant-card-head]
+        {
+            height: 35px;
+            padding-left: 5px;
+
+            & > div
+            {
+                font-size: 12px;
+                line-height: 35px;
+            }
+        }
+
+        & > [class=ant-card-body]
+        {
+            padding: 8px;
+            height: 100%;
+
+            & > section
+            {
+                height: 100%;
+            }
+        }
+    }
+
+    .card-potential-head-padding
+    {
+        & > [class=ant-card-head]
+        {
+            background: #fafafa;
+            height: 30px;
+            padding-left: 5px;
+
+            & > div
+            {
+                font-size: 12px;
+                line-height: 30px;
+            }
+        }
+
+        & > [class=ant-card-body]
+        {
+            padding: 8px;
+        }
+    }
+
+    .layout-day
+    {
+        width: 18px;
+        height: 18px;
+        border :3px solid;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 3px;
+        font-size: 8px;
+        color:#505050;
+        padding: 3px;
+        margin-right: 5px;
+        margin-top: 3px;
     }

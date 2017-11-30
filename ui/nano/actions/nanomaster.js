@@ -440,7 +440,7 @@ export const setOpenPlanOpenBranch = (targetMarker, currentState, isOpen) => dis
 
 export const setOpenTargetMarketMarker = (targetMarker, currentState, isOpen) => dispatch => {
 
-    let item = _.find(currentState, { MarketName: targetMarker.MarketName })
+    let item = _.find(currentState, { PotentialMarketCode: targetMarker.PotentialMarketCode })
     item.showInfo = isOpen
 
     let newState = _.cloneDeep(currentState)
