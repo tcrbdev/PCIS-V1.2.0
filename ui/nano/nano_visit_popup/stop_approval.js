@@ -12,7 +12,9 @@ import styles from './index.scss'
 class StopApproval extends Component {
 
     state = {
-        showSubPage: {}
+        showSubPage: {},
+        filteredInfo: null,
+        sortedInfo: null,
     }
 
     getHeaderTitle = (props) => {
@@ -175,7 +177,25 @@ class StopApproval extends Component {
                                                                 </Tooltip>
                                                             </div>
                                                         )
-                                                    }
+                                                    },
+                                                    sorter: (a, b) => a.MarketName.length - b.MarketName.length
+                                                }, {
+                                                    title: 'CA Name',
+                                                    className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
+                                                    dataIndex: 'CAName',
+                                                    key: 'CAName',
+                                                    render: (text, record, index) => {
+                                                        return (
+                                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                                <Tooltip title={`${text}`} placement="left" >
+                                                                    <span className={styles['text-ellipsis-visit-b']}>{text}</span>
+                                                                </Tooltip>
+                                                            </div>
+                                                        )
+                                                    },
+                                                    filters: this.state.showSubPage.result.map(item => ({ text: item.CAName, value: item.CAName })),
+                                                    onFilter: (value, record) => record.CAName.includes(value),
+                                                    sorter: (a, b) => a.CAName.length - b.CAName.length
                                                 }, {
                                                     title: 'Cust. Name',
                                                     className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
@@ -190,28 +210,13 @@ class StopApproval extends Component {
                                                                 </Tooltip>
                                                             </div>
                                                         )
-                                                    }
-                                                }, {
-                                                    title: 'CA Name',
-                                                    className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                                    dataIndex: 'CAName',
-                                                    key: 'CAName',
-
-                                                    render: (text, record, index) => {
-                                                        return (
-                                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                                <Tooltip title={`${text}`} placement="left" >
-                                                                    <span className={styles['text-ellipsis-visit-b']}>{text}</span>
-                                                                </Tooltip>
-                                                            </div>
-                                                        )
-                                                    }
+                                                    },
+                                                    sorter: (a, b) => a.AccountName.length - b.AccountName.length
                                                 }, {
                                                     title: (<div className={styles['div-center']}><span>DPD</span><br /><span>Bucket</span></div>),
                                                     className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
                                                     dataIndex: 'DPDBucket',
                                                     key: 'DPDBucket',
-
                                                     render: (text, record, index) => {
                                                         return <span className={`${styles['align-right']} ${styles['span-text']}`}>{text}</span>
                                                     }
@@ -220,7 +225,6 @@ class StopApproval extends Component {
                                                     className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
                                                     dataIndex: 'Principle',
                                                     key: 'Principle',
-
                                                     render: (text, record, index) => {
                                                         return <span className={`${styles['align-right']} ${styles['span-text']}`}>{text}</span>
                                                     }
@@ -229,7 +233,6 @@ class StopApproval extends Component {
                                                     className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
                                                     dataIndex: 'Amount To Collect',
                                                     key: 'Amount To Collect',
-
                                                     render: (text, record, index) => {
                                                         return <span className={`${styles['align-right']} ${styles['span-text']}`}>{text}</span>
                                                     }
