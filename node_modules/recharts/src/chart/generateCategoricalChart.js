@@ -2,7 +2,6 @@ import React, { Component, cloneElement, isValidElement, createElement } from 'r
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Smooth from 'react-smooth';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -90,7 +89,7 @@ const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-     /**
+    /**
      * Returns default, reset state for the categorical chart.
      * @param {Object} props Props object to use when creating the default state
      * @return {Object} Whole new state
@@ -268,7 +267,7 @@ const generateCategoricalChart = ({
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
-        const { type, dataKey, allowDataOverflow, scale } = child.props;
+        const { type, dataKey, allowDataOverflow, scale, ticks } = child.props;
         const axisId = child.props[axisIdKey];
         const displayedData = this.constructor.getDisplayedData(props, {
           graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
@@ -330,7 +329,7 @@ const generateCategoricalChart = ({
           }
           if (type === 'number') {
             // To detect wether there is any reference lines whose props alwaysShow is true
-            domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
+            domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
 
             if (child.props.domain) {
               domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
@@ -436,7 +435,9 @@ const generateCategoricalChart = ({
 
     getActiveCoordinate(tooltipTicks, activeIndex, rangeObj) {
       const { layout } = this.props;
-      const entry = tooltipTicks[activeIndex];
+      const entry = _.get(tooltipTicks.filter(tick => (
+        tick && (tick.index === activeIndex)
+      )), '[0]');
 
       if (entry) {
         if (layout === 'horizontal') {
@@ -492,7 +493,7 @@ const generateCategoricalChart = ({
 
       const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
       const pos = this.calculateTooltipPos(rangeObj);
-      const activeIndex = calculateActiveTickIndex(pos, ticks, axis);
+      const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
 
       if (activeIndex >= 0 && tooltipTicks) {
         const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
@@ -1119,8 +1120,7 @@ const generateCategoricalChart = ({
         restProps = this.getCursorRectangle();
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
-        const { cx, cy, radius, startAngle, endAngle, points } = this.getCursorPoints();
-        const delta = endAngle - startAngle;
+        const { cx, cy, radius, startAngle, endAngle } = this.getCursorPoints();
         restProps = {
           cx, cy, startAngle, endAngle, innerRadius: radius, outerRadius: radius,
         };
@@ -1154,10 +1154,7 @@ const generateCategoricalChart = ({
         ...axisOption,
         className: axisType,
         key: element.key || `${displayName}-${index}`,
-        ticks: getTicksOfAxis(axisOption, true).map(entry => ({
-          ...entry,
-          coordinate: entry.coordinate - entry.offset,
-        })),
+        ticks: getTicksOfAxis(axisOption, true),
       });
     };
 
@@ -1205,13 +1202,14 @@ const generateCategoricalChart = ({
       const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxis = getAnyElementOfObject(yAxisMap);
+      const props = element.props || {};
 
       return cloneElement(element, {
         key: element.key || 'grid',
-        x: offset.left,
-        y: offset.top,
-        width: offset.width,
-        height: offset.height,
+        x: isNumber(props.x) ? props.x : offset.left,
+        y: isNumber(props.y) ? props.y : offset.top,
+        width: isNumber(props.width) ? props.width : offset.width,
+        height: isNumber(props.height) ? props.height : offset.height,
         xAxis,
         yAxis,
         offset,
@@ -1291,10 +1289,10 @@ const generateCategoricalChart = ({
         key: element.key || '_recharts-brush',
         onChange: combineEventHandlers(this.handleBrushChange, null, element.props.onChange),
         data,
-        x: offset.left,
-        y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
-        width: isNumber(element.props.width) && element.props.width ?
-          element.props.width : offset.width,
+        x: isNumber(element.props.x) ? element.props.x : offset.left,
+        y: isNumber(element.props.y) ? element.props.y :
+          (offset.top + offset.height + offset.brushBottom - (margin.bottom || 0)),
+        width: isNumber(element.props.width) ? element.props.width : offset.width,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,
@@ -1354,6 +1352,7 @@ const generateCategoricalChart = ({
         value: activePoint.value,
         key: `${key}-activePoint-${childIndex}`,
         ...getPresentationAttributes(activeDot),
+        ...filterEventAttributes(activeDot),
       };
 
       result.push(this.renderActiveDot(activeDot, dotProps, childIndex));

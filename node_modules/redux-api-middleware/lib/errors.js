@@ -1,3 +1,28 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ApiError = exports.RequestError = exports.InternalError = exports.InvalidRSAA = undefined;
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
  * Error class for an RSAA that does not conform to the RSAA definition
  *
@@ -5,97 +30,103 @@
  * @access public
  * @param {array} validationErrors - an array of validation errors
  */
-'use strict';
-
-var _inherits = require('babel-runtime/helpers/inherits')['default'];
-
-var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
-
-exports.__esModule = true;
-
-var InvalidRSAA = (function (_Error) {
-  _inherits(InvalidRSAA, _Error);
+var InvalidRSAA = function (_Error) {
+  (0, _inherits3.default)(InvalidRSAA, _Error);
 
   function InvalidRSAA(validationErrors) {
-    _classCallCheck(this, InvalidRSAA);
+    (0, _classCallCheck3.default)(this, InvalidRSAA);
 
-    _Error.call(this);
-    this.name = 'InvalidRSAA';
-    this.message = 'Invalid RSAA';
-    this.validationErrors = validationErrors;
+    var _this = (0, _possibleConstructorReturn3.default)(this, (InvalidRSAA.__proto__ || (0, _getPrototypeOf2.default)(InvalidRSAA)).call(this));
+
+    _this.name = 'InvalidRSAA';
+    _this.message = 'Invalid RSAA';
+    _this.validationErrors = validationErrors;
+    return _this;
   }
 
-  /**
-   * Error class for a custom `payload` or `meta` function throwing
-   *
-   * @class InternalError
-   * @access public
-   * @param {string} message - the error message
-   */
   return InvalidRSAA;
-})(Error);
+}(Error);
 
-var InternalError = (function (_Error2) {
-  _inherits(InternalError, _Error2);
+/**
+ * Error class for a custom `payload` or `meta` function throwing
+ *
+ * @class InternalError
+ * @access public
+ * @param {string} message - the error message
+ */
+
+
+var InternalError = function (_Error2) {
+  (0, _inherits3.default)(InternalError, _Error2);
 
   function InternalError(message) {
-    _classCallCheck(this, InternalError);
+    (0, _classCallCheck3.default)(this, InternalError);
 
-    _Error2.call(this);
-    this.name = 'InternalError';
-    this.message = message;
+    var _this2 = (0, _possibleConstructorReturn3.default)(this, (InternalError.__proto__ || (0, _getPrototypeOf2.default)(InternalError)).call(this));
+
+    _this2.name = 'InternalError';
+    _this2.message = message;
+    return _this2;
   }
 
-  /**
-   * Error class for an error raised trying to make an API call
-   *
-   * @class RequestError
-   * @access public
-   * @param {string} message - the error message
-   */
   return InternalError;
-})(Error);
+}(Error);
 
-var RequestError = (function (_Error3) {
-  _inherits(RequestError, _Error3);
+/**
+ * Error class for an error raised trying to make an API call
+ *
+ * @class RequestError
+ * @access public
+ * @param {string} message - the error message
+ */
+
+
+var RequestError = function (_Error3) {
+  (0, _inherits3.default)(RequestError, _Error3);
 
   function RequestError(message) {
-    _classCallCheck(this, RequestError);
+    (0, _classCallCheck3.default)(this, RequestError);
 
-    _Error3.call(this);
-    this.name = 'RequestError';
-    this.message = message;
+    var _this3 = (0, _possibleConstructorReturn3.default)(this, (RequestError.__proto__ || (0, _getPrototypeOf2.default)(RequestError)).call(this));
+
+    _this3.name = 'RequestError';
+    _this3.message = message;
+    return _this3;
   }
 
-  /**
-   * Error class for an API response outside the 200 range
-   *
-   * @class ApiError
-   * @access public
-   * @param {number} status - the status code of the API response
-   * @param {string} statusText - the status text of the API response
-   * @param {object} response - the parsed JSON response of the API server if the
-   *  'Content-Type' header signals a JSON response
-   */
   return RequestError;
-})(Error);
+}(Error);
 
-var ApiError = (function (_Error4) {
-  _inherits(ApiError, _Error4);
+/**
+ * Error class for an API response outside the 200 range
+ *
+ * @class ApiError
+ * @access public
+ * @param {number} status - the status code of the API response
+ * @param {string} statusText - the status text of the API response
+ * @param {object} response - the parsed JSON response of the API server if the
+ *  'Content-Type' header signals a JSON response
+ */
+
+
+var ApiError = function (_Error4) {
+  (0, _inherits3.default)(ApiError, _Error4);
 
   function ApiError(status, statusText, response) {
-    _classCallCheck(this, ApiError);
+    (0, _classCallCheck3.default)(this, ApiError);
 
-    _Error4.call(this);
-    this.name = 'ApiError';
-    this.status = status;
-    this.statusText = statusText;
-    this.response = response;
-    this.message = status + ' - ' + statusText;
+    var _this4 = (0, _possibleConstructorReturn3.default)(this, (ApiError.__proto__ || (0, _getPrototypeOf2.default)(ApiError)).call(this));
+
+    _this4.name = 'ApiError';
+    _this4.status = status;
+    _this4.statusText = statusText;
+    _this4.response = response;
+    _this4.message = status + ' - ' + statusText;
+    return _this4;
   }
 
   return ApiError;
-})(Error);
+}(Error);
 
 exports.InvalidRSAA = InvalidRSAA;
 exports.InternalError = InternalError;

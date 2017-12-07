@@ -14,10 +14,8 @@ import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
+  getPresentationAttributes, isSsr, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
-
-const FACTOR = 1.0000001;
 
 @pureRender
 class Line extends Component {
@@ -43,7 +41,7 @@ class Line extends Component {
     connectNulls: PropTypes.bool,
     hide: PropTypes.bool,
 
-     // whether have dot in line
+    // whether have dot in line
     activeDot: PropTypes.oneOfType([
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
@@ -218,9 +216,9 @@ class Line extends Component {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { points, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItem = findChildByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
-    if (!errorBarItem) { return null; }
+    if (!errorBarItems) { return null; }
 
     function dataPointFormatter(dataPoint, dataKey) {
       return {
@@ -231,13 +229,14 @@ class Line extends Component {
       };
     }
 
-    return React.cloneElement(errorBarItem, {
+    return errorBarItems.map((item, i) => React.cloneElement(item, {
+      key: i,
       data: points,
       xAxis,
       yAxis,
       layout,
       dataPointFormatter,
-    });
+    }));
   }
 
   renderDotItem(option, props) {
@@ -248,7 +247,7 @@ class Line extends Component {
     } else if (_.isFunction(option)) {
       dotItem = option(props);
     } else {
-      const className = classNames('recharts-line-dot', option.className);
+      const className = classNames('recharts-line-dot', option ? option.className : '');
       dotItem = <Dot {...props} className={className} />;
     }
 
@@ -261,16 +260,19 @@ class Line extends Component {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-    const { dot, points } = this.props;
+    const { dot, points, dataKey } = this.props;
     const lineProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
+    const dotEvents = filterEventAttributes(dot);
     const dots = points.map((entry, i) => {
       const dotProps = {
         key: `dot-${i}`,
         r: 3,
         ...lineProps,
         ...customDotProps,
+        ...dotEvents,
         value: entry.value,
+        dataKey,
         cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
       };
 
@@ -298,7 +300,8 @@ class Line extends Component {
 
   renderCurveWithAnimation(needClip) {
     const { points, strokeDasharray, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId, ...other } = this.props;
+      animationDuration, animationEasing, animationId, width, height, ...other
+    } = this.props;
     const { prevPoints, totalLength } = this.state;
 
     return (
@@ -325,7 +328,10 @@ class Line extends Component {
                   return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
                 }
 
-                return entry;
+                // magic number of faking previous x and y location
+                const interpolatorX = interpolateNumber(width * 2, entry.x);
+                const interpolatorY = interpolateNumber(height / 2, entry.y);
+                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
               });
               return this.renderCurveStatically(stepData, needClip);
             }
