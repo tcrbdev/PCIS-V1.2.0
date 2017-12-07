@@ -13,12 +13,13 @@ module.exports = {
         './ui/common/theme/reset.css',
         './ui/common/theme/antd.min.css',
         './ui/common/theme/smooth-scrollbar.css',
+        './ui/common/theme/react-big-calendar.css',
         './ui/common/theme/quill.core.css',
         './ui/common/theme/quill.bubble.css',
         './ui/common/theme/quill.snow.css',
         './ui/common/theme/elements.css',
         './vendors/jquery/jquery-3.2.1.min.js',
-        './ui/client/index.js'],
+        './ui/common_backends/index.js'],
     output: {
         publicPath: `http://${config.webPackHost}:${config.webPackDevServPort}/static/`,
         path: path.join(__dirname, 'static'),
@@ -31,7 +32,7 @@ module.exports = {
             use: {
                 loader: 'babel-loader',
                 options: {
-                    babelra: false,
+                    babelrc: false,
                     presets: ["es2015", "stage-0", "react"],
                     plugins: ['transform-runtime']
                 }

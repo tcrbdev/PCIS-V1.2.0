@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { Input, Button, DatePicker, Timeline, Modal, Spin, Table } from 'antd';
-import { Card, Icon, Image } from 'semantic-ui-react'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -63,31 +62,6 @@ class Home extends Component {
 
     expandedRowRender(record) {
         console.log("Record : ", record)
-
-        return (
-            <Card>
-                <Image src='http://172.17.9.94/pcisservices/StaffPicture/58385 Janewit.jpg' />
-                <Card.Content>
-                    <Card.Header>
-                        {record.RegionCode}
-                    </Card.Header>
-                    <Card.Meta>
-                        <span className='date'>
-                            {record.ProvinceNameTH}
-                        </span>
-                    </Card.Meta>
-                    <Card.Description>
-                        {record.ProvinceNameEN}
-                    </Card.Description>
-                </Card.Content>
-                <Card.Content extra>
-                    <a>
-                        <Icon name='user' />
-                        22 Friends
-                        </a>
-                </Card.Content>
-            </Card>
-        )
     }
 
     gotoCustomerInfo() {
