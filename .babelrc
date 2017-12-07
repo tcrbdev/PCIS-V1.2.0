@@ -13,6 +13,14 @@
             {
                 "libraryName": "antd",
                 "libraryDirectory": "lib"
+            },
+            "css-modules-transform",
+            {
+                "preprocessCss": "./lib/processSass.js",
+                "extensions": [
+                    ".css",
+                    ".scss"
+                ]
             }
         ]
     ]

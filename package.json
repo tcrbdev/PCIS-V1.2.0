@@ -8,6 +8,7 @@
     "json-server": "json-server --watch api/db.json --routes api/routes.json --port 5000",
     "web-nano": "webpack-dev-server --config ui/webpack/webpack.config.nano.js",
     "web-dev": "webpack-dev-server --config ui/webpack/webpack.config.js",
+    "web-backend": "webpack-dev-server --config ui/webpack/webpack.config.backend.js",
     "build": "webpack --config ui/webpack/webpack.config.production.js",
     "build-nano": "webpack --config ui/webpack/webpack.config.nano.production.js",
     "test": "echo \"Error: no test specified\" && exit 1"

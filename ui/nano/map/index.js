@@ -55,7 +55,7 @@ import icon_destination_b from '../../../image/icon_destination_b.png'
 import icon_destination_a2 from '../../../image/icon_destination_a2.png'
 import icon_destination_b2 from '../../../image/icon_destination_b2.png'
 import flag_r from '../../../image/Flag_R.png'
-import flag_y from '../../../image/Flag_Y.png'
+import Flag_Gray from '../../../image/Flag_Gray.png'
 import flag_g from '../../../image/Flag_G.png'
 
 import {
@@ -252,13 +252,13 @@ const handleBounds = (props, map) => {
                 bounds.extend(marker.position)
             })
 
-            RELATED_TARGET_MARKET_DATA.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
-            })
+            // RELATED_TARGET_MARKET_DATA.map((item, index) => {
+            //     let marker = new google.maps.Marker({
+            //         position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+            //     })
+            //     hasMarker = true
+            //     bounds.extend(marker.position)
+            // })
 
             RELATED_COMPLITITOR_DATA.map((item, index) => {
                 let marker = new google.maps.Marker({
@@ -1986,248 +1986,345 @@ class ModalDirectionInfo extends Component {
 
 }
 
-const getPotentialMarketMarker = (props, handleDirection) => {
-    if (props.RELATED_TARGET_MARKET_DATA) {
-        return props.RELATED_TARGET_MARKET_DATA.map((item, index) => {
-            let flag = flag_r
+class PotentialImage extends Component {
 
-            switch (item.FlagY1N0) {
-                case 1:
-                    flag = flag_g
-                    break;
-                case 0:
-                    flag = flag_y
-                    break;
-            }
+    state = {
+        potentialPage: 1,
+        showPotentialFullImage: false,
+        potentialImageIndex: 0
+    }
 
-            return (
-                <Marker
-                    key={`Potential_${index}`}
-                    onClick={() => props.setOpenTargetMarketMarker(item, props.RELATED_TARGET_MARKET_DATA, true)}
-                    position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                    title={item.MarketName}
-                    icon={{
-                        url: flag
-                    }}
-                >
-                    {
-                        item.showInfo &&
-                        (
-                            <InfoWindow
-                                onDomReady={() => onDomReady('potential')}>
-                                <Layout>
-                                    <div className={styles['headers']}>
-                                        <Icon
-                                            className="trigger"
-                                            type='shop' />
-                                        <span style={{ fontSize: '.9em' }}>
-                                            {`${item.PotentialMarketName} (${item.PotentialMarketCode})`}
-                                        </span>
-                                        <Icon
-                                            onClick={() => props.setOpenTargetMarketMarker(item, props.RELATED_TARGET_MARKET_DATA, false)}
-                                            className="trigger"
-                                            type='close' />
-                                    </div>
-                                    <Layout style={{ margin: '10px', background: '#ececec' }}>
-                                        <div style={{ margin: '-5px', display: 'flex', flexDirection: 'column' }}>
-                                            <div className={styles['potential-info']}>
-                                                <div>
-                                                    <Card
-                                                        noHovering
-                                                        className={styles['card-potential-img-padding']}>
-                                                        {
-                                                            item.Image ?
-                                                                <Popover content={
+    openImageNewTab = (url) => (window.open(url))
+
+    onPrevImage = () => {
+        this.setState({ potentialImageIndex: this.state.potentialImageIndex - 1 })
+    }
+
+    onNextImage = () => {
+        this.setState({ potentialImageIndex: this.state.potentialImageIndex + 1 })
+    }
+
+    render() {
+        const { item, index, handleDirection } = this.props
+        const { RELATED_TARGET_MARKET_DATA, setOpenTargetMarketMarker } = this.props.ownProps
+        const { POTENTIAL_IMAGE } = item
+
+        let flag = flag_r
+        let flag_status = 'ยังไม่ได้สำรวจ'
+        let flag_status_color = "#f04134"
+
+        switch (item.FlagY1N0) {
+            case 1:
+                flag = flag_g
+                flag_status = 'ผ่านเกณฑ์'
+                flag_status_color = "#95a023"
+                break;
+            case 0:
+                flag = Flag_Gray
+                flag_status = 'ไม่ผ่านเกณฑ์'
+                flag_status_color = "#565656"
+                break;
+        }
+
+        return (
+            <Marker
+                key={`Potential_${index}`}
+                onClick={() => setOpenTargetMarketMarker(item, RELATED_TARGET_MARKET_DATA, true)}
+                position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+                title={item.MarketName}
+                icon={{
+                    url: flag
+                }}
+            >
+                {
+                    item.showInfo &&
+                    (
+                        <InfoWindow
+                            onDomReady={() => onDomReady('potential')}>
+                            <Layout>
+                                <div className={styles['headers']}>
+                                    <Icon
+                                        className="trigger"
+                                        type='shop' />
+                                    <span style={{ fontSize: '.9em' }}>
+                                        {`${item.PotentialMarketName} (${process.env.NODE_ENV != 'production' && item.PotentialMarketCode})`}
+                                    </span>
+                                    <Icon
+                                        onClick={() => setOpenTargetMarketMarker(item, RELATED_TARGET_MARKET_DATA, false)}
+                                        className="trigger"
+                                        type='close' />
+                                </div>
+                                <Layout style={{ margin: '10px', background: '#ececec' }}>
+                                    <div style={{ margin: '-5px', display: 'flex', flexDirection: 'column' }}>
+                                        <div className={styles['potential-info']}>
+                                            <div>
+                                                <Card
+                                                    noHovering
+                                                    className={styles['card-potential-img-padding']}>
+                                                    {
+                                                        POTENTIAL_IMAGE.length > 0 ?
+                                                            <Popover content={
+                                                                <div className={styles['full-image']} >
                                                                     <img
-                                                                        style={{ width: '680px', height: '520px', marginLeft: '-8px', marginRight: '-8px' }}
-                                                                        src={`http://tc001pcis1p/newservices/LBServices.svc/nano/market/image/M025913/M025913-1.JPG`} />
-                                                                }>
+                                                                        src={POTENTIAL_IMAGE[this.state.potentialImageIndex].Url}
+                                                                        style={{ width: '100%', height: '100%' }} />
+                                                                    {
+                                                                        POTENTIAL_IMAGE.length > 1 &&
+                                                                        <div className={styles['tool-full-image']} style={{ bottom: '15px' }}>
+                                                                            <div className={styles['on-tool-hover']}>
+                                                                                <Tooltip
+                                                                                    title='Previous'
+                                                                                    placement="top">
+                                                                                    <Button shape="circle" icon="caret-left" onClick={this.onPrevImage} disabled={this.state.potentialImageIndex == 0}></Button>
+                                                                                </Tooltip>
+                                                                                <div>
+                                                                                    <span>{`${this.state.potentialImageIndex + 1} / ${POTENTIAL_IMAGE.length}`}</span>
+                                                                                    <Tooltip
+                                                                                        title='Full Image'
+                                                                                        placement="top">
+                                                                                        <Icon type="search"
+                                                                                            className={styles['zoom-image']}
+                                                                                            onClick={() => this.openImageNewTab(POTENTIAL_IMAGE[this.state.potentialImageIndex].Url)} />
+                                                                                    </Tooltip>
+                                                                                </div>
+                                                                                <Tooltip
+                                                                                    title='Next'
+                                                                                    placement="top">
+                                                                                    <Button shape="circle" icon="caret-right" onClick={this.onNextImage} disabled={this.state.potentialImageIndex + 1 == POTENTIAL_IMAGE.length}>
+                                                                                    </Button>
+                                                                                </Tooltip>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            }>
+                                                                <div style={{ width: '100%', height: '100%' }}>
+                                                                    {
+                                                                        POTENTIAL_IMAGE.length > 1 &&
+                                                                        <div className={`${styles['tool-full-image']}`} style={{ bottom: '5px', width: '150px' }}>
+                                                                            <div className={styles['on-tool-hover']}>
+                                                                                <Tooltip
+                                                                                    title='Previous'
+                                                                                    placement="top">
+                                                                                    <Button shape="circle" icon="caret-left" className={styles['tool-small-button']} onClick={this.onPrevImage} disabled={this.state.potentialImageIndex == 0}></Button>
+                                                                                </Tooltip>
+                                                                                <div style={{ fontSize: '12px' }}>
+                                                                                    <span>{`${this.state.potentialImageIndex + 1} / ${POTENTIAL_IMAGE.length}`}</span>
+                                                                                    <Tooltip
+                                                                                        title='Full Image'
+                                                                                        placement="top">
+                                                                                        <Icon type="search"
+                                                                                            style={{ fontSize: '12px' }}
+                                                                                            className={styles['zoom-image']}
+                                                                                            onClick={() => this.openImageNewTab(POTENTIAL_IMAGE[this.state.potentialImageIndex].Url)} />
+                                                                                    </Tooltip>
+                                                                                </div>
+                                                                                <Tooltip
+                                                                                    title='Next'
+                                                                                    placement="top">
+                                                                                    <Button shape="circle" icon="caret-right" className={styles['tool-small-button']} onClick={this.onNextImage} disabled={this.state.potentialImageIndex + 1 == POTENTIAL_IMAGE.length}>
+                                                                                    </Button>
+                                                                                </Tooltip>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
                                                                     <img
                                                                         style={{ width: '100%', height: '100%', cursor: 'pointer' }}
-                                                                        src={`http://tc001pcis1p/newservices/LBServices.svc/nano/market/image/M025913/M025913-1.JPG`} />
-                                                                </Popover>
-                                                                :
-                                                                <div className={styles['image-not-found']} style={{ height: '100%' }}><span style={{ fontSize: '18px' }}><Icon type="frown-o" /> Image not avaliable.</span></div>
-                                                        }
-                                                    </Card>
-                                                </div>
-                                                <div style={{ height: '150px', flex: '1' }}>
-                                                    <Card
-                                                        noHovering
-                                                        className={styles['card-potential-padding-detail']}
-                                                        title={(<div><Icon type="contacts" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#03A9F4' }} /><span>Detail</span></div>)}
-                                                        style={{ height: '100%', width: '100%' }}>
-                                                        <Scrollbar overscrollEffect="bounce" >
-                                                            <div>
-                                                                <Row gutter={16} style={{ marginBottom: '5px' }}>
-                                                                    <Col className="gutter-row" span={9}>
-                                                                        <span>แผง</span>
-                                                                    </Col>
-                                                                    <Col className="gutter-row" span={15} style={{ paddingLeft: '0' }}>
-                                                                        <span>{item.Shop}</span>
-                                                                    </Col>
-                                                                </Row>
-                                                                <Row gutter={16} style={{ marginBottom: '5px' }}>
-                                                                    <Col className="gutter-row" span={9}>
-                                                                        <span>ประเภทตลาด</span>
-                                                                    </Col>
-                                                                    <Col className="gutter-row" span={15} style={{ paddingLeft: '0' }}>
-                                                                        <span>{item.MarketType}</span>
-                                                                    </Col>
-                                                                </Row>
-                                                                <Row gutter={16} style={{ marginBottom: '5px' }}>
-                                                                    <Col className="gutter-row" span={9}>
-                                                                        <span>อายุตลาด</span>
-                                                                    </Col>
-                                                                    <Col className="gutter-row" span={15} style={{ paddingLeft: '0' }}>
-                                                                        <span>{item.YearMarket}</span>
-                                                                    </Col>
-                                                                </Row>
-                                                            </div>
-                                                        </Scrollbar>
-                                                    </Card>
-                                                </div>
+                                                                        src={`${POTENTIAL_IMAGE[this.state.potentialImageIndex].Url}`} />
+                                                                </div>
+                                                            </Popover>
+                                                            :
+                                                            <div className={styles['image-not-found']} style={{ height: '100%' }}><span style={{ fontSize: '18px' }}><Icon type="frown-o" /> Image not avaliable.</span></div>
+                                                    }
+                                                </Card>
                                             </div>
-                                            <div className={styles['potential-info']}>
-                                                <div style={{ marginRight: '0', width: '100%' }}>
-                                                    <Card
-                                                        noHovering
-                                                        className={styles['card-potential-padding']}
-                                                        title={(<div><Icon type="shop" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#03A9F4' }} /><span>Market Information</span></div>)}
-                                                        style={{ width: '100%' }}>
-                                                        <div
-                                                            style={{ marginBottom: '10px' }}>
+                                            <div style={{ height: '150px', flex: '1' }}>
+                                                <Card
+                                                    noHovering
+                                                    className={styles['card-potential-padding-detail']}
+                                                    title={(<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                        <Icon type="contacts" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#03A9F4' }} />
+                                                        <span>Detail</span>
+                                                        <span style={{ flex: '1', textAlign: 'right', color: `${flag_status_color}` }}>{flag_status}</span>
+                                                    </div>)}
+                                                    style={{ height: '100%', width: '100%' }}>
+                                                    <Scrollbar overscrollEffect="bounce" >
+                                                        <div>
                                                             <Row gutter={16} style={{ marginBottom: '5px' }}>
-                                                                <Col className={styles['gutter-row']} span={5}>
-                                                                    <span>จากสาขา
-                                                                        <Tooltip title={`Direction To ${item.BranchName}`} placement="top">
-                                                                            <FontAwesome className={styles['icon-direction']}
-                                                                                name="road"
-                                                                                onClick={() => handleDirection(
-                                                                                    { name: "Branch", Latitude: item.Latitude, Longitude: item.Longitude },
-                                                                                    { name: item.MarketName, Latitude: item.Latitude, Longitude: item.Longitude }
-                                                                                )} />
-                                                                        </Tooltip>
-                                                                    </span>
+                                                                <Col className="gutter-row" span={9}>
+                                                                    <span>แผง</span>
                                                                 </Col>
-                                                                <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                    <span>{item.DistanceFromBranch}</span>
-                                                                </Col>
-                                                                <Col className={styles['gutter-row']} span={5}>
-                                                                    <span>ธนาคารในพื้นที่</span>
-                                                                </Col>
-                                                                <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                    <span>{item.OthersBank}</span>
+                                                                <Col className="gutter-row" span={15} style={{ paddingLeft: '0' }}>
+                                                                    <span>{item.Shop}</span>
                                                                 </Col>
                                                             </Row>
                                                             <Row gutter={16} style={{ marginBottom: '5px' }}>
-                                                                <Col className={styles['gutter-row']} span={5}>
-                                                                    <span>วันทำการ</span>
+                                                                <Col className="gutter-row" span={9}>
+                                                                    <span>ประเภทตลาด</span>
                                                                 </Col>
-                                                                <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                                        {
-                                                                            item.Monday == '1' &&
-                                                                            <div className={styles['layout-day']} style={{ borderColor: '#FFC107' }}>M</div>
-                                                                        }
-                                                                        {
-                                                                            item.Tuesday == '1' &&
-                                                                            <div className={styles['layout-day']} style={{ borderColor: '#ff4cd8' }}>T</div>
-                                                                        }
-                                                                        {
-                                                                            item.Wednesday == '1' &&
-                                                                            <div className={styles['layout-day']} style={{ borderColor: '#8BC34A' }}>W</div>
-                                                                        }
-                                                                        {
-                                                                            item.Thursday == '1' &&
-                                                                            <div className={styles['layout-day']} style={{ borderColor: '#FF5722' }}>Th</div>
-                                                                        }
-                                                                        {
-                                                                            item.Friday == '1' &&
-                                                                            <div className={styles['layout-day']} style={{ borderColor: '#00BCD4' }}>F</div>
-                                                                        }
-                                                                        {
-                                                                            item.Saturday == '1' &&
-                                                                            <div className={styles['layout-day']} style={{ borderColor: '#b85ac7' }}>Sa</div>
-                                                                        }
-                                                                        {
-                                                                            item.Sunday == '1' &&
-                                                                            <div className={styles['layout-day']} style={{ borderColor: '#f71a0a' }}>Su</div>
-                                                                        }
-                                                                    </div>
-                                                                </Col>
-                                                                <Col className={styles['gutter-row']} span={5}>
-                                                                    <span>เวลาทำการ</span>
-                                                                </Col>
-                                                                <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                    <span>{`${item.TimeOpen}-${item.TimeClose}`}</span>
+                                                                <Col className="gutter-row" span={15} style={{ paddingLeft: '0' }}>
+                                                                    <span>{item.MarketType}</span>
                                                                 </Col>
                                                             </Row>
                                                             <Row gutter={16} style={{ marginBottom: '5px' }}>
-                                                                <Col className={styles['gutter-row']} span={5}>
-                                                                    <span>สาขาที่สำรวจ</span>
+                                                                <Col className="gutter-row" span={9}>
+                                                                    <span>อายุตลาด</span>
                                                                 </Col>
-                                                                <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                    <span>{item.Branch}</span>
-                                                                </Col>
-                                                                <Col className={styles['gutter-row']} span={5}>
-                                                                    <span>วันที่สำรวจ</span>
-                                                                </Col>
-                                                                <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                    <span>{moment(item.SurveyDate).format("DD/MM/YYYY")}</span>
-                                                                </Col>
-                                                            </Row>
-                                                            <Row gutter={16}>
-                                                                <Col className={styles['gutter-row']} span={5}>
-                                                                    <span>ที่อยู่</span>
-                                                                </Col>
-                                                                <Col className={styles['gutter-row']} span={19} style={{ paddingLeft: '0' }}>
-                                                                    <span>{`${item.Tumbon} ${item.Amphor} ${item.Province}`}</span>
+                                                                <Col className="gutter-row" span={15} style={{ paddingLeft: '0' }}>
+                                                                    <span>{item.YearMarket}</span>
                                                                 </Col>
                                                             </Row>
                                                         </div>
-                                                        <Card
-                                                            noHovering
-                                                            className={styles['card-potential-head-padding']}
-                                                            style={{ marginBottom: '10px' }}
-                                                            title={(<div><Icon type="solution" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#FF9800' }} /><span>หมายเหตุ</span></div>)}>
-                                                            {
-                                                                item.Note ?
-                                                                    <span>{item.Note}</span>
-                                                                    :
-                                                                    <span style={{ textAlign: 'center', display: 'block' }}><Icon type="frown-o" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#F44336' }} />Nothing</span>
-                                                            }
-                                                        </Card>
-                                                        <Card
-                                                            noHovering
-                                                            className={styles['card-potential-head-padding']}
-                                                            title={(<div><Icon type="exception" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#E91E63' }} /><span>เหตุผลที่ไม่ผ่านเกณฑ์ธนาคาร</span></div>)}>
-                                                            {
-                                                                item.NoReason1 != '0' || item.NoReason2 != '0' || item.NoReason3 != '0' || item.NoReason4 != '0' || item.NoReason5 != '0' || item.NoReason6 != '0' ?
-                                                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                                        {item.NoReason1 != '0' && <span>{item.NoReason1}</span>}
-                                                                        {item.NoReason2 != '0' && <span>{item.NoReason2}</span>}
-                                                                        {item.NoReason3 != '0' && <span>{item.NoReason3}</span>}
-                                                                        {item.NoReason4 != '0' && <span>{item.NoReason4}</span>}
-                                                                        {item.NoReason5 != '0' && <span>{item.NoReason5}</span>}
-                                                                        {item.NoReason6 != '0' && <span>{item.NoReason6}</span>}
-                                                                    </div>
-                                                                    :
-                                                                    <span style={{ textAlign: 'center', display: 'block' }}><Icon type="frown-o" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#F44336' }} />Nothing</span>
-                                                            }
-                                                        </Card>
-                                                    </Card>
-                                                </div>
+                                                    </Scrollbar>
+                                                </Card>
                                             </div>
                                         </div>
-                                    </Layout>
+                                        <div className={styles['potential-info']}>
+                                            <div style={{ marginRight: '0', width: '100%' }}>
+                                                <Card
+                                                    noHovering
+                                                    className={styles['card-potential-padding']}
+                                                    title={(<div><Icon type="shop" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#03A9F4' }} /><span>Market Information</span></div>)}
+                                                    style={{ width: '100%' }}>
+                                                    <div
+                                                        style={{ marginBottom: '10px' }}>
+                                                        <Row gutter={16} style={{ marginBottom: '5px' }}>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>จากสาขา
+                                                                        <Tooltip title={`Direction To ${item.Branch}`} placement="top">
+                                                                        <FontAwesome className={styles['icon-direction']}
+                                                                            name="road"
+                                                                            onClick={() => handleDirection(
+                                                                                { name: item.Branch, Latitude: item.BranchLatitude, Longitude: item.BranchLongitude },
+                                                                                { name: item.PotentialMarketName, Latitude: item.Latitude, Longitude: item.Longitude }
+                                                                            )} />
+                                                                    </Tooltip>
+                                                                </span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <span>{item.DistanceFromBranch}</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>ธนาคารในพื้นที่</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <span>{item.OthersBank}</span>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row gutter={16} style={{ marginBottom: '5px' }}>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>วันทำการ</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                                    {
+                                                                        item.Monday == '1' &&
+                                                                        <div className={styles['layout-day']} style={{ borderColor: '#FFC107' }}>M</div>
+                                                                    }
+                                                                    {
+                                                                        item.Tuesday == '1' &&
+                                                                        <div className={styles['layout-day']} style={{ borderColor: '#ff4cd8' }}>T</div>
+                                                                    }
+                                                                    {
+                                                                        item.Wednesday == '1' &&
+                                                                        <div className={styles['layout-day']} style={{ borderColor: '#8BC34A' }}>W</div>
+                                                                    }
+                                                                    {
+                                                                        item.Thursday == '1' &&
+                                                                        <div className={styles['layout-day']} style={{ borderColor: '#FF5722' }}>Th</div>
+                                                                    }
+                                                                    {
+                                                                        item.Friday == '1' &&
+                                                                        <div className={styles['layout-day']} style={{ borderColor: '#00BCD4' }}>F</div>
+                                                                    }
+                                                                    {
+                                                                        item.Saturday == '1' &&
+                                                                        <div className={styles['layout-day']} style={{ borderColor: '#b85ac7' }}>Sa</div>
+                                                                    }
+                                                                    {
+                                                                        item.Sunday == '1' &&
+                                                                        <div className={styles['layout-day']} style={{ borderColor: '#f71a0a' }}>Su</div>
+                                                                    }
+                                                                </div>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>เวลาทำการ</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <span>{`${item.TimeOpen}-${item.TimeClose}`}</span>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row gutter={16} style={{ marginBottom: '5px' }}>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>สาขาที่สำรวจ</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <span>{item.Branch}</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>วันที่สำรวจ</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <span>{moment(item.SurveyDate).format("DD/MM/YYYY")}</span>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row gutter={16}>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>ที่อยู่</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={19} style={{ paddingLeft: '0' }}>
+                                                                <span>{`${item.Tumbon} ${item.Amphor} ${item.Province}`}</span>
+                                                            </Col>
+                                                        </Row>
+                                                    </div>
+                                                    <Card
+                                                        noHovering
+                                                        className={styles['card-potential-head-padding']}
+                                                        style={{ marginBottom: '10px' }}
+                                                        title={(<div><Icon type="solution" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#FF9800' }} /><span>หมายเหตุ</span></div>)}>
+                                                        {
+                                                            item.Note ?
+                                                                <span>{item.Note}</span>
+                                                                :
+                                                                <span style={{ textAlign: 'center', display: 'block' }}><Icon type="frown-o" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#F44336' }} />Nothing</span>
+                                                        }
+                                                    </Card>
+                                                    <Card
+                                                        noHovering
+                                                        className={styles['card-potential-head-padding']}
+                                                        title={(<div><Icon type="exception" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#E91E63' }} /><span>เหตุผลที่ไม่ผ่านเกณฑ์ธนาคาร</span></div>)}>
+                                                        {
+                                                            item.NoReason1 != '0' || item.NoReason2 != '0' || item.NoReason3 != '0' || item.NoReason4 != '0' || item.NoReason5 != '0' || item.NoReason6 != '0' ?
+                                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                                    {item.NoReason1 != '0' && <span>{item.NoReason1}</span>}
+                                                                    {item.NoReason2 != '0' && <span>{item.NoReason2}</span>}
+                                                                    {item.NoReason3 != '0' && <span>{item.NoReason3}</span>}
+                                                                    {item.NoReason4 != '0' && <span>{item.NoReason4}</span>}
+                                                                    {item.NoReason5 != '0' && <span>{item.NoReason5}</span>}
+                                                                    {item.NoReason6 != '0' && <span>{item.NoReason6}</span>}
+                                                                </div>
+                                                                :
+                                                                <span style={{ textAlign: 'center', display: 'block' }}><Icon type="frown-o" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#F44336' }} />Nothing</span>
+                                                        }
+                                                    </Card>
+                                                </Card>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </Layout>
-                            </InfoWindow>
-                        )
-                    }
-                </Marker >
-            )
+                            </Layout>
+                        </InfoWindow>
+                    )
+                }
+            </Marker >
+        )
+    }
+}
 
+const getPotentialMarketMarker = (props, handleDirection) => {
+    if (props.RELATED_TARGET_MARKET_DATA.length > 0) {
+        return props.RELATED_TARGET_MARKET_DATA.map((item, index) => {
+            return <PotentialImage key={`C_Potential_${index}`} index={index} item={item} ownProps={props} handleDirection={handleDirection} />
         })
     }
 }

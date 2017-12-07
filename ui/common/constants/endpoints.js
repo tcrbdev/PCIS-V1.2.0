@@ -53,6 +53,7 @@ export const GET_BRANCH_MARKER_DATA_URL = `${url}/nano/branch/`
 export const GET_BRANCH_IMAGE_MARKER_URL = `${urlPcis}/nano/branch/image/list/`
 export const GET_EXITING_MARKET_MARKER_DATA_URL = `${url}/nano/market/`
 export const GET_EXITING_MARKET_IMAGE_MARKER_URL = `${urlPcis}/nano/market/image/list/`
+export const GET_POTENTIAL_MARKET_IMAGE_MARKER_URL = `${urlPcis}/nano/potential/image/list/`
 
 
 export const INSERT_UPDATE_MARKER_NOTE_URL = `${url}/nano/marker/note`

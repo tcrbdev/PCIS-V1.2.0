@@ -23,6 +23,7 @@ import {
     GET_BRANCH_IMAGE_MARKER_URL,
     GET_EXITING_MARKET_MARKER_DATA_URL,
     GET_EXITING_MARKET_IMAGE_MARKER_URL,
+    GET_POTENTIAL_MARKET_IMAGE_MARKER_URL,
 
     INSERT_UPDATE_MARKER_NOTE_URL,
 
@@ -440,15 +441,37 @@ export const setOpenPlanOpenBranch = (targetMarker, currentState, isOpen) => dis
 
 export const setOpenTargetMarketMarker = (targetMarker, currentState, isOpen) => dispatch => {
 
+    const URL = `${GET_POTENTIAL_MARKET_IMAGE_MARKER_URL}${targetMarker.PotentialMarketCode}`
+
     let item = _.find(currentState, { PotentialMarketCode: targetMarker.PotentialMarketCode })
     item.showInfo = isOpen
 
     let newState = _.cloneDeep(currentState)
 
-    dispatch({
-        type: SET_OPEN_TARGET_MARKET_MARKER_REQUEST,
-        payload: newState
-    })
+    if (isOpen) {
+        fetch(URL)
+            .then(res => (res.json()))
+            .then(res => {
+                item.POTENTIAL_IMAGE = res
+
+                let newState = _.cloneDeep(currentState)
+
+                dispatch({
+                    type: SET_OPEN_TARGET_MARKET_MARKER_REQUEST,
+                    payload: newState
+                })
+            })
+    }
+    else {
+        item.POTENTIAL_IMAGE = []
+
+        let newState = _.cloneDeep(currentState)
+
+        dispatch({
+            type: SET_OPEN_TARGET_MARKET_MARKER_REQUEST,
+            payload: newState
+        })
+    }
 }
 
 

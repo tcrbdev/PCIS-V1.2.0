@@ -1711,3 +1711,30 @@ color: #FFF;
         margin-right: 5px;
         margin-top: 3px;
     }
+
+    .on-tool-hover:hover
+    {
+        background:  rgba(0,0,0,.4);
+        & > span , > div , > div > i
+        {
+            color: #FFF;
+        }
+
+        & > div > i:hover
+        {
+            color: #FFEB3B;
+        }
+    }
+
+    .tool-small-button
+    {
+            width: 18px;
+    height: 18px;
+    font-size: 10px;
+    & > button
+    {
+                    width: inherit;
+    height: inherit;
+    font-size: inherit;
+    }
+    }
