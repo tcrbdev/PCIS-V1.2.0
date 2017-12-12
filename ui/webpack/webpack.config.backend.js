@@ -7,13 +7,14 @@ module.exports = {
     devtool: 'eval',
     entry: [
         'react-hot-loader/patch',
-        'webpack-dev-server/client?http://localhost:8080',
+        'webpack-dev-server/client?http://localhost:8081',
         'webpack/hot/only-dev-server',
         './ui/common/theme/_general.scss',
         './ui/common/theme/reset.css',
         './ui/common/theme/antd.min.css',
         './ui/common/theme/smooth-scrollbar.css',
         './ui/common/theme/react-big-calendar.css',
+        './ui/common_backends/theme/bigcalendar-dnd-styles.css',
         './ui/common/theme/quill.core.css',
         './ui/common/theme/quill.bubble.css',
         './ui/common/theme/quill.snow.css',
@@ -21,7 +22,7 @@ module.exports = {
         './vendors/jquery/jquery-3.2.1.min.js',
         './ui/common_backends/index.js'],
     output: {
-        publicPath: `http://${config.webPackHost}:${config.webPackDevServPort}/static/`,
+        publicPath: `http://${config.webPackHost}:${config.ssrWebpackPort}/static/`,
         path: path.join(__dirname, 'static'),
         filename: 'bundle.js'
     },
@@ -91,14 +92,14 @@ module.exports = {
         })
     ],
     devServer: {
-        port: config.webPackDevServPort,
+        port: config.ssrWebpackPort,
         hot: true,
         inline: false,
         historyApiFallback: true,
         headers: { "Access-Control-Allow-Origin": "*" },
         proxy: {
             '/api/*': {
-                target: 'http://127.0.0.1:5000'
+                target: `http://127.0.0.1:${config.ssrApiDevPort}`
             }
         }
     }

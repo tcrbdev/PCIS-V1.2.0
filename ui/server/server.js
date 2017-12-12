@@ -1,9 +1,20 @@
-// ui/src/server/server.js
 import express from 'express'
-import ssr from './ssr'
+import httpProxy from 'http-proxy'
 
-const PORT = 8080
+import ssr from './ssr'
+import config from '../config'
+
+const PORT = config.ssrDevPort
 const app = express()
+
+const targetUrl = `http://127.0.0.1:${config.ssrApiDevPort}`
+const proxy = httpProxy.createProxyServer({
+    target: targetUrl
+})
+
+app.use('/api', (req, res) => {
+    proxy.web(req, res, { target: `${targetUrl}/api` });
+})
 
 // โยน ssr ลงไปเป็น middleware ของ Express
 app.use(ssr)

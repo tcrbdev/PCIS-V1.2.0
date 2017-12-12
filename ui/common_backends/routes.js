@@ -33,24 +33,21 @@ const getApplication = ({ match }) => {
     const component_route = [{
         componentId: '1',
         componentPath: `${path}`,
-        component: App,
-        childComponent: [{
-            componentId: '1_2',
-            componentPath: `${path}/home`,
-            component: Home,
-        }]
+        component: App
     }]
 
-    return generateRouteComponent(component_route)
-    // return <Route key={1} path='/' component={App} />
+    // return generateRouteComponent(component_route)
+    return <Route key={1} path='/' component={App} />
 }
 
 export default (store, history) => {
-
     return (
         <CookiesProvider>
             <Router history={syncHistoryWithStore(history, store)}>
-                <Route exact path='/' component={getApplication} />
+                <div style={{ height: '100%' }}>
+                    <Route exact path='/' component={getApplication} />
+
+                </div>
             </Router>
         </CookiesProvider>
     )

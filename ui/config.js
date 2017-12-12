@@ -3,6 +3,9 @@ expiredDate.setMonth((new Date).getMonth() + 3)
 
 module.exports = {
     webPackHost: '127.0.0.1',
+    ssrDevPort: 8080,
+    ssrWebpackPort: 8081,
+    ssrApiDevPort: 5000,
     webPackDevServPort: 8080,
     apiHost: '172.17.9.94',
     apiPort: 60001,

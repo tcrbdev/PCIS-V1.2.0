@@ -1,15 +1,17 @@
 import React from 'react'
 import { render } from 'react-dom'
-import Root from './containers/Root'
+import createBrowserHistory from 'history/createBrowserHistory'
 import 'react-hot-loader/patch'
 import { AppContainer } from 'react-hot-loader'
+import Root from './containers/Root'
 
 const rootEl = document.getElementById('app')
+const history = createBrowserHistory()
 
 if (process.env.NODE_ENV === 'dev') {
     render(
         <AppContainer>
-            <Root />
+            <Root history={history} />
         </AppContainer>,
         rootEl
     )
@@ -19,7 +21,7 @@ if (process.env.NODE_ENV === 'dev') {
             const NextRootApp = require('./containers/Root').default
             render(
                 <AppContainer>
-                    <NextRootApp />
+                    <NextRootApp history={history} />
                 </AppContainer>,
                 rootEl);
         });
