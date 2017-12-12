@@ -169,3 +169,13 @@
     width: 600px;
     transition: .4s ease-in-out;
 }
+
+.align-sort-item
+{
+    & > span 
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

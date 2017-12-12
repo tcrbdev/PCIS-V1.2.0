@@ -8,6 +8,11 @@ import moment from 'moment'
 
 import styles from './index.scss'
 
+const numberWithCommas = (x) => {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}
 
 class StopApproval extends Component {
 
@@ -161,7 +166,7 @@ class StopApproval extends Component {
                                         dataSource={this.state.showSubPage.result}
                                         columns={
                                             [{
-                                                title: `${this.state.showSubPage.branch.RegionID} / ${this.state.showSubPage.branch.BranchName} (Total Customer ${this.state.showSubPage.result.length} Forecast ${this.state.showSubPage.branch.FCStopApproval}%)`,
+                                                title: `${this.state.showSubPage.branch.RegionID} / ${this.state.showSubPage.branch.BranchName} (Total Customer ${this.state.showSubPage.result.length} Forecast ${this.state.showSubPage.branch.FCStopApproval}% OS ${numberWithCommas(_.sumBy(this.state.showSubPage.result, 'Principle_Bk'))})`,
                                                 className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
                                                 children: [{
                                                     title: 'MarketName',
@@ -201,7 +206,7 @@ class StopApproval extends Component {
                                                     className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
                                                     dataIndex: 'AccountName',
                                                     key: 'AccountName',
-                                                    width: '20%',
+                                                    width: '15%',
                                                     render: (text, record, index) => {
                                                         return (
                                                             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -210,16 +215,17 @@ class StopApproval extends Component {
                                                                 </Tooltip>
                                                             </div>
                                                         )
-                                                    },
-                                                    sorter: (a, b) => a.AccountName.length - b.AccountName.length
+                                                    }
                                                 }, {
                                                     title: (<div className={styles['div-center']}><span>DPD</span><br /><span>Bucket</span></div>),
-                                                    className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
+                                                    className: `${styles['xsm-padding']} ${styles['vertical-middle']} ${styles['align-sort-item']}`,
                                                     dataIndex: 'DPDBucket',
                                                     key: 'DPDBucket',
+                                                    width: '12%',
                                                     render: (text, record, index) => {
                                                         return <span className={`${styles['align-right']} ${styles['span-text']}`}>{text}</span>
-                                                    }
+                                                    },
+                                                    sorter: (a, b) => a.BucketSeq - b.BucketSeq
                                                 }, {
                                                     title: (<div className={styles['div-center']}><span>OS</span><br /><span>(Mb)</span></div>),
                                                     className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
