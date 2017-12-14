@@ -64,7 +64,7 @@ class VisitPopup extends Component {
                             <Badge count={!_.isEmpty(NANO_VISIT_POPUP_INFO) ? NANO_VISIT_POPUP_INFO[1].length : 0} style={{ backgroundColor: '#F44336' }}>
                                 <FontAwesome style={{ color: '#FF9800', fontSize: '18px' }} name="exclamation-triangle" />
                             </Badge>
-                            <span style={{ marginLeft: '10px' }}>Warning Stop Approval</span>
+                            <span style={{ marginLeft: '10px' }}>{`Warning Stop Approval (Plan < 5%)`}</span>
                         </div>
                     } key="1">
                         <StopApproval custom_width="610px" NO_HEADER={true} />

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withCookies } from 'react-cookie'
 
 import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContext, DragSource } from 'react-dnd'
+import { DragDropContext } from 'react-dnd'
 import BigCalendar from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop/DragableNoBackend'
 
@@ -22,31 +22,22 @@ const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 
 const { Header, Sider, Content } = Layout
 
-class DragMenu extends Component {
-    render() {
-        const { isDragging, connectDragSource } = this.props
-        const opacity = isDragging ? 0.4 : 1
-        console.log(this.props)
 
-        return connectDragSource(<span style={{ background: '#2196F3', borderRadius: '5px', margin: '5px', padding: '3px', width: '60px', opacity }}>Menu 1</span>)
-    }
-}
-
-const boxSource = {
-    beginDrag(props) {
-        return {
-            name: props.name,
-        }
-    }
-}
-
-const DragEvents = DragSource(props => props.type, boxSource, (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-    
-}))(DragMenu)
 
 class App extends Component {
+
+    state = {
+        events: [{
+            'title': 'All Day Event very long title',
+            'allDay': true,
+            'start': new Date(),
+            'end': new Date('2017-12-15')
+        }, {
+            'title': 'Long Event',
+            'start': new Date(),
+            'end': new Date()
+        }]
+    }
 
     componentWillMount() {
         const { getNanoMasterData, cookies } = this.props
@@ -54,38 +45,55 @@ class App extends Component {
         getNanoMasterData();
     }
 
-    moveEvent = ({ event, start, end, ...custom }) => {
+    onEventDrop = ({ event, start, end, ...custom }) => {
         console.log(event, start, end, ...custom)
+        let events = this.state.events
+        events.push({
+            title: event.title,
+            start,
+            end
+        })
+
+        this.setState({ events })
+    }
+
+    getToolbar = (props, obj) => {
+        const { onNavigate, onViewChange, views, label } = props
+
+        console.log(views, "---------", label)
+        // 0"month" 1"week" 2"work_week" 3"day" 4"agenda"
+
+        return (
+            <Header style={{ background: '#EEE', width: '100%' }}>
+                <Icon
+                    className="trigger"
+                    type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                    onClick={this.toggle}
+                />
+            </Header>
+        )
     }
 
     render() {
 
+        let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
+
         return (
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', height: '150px' }}>
-                    <DragEvents type="event" name="item_1" />
-                </div>
                 <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
                     <div style={{ height: '100%' }}>
                         <Home />
                     </div>
                     <div style={{ flex: '1' }}>
                         <DragAndDropCalendar
-                            events={[
-                                {
-                                    'title': 'All Day Event very long title',
-                                    'allDay': true,
-                                    'start': new Date(),
-                                    'end': new Date('2017-12-15')
-                                },
-                                {
-                                    'title': 'Long Event',
-                                    'start': new Date(),
-                                    'end': new Date()
-                                }
-                            ]}
-                            onEventDrop={this.moveEvent}
-                            defaultDate={new Date()} />
+                            popup
+                            events={this.state.events}
+                            onEventDrop={this.onEventDrop}
+                            defaultDate={new Date()}
+                            views={allViews}
+                            components={{
+                                toolbar: this.getToolbar
+                            }} />
                         <div>
                         </div>
                     </div>

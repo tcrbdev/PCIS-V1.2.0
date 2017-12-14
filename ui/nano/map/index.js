@@ -4,7 +4,7 @@ import { renderToString } from 'react-dom/server'
 
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
 
-import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
+import DrawingManager from 'react-google-maps/lib/components/drawing/DrawingManager'
 
 import { MAP } from 'react-google-maps/lib/constants';
 

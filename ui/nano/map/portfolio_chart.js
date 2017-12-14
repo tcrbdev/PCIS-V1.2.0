@@ -870,7 +870,7 @@ class CurveTooltip extends Component {
     }
 }
 
-const CustomizedCurveDot = React.createClass({
+class CustomizedCurveDot extends Component {
     render() {
         const { cx, cy, stroke, payload, value } = this.props;
         let sx = cx
@@ -890,7 +890,7 @@ const CustomizedCurveDot = React.createClass({
             return null
         }
     }
-});
+}
 
 export default connect(
     (state) => ({

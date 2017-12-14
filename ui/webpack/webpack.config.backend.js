@@ -11,7 +11,7 @@ module.exports = {
         'webpack/hot/only-dev-server',
         './ui/common/theme/_general.scss',
         './ui/common/theme/reset.css',
-        './ui/common/theme/antd.min.css',
+        './ui/common_backends/theme/antd.min.css',
         './ui/common/theme/smooth-scrollbar.css',
         './ui/common/theme/react-big-calendar.css',
         './ui/common_backends/theme/bigcalendar-dnd-styles.css',

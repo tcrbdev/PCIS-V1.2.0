@@ -179,3 +179,29 @@
         align-items: center;
     }
 }
+
+.stop-approval-info
+{
+
+    font-size: 18px;
+    cursor: pointer;
+    color: #08736a;
+
+    &:hover
+    {
+        color: #009688;
+    }
+}
+
+.stop-approval-info-popover
+{
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+
+    & > span:nth-child(2)
+    {
+        color: rgba(255, 0, 0, .7);
+        font-size: 11px;
+    }
+}

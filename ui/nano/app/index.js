@@ -163,13 +163,21 @@ class Index extends Component {
         $(`.${styles['top-layer']}`).removeClass(styles['top-layer'])
     }
 
-    handleDrag(e) {
+    onStart() {
+
+    }
+
+    onStop() {
+
     }
 
     renderForm() {
         const side_menu = this.state.collapsed ? styles['side-menu-close'] : styles['side-menu']
 
         const Coordinates = document.getElementById('app').getBoundingClientRect()
+
+        const dragHandlers = { onStart: this.onStart, onStop: this.onStop };
+
         return (
             <Layout style={{ overflow: 'hidden' }}>
                 {
@@ -226,8 +234,10 @@ class Index extends Component {
                 <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
                     <div id="add-sale-summary-chart2" className={styles['multiple-window']}></div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="nano-stop-approval" className={styles['multiple-window']}></div>
+                <Draggable onStart={this.handleDrag} onStop={this.handleDrag} handle='.hello'>
+                    <div className="hello">
+                        <div id="nano-stop-approval" className={styles['multiple-window']}></div>
+                    </div>
                 </Draggable>
                 <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
                     <div id="nano-news-feed" className={styles['multiple-window']}></div>

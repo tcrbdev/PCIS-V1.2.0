@@ -17,7 +17,7 @@ app.use('/api', (req, res) => {
 })
 
 // โยน ssr ลงไปเป็น middleware ของ Express
-app.use(ssr)
+// app.use(ssr)
 
 app.listen(PORT, error => {
     if (error) {
