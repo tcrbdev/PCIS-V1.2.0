@@ -121,7 +121,7 @@ class StopApproval extends Component {
                             <div className={styles['animation-slide']} style={{ width: '605px', marginLeft: `${!_.isEmpty(this.state.showSubPage) ? '-610px' : '0'}`, marginRight: '5px' }}>
                                 <Table
                                     className={styles['summary-table-visit']}
-                                    dataSource={this.getDataSource()}
+                                    dataSource={NANO_VISIT_POPUP_INFO[1]}
                                     columns={[{
                                         title: 'Br. Name',
                                         className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
@@ -196,8 +196,8 @@ class StopApproval extends Component {
                                         }, {
                                             title: 'Total',
                                             className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                            dataIndex: 'TotalMinAmt',
-                                            key: 'TotalMinAmt',
+                                            dataIndex: 'MinAmt',
+                                            key: 'MinAmt',
                                             width: '10%',
                                             render: (text, record, index) => {
                                                 return <span className={`${styles['align-right']} ${styles['span-text']}`} style={{ color: (parseFloat(text).toFixed(2) >= 5 ? 'red' : '#000') }}>{parseFloat(text).toFixed(2)}%</span>
