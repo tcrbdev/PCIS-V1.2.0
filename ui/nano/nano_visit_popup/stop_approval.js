@@ -110,7 +110,7 @@ class StopApproval extends Component {
                                     content={
                                         <div className={styles['stop-approval-info-popover']}>
                                             <span>ลูกค้าที่มียอดค้างชำระตั้งแต่ 61 วันขึ้นไป(M2,NPL) มากกว่า 5% ของยอด O/S Balance ในสาขา จะถูกระงับการปล่อยสินเชื่อในเดือนถัดไป</span>
-                                            <span>*เฉพาะลูกค้าที่ตั้งวันเงินตั้งแต่ ก.พ.60 เป็นต้นไป (กรณีสาขาที่ถูกระงับและอนุมัติให้ปล่อยสินเชื่อใหม่ จะเริ่มนับเฉพาะลูกค้าตั้งแต่เดือนที่ปล่อยสินเชื่อใหม่ เป็นต้นไป)</span>
+                                            <span>*เฉพาะลูกค้าที่ตั้งวงเงินตั้งแต่ ก.พ.60 เป็นต้นไป (กรณีสาขาที่ถูกระงับและอนุมัติให้ปล่อยสินเชื่อใหม่ จะเริ่มนับเฉพาะลูกค้าตั้งแต่เดือนที่ปล่อยสินเชื่อใหม่ เป็นต้นไป)</span>
                                         </div>
                                     }>
                                     <Icon type="info-circle-o" />
@@ -127,7 +127,7 @@ class StopApproval extends Component {
                                         className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
                                         dataIndex: 'BranchName',
                                         key: 'BranchName',
-                                        width: '30%',
+                                        width: '40%',
                                         render: (text, record, index) => {
                                             return (
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -147,66 +147,37 @@ class StopApproval extends Component {
                                         title: 'Warning / Stop',
                                         className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
                                         width: '20%',
-                                        children: [
-                                            {
-                                                title: 'Cust',
-                                                className: `${styles['align-center']} ${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                                dataIndex: 'CustM2NPLFebUp',
-                                                key: 'CustM2NPLFebUp',
-                                                width: '10%'
-                                            }, {
-                                                title: 'DPD (Mb)',
-                                                className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                                dataIndex: 'M2NPLFebUp',
-                                                key: 'M2NPLFebUp',
-                                                width: '10%',
-                                                render: (text, record, index) => {
-                                                    return <span className={`${styles['align-right']} ${styles['span-text']}`}>{text}</span>
-                                                }
-                                            }, {
-                                                title: '%',
-                                                className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                                dataIndex: 'StopApproval',
-                                                key: 'StopApproval',
-                                                width: '10%',
-                                                render: (text, record, index) => {
-                                                    return <span className={`${styles['align-right']} ${styles['span-text']}`} style={{ color: (parseFloat(text).toFixed(2) >= 5 ? 'red' : '#000') }}>{parseFloat(text).toFixed(2)}%</span>
-                                                }
-                                            }
-                                        ]
-                                    }, {
-                                        title: 'Forecast',
-                                        className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                        width: '20%',
                                         children: [{
                                             title: 'Cust',
                                             className: `${styles['align-center']} ${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                            dataIndex: 'CustFCFebUp',
-                                            key: 'CustFCFebUp',
+                                            dataIndex: 'CustM2NPLFebUp',
+                                            key: 'CustM2NPLFebUp',
                                             width: '10%'
                                         }, {
                                             title: 'DPD (Mb)',
                                             className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                            dataIndex: 'FCFebUp',
-                                            key: 'FCFebUp',
+                                            dataIndex: 'M2NPLFebUp',
+                                            key: 'M2NPLFebUp',
                                             width: '10%',
                                             render: (text, record, index) => {
                                                 return <span className={`${styles['align-right']} ${styles['span-text']}`}>{text}</span>
                                             }
                                         }, {
-                                            title: 'Total',
+                                            title: '%',
                                             className: `${styles['xsm-padding']} ${styles['vertical-middle']}`,
-                                            dataIndex: 'MinAmt',
-                                            key: 'MinAmt',
+                                            dataIndex: 'StopApproval',
+                                            key: 'StopApproval',
                                             width: '10%',
                                             render: (text, record, index) => {
                                                 return <span className={`${styles['align-right']} ${styles['span-text']}`} style={{ color: (parseFloat(text).toFixed(2) >= 5 ? 'red' : '#000') }}>{parseFloat(text).toFixed(2)}%</span>
                                             }
                                         }]
-                                    }]}
+                                    }]
+                                    }
                                     pagination={{
                                         pageSize: 15,
-                                        size: 'small'
+                                        size: 'small',
+                                        showTotal: total => `Total ${NANO_VISIT_POPUP_INFO[1].length} Br.`
                                     }}
                                     loading={!NANO_VISIT_POPUP_STATUS}
                                     onRowClick={this.onRowClick}
