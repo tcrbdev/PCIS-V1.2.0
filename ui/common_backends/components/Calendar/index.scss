@@ -1,0 +1,299 @@
+.header-calendar-tool
+{
+    display: flex;
+    flex-direction: row;
+
+    & > div , > span
+    {
+        position: relative;
+        color: #FFF;
+        font-size: 16px;
+        margin: 0 10px;
+        transition: .1s ease-in-out all;
+        cursor: pointer;
+    }
+
+    & > div:hover
+    {
+        transform: scale(1.5);
+    }
+
+    & > [class=hover-trash]
+    {
+        transform: scale(1.5);
+    }
+}
+
+.event-calendar
+{
+    position: absolute;
+    background: rgba(255,255,255, 0.9);
+    box-shadow: rgba(0, 21, 41, 0.35) 2px 0px 6px;
+    width: 0px;
+    height: 100%;
+    transition: .2s ease-in all;
+    opacity: 0;
+}
+
+.event-calendar-open
+{
+    display: flex;
+    flex-direction: column;
+    width: 250px;    
+    height: 100%;
+    opacity: 1;
+    z-index: 5;
+}
+
+.modal-event-calendar
+{
+    & > div
+    {
+        width: 100%;
+        height: 100%;
+
+        & > div
+        {
+            width: inherit;
+            height: inherit;
+
+            & [class=ant-modal-mask]
+            {
+                position: absolute;
+                animation-duration: 0s !important;
+                overflow-x: hidden;
+                background-color: rgba(0,0,0,.2);
+            }
+
+            & > div:nth-child(1)
+            {
+                position: absolute;
+                background-color: rgba(0,0,0,.2);
+            }
+        }
+    }
+}
+
+.hover-trash
+{
+    transform: scale(1.5) !important;
+}
+
+.float-bin-calendar
+{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    width: 60px;
+    height: 60px;
+    background: #FFF;
+    border-radius: 50%;
+    box-shadow: rgba(0, 21, 41, 0.35) 2px 0px 6px;
+    bottom: 30px;
+    left: 50%;
+    transform :translate(-50%, 0);
+}
+
+.custom-scrollbar
+{
+    &::-webkit-scrollbar-track
+    {
+        background-color: #EEE;
+    }
+    
+    &::-webkit-scrollbar
+    {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb
+    {
+        border-radius: 5px;
+        background-color: rgba(0,0,0,.0);
+    }
+
+    &:hover::-webkit-scrollbar-thumb
+    {
+        border-radius: 5px;
+        background-color: rgba(0,0,0,.4);
+    }
+}
+
+.popover-event
+{
+    display: flex;
+    flex-direction: column;
+    margin: -12px -16px;
+    min-width: 300px;
+    max-width: 400px;
+
+    & > div:first-child
+    {
+        position: relative;
+        padding: 15px 15px 30px 15px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+
+        & > div:first-child
+        {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            text-align: right;
+            margin-bottom: 10px;
+            justify-content: space-between;
+
+            & div
+            {
+                display: flex;
+                flex-direction: row;
+            }
+        }
+
+        & > div > span
+        {
+            font-size: 16px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: block;
+            overflow: hidden;
+        }
+
+        & > [class*=popover-event-float-button]
+        {
+            position: absolute;
+            bottom: -20px;
+            box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 0 1px 18px 0 rgba(0,0,0,0.12), 0 3px 5px -1px rgba(0,0,0,0.2);
+        }
+    }
+
+    & > div:nth-child(2)
+    {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 30px 10px 10px 10px;
+
+        & div
+        {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 5px;
+
+            & > span:nth-child(2)
+            {
+                flex: 1;
+            }
+        }
+    }
+}
+
+.calendar-form-event
+{
+    position: absolute;
+    overflow-x: hidden;
+
+    & > div:first-child
+    {
+        width: 420px !important;
+        max-width: 520px;
+    }
+}
+
+.calendar-from-event-header
+{
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    font-size: 15px;
+
+    & > i:first-child
+    {
+        margin-right: 5px;
+    }
+
+    & > span
+    {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    & > [class*=close]
+    {
+        cursor: pointer;
+        margin-left: 5px;
+    }
+}
+
+.calendar-from-event-body
+{
+    padding: 10px;
+}
+
+.form-label
+{
+    margin-bottom: 9px;
+
+    & > [class*=ant-form-item-label]
+    {
+        text-align: left;
+
+        & > label
+        {
+            display: flex;
+            color: rgba(0,0,0,.6);
+
+            & > span
+            {
+                order: 1;
+
+                & > span:first-child , > i:first-child
+                {
+                    color: #03A9F4;
+                }
+            }
+
+            &:before{
+                order: 2;
+            }
+
+            &:after{
+                order: 3;
+            }
+        }
+    }
+}
+
+.form-check-box
+{
+    & > span:nth-child(2)
+    {
+        padding-right: 0;
+    }
+}
+
+.wrap-text
+{
+    padding: 5px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.divider
+{
+   	border-top: 1px solid #d4d4d4;
+	border-bottom: none;
+}

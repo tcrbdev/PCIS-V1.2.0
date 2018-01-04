@@ -31,12 +31,7 @@ module.exports = {
             test: /\.jsx?$/,
             exclude: /node_modules/,
             use: {
-                loader: 'babel-loader',
-                options: {
-                    babelrc: false,
-                    presets: ["es2015", "stage-0", "react"],
-                    plugins: ['transform-runtime']
-                }
+                loader: 'babel-loader'
             }
         }, {
             test: /\.css$/,
@@ -54,7 +49,7 @@ module.exports = {
                 loader: 'css-loader',
                 options: {
                     module: true,
-                    localIdentName: '[name]__[local]___[hash:base64:5]'
+                    localIdentName: '[local]___[hash:base64:5]'
                 }
             }, {
                 loader: 'sass-loader',

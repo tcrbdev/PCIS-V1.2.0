@@ -1,5 +1,5 @@
 import React from 'react'
-import { Router, Route } from 'react-router'
+import { Router, Route, Link } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import { App, Home } from './components'
@@ -46,7 +46,6 @@ export default (store, history) => {
             <Router history={syncHistoryWithStore(history, store)}>
                 <div style={{ height: '100%' }}>
                     <Route exact path='/' component={getApplication} />
-
                 </div>
             </Router>
         </CookiesProvider>

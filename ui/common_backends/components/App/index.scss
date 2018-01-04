@@ -1,0 +1,19 @@
+.logo
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 47px;
+    height: 47px;
+    border: 4px solid #FFF;
+    border-radius: 50%;
+    background: #043ba3;
+
+    & > img
+    {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+    }
+}

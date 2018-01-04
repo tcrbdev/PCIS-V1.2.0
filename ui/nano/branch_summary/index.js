@@ -223,6 +223,15 @@ class BranchSummary extends Component {
                     OrderByOS: _.find(value, { Kpi: 'Unit' }).OS
                 }
             }
+            else if (this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.branch || this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.branch_kiosk) {
+                temp = {
+                    GroupName: key,
+                    Data: value,
+                    Period: value[0].OpenDate,
+                    OrderByOS: _.find(value, { Kpi: 'Unit' }).OS,
+                    BranchCode: value[0].BranchCode
+                }
+            }
             else {
                 temp = {
                     GroupName: key,
@@ -264,7 +273,7 @@ class BranchSummary extends Component {
                                     :
                                     <Tooltip
                                         placement="topLeft"
-                                        title={<div>{item.GroupName} <br /> Br. Open: Coming soon..</div>}>
+                                        title={<div>{item.GroupName} {item.Period && `<br /> Br. Open: ${moment(item.Period).format("DD-MM-YYYY")}`}</div>}>
                                         <div>{item.GroupName.indexOf('osk') <= 0 ? item.GroupName.split(' ')[0] : item.GroupName.split(' ')[1]}</div>
                                     </Tooltip>
                             }

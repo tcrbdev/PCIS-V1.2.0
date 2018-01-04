@@ -6,7 +6,7 @@
   pointer-events: all;
 }
 .rbc-addons-dnd .rbc-addons-dnd-over {
-  background-color: rgba(255, 193, 7, .5);
+  background-color: rgba(33, 150, 243, 0.37);
 }
 .rbc-addons-dnd .rbc-event {
   transition: opacity 150ms;
@@ -15,4 +15,38 @@
 .rbc-addons-dnd.rbc-addons-dnd-is-dragging .rbc-event {
   pointer-events: none;
   opacity: .50;
+}
+.rbc-off-range-bg {
+    background: rgba(158, 158, 158, 0.1);
+}
+.rbc-month-header
+{
+    background: #f33a00;
+    color: #FFF;
+    font-size: 12px
+}
+.rbc-calendar > div:nth-child(2)
+{
+  border: none;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.15);
+}
+.rbc-month-view .rbc-header + .rbc-header
+{
+  border: none;
+}
+.rbc-month-view .rbc-header
+{
+border: none;
+}
+.rbc-time-header rbc-overflowing
+{
+  margin-right: 0 !important;
+}
+.rbc-time-content
+{
+      border-top: 2px solid #ff5722;
+}
+.rbc-event-label
+{
+  display: none;
 }

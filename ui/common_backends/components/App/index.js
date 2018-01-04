@@ -3,116 +3,161 @@ import { connect } from 'react-redux'
 import { withCookies } from 'react-cookie'
 
 import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContext } from 'react-dnd'
+import { DragDropContext, DropTarget } from 'react-dnd'
 import BigCalendar from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop/DragableNoBackend'
 
-import { Layout, Menu, Icon, Button } from 'antd'
+import { Layout, Breadcrumb, Menu, Dropdown, Badge, Avatar, Icon, Button, Tooltip, Popover, Modal, Calendar as MiniCalendar, Popconfirm } from 'antd'
 import FontAwesome from 'react-fontawesome'
 import moment from 'moment'
 
-import { getNanoMasterData, setOnDragEventCalendar } from '../../actions/master'
+import logo from '../../../../image/logo.png'
 
-import Home from '../Home'
+import {
+    setOnOpenMainMenu
+} from '../../actions/master'
+
+import CalendarApp from '../Calendar'
 import styles from './index.scss'
 
-BigCalendar.momentLocalizer(moment)
-
-const DragAndDropCalendar = withDragAndDrop(BigCalendar)
-
 const { Header, Sider, Content } = Layout
+const SubMenu = Menu.SubMenu
 
-
+const app_style = {
+    Header: {
+        background: '#fff',
+        padding: 0,
+        // height: '45px',
+        // lineHeight: '45px',
+        zIndex: '1',
+        boxShadow: '0 1px 4px rgba(0, 21, 41, 0.08)'
+    }
+}
 
 class App extends Component {
 
-    state = {
-        events: [{
-            'title': 'All Day Event very long title',
-            'allDay': true,
-            'start': new Date(),
-            'end': new Date('2017-12-15')
-        }, {
-            'title': 'Long Event',
-            'start': new Date(),
-            'end': new Date()
-        }]
-    }
-
-    componentWillMount() {
-        const { getNanoMasterData, cookies } = this.props
-
-        getNanoMasterData();
-    }
-
-    onEventDrop = ({ event, start, end, ...custom }) => {
-        console.log(event, start, end, ...custom)
-        let events = this.state.events
-        events.push({
-            title: event.title,
-            start,
-            end
-        })
-
-        this.setState({ events })
-    }
-
-    getToolbar = (props, obj) => {
-        const { onNavigate, onViewChange, views, label } = props
-
-        console.log(views, "---------", label)
-        // 0"month" 1"week" 2"work_week" 3"day" 4"agenda"
-
-        return (
-            <Header style={{ background: '#EEE', width: '100%' }}>
-                <Icon
-                    className="trigger"
-                    type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                    onClick={this.toggle}
-                />
-            </Header>
-        )
+    openMenu = () => {
+        this.props.setOnOpenMainMenu(!this.props.IS_OPEN_MAIN_MENU)
     }
 
     render() {
 
-        let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-
-        return (
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
-                    <div style={{ height: '100%' }}>
-                        <Home />
-                    </div>
-                    <div style={{ flex: '1' }}>
-                        <DragAndDropCalendar
-                            popup
-                            events={this.state.events}
-                            onEventDrop={this.onEventDrop}
-                            defaultDate={new Date()}
-                            views={allViews}
-                            components={{
-                                toolbar: this.getToolbar
-                            }} />
-                        <div>
+        const menu = (
+            <Menu>
+                <Menu.Item disabled>
+                    <div style={{ display: 'flex', alignItems: 'center', margin: '0 12px', cursor: 'pointer', width: '150px' }}>
+                        <Avatar src="http://172.17.9.94/newservices/LBServices.svc/employee/image/58385" style={{ marginRight: '5px' }} size="large" />
+                        <div style={{ display: 'flex', flexDirection: 'column', color: 'rgba(39, 39, 39, 0.7)', fontSize: '12px' }}>
+                            <span style={{ whiteSpace: 'nowrap' }}>Janewit .L</span>
+                            <span style={{ whiteSpace: 'nowrap' }}>Work Period 2.1.3</span>
                         </div>
                     </div>
-                </div>
-            </div>
+                </Menu.Item>
+                <Menu.Divider />
+                <Menu.Item key="0"><Icon type="user" style={{ marginRight: '5px' }} />Profile</Menu.Item>
+                <Menu.Item key="1"> <Icon type="setting" style={{ marginRight: '5px' }} />Setting</Menu.Item>
+                <Menu.Divider />
+                <Menu.Item key="3"><Icon type="logout" style={{ marginRight: '5px', color: '#b1023e' }} />Sign out</Menu.Item>
+            </Menu>
+        )
+
+        return (
+            <Layout style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <Header style={{ ...app_style.Header }} >
+                    <div style={{ display: 'flex', height: '100%', width: '100%' }}>
+                        <div style={{ width: '80px', background: '#043ba3', height: 'inherit', fontSize: '32px', textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <div className={styles['logo']}>
+                                <img src={logo} />
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', flex: '1', alignItems: 'center', padding: '0 10px' }}>
+                            <Breadcrumb>
+                                <Breadcrumb.Item href="">
+                                    <Icon type="home" />
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item href="">
+                                    <Icon type="calendar" />
+                                    <span>Calendar</span>
+                                </Breadcrumb.Item>
+                                {/* <Breadcrumb.Item>
+                                    <Icon type="schedule" />
+                                    <span>Management</span>
+                                </Breadcrumb.Item> */}
+                            </Breadcrumb>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', borderLeft: '1px solid #EEE', padding: '0 10px' }}>
+                            <div style={{ margin: '0 12px', cursor: 'pointer' }}><Tooltip title="Chat"><Badge count={0}><Icon type="message" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
+                            <div style={{ margin: '0 12px', cursor: 'pointer' }}><Tooltip title="Notification"><Badge count={0}><Icon type="bell" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
+                            <Dropdown
+                                placement="bottomRight"
+                                overlay={menu}>
+                                <div style={{ display: 'flex', justifyContent: 'center', margin: '0 12px', cursor: 'pointer' }}>
+                                    <Avatar src="http://172.17.9.94/newservices/LBServices.svc/employee/image/58385" style={{ marginTop: '16px', marginRight: '5px' }} />
+                                    <span style={{ whiteSpace: 'nowrap' }}>Janewit .L</span>
+                                </div>
+                            </Dropdown>
+                        </div>
+                    </div>
+                </Header>
+                <Layout style={{ display: 'flex', flex: '1', flexDirection: 'row', height: '100%' }}>
+                    <Menu
+                        style={{ height: '100%', boxShadow: '2px 0 6px rgba(0, 21, 41, 0.35)' }}
+                        mode="inline"
+                        theme="dark"
+                        inlineCollapsed={true}
+                    >
+                        {/* <Menu.Item key="1">
+                            <Icon type="pie-chart" />
+                            <span>Dashboard</span>
+                        </Menu.Item>
+                        <Menu.Item key="2">
+                            <Icon type="desktop" />
+                            <span>Application</span>
+                        </Menu.Item>
+                        <Menu.Item key="3">
+                            <Icon type="inbox" />
+                            <span>Files</span>
+                        </Menu.Item> */}
+                        <SubMenu key="calendar" title={
+                            <span style={{ position: 'relative' }}>
+                                <FontAwesome name="calendar-o" style={{ fontSize: '16px', paddingLeft: '1px' }} />
+                                <i style={{ position: 'absolute', left: '54%', transform: 'translate(-50%, 0)', paddingTop: '1px', fontSize: '8px' }}>{moment(new Date()).format("DD")}</i>
+                            </span>
+                        }>
+                            <Menu.Item key="calendar_5"><span><Icon type="dashboard" /><span>Dashboard</span></span></Menu.Item>
+                            <Menu.Item key="calendar_6"><span><Icon type="schedule" /><span>Management</span></span></Menu.Item>
+                        </SubMenu>
+                        {/* <SubMenu key="sub1" title={<span><Icon type="mail" /><span>Navigation One</span></span>}>
+                            <Menu.Item key="5">Option 5</Menu.Item>
+                            <Menu.Item key="6">Option 6</Menu.Item>
+                            <Menu.Item key="7">Option 7</Menu.Item>
+                            <Menu.Item key="8">Option 8</Menu.Item>
+                        </SubMenu>
+                        <SubMenu key="sub2" title={<span><Icon type="appstore" /><span>Navigation Two</span></span>}>
+                            <Menu.Item key="9">Option 9</Menu.Item>
+                            <Menu.Item key="10">Option 10</Menu.Item>
+                            <SubMenu key="sub3" title="Submenu">
+                                <Menu.Item key="11">Option 11</Menu.Item>
+                                <Menu.Item key="12">Option 12</Menu.Item>
+                            </SubMenu>
+                        </SubMenu> */}
+                    </Menu>
+                    <Content style={{ margin: '0 16px' }}>
+                        <CalendarApp />
+                    </Content>
+                </Layout>
+            </Layout>
         )
     }
 }
 
-const DragContextCalendar = DragDropContext(HTML5Backend)(App)
-
-const CookiesApp = withCookies(DragContextCalendar)
+const CookiesApp = withCookies(App)
 
 export default connect(
     (state) => ({
-        NANO_MASTER_ALL: state.NANO_MASTER_ALL
+        IS_OPEN_MAIN_MENU: state.IS_OPEN_MAIN_MENU
     }),
     {
-        getNanoMasterData: getNanoMasterData,
-        setOnDragEventCalendar: setOnDragEventCalendar
+        setOnOpenMainMenu: setOnOpenMainMenu
     })(CookiesApp)
 
