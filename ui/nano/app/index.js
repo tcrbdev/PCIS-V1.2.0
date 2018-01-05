@@ -46,7 +46,8 @@ class Index extends Component {
         collapsed: false,
         SEARCH_BRANCH_MARKER: [],
         collapsedSummary: false,
-        openFilterCollapsed: "1"
+        openFilterCollapsed: "1",
+        role: "0"
     }
 
     componentWillMount() {
@@ -64,6 +65,7 @@ class Index extends Component {
                 const auth = cookies.get('authen_info')
                 getNanoMasterData(auth);
                 getNanoVisitPopupInformation({ EmpCode: auth.Session.sess_empcode });
+                this.setState({ role: auth.Session.sess_authorized })
             }
             else {
                 window.location.href = 'http://tc001pcis1p/login/'
@@ -173,7 +175,7 @@ class Index extends Component {
         return (
             <Layout style={{ overflow: 'hidden' }}>
                 {
-                    <VisitPopup />
+                    <VisitPopup role={this.state.role} />
                 }
                 <Layout>
                     <Content className={styles['map-container']}>
@@ -189,6 +191,16 @@ class Index extends Component {
                     collapsed={this.state.collapsed}>
                     <div className={styles['icon-header-container']} style={{ zIndex: '4', right: '23%' }}>
                         <div className={`${this.state.collapsed && styles['hide']}`} style={{ opacity: this.state.collapsed ? 0 : 1, height: '100%' }}>
+                            <a target="_blank" href="http://tc001pcis1p/calendar/">
+                                <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
+                                    <Tooltip title="calendar" >
+                                        <span style={{ position: 'relative' }}>
+                                            <FontAwesome name="calendar-o" style={{ fontSize: '18px', paddingLeft: '1px' }} />
+                                            <i style={{ position: 'absolute', left: '54%', transform: 'translate(-50%, 0)', paddingTop: '3px', fontSize: '8px' }}>{moment(new Date()).format("DD")}</i>
+                                        </span>
+                                    </Tooltip>
+                                </div>
+                            </a>
                             <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
                                 <ModalNanoStopApproval />
                             </div>

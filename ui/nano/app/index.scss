@@ -543,7 +543,13 @@
 
          & > span:hover , > div:hover
          {
-            & > [class*=fa]
+            & > i
+            {
+                color: #FFF;
+                z-index: 2;
+            }
+
+            & > [class*=fa] 
             {
                 color: #FFF !important;
             } 

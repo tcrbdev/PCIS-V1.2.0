@@ -37,10 +37,10 @@ class VisitPopup extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { NANO_VISIT_POPUP_INFO } = nextProps
+        const { NANO_VISIT_POPUP_INFO, role } = nextProps
 
         if (!_.isEmpty(NANO_VISIT_POPUP_INFO))
-            if (NANO_VISIT_POPUP_INFO[0].length > 0) {
+            if (NANO_VISIT_POPUP_INFO[0].length > 0 && role == '6') {
                 this.setState({
                     visible: true,
                 });
