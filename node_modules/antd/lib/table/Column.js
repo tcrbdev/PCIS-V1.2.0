@@ -36,4 +36,3 @@ var Column = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = Column;
-module.exports = exports['default'];

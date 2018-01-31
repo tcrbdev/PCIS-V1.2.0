@@ -5,9 +5,28 @@ import { Menu, Dropdown, Icon, Button, Tooltip, Popover, Popconfirm } from 'antd
 import FontAwesome from 'react-fontawesome'
 import moment from 'moment'
 
+import MiniMap from './minimap'
+
 import styles from './index.scss'
 
 export default class CalendarEventPopInfo extends Component {
+    getDeleteButton = () => {
+        const { event } = this.props
+
+        if (event.E_IsConfirm == 'Y') {
+            return <Button className="popover-event-float-button" shape="circle" type="danger" icon="delete" size="large" disabled />
+        }
+        else {
+            return <Popconfirm
+                title="Are you sure delete this event?"
+                onConfirm={() => this.props.onDelete(event)}>
+                <Tooltip title="Delete Event">
+                    <Button className="popover-event-float-button" shape="circle" type="danger" icon="delete" size="large" disabled={event.E_IsConfirm == 'Y' ? true : false} />
+                </Tooltip>
+            </Popconfirm>
+        }
+    }
+
     render() {
         const { event } = this.props
 
@@ -16,17 +35,20 @@ export default class CalendarEventPopInfo extends Component {
                 <div style={{ background: `${event.backgroundColor}`, color: `${event.foreColor}` }}>
                     <div>
                         <div>
-                            <Tooltip title="Unlock Confirm Event">
-                                <Icon type="lock"
-                                    style={{ cursor: 'pointer', width: '20px', height: '20px', display: 'flex', justifyContent: 'center' }} />
-                            </Tooltip>
+                            {
+                                event.E_IsConfirm == 'Y' &&
+                                <Tooltip title="Unlock Confirm Event">
+                                    <Icon type="lock"
+                                        style={{ cursor: 'pointer', width: '20px', height: '20px', display: 'flex', justifyContent: 'center' }} />
+                                </Tooltip>
+                            }
                         </div>
                         <div>
                             <Dropdown overlay={
                                 <Menu>
-                                    <Menu.Item key="0">
+                                    {/* <Menu.Item key="0">
                                         <span><Icon type="global" /> Map Location</span>
-                                    </Menu.Item>
+                                    </Menu.Item> */}
                                     <Menu.Item key="1">
                                         <Icon type="share-alt" /> Invite Event
                                             </Menu.Item>
@@ -45,13 +67,7 @@ export default class CalendarEventPopInfo extends Component {
                         </div>
                     </div>
                     <div><Tooltip title={event.title}><span>{event.title}</span></Tooltip></div>
-                    <Popconfirm
-                        title="Are you sure delete this event?"
-                        onConfirm={() => this.props.onDelete(event)}>
-                        <Tooltip title="Delete Event">
-                            <Button className="popover-event-float-button" shape="circle" type="danger" icon="delete" size="large" />
-                        </Tooltip>
-                    </Popconfirm>
+                    {this.getDeleteButton()}
                 </div>
                 <div>
                     <div>
@@ -74,7 +90,14 @@ export default class CalendarEventPopInfo extends Component {
                         </div>
                     }
                 </div>
-            </div>
+                <div style={{ width: '100%', height: '170px' }}>
+                    <MiniMap
+                        event={event}
+                        containerElement={<div style={{ height: `100%` }} />}
+                        mapElement={<div style={{ height: `100%` }} />}
+                    />
+                </div>
+            </div >
         )
 
     }

@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Επιλέξτε ώρα'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

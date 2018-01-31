@@ -89,4 +89,3 @@ var CheckableTag = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = CheckableTag;
-module.exports = exports['default'];

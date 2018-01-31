@@ -16,4 +16,3 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 _Upload2['default'].Dragger = _Dragger2['default'];
 exports['default'] = _Upload2['default'];
-module.exports = exports['default'];

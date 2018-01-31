@@ -6,7 +6,7 @@ import { DragDropContext } from 'react-dnd'
 import BigCalendar from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop/DragableNoBackend'
 
-import { Layout, Menu, Dropdown, Icon, Button, Tooltip, Popover, Popconfirm, Calendar as MiniCalendar } from 'antd'
+import { Layout, Menu, Dropdown, Icon, Button, Tooltip, Popover, Popconfirm, Calendar as MiniCalendar, notification, Badge } from 'antd'
 import FontAwesome from 'react-fontawesome'
 import moment from 'moment'
 
@@ -38,24 +38,34 @@ const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 class Calendar extends Component {
 
     state = {
+        Auth: null,
         defaultView: 'month',
         gotoDate: new Date(),
         formItem: null
     }
 
+    openNotificationWithIcon = (type, title, description) => {
+        notification[type]({
+            message: title,
+            description: description
+        });
+
+        if (type != 'error') {
+            this.setState({
+                formItem: null,
+            })
+        }
+    }
+
     handleOk = (obj) => {
-        const { insertCalendarEvent, updateCalendarEvent, CALENDAR_EVENT_DATA } = this.props
+        const { insertCalendarEvent, updateCalendarEvent, CALENDAR_EVENT_DATA, CALENDAR_EVENT_NON_CONFIRM } = this.props
 
         if (obj.E_Id) {
-            updateCalendarEvent(obj, CALENDAR_EVENT_DATA)
+            updateCalendarEvent(obj, [CALENDAR_EVENT_DATA, CALENDAR_EVENT_NON_CONFIRM], this.openNotificationWithIcon)
         }
         else {
-            insertCalendarEvent(obj, CALENDAR_EVENT_DATA)
+            insertCalendarEvent(obj, [CALENDAR_EVENT_DATA, CALENDAR_EVENT_NON_CONFIRM], this.openNotificationWithIcon)
         }
-
-        this.setState({
-            formItem: null,
-        });
     }
 
     handleCancel = e => this.setState({ formItem: null })
@@ -80,7 +90,7 @@ class Calendar extends Component {
                 title: `${event.E_Group_Title} ${event.E_Type_Description}`,
                 allday: event.allday,
                 start: event.start,
-                end: event.end,
+                end: event.start,
                 editable: true,
                 foreColor: event.E_Group_ForeColor,
                 backgroundColor: event.E_Group_BackgroundColor,
@@ -91,24 +101,29 @@ class Calendar extends Component {
 
     calendarEvent = () => {
         const { CALENDAR_EVENT_DATA } = this.props
-
-        return CALENDAR_EVENT_DATA.map((event, index) => {
-            return this.generateCalendarFormatItem(event)
-        })
+        if (CALENDAR_EVENT_DATA.length > 0) {
+            return CALENDAR_EVENT_DATA.map((event, index) => {
+                return this.generateCalendarFormatItem(event)
+            })
+        }
+        else {
+            return []
+        }
     }
 
     onEventDrop = (item) => {
         const { event, allday, start, end, ...custom } = item
+        console.log(start, end)
 
-        const { updateCalendarEvent, CALENDAR_EVENT_DATA } = this.props
+        const { updateCalendarEvent, CALENDAR_EVENT_DATA, CALENDAR_EVENT_NON_CONFIRM, AUTH_INFO, EMP_INFO } = this.props
 
         if (event.type == "new_event") {
+            //set end to start beacause year ondrop of event is 2066 not currently year on slot event
             this.setState({
                 formItem: this.generateCalendarFormatItem({
                     ...event,
                     allday,
-                    start,
-                    end
+                    start
                 })
             })
         }
@@ -173,30 +188,58 @@ class Calendar extends Component {
             if (canUpdate) {
                 updateCalendarEvent({
                     E_Id: event.E_Id,
-                    E_EmployeeCode: '58385',
                     E_Start: start_date,
                     E_End: end_date,
                     E_IsAllDay: is_allday,
-                    E_UpdateBy: '58385'
-                }, CALENDAR_EVENT_DATA)
+                    E_UpdateBy: AUTH_INFO.EmployeeCode
+                }, [CALENDAR_EVENT_DATA, CALENDAR_EVENT_NON_CONFIRM], this.openNotificationWithIcon)
             }
         }
     }
 
+    checkHaveEventOnMiniCalendar = value => {
+        // const { CALENDAR_EVENT_DATA } = this.props
+
+        // const check = _.filter(CALENDAR_EVENT_DATA, o => {
+        //     const event = this.generateCalendarFormatItem(o)
+        //     return moment(value.format("YYYY-MM-DD")).isSameOrAfter(moment(event.start).format("YYYY-MM-DD")) && moment(value.format("YYYY-MM-DD")).isSameOrBefore(moment(event.end).format("YYYY-MM-DD"))
+        // })
+
+        // if (!_.isEmpty(check)) {
+        //     return <Badge status={'success'} />
+        // }
+    }
+
     getToolbar = (toolbar, obj) => {
         const { onNavigate, onViewChange, views, label } = toolbar
-        const { onDropToTrash, onSelectMiniCalendar, props: { IS_DRAG_EVENT_CALENDAR, setOnDragEventCalendar, getCalendarEvent } } = this
-
-        // 0"month" 1"week" 2"work_week" 3"day" 4"agenda"
+        const { onDropToTrash, onSelectMiniCalendar, props: { IS_DRAG_EVENT_CALENDAR, setOnDragEventCalendar, getCalendarEvent, AUTH_INFO, EMP_INFO } } = this
 
         const goToBack = () => {
-            toolbar.date.setMonth(toolbar.date.getMonth() - 1);
-            toolbar.onNavigate('prev');
+            if (this.state.defaultView == 'day') {
+                toolbar.date.setDate(toolbar.date.getDate() - 1)
+            }
+            else if (this.state.defaultView == 'week') {
+                toolbar.date.setDate(toolbar.date.getDate() - 7)
+            }
+            else {
+                toolbar.date.setMonth(toolbar.date.getMonth() - 1)
+            }
+
+            toolbar.onNavigate('PREV');
         }
 
         const goToNext = () => {
-            toolbar.date.setMonth(toolbar.date.getMonth() + 1);
-            toolbar.onNavigate('next');
+            if (this.state.defaultView == 'day') {
+                toolbar.date.setDate(toolbar.date.getDate() + 1)
+            }
+            else if (this.state.defaultView == 'week') {
+                toolbar.date.setDate(toolbar.date.getDate() + 7)
+            }
+            else {
+                toolbar.date.setMonth(toolbar.date.getMonth() + 1)
+            }
+
+            toolbar.onNavigate('NEXT');
         }
 
         const goToCurrent = () => {
@@ -205,7 +248,8 @@ class Calendar extends Component {
             toolbar.date.setMonth(now.getMonth())
             toolbar.date.setYear(now.getFullYear())
 
-            toolbar.onNavigate('current');
+            // toolbar.onNavigate('current');
+            toolbar.onNavigate('TODAY');
         }
 
         const changeView = (view) => {
@@ -223,7 +267,11 @@ class Calendar extends Component {
                                 placement="bottomLeft"
                                 content={
                                     <div style={{ width: '290px' }}>
-                                        <MiniCalendar fullscreen={false} onSelect={onSelectMiniCalendar} />
+                                        <MiniCalendar
+                                            className={styles['have-event-minicalendar']}
+                                            fullscreen={false}
+                                            onSelect={onSelectMiniCalendar}
+                                            dateCellRender={this.checkHaveEventOnMiniCalendar} />
                                     </div>
                                 }>
                                 <Tooltip title="Today">
@@ -236,10 +284,21 @@ class Calendar extends Component {
                         </div>
                         <div onClick={() => goToNext()}><Tooltip title="Next"><FontAwesome name="chevron-right" /></Tooltip></div>
                         <div onClick={() => setOnDragEventCalendar(!IS_DRAG_EVENT_CALENDAR)}><Tooltip title="New Event"><FontAwesome name="calendar-plus-o" /></Tooltip></div>
-                        <div onClick={() => getCalendarEvent()}><Tooltip title="Refresh"><FontAwesome name="refresh" /></Tooltip></div>
+                        <div onClick={() => getCalendarEvent(EMP_INFO)}><Tooltip title="Refresh"><FontAwesome name="refresh" /></Tooltip></div>
                     </div>
                     <div style={{ flex: '1', textAlign: 'center', fontSize: '20px', color: '#FFF' }}>
-                        {label}
+                        {
+                            this.state.defaultView == 'month' &&
+                            `${label}`
+                        }
+                        {
+                            this.state.defaultView == 'week' &&
+                            `${moment(toolbar.date).format('YYYY')} ${label}`
+                        }
+                        {
+                            this.state.defaultView == 'day' &&
+                            `${label} ${moment(toolbar.date).format('YYYY')}`
+                        }
                     </div>
                     <div className={styles['header-calendar-tool']}>
                         <CalendarTrash onDrop={this.onDropToTrash} />
@@ -254,12 +313,12 @@ class Calendar extends Component {
     }
 
     onDropToTrash = (item) => {
-        const { updateCalendarEvent, CALENDAR_EVENT_DATA } = this.props
+        const { updateCalendarEvent, CALENDAR_EVENT_DATA, CALENDAR_EVENT_NON_CONFIRM, AUTH_INFO } = this.props
         updateCalendarEvent({
             E_Id: item.E_Id,
             E_IsDelete: 'Y',
-            E_UpdateBy: '58385'
-        }, CALENDAR_EVENT_DATA)
+            E_UpdateBy: AUTH_INFO.EmployeeCode
+        }, [CALENDAR_EVENT_DATA, CALENDAR_EVENT_NON_CONFIRM], this.openNotificationWithIcon)
     }
 
     customEvent = (event, start, end, isSelected) => {
@@ -267,10 +326,17 @@ class Calendar extends Component {
         var backgroundColor = event.backgroundColor ? event.backgroundColor : '#ff5722'
 
         var style = {
-            backgroundColor: backgroundColor,
             fontSize: '12px',
             borderRadius: '0',
             padding: '0',
+            cursor: 'pointer'
+        }
+
+        if (this.state.defaultView == 'agenda') {
+            style.color = backgroundColor
+        }
+        else {
+            style.backgroundColor = backgroundColor
         }
 
         return {
@@ -280,14 +346,21 @@ class Calendar extends Component {
 
     eventFormat = (props) => {
         const { event } = props
+
         return (
             <Popover
                 trigger="hover"
-                content={<CalendarEventPopInfo event={event} onDelete={this.onDropToTrash} />}>
+                content={<CalendarEventPopInfo event={event} onDelete={this.onDropToTrash} arrowPointAtCenter />}
+                mouseEnterDelay={.4}
+            >
                 <div onClick={() => this.setState({ formItem: event })} style={{ width: '100%', height: '100%', display: 'flex', position: 'relative' }}>
                     {
-                        !event.allday &&
-                        < span style={{ marginRight: '5px', background: 'rgba(0,0,0,.7)', padding: '0 3px' }}>{moment(event.start).format("ha")}</span>
+                        !event.allday && this.state.defaultView != 'agenda' &&
+                        < span style={{ background: 'rgba(0,0,0,.7)', padding: '0 3px' }}>{moment(event.start).format("ha")}</span>
+                    }
+                    {
+                        event.E_IsConfirm == 'Y' &&
+                        <Icon type="lock" style={{ margin: '0 4px', fontSize: '14px', display: 'flex', justifyContent: 'center', alignItems: 'center' }} />
                     }
                     <span style={{ marginLeft: '5px', flex: '1', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{event.title}</span>
                 </div>
@@ -296,10 +369,24 @@ class Calendar extends Component {
     }
 
     componentWillMount() {
-        const { getCalendarMasterEvents, getCalendarEvent } = this.props
+        const { getCalendarMasterEvents, getCalendarEvent, AUTH_INFO, EMP_INFO } = this.props
 
-        getCalendarMasterEvents()
-        getCalendarEvent()
+        this.setState({ Auth: EMP_INFO })
+
+        getCalendarMasterEvents(EMP_INFO)
+        getCalendarEvent(EMP_INFO, { StartDate: moment(new Date()).add(-1, 'M').startOf('M').format("YYYY-MM-DD"), EndDate: moment(new Date()).add(1, 'M').endOf('M').format("YYYY-MM-DD") })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { getCalendarMasterEvents, getCalendarEvent, AUTH_INFO, EMP_INFO } = nextProps
+
+        if (this.state.Auth != EMP_INFO) {
+            this.setState({ Auth: EMP_INFO })
+
+            getCalendarMasterEvents(EMP_INFO)
+            getCalendarEvent(EMP_INFO, { StartDate: moment(new Date()).add(-1, 'M').startOf('M').format("YYYY-MM-DD"), EndDate: moment(new Date()).add(1, 'M').endOf('M').format("YYYY-MM-DD") })
+        }
+
     }
 
     componentWillUpdate() {
@@ -315,12 +402,35 @@ class Calendar extends Component {
     }
 
     onSelectMiniCalendar = (value) => {
-        console.log(value)
         this.setState({ gotoDate: value.toDate() })
     }
 
     handleNavigate(date, view, action) {
-        console.log(date, view, action)
+        if (action == "DATE") {
+            this.setState({ gotoDate: date })
+        }
+    }
+
+    eventEndAccessor = event => {
+        if (event.allday) {
+            if (this.state.defaultView == 'day') {
+                return moment(event.end).toDate()
+            }
+            else {
+                if (moment(event.start).format("YYYY-MM-DD") == moment(event.end).format("YYYY-MM-DD")) {
+                    return moment(event.end).toDate()
+                }
+                else if (moment(event.end).toDate().getDay() == 6) {
+                    return moment(`${moment(event.end).format("YYYY-MM-DD")} 00:59:00`).toDate()
+                }
+                else {
+                    return moment(event.end).add(1, 'd').toDate()
+                }
+            }
+        }
+        else {
+            return moment(event.end).toDate()
+        }
     }
 
     render() {
@@ -331,7 +441,8 @@ class Calendar extends Component {
                     <CalendarFormEvent
                         formItem={this.state.formItem}
                         onCancel={this.handleCancel}
-                        onOk={this.handleOk} />
+                        onOk={this.handleOk}
+                        onDelete={this.onDropToTrash} />
                 }
                 < div className={`${styles['event-calendar']} ${this.props.IS_DRAG_EVENT_CALENDAR && styles['event-calendar-open']}`}>
                     <div style={{ textAlign: 'right', fontSize: '16px', fontWeight: 'bold', marginRight: '5px', marginTop: '5px', cursor: 'pointer', color: '#ff5722' }}>
@@ -344,22 +455,27 @@ class Calendar extends Component {
                         </div>
                     }
                 </div >
-                <div style={{ position: 'relative', width: '100%' }}>
+                <div ref='calendar_container' style={{ position: 'relative', width: '100%' }}>
                     <div style={{ position: 'absolute', width: '100%', height: '100%' }} className={styles['modal-event-calendar']} id="m-calendar">
                         <div id="mask-modal-calendar-event"></div>
                     </div>
-                    <DragAndDropCalendar
-                        date={this.state.gotoDate}
-                        defaultDate={this.state.gotoDate}
-                        defaultView={this.state.defaultView}
-                        events={this.calendarEvent()}
-                        onNavigate={this.handleNavigate}
-                        onEventDrop={this.onEventDrop}
-                        eventPropGetter={this.customEvent}
-                        components={{
-                            event: this.eventFormat.bind(this),
-                            toolbar: this.getToolbar.bind(this)
-                        }} />
+                    <div style={{ width: '100%', height: '100%' }}>
+                        <DragAndDropCalendar
+                            date={this.state.gotoDate}
+                            popup
+                            defaultDate={this.state.gotoDate}
+                            defaultView={this.state.defaultView}
+                            events={this.calendarEvent()}
+                            drilldownView="day"
+                            onNavigate={(date, view, action) => this.handleNavigate(date, view, action)}
+                            onEventDrop={this.onEventDrop}
+                            eventPropGetter={this.customEvent}
+                            endAccessor={this.eventEndAccessor}
+                            components={{
+                                event: this.eventFormat.bind(this),
+                                toolbar: this.getToolbar.bind(this)
+                            }} />
+                    </div>
                 </div>
             </div >
         )
@@ -370,8 +486,11 @@ const ContextCalendar = DragDropContext(HTML5Backend)(Calendar)
 
 export default connect(
     (state) => ({
+        AUTH_INFO: state.AUTH_INFO,
+        EMP_INFO: state.EMP_INFO,
         IS_DRAG_EVENT_CALENDAR: state.IS_DRAG_EVENT_CALENDAR,
-        CALENDAR_EVENT_DATA: state.CALENDAR_EVENT_DATA
+        CALENDAR_EVENT_DATA: state.CALENDAR_EVENT_DATA,
+        CALENDAR_EVENT_NON_CONFIRM: state.CALENDAR_EVENT_NON_CONFIRM
     }),
     {
         setOnDragEventCalendar: setOnDragEventCalendar,

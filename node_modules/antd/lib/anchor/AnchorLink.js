@@ -100,4 +100,3 @@ AnchorLink.defaultProps = {
 AnchorLink.contextTypes = {
     antAnchor: _propTypes2['default'].object
 };
-module.exports = exports['default'];

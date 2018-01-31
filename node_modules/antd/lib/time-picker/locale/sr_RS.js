@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Izaberite vreme'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

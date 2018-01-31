@@ -147,4 +147,3 @@ Form.create = function () {
 
     return (0, _createDOMForm2['default'])((0, _extends3['default'])({ fieldNameProp: 'id' }, options, { fieldMetaProp: _constants.FIELD_META_PROP, fieldDataProp: _constants.FIELD_DATA_PROP }));
 };
-module.exports = exports['default'];

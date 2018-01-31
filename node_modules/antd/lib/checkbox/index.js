@@ -16,4 +16,3 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 _Checkbox2['default'].Group = _Group2['default'];
 exports['default'] = _Checkbox2['default'];
-module.exports = exports['default'];

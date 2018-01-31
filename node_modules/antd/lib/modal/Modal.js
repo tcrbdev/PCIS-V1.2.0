@@ -166,4 +166,3 @@ Modal.propTypes = {
     title: _propTypes2['default'].node,
     closable: _propTypes2['default'].bool
 };
-module.exports = exports['default'];

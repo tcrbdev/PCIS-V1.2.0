@@ -105,4 +105,3 @@ function calculateNodeHeight(uiTextNode) {
     }
     return { height: height, minHeight: minHeight, maxHeight: maxHeight, overflowY: overflowY };
 }
-module.exports = exports['default'];

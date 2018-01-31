@@ -12,4 +12,3 @@ function isFlexSupported() {
     }
     return false;
 }
-module.exports = exports['default'];

@@ -237,4 +237,3 @@ Tooltip.defaultProps = {
     arrowPointAtCenter: false,
     autoAdjustOverflow: true
 };
-module.exports = exports['default'];

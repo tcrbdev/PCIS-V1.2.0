@@ -142,4 +142,3 @@ Slider.defaultProps = {
         return value.toString();
     }
 };
-module.exports = exports['default'];

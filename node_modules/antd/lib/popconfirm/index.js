@@ -190,4 +190,3 @@ Popconfirm.defaultProps = {
     trigger: 'click',
     okType: 'primary'
 };
-module.exports = exports['default'];

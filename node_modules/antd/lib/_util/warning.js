@@ -18,5 +18,3 @@ exports['default'] = function (valid, message) {
         warned[message] = true;
     }
 };
-
-module.exports = exports['default'];

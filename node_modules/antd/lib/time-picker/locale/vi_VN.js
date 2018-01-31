@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Chọn thời gian'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

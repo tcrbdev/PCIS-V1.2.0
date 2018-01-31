@@ -80,4 +80,3 @@ MenuItem.contextTypes = {
 };
 MenuItem.isMenuItem = 1;
 exports['default'] = MenuItem;
-module.exports = exports['default'];

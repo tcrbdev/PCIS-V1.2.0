@@ -14,10 +14,14 @@ import moment from 'moment'
 import logo from '../../../../image/logo.png'
 
 import {
-    setOnOpenMainMenu
+    authenticate,
+    setAuthentication,
+    setOnOpenMainMenu,
+    getOrganizationTem
 } from '../../actions/master'
 
 import CalendarApp from '../Calendar'
+import OrgChart from '../OrgChart'
 import styles from './index.scss'
 
 const { Header, Sider, Content } = Layout
@@ -29,33 +33,74 @@ const app_style = {
         padding: 0,
         // height: '45px',
         // lineHeight: '45px',
-        zIndex: '1',
-        boxShadow: '0 1px 4px rgba(0, 21, 41, 0.08)'
+        zIndex: '6',
+        boxShadow: '0 0 4px 2px rgba(0,0,0,.14)'
     }
 }
 
 class App extends Component {
+
+    componentWillMount() {
+        this.initData();
+
+        // Set Title
+        $('title').text('Calendar')
+    }
+
+    initData() {
+        const { setAuthentication, getOrganizationTem, cookies } = this.props
+        if (process.env.NODE_ENV === 'production') {
+
+            console.log("Cookie : ", cookies.get('authen_info'))
+
+            if (!_.isEmpty(cookies.get('authen_info'))) {
+
+                const { Auth } = cookies.get('authen_info')
+
+                setAuthentication(Auth)
+
+                getOrganizationTem(Auth)
+            }
+            else {
+                // window.location.href = 'http://tc001pcis1u/login/'
+                window.location.href = 'http://tc001pcis1p:8099/pcis/'
+            }
+        }
+        else {
+            this.props.authenticate({ username: 't58385' })
+
+            this.props.getOrganizationTem({ EmployeeCode: '58385' })
+            // setAuthentication({
+            //     EmployeeCode: '58385',
+            //     EmpName_TH: 'เจนวิทย์ เลิศสินอธิชัย',
+            //     RoleId: '6',
+            // })
+        }
+    }
+
 
     openMenu = () => {
         this.props.setOnOpenMainMenu(!this.props.IS_OPEN_MAIN_MENU)
     }
 
     render() {
+        const { AUTH_INFO } = this.props
 
         const menu = (
             <Menu>
                 <Menu.Item disabled>
-                    <div style={{ display: 'flex', alignItems: 'center', margin: '0 12px', cursor: 'pointer', width: '150px' }}>
-                        <Avatar src="http://172.17.9.94/newservices/LBServices.svc/employee/image/58385" style={{ marginRight: '5px' }} size="large" />
-                        <div style={{ display: 'flex', flexDirection: 'column', color: 'rgba(39, 39, 39, 0.7)', fontSize: '12px' }}>
-                            <span style={{ whiteSpace: 'nowrap' }}>Janewit .L</span>
-                            <span style={{ whiteSpace: 'nowrap' }}>Work Period 2.1.3</span>
+                    <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                        <Avatar src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${AUTH_INFO.EmployeeCode}`} style={{ marginRight: '5px' }} size="large" />
+                        <div style={{ display: 'flex', flex: '1', flexDirection: 'column', color: 'rgba(39, 39, 39, 0.7)', fontSize: '12px' }}>
+                            <span style={{ whiteSpace: 'nowrap' }}>{AUTH_INFO.EmpName_TH}</span>
+                            <span style={{ whiteSpace: 'nowrap' }}>Work Period {AUTH_INFO.StartWork}</span>
                         </div>
                     </div>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key="0"><Icon type="user" style={{ marginRight: '5px' }} />Profile</Menu.Item>
                 <Menu.Item key="1"> <Icon type="setting" style={{ marginRight: '5px' }} />Setting</Menu.Item>
+                <Menu.Item key="2"> <Icon type="solution" style={{ marginRight: '5px' }} />Contact</Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key="3"><Icon type="logout" style={{ marginRight: '5px', color: '#b1023e' }} />Sign out</Menu.Item>
             </Menu>
@@ -85,23 +130,27 @@ class App extends Component {
                                 </Breadcrumb.Item> */}
                             </Breadcrumb>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', borderLeft: '1px solid #EEE', padding: '0 10px' }}>
-                            <div style={{ margin: '0 12px', cursor: 'pointer' }}><Tooltip title="Chat"><Badge count={0}><Icon type="message" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
-                            <div style={{ margin: '0 12px', cursor: 'pointer' }}><Tooltip title="Notification"><Badge count={0}><Icon type="bell" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
+                        <div className={styles['toolbar-profile-header']} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div ><Tooltip title="TCRB War Room"><Badge count={0}><Icon type="share-alt" style={{ fontSize: '18px', padding: '4px', marginTop: '3px', color: '#043ba3' }} /></Badge></Tooltip></div>
+                            <div ><Tooltip title="Scoreboard"><Badge count={0}><FontAwesome name="trophy" style={{ fontSize: '18px', padding: '4px', marginTop: '3px', color: '#FF9800' }} /></Badge></Tooltip></div>
+                            <div style={{ borderLeft: '1px solid #e6e6e6' }}><Tooltip title="News Feed"><Badge count={0}><FontAwesome name="rss" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
+                            <div ><Tooltip title="Mail"><Badge count={0}><FontAwesome name="envelope-o" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
+                            <div ><Tooltip title="Chat"><Badge count={0}><Icon type="message" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
+                            <div ><Tooltip title="Notification"><Badge count={0}><Icon type="bell" style={{ fontSize: '18px', padding: '4px', marginTop: '3px' }} /></Badge></Tooltip></div>
                             <Dropdown
                                 placement="bottomRight"
                                 overlay={menu}>
-                                <div style={{ display: 'flex', justifyContent: 'center', margin: '0 12px', cursor: 'pointer' }}>
-                                    <Avatar src="http://172.17.9.94/newservices/LBServices.svc/employee/image/58385" style={{ marginTop: '16px', marginRight: '5px' }} />
-                                    <span style={{ whiteSpace: 'nowrap' }}>Janewit .L</span>
+                                <div>
+                                    <Avatar src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${AUTH_INFO.EmployeeCode}`} style={{ marginRight: '5px' }} />
+                                    <span style={{ whiteSpace: 'nowrap' }}>{AUTH_INFO.EmpName_TH}</span>
                                 </div>
                             </Dropdown>
                         </div>
                     </div>
                 </Header>
-                <Layout style={{ display: 'flex', flex: '1', flexDirection: 'row', height: '100%' }}>
+                <Layout style={{ display: 'flex', flex: '1', flexDirection: 'row', height: '100%', width: '100%', backgroundColor: '#e6eaed' }}>
                     <Menu
-                        style={{ height: '100%', boxShadow: '2px 0 6px rgba(0, 21, 41, 0.35)' }}
+                        style={{ height: '100%', boxShadow: '2px 0 6px rgba(0, 21, 41, 0.35)', zIndex: 6 }}
                         mode="inline"
                         theme="dark"
                         inlineCollapsed={true}
@@ -142,8 +191,9 @@ class App extends Component {
                             </SubMenu>
                         </SubMenu> */}
                     </Menu>
-                    <Content style={{ margin: '0 16px' }}>
+                    <Content style={{ margin: '0 16px', width: 'calc(100% - 112px)', flex: '1' }}>
                         <CalendarApp />
+                        {/* <OrgChart /> */}
                     </Content>
                 </Layout>
             </Layout>
@@ -155,9 +205,13 @@ const CookiesApp = withCookies(App)
 
 export default connect(
     (state) => ({
+        AUTH_INFO: state.AUTH_INFO,
         IS_OPEN_MAIN_MENU: state.IS_OPEN_MAIN_MENU
     }),
     {
-        setOnOpenMainMenu: setOnOpenMainMenu
+        getOrganizationTem, getOrganizationTem,
+        setOnOpenMainMenu: setOnOpenMainMenu,
+        setAuthentication: setAuthentication,
+        authenticate: authenticate
     })(CookiesApp)
 

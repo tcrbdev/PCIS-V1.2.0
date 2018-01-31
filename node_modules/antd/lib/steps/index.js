@@ -66,4 +66,3 @@ Steps.propTypes = {
     iconPrefix: _propTypes2['default'].string,
     current: _propTypes2['default'].number
 };
-module.exports = exports['default'];

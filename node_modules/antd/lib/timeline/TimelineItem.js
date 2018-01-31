@@ -102,4 +102,3 @@ TimelineItem.defaultProps = {
     last: false,
     pending: false
 };
-module.exports = exports['default'];

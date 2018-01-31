@@ -56,4 +56,3 @@ var Dragger = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = Dragger;
-module.exports = exports['default'];

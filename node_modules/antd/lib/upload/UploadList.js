@@ -259,4 +259,3 @@ UploadList.defaultProps = {
     showRemoveIcon: true,
     showPreviewIcon: true
 };
-module.exports = exports['default'];

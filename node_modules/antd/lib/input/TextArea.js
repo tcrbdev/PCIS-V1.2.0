@@ -170,4 +170,3 @@ exports['default'] = TextArea;
 TextArea.defaultProps = {
     prefixCls: 'ant-input'
 };
-module.exports = exports['default'];

@@ -171,4 +171,3 @@ Avatar.defaultProps = {
     shape: 'circle',
     size: 'default'
 };
-module.exports = exports['default'];

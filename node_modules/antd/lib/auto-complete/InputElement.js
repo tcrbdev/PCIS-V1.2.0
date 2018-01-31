@@ -71,4 +71,3 @@ var InputElement = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = InputElement;
-module.exports = exports['default'];

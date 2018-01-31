@@ -129,4 +129,3 @@ TreeSelect.defaultProps = {
     showSearch: false,
     dropdownClassName: 'ant-select-tree-dropdown'
 };
-module.exports = exports['default'];

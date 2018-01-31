@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Hora'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

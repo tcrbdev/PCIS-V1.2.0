@@ -114,4 +114,3 @@ var ActionButton = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = ActionButton;
-module.exports = exports['default'];

@@ -16,4 +16,3 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 _dropdown2['default'].Button = _dropdownButton2['default'];
 exports['default'] = _dropdown2['default'];
-module.exports = exports['default'];

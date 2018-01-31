@@ -228,4 +228,3 @@ var SelectionCheckboxAll = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = SelectionCheckboxAll;
-module.exports = exports['default'];

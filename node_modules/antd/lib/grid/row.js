@@ -205,4 +205,3 @@ Row.propTypes = {
     gutter: _propTypes2['default'].oneOfType([_propTypes2['default'].object, _propTypes2['default'].number]),
     prefixCls: _propTypes2['default'].string
 };
-module.exports = exports['default'];

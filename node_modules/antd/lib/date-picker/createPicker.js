@@ -201,4 +201,3 @@ function createPicker(TheCalendar) {
     }, _a;
     var _a;
 }
-module.exports = exports['default'];

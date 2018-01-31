@@ -105,4 +105,3 @@ BreadcrumbItem.propTypes = {
     separator: _propTypes2['default'].oneOfType([_propTypes2['default'].string, _propTypes2['default'].element]),
     href: _propTypes2['default'].string
 };
-module.exports = exports['default'];

@@ -114,4 +114,3 @@ var Item = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = Item;
-module.exports = exports['default'];

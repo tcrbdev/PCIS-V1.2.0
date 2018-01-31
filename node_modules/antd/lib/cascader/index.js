@@ -379,4 +379,3 @@ Cascader.defaultProps = {
     allowClear: true,
     notFoundContent: 'Not Found'
 };
-module.exports = exports['default'];

@@ -145,4 +145,3 @@ Carousel.defaultProps = {
     prefixCls: 'ant-carousel',
     draggable: false
 };
-module.exports = exports['default'];

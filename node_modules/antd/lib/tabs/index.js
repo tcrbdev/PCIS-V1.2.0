@@ -210,4 +210,3 @@ Tabs.defaultProps = {
     prefixCls: 'ant-tabs',
     hideAdd: false
 };
-module.exports = exports['default'];

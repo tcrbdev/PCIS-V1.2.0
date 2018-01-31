@@ -96,4 +96,3 @@ InputNumber.defaultProps = {
     prefixCls: 'ant-input-number',
     step: 1
 };
-module.exports = exports['default'];

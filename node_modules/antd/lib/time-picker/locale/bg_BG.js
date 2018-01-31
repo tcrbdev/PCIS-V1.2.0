@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Избор на час'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

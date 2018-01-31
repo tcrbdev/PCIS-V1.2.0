@@ -87,4 +87,3 @@ Rate.defaultProps = {
     prefixCls: 'ant-rate',
     character: React.createElement(_icon2['default'], { type: 'star' })
 };
-module.exports = exports['default'];

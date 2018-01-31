@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Vybrat čas'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

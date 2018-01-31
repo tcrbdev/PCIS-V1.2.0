@@ -293,4 +293,3 @@ FilterMenu.defaultProps = {
 
     column: {}
 };
-module.exports = exports['default'];

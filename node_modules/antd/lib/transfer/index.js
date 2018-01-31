@@ -406,4 +406,3 @@ Transfer.propTypes = {
     rowKey: _propTypes2['default'].func,
     lazy: _propTypes2['default'].oneOfType([_propTypes2['default'].object, _propTypes2['default'].bool])
 };
-module.exports = exports['default'];

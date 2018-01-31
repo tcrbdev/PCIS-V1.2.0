@@ -39,4 +39,3 @@ _Modal2['default'].confirm = function (props) {
     return (0, _confirm2['default'])(config);
 };
 exports['default'] = _Modal2['default'];
-module.exports = exports['default'];

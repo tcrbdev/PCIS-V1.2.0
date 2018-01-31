@@ -3,6 +3,7 @@
 
 @card-prefix-cls: ~"@{ant-prefix}-card";
 @card-head-height: 48px;
+@card-hover-border: rgba(0, 0, 0, 0.09);
 
 .@{card-prefix-cls} {
   .reset-component;
@@ -15,7 +16,7 @@
     cursor: pointer;
     &:hover {
       box-shadow: @card-shadow;
-      border-color: rgba(0, 0, 0, 0.09);
+      border-color: @card-hover-border;
     }
   }
 
@@ -188,22 +189,16 @@
 
   &-meta {
     margin: -4px 0;
-
-    &-content {
-      display: table-row;
-    }
+    .clearfix;
 
     &-avatar {
       padding-right: 16px;
-      display: table-cell;
+      float: left;
     }
 
     &-detail {
-      display: table-cell;
-      vertical-align: top;
-      position: relative;
-
-      & > div:not(:last-child) {
+      overflow: hidden;
+      > div:not(:last-child) {
         margin-bottom: 8px;
       }
     }
@@ -211,7 +206,6 @@
     &-title {
       font-size: @font-size-lg;
       text-overflow: ellipsis;
-      width: 100%;
       overflow: hidden;
       white-space: nowrap;
       color: @card-head-color;

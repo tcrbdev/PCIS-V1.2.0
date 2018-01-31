@@ -17,5 +17,3 @@ exports['default'] = function (props) {
         props.children
     );
 };
-
-module.exports = exports['default'];

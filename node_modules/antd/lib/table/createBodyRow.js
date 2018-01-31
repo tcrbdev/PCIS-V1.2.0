@@ -116,4 +116,3 @@ function createTableRow() {
 
     return BodyRow;
 }
-module.exports = exports['default'];

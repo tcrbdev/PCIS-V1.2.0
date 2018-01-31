@@ -138,4 +138,3 @@ Radio.defaultProps = {
 Radio.contextTypes = {
     radioGroup: _propTypes2['default'].any
 };
-module.exports = exports['default'];

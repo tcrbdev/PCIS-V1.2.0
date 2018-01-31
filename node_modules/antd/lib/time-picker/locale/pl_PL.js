@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Wybierz godzinę'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

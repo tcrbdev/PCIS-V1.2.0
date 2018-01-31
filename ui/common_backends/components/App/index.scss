@@ -15,5 +15,30 @@
         width: 28px;
         height: 28px;
         border-radius: 50%;
+        margin-left: 3px;
+        transform: rotate(180deg)
+    }
+}
+
+.toolbar-profile-header
+{
+    & > div:last-child
+    {
+        margin-right: 16px;
+    }
+
+    & > div
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        min-width: 40px;
+        padding: 0 10px;
+    }
+
+    & > div:hover
+    {
+        background: #eee;
     }
 }

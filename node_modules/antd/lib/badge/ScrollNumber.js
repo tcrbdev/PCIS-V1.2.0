@@ -187,4 +187,3 @@ ScrollNumber.defaultProps = {
     count: null,
     onAnimated: function onAnimated() {}
 };
-module.exports = exports['default'];

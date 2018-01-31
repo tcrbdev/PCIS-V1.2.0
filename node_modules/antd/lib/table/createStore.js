@@ -37,4 +37,3 @@ function createStore(initialState) {
         subscribe: subscribe
     };
 }
-module.exports = exports["default"];

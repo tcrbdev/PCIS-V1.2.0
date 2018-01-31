@@ -78,4 +78,3 @@ var Operation = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = Operation;
-module.exports = exports['default'];

@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Velja tíma'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

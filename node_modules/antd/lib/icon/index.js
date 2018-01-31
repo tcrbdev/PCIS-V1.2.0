@@ -41,4 +41,3 @@ var Icon = function Icon(props) {
     return React.createElement('i', (0, _extends3['default'])({}, (0, _omit2['default'])(props, ['type', 'spin']), { className: classString }));
 };
 exports['default'] = Icon;
-module.exports = exports['default'];

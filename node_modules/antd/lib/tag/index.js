@@ -167,4 +167,3 @@ Tag.defaultProps = {
     prefixCls: 'ant-tag',
     closable: false
 };
-module.exports = exports['default'];

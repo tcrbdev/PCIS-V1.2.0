@@ -16,4 +16,3 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 _Anchor2['default'].Link = _AnchorLink2['default'];
 exports['default'] = _Anchor2['default'];
-module.exports = exports['default'];

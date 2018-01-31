@@ -10,4 +10,3 @@ var locale = {
   placeholder: 'Выберите время'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

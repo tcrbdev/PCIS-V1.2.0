@@ -12,4 +12,3 @@ function triggerEvent(el, type) {
         el.dispatchEvent(e);
     }
 }
-module.exports = exports['default'];

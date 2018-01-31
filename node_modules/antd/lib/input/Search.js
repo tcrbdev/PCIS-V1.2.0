@@ -127,4 +127,3 @@ Search.defaultProps = {
     prefixCls: 'ant-input-search',
     enterButton: false
 };
-module.exports = exports['default'];

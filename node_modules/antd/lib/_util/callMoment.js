@@ -12,4 +12,3 @@ function callMoment(moment) {
 
     return (moment["default"] || moment).apply(undefined, args);
 }
-module.exports = exports["default"];

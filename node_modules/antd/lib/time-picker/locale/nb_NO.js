@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Velg tid'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

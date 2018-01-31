@@ -26,4 +26,3 @@ var locale = {
 // All settings at:
 // https://github.com/ant-design/ant-design/blob/master/components/date-picker/locale/example.json
 exports['default'] = locale;
-module.exports = exports['default'];

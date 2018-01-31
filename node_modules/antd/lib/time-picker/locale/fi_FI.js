@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Valitse aika'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

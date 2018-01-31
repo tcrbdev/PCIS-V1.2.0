@@ -93,4 +93,3 @@ exports['default'] = Search;
 Search.defaultProps = {
     placeholder: ''
 };
-module.exports = exports['default'];

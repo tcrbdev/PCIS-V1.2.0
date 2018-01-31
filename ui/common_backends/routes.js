@@ -45,7 +45,7 @@ export default (store, history) => {
         <CookiesProvider>
             <Router history={syncHistoryWithStore(history, store)}>
                 <div style={{ height: '100%' }}>
-                    <Route exact path='/' component={getApplication} />
+                    <Route exact path='/calendar' component={getApplication} />
                 </div>
             </Router>
         </CookiesProvider>

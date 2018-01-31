@@ -57,4 +57,3 @@ function Divider(_a) {
         )
     );
 }
-module.exports = exports['default'];

@@ -141,4 +141,3 @@ Checkbox.defaultProps = {
 Checkbox.contextTypes = {
     checkboxGroup: _propTypes2['default'].any
 };
-module.exports = exports['default'];

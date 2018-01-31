@@ -57,4 +57,3 @@ var ButtonGroup = function ButtonGroup(props) {
     return React.createElement('div', (0, _extends3['default'])({}, others, { className: classes }));
 };
 exports['default'] = ButtonGroup;
-module.exports = exports['default'];

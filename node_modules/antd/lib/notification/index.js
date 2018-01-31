@@ -180,4 +180,3 @@ var api = {
 });
 api.warn = api.warning;
 exports['default'] = api;
-module.exports = exports['default'];

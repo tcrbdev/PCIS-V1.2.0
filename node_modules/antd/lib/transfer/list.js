@@ -292,4 +292,3 @@ TransferList.defaultProps = {
     render: noop,
     lazy: {}
 };
-module.exports = exports['default'];

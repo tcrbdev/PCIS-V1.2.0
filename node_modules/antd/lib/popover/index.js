@@ -105,4 +105,3 @@ Popover.defaultProps = {
     mouseLeaveDelay: 0.1,
     overlayStyle: {}
 };
-module.exports = exports['default'];

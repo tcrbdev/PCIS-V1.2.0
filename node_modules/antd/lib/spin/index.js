@@ -219,4 +219,3 @@ Spin.propTypes = {
     wrapperClassName: _propTypes2['default'].string,
     indicator: _propTypes2['default'].node
 };
-module.exports = exports['default'];

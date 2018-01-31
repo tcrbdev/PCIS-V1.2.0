@@ -179,4 +179,3 @@ Layout.Header = Header;
 Layout.Footer = Footer;
 Layout.Content = Content;
 exports['default'] = Layout;
-module.exports = exports['default'];

@@ -140,4 +140,3 @@ function confirm(config) {
         destroy: close
     };
 }
-module.exports = exports['default'];

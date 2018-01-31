@@ -103,4 +103,3 @@ Pagination.defaultProps = {
     prefixCls: 'ant-pagination',
     selectPrefixCls: 'ant-select'
 };
-module.exports = exports['default'];

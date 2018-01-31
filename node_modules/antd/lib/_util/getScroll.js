@@ -18,4 +18,3 @@ function getScroll(target, top) {
     }
     return ret;
 }
-module.exports = exports['default'];

@@ -109,4 +109,3 @@ var SelectionBox = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = SelectionBox;
-module.exports = exports['default'];

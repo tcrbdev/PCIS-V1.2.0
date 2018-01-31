@@ -16,4 +16,3 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 _layout2['default'].Sider = _Sider2['default'];
 exports['default'] = _layout2['default'];
-module.exports = exports['default'];

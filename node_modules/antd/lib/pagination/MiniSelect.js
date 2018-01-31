@@ -56,4 +56,3 @@ var MiniSelect = function (_React$Component) {
 exports['default'] = MiniSelect;
 
 MiniSelect.Option = _select2['default'].Option;
-module.exports = exports['default'];

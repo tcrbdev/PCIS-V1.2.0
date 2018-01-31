@@ -161,4 +161,3 @@ Mention.defaultProps = {
 Mention.Nav = _rcEditorMention.Nav;
 Mention.toString = _rcEditorMention.toString;
 Mention.toContentState = _rcEditorMention.toEditorState;
-module.exports = exports['default'];

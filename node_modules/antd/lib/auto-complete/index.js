@@ -164,4 +164,3 @@ AutoComplete.defaultProps = {
     showSearch: false,
     filterOption: false
 };
-module.exports = exports['default'];

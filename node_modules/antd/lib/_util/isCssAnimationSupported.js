@@ -25,4 +25,3 @@ function isCssAnimationSupported() {
     return animation;
 }
 exports['default'] = isCssAnimationSupported;
-module.exports = exports['default'];

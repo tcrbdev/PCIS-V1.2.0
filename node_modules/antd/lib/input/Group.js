@@ -36,4 +36,3 @@ var Group = function Group(props) {
     );
 };
 exports['default'] = Group;
-module.exports = exports['default'];

@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Välj tid'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

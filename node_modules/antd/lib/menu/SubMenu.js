@@ -77,4 +77,3 @@ SubMenu.contextTypes = {
     antdMenuTheme: _propTypes2['default'].string
 };
 exports['default'] = SubMenu;
-module.exports = exports['default'];

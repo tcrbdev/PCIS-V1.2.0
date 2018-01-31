@@ -16,4 +16,3 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 _Breadcrumb2['default'].Item = _BreadcrumbItem2['default'];
 exports['default'] = _Breadcrumb2['default'];
-module.exports = exports['default'];

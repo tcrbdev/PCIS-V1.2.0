@@ -188,4 +188,3 @@ Progress.propTypes = {
     gapDegree: _propTypes2['default'].number,
     'default': _propTypes2['default'].oneOf(['default', 'small'])
 };
-module.exports = exports['default'];

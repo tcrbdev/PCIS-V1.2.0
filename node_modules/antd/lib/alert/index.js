@@ -163,4 +163,3 @@ var Alert = function (_React$Component) {
 }(React.Component);
 
 exports['default'] = Alert;
-module.exports = exports['default'];

@@ -7,4 +7,3 @@ var locale = {
     placeholder: 'Zaman Seç'
 };
 exports['default'] = locale;
-module.exports = exports['default'];

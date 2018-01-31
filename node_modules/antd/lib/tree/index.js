@@ -75,4 +75,3 @@ Tree.defaultProps = {
     showIcon: false,
     openAnimation: _openAnimation2['default']
 };
-module.exports = exports['default'];
