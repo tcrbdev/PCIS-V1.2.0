@@ -563,7 +563,7 @@ export const getNanoMasterData = (auth = {}) => ((dispatch) => {
 
     let token = ''
     if (!_.isEmpty(auth)) {
-        token = auth.Session.sess_empcode
+        token = auth.EmployeeCode
     }
 
     let api = [

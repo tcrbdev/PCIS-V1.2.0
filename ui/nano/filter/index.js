@@ -164,6 +164,22 @@ class Filter extends Component {
                     }))
                 }))
             }]
+
+            // let resultGroupBy = [];
+            // _.mapKeys(_.groupBy(AREA_DATA, 'ZoneValue'), (i, k) => {
+            //     resultGroupBy.push({
+            //         label: i[0].ZoneText,
+            //         value: k,
+            //         key: k
+            //     })
+            // })
+
+            // return [{
+            //     label: 'Select All',
+            //     value: resultGroupBy.map(item => item.value).join(','),
+            //     key: 'all',
+            //     children: resultGroupBy
+            // }]
         }
     }
 
@@ -700,7 +716,7 @@ class Filter extends Component {
         let auth_pass = false
         if (process.env.NODE_ENV === 'production') {
             if (!_.isEmpty(AUTH_NANO_USER)) {
-                if (!_.isEmpty(_.find(AuthList, o => o == AUTH_NANO_USER.Session.sess_empcode))) {
+                if (!_.isEmpty(_.find(AuthList, o => o == AUTH_NANO_USER.EmployeeCode))) {
                     auth_pass = true
                     ShowMarkerOptions[2].disabled = !auth_pass
                 }
@@ -741,6 +757,7 @@ class Filter extends Component {
                                                 className={styles['region_field']}
                                                 treeData={this.getRegionSelectItem()}
                                                 searchPlaceholder="Please select area"
+                                                treeNodeFilterProp="label"
                                                 onClick={this.onRegionExpand(styles['region_field'])}
                                             />
                                             )
@@ -790,6 +807,7 @@ class Filter extends Component {
                                                 treeData={this.getBranchSelectItem()}
                                                 dropdownMatchSelectWidth={false}
                                                 onClick={this.onBrExpand}
+                                                treeNodeFilterProp="label"
                                                 searchPlaceholder="Please select branch"
                                             />
                                             )
@@ -839,6 +857,7 @@ class Filter extends Component {
                                                 treeData={this.getCANameSelect()}
                                                 dropdownMatchSelectWidth={false}
                                                 onClick={this.onCAExpand}
+                                                treeNodeFilterProp="label"
                                                 searchPlaceholder="Search ca name"
                                             />
                                             )
@@ -977,6 +996,7 @@ class Filter extends Component {
                                                             treeData={this.getComplititorSelect()}
                                                             searchPlaceholder="กรุณาเลือกจังหวัด"
                                                             style={{ 'width': '100%' }}
+                                                            treeNodeFilterProp="label"
                                                             onClick={this.onCompetitorExpand} />
                                                         )
                                                 }
@@ -1053,6 +1073,7 @@ class Filter extends Component {
                                                     treeDefaultExpandedKeys={['all']}
                                                     treeData={this.getProvinceSelect()}
                                                     searchPlaceholder="Search employee name"
+                                                    treeNodeFilterProp="label"
                                                     onClick={this.onProvinceExpand} />
                                                 )
                                         }

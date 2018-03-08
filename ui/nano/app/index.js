@@ -12,6 +12,8 @@ import GMap from '../map'
 import BranchSummary from '../branch_summary'
 import FontAwesome from 'react-fontawesome'
 
+import HOCScript from './HOCScript'
+
 import moment from 'moment'
 
 import {
@@ -54,7 +56,7 @@ class Index extends Component {
         this.initData();
 
         // Set Title
-        $('title').text('Nano OK Menu')
+        // $('title').text('Nano OK Menu')
     }
 
     initData() {
@@ -63,16 +65,17 @@ class Index extends Component {
             console.log("Cookie : ", cookies.get('authen_info'))
             if (!_.isEmpty(cookies.get('authen_info'))) {
                 const auth = cookies.get('authen_info')
-                getNanoMasterData(auth);
-                getNanoVisitPopupInformation({ EmpCode: auth.Session.sess_empcode });
-                this.setState({ role: auth.Session.sess_authorized })
+                getNanoMasterData(auth.Auth);
+                getNanoVisitPopupInformation({ EmpCode: auth.Auth.EmployeeCode });
+                this.setState({ role: auth.Auth.EmployeeCode })
             }
             else {
                 window.location.href = 'http://tc001pcis1p/login/'
+                // window.location.href = 'http://tc001pcis1u/login/'
             }
         }
         else {
-            getNanoMasterData();
+            getNanoMasterData({ EmployeeCode: '58055' });
             getNanoVisitPopupInformation({});
         }
     }
@@ -102,10 +105,21 @@ class Index extends Component {
         else {
             return (
                 <div className={styles['map-container']}>
-                    <GMap
-                        containerElement={<div style={{ height: `100%` }} />}
-                        mapElement={<div style={{ height: `100%` }} />}
-                    />
+                    <HOCScript>
+                        <GMap
+                            containerElement={<div style={{ height: `100%` }} />}
+                            mapElement={<div style={{ height: `100%` }} />}
+                        />
+                    </HOCScript>
+                    {/* <div style={{ width: '100%', height: '100%' }}>
+                        <div style={{ width: '100%', height: '100%' }}>
+                            <Icon type="exclamation-circle" style={{ marginBottom: '15px', fontSize: '35px', color: '#F44336' }} />
+                            <span>Have trouble loading Google Map please try again later.</span>
+                            <span>Or press F5 on keyboard for refresh this's page.</span>
+                            <span style={{ marginTop: '15px', fontSize: '14px', color: '#009688' }} >(But search data is ready to use.)</span>
+                            <span style={{ marginTop: '15px', fontSize: '16px', color: '#F44336' }} >We are sorry for inconvenience.</span>
+                        </div>
+                    </div> */}
                     <div className={styles['float-button']}>
                         <Button
                             shape="circle"
@@ -113,7 +127,7 @@ class Index extends Component {
                             className={this.state.collapsed && styles['rotate']}
                             onClick={this.handlePanel} />
                     </div>
-                </div>
+                </div >
             )
         }
     }

@@ -51,7 +51,7 @@ class AddNote extends Component {
         let By;
         if (!_.isEmpty(cookies.get('authen_info'))) {
             const auth = cookies.get('authen_info')
-            By = auth.Session.sess_engname
+            By = auth.Auth.EmployeeCode
         }
 
         return (

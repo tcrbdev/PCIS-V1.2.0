@@ -237,19 +237,23 @@ const handleBounds = (props, map) => {
             } = props
 
             RELATED_BRANCH_DATA.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
+                if (item.BranchLatitude && item.BranchLongitude) {
+                    let marker = new google.maps.Marker({
+                        position: { lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }
+                    })
+                    hasMarker = true
+                    bounds.extend(marker.position)
+                }
             })
 
             RELATED_EXITING_MARKET_DATA.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
+                if (item.Latitude && item.Longitude) {
+                    let marker = new google.maps.Marker({
+                        position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+                    })
+                    hasMarker = true
+                    bounds.extend(marker.position)
+                }
             })
 
             // RELATED_TARGET_MARKET_DATA.map((item, index) => {
@@ -261,19 +265,23 @@ const handleBounds = (props, map) => {
             // })
 
             RELATED_COMPLITITOR_DATA.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
+                if (item.Lat && item.Long) {
+                    let marker = new google.maps.Marker({
+                        position: { lat: parseFloat(item.Lat), lng: parseFloat(item.Long) }
+                    })
+                    hasMarker = true
+                    bounds.extend(marker.position)
+                }
             })
 
             RELATED_PLAN_OPEN_BRANCH_DATA.map((item, index) => {
-                let marker = new google.maps.Marker({
-                    position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
-                })
-                hasMarker = true
-                bounds.extend(marker.position)
+                if (item.Latitude && item.Longitude) {
+                    let marker = new google.maps.Marker({
+                        position: { lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }
+                    })
+                    hasMarker = true
+                    bounds.extend(marker.position)
+                }
             })
 
             if (hasMarker)

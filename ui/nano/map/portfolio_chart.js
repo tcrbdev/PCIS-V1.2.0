@@ -171,16 +171,22 @@ const GaugeChart = (props) => {
         .map(cur => cur.value)
         .reduce((a, b) => a + b);
 
+    // console.log(sumValues, data.SecondPinAch, sumValues - data.SecondPinAch, colorData)
+
+    // console.log(_.maxBy(colorData, 'max').max)
+
+    const max = _.maxBy(colorData, 'max').max
+
     const arrowData = [
-        { value: data.FirstPinAch < 0 ? 0 : data.FirstPinAch },
+        { value: data.FirstPinAch < 0 ? 0 : data.FirstPinAch * 100 / max },
         { value: 0 },
-        { value: sumValues - (data.FirstPinAch < 0 ? 0 : data.FirstPinAch) }
+        { value: 100 - (data.FirstPinAch * 100 / max) }
     ];
 
     const arrowData2 = [
-        { value: data.SecondPinAch < 0 ? 0 : data.SecondPinAch },
+        { value: data.SecondPinAch < 0 ? 0 : data.SecondPinAch * 100 / max },
         { value: 0 },
-        { value: sumValues - (data.SecondPinAch < 0 ? 0 : data.SecondPinAch) }
+        { value: 100 - (data.SecondPinAch * 100 / max) }
     ];
 
     const pieProps = {
@@ -847,6 +853,7 @@ class CurrentPieChart extends Component {
 class CollectionMovementTooltip extends Component {
     render() {
         const { active, payload } = this.props
+        console.log(payload)
         if (active) {
             const { payload, label, coordinate } = this.props
             return <div key={`${label}_${coordinate.x}_${coordinate.y}`} className={styles['custom-tooltip']}>{payload[0].payload.max}%</div>

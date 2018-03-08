@@ -47,7 +47,7 @@ const columnsBranchPerformance = [
         ]
     },
     {
-        title: (<div className={styles['div-center']}><span>Financial Volume 2017</span></div>),
+        title: (<div className={styles['div-center']}><span>{`Financial Volume ${(new Date()).getFullYear()}`}</span></div>),
         className: `${styles['align-center']} ${styles['sm-padding']} ${styles['vertical-middle']} financial-volume`,
         children: [{
             title: (<div className={styles['div-center']}><span>Avg.</span></div>),
@@ -64,7 +64,7 @@ const columnsBranchPerformance = [
             render: (text, record, index) => (record.Product == 'Share' ? `${parseFloat(text).toFixed(0)}%` : parseFloat(text).toFixed(parseInt(text) >= 100 ? 0 : 1))
         },
         {
-            title: (<div className={styles['div-center']}><span>CIF</span></div>),
+            title: (<div className={styles['div-center']}><span>Cust</span></div>),
             dataIndex: 'TOTAL_Unit',
             width: '8%',
             className: `${styles['align-right']} ${styles['sm-padding']} ${styles['vertical-bottom']} financial-volume`,
@@ -224,6 +224,7 @@ class BranchSummary extends Component {
                 }
             }
             else {
+
                 temp = {
                     GroupName: key,
                     Data: value,
@@ -374,9 +375,12 @@ class BranchSummary extends Component {
         let auth_pass = false
         if (process.env.NODE_ENV === 'production') {
             if (!_.isEmpty(AUTH_NANO_USER)) {
-                if (!_.isEmpty(_.find(AuthList, o => o == AUTH_NANO_USER.Session.sess_empcode))) {
+                if (AUTH_NANO_USER.PositionCode != 'CA' || AUTH_NANO_USER.PositionCode != 'TM') {
                     auth_pass = true
                 }
+                // if (!_.isEmpty(_.find(AuthList, o => o == AUTH_NANO_USER.EmployeeCode))) {
+                //     auth_pass = true
+                // }
             }
         }
         else {
@@ -424,6 +428,21 @@ class BranchSummary extends Component {
                             <Scrollbar overscrollEffect="bounce">
                                 <div>
                                     {
+                                        <div className="rotate-total">
+                                            <div>
+                                                <div>TOTAL</div>
+                                            </div>
+                                            <div>
+                                                <Table
+                                                    className={styles['summary-table-hilight']}
+                                                    dataSource={this.props.RELATED_OVERALL_SUMMARY_DATA}
+                                                    columns={columnsTotalSummary}
+                                                    pagination={false}
+                                                    bordered />
+                                            </div>
+                                        </div>
+                                    }
+                                    {/* {
                                         (_.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "YTD") > 0 && _.sumBy(this.props.RELATED_OVERALL_SUMMARY_DATA, "OS") > 0) ?
                                             <div className="rotate-total">
                                                 <div>
@@ -452,7 +471,7 @@ class BranchSummary extends Component {
                                                         bordered />
                                                 </div>
                                             </div>
-                                    }
+                                    } */}
                                     {
                                         this.getGroupBySummary()
                                     }
