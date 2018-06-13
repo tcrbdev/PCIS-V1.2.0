@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover } from 'antd';
 import Draggable from 'react-draggable'
 import Scrollbar from 'react-smooth-scrollbar';
+import Rnd from 'react-rnd'
 
 const { Header } = Layout
 

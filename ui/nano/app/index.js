@@ -75,7 +75,7 @@ class Index extends Component {
             }
         }
         else {
-            getNanoMasterData({ EmployeeCode: '58055' });
+            getNanoMasterData({ EmployeeCode: '58385' });
             getNanoVisitPopupInformation({});
         }
     }
@@ -186,6 +186,9 @@ class Index extends Component {
         const side_menu = this.state.collapsed ? styles['side-menu-close'] : styles['side-menu']
 
         const Coordinates = document.getElementById('app').getBoundingClientRect()
+
+        const AuthList = ['57251', '58385', '56225', '58141', '56679', '58106', '59016', '57568', '59440', '57160', '57249', '59151', '58202', '57170', '59613', '56367', '59184']
+
         return (
             <Layout style={{ overflow: 'hidden' }}>
                 {
@@ -205,8 +208,29 @@ class Index extends Component {
                     collapsed={this.state.collapsed}>
                     <div className={styles['icon-header-container']} style={{ zIndex: '4', right: '23%' }}>
                         <div className={`${this.state.collapsed && styles['hide']}`} style={{ opacity: this.state.collapsed ? 0 : 1, height: '100%' }}>
-                            <a target="_blank" href="http://tc001pcis1p/calendar/">
+                            {/*
+                                !_.isEmpty(_.find(AuthList, o => o == this.props.AUTH_NANO_USER.EmployeeCode)) &&
+                                <a target="_blank" href="http://tc001pcis1p/nanolayout/">
+                                    <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
+                                        <Tooltip title="Nano Layout" >
+                                            <span style={{ position: 'relative' }}>
+                                                <FontAwesome name="braille " style={{ fontSize: '18px', paddingTop: '4px', color: '#64a717' }} />
+                                            </span>
+                                        </Tooltip>
+                                    </div>
+                                </a>
+                            */}
+                            <a target="_blank" href="http://tc001pcis1p/nanolayout/">
                                 <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
+                                    <Tooltip title="Nano Layout" >
+                                        <span style={{ position: 'relative' }}>
+                                            <FontAwesome name="braille " style={{ fontSize: '18px', paddingTop: '4px', color: '#64a717' }} />
+                                        </span>
+                                    </Tooltip>
+                                </div>
+                            </a>
+                            <a target="_blank" href="http://tc001pcis1p/calendar/">
+                                <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px', marginLeft: '5px' }}>
                                     <Tooltip title="calendar" >
                                         <span style={{ position: 'relative' }}>
                                             <FontAwesome name="calendar-o" style={{ fontSize: '18px', paddingLeft: '1px' }} />
@@ -278,7 +302,8 @@ const CookiesHomeForm = withCookies(Index)
 export default connect(
     (state) => ({
         NANO_INIT_PAGE: state.NANO_INIT_PAGE,
-        ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA
+        ON_NANO_SEARCHING_DATA: state.ON_NANO_SEARCHING_DATA,
+        AUTH_NANO_USER: state.AUTH_NANO_USER,
     }),
     {
         getNanoMasterData: getNanoMasterData,

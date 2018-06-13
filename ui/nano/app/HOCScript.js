@@ -3,6 +3,7 @@ import { Icon } from 'antd'
 import _ from 'lodash'
 
 const new_script = (src) => {
+    console.log(src)
     return new Promise(function (resolve, reject) {
         let script = document.createElement('script')
         script.src = src

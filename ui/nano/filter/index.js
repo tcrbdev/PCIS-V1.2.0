@@ -286,6 +286,8 @@ class Filter extends Component {
                 group.push(obj)
             })
 
+            console.log("-----------------------", group)
+
             return [{
                 label: 'Select All',
                 value: _.uniq(CALIST_DATA.map(item => item.CA_Code)).join(','),

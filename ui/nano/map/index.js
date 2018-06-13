@@ -57,6 +57,7 @@ import icon_destination_b2 from '../../../image/icon_destination_b2.png'
 import flag_r from '../../../image/Flag_R.png'
 import Flag_Gray from '../../../image/Flag_Gray.png'
 import flag_g from '../../../image/Flag_G.png'
+import flag_y from '../../../image/Flag_Y.png'
 
 import {
     setOpenBranchMarker,
@@ -449,11 +450,16 @@ const getFormatShortDay = (value) => {
             result = obj.join('/')
         }
 
+        if (result == 'Su-Sa') {
+            result = 'Everyday'
+        }
+
         return result
     }
 }
 
 const getCAData = (item) => {
+    console.log(item,"9999999999999999999999999999999999999999999999999999999999999")
     if (!_.isEmpty(item)) {
         let data = []
         _.mapKeys(_.groupBy(item, "CAName"), (value, key) => {
@@ -470,6 +476,7 @@ const getCAData = (item) => {
                 EmpCode: value[0].CAID,
                 StartWork: value[0].StartWork,
                 CAID: caid == 99999 ? 1 : 0,
+                Mobile: value[0].Mobile,
                 OS_App: !_.isEmpty(os) ? os.Total : 0,
                 OS_Ach: !_.isEmpty(os) ? os.Ach : 0,
                 Setup_App: !_.isEmpty(approved) ? approved.Total : 0,
@@ -500,7 +507,7 @@ const getColumnCA = [{
         return <span>{text}</span>
     },
     render: (text, record, index) => {
-        if (record.CAID != 99999 && !_.isEmpty(record.EmpCode)) {
+        if (record.EmpCode != 99999 && !_.isEmpty(record.EmpCode)) {
             const start_work_date = !_.isEmpty(record.StartWork) ? moment.duration(moment(new Date()).diff(moment(record.StartWork)))._data : ''
             const work_date_format = `Work Period : ${start_work_date.years}.${start_work_date.months}.${start_work_date.days}`
             return (
@@ -509,7 +516,7 @@ const getColumnCA = [{
                         <img className={styles['ca-big-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${record.EmpCode}`} />
                         <span>{`${record.Name}`} {`(${'NickName'})`}</span>
                         <span>{`อายุงาน ${work_date_format}`}</span>
-                        <span>{`${'Mobile'}`}</span>
+                        <span>{`Mobile ${record.Mobile} `}</span>
                     </div>
                 } >
                     <span className={styles['text-ellipsis-map']}>{text}</span>
@@ -704,7 +711,8 @@ const getBranchMarkerMenu = (props) => {
                     BranchCode: branchCodeCriteria,
                     MktCode: null,
                     CAID: null,
-                    EmpCode: null
+                    EmpCode: null,
+                    IncludeKiosk : 'Y'
                 }
 
                 return (
@@ -754,6 +762,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
             let icon = icon_full_branch
             let related_branch = [], current_branch
             current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
+            console.log(current_branch)
 
             switch (item.BranchType) {
                 case 'K':
@@ -844,7 +853,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                                                     <div>
                                                         <div className={styles['text-descrition']}>
                                                             <div>
-                                                                <span style={{ position: 'relative' }}>{`${current_branch.MarketShop} Shop `}<span style={{ position: 'absolute', color: '#000', left: '0', textAlign: 'right', width: '100%', fontSize: '8px' }}></span></span>
+                                                                <span style={{ position: 'relative' }}>{`${((current_branch || {})['MarketShop'] || 'None')} Shop `}<span style={{ position: 'absolute', color: '#000', left: '0', textAlign: 'right', width: '100%', fontSize: '8px' }}></span></span>
                                                                 <span>{`From ${current_branch.Market} Markets (Branch Open : ${current_branch.OpenDate ? moment(current_branch.OpenDate).format("MMM-YY") : 'unknow'})`}</span>
                                                             </div>
                                                             <span>
@@ -1193,7 +1202,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                                     <div>
                                                         <div className={styles['text-descrition']}>
                                                             <div>
-                                                                <span style={{ position: 'relative' }}>{`${item.MarketShop} Shop `}<span style={{ position: 'absolute', color: '#000', left: '0', textAlign: 'right', width: '100%', fontSize: '8px' }}></span></span>
+                                                                <span style={{ position: 'relative' }}>{`${((item || {})['MarketShop'] || 'None')} Shop `}<span style={{ position: 'absolute', color: '#000', left: '0', textAlign: 'right', width: '100%', fontSize: '8px' }}></span></span>
                                                                 <span>
                                                                     {`Distance `}
                                                                     {<span><a onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}>{item.BranchName}</a></span>}
@@ -2022,6 +2031,16 @@ class PotentialImage extends Component {
         let flag_status_color = "#f04134"
 
         switch (item.FlagY1N0) {
+            // case 3:
+            //     flag = flag_y
+            //     flag_status = 'ลงทะเบียนในระบบแล้ว'
+            //     flag_status_color = "#FFC107"
+            //     break;
+            case 2:
+                flag = flag_r
+                flag_status = 'ยังไม่ได้สำรวจ'
+                flag_status_color = "#f04134"
+                break;
             case 1:
                 flag = flag_g
                 flag_status = 'ผ่านเกณฑ์'
@@ -2039,7 +2058,7 @@ class PotentialImage extends Component {
                 key={`Potential_${index}`}
                 onClick={() => setOpenTargetMarketMarker(item, RELATED_TARGET_MARKET_DATA, true)}
                 position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
-                title={item.MarketName}
+                title={`${item.PotentialMarketName} (${item.Shop ? item.Shop : 0} แผง)`}
                 icon={{
                     url: flag
                 }}
@@ -2055,7 +2074,7 @@ class PotentialImage extends Component {
                                         className="trigger"
                                         type='shop' />
                                     <span style={{ fontSize: '.9em' }}>
-                                        {`${item.PotentialMarketName} (${process.env.NODE_ENV != 'production' && item.PotentialMarketCode})`}
+                                        {`${item.PotentialMarketName} (${item.PotentialMarketCode})`}
                                     </span>
                                     <Icon
                                         onClick={() => setOpenTargetMarketMarker(item, RELATED_TARGET_MARKET_DATA, false)}
@@ -2198,6 +2217,12 @@ class PotentialImage extends Component {
                                                         style={{ marginBottom: '10px' }}>
                                                         <Row gutter={16} style={{ marginBottom: '5px' }}>
                                                             <Col className={styles['gutter-row']} span={5}>
+                                                                <span>สาขาที่รับผิดชอบ</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <span>{item.Branch}</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={5}>
                                                                 <span>จากสาขา
                                                                         <Tooltip title={`Direction To ${item.Branch}`} placement="top">
                                                                         <FontAwesome className={styles['icon-direction']}
@@ -2211,6 +2236,14 @@ class PotentialImage extends Component {
                                                             </Col>
                                                             <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
                                                                 <span>{item.DistanceFromBranch}</span>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row gutter={16} style={{ marginBottom: '5px' }}>
+                                                            <Col className={styles['gutter-row']} span={5}>
+                                                                <span>วันที่สำรวจ</span>
+                                                            </Col>
+                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
+                                                                <span>{item.SurveyDate ? moment(item.SurveyDate).format("DD/MM/YYYY") : ''}</span>
                                                             </Col>
                                                             <Col className={styles['gutter-row']} span={5}>
                                                                 <span>ธนาคารในพื้นที่</span>
@@ -2226,32 +2259,7 @@ class PotentialImage extends Component {
                                                             <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
                                                                 <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                                                                     {
-                                                                        item.Monday == '1' &&
-                                                                        <div className={styles['layout-day']} style={{ borderColor: '#FFC107' }}>M</div>
-                                                                    }
-                                                                    {
-                                                                        item.Tuesday == '1' &&
-                                                                        <div className={styles['layout-day']} style={{ borderColor: '#ff4cd8' }}>T</div>
-                                                                    }
-                                                                    {
-                                                                        item.Wednesday == '1' &&
-                                                                        <div className={styles['layout-day']} style={{ borderColor: '#8BC34A' }}>W</div>
-                                                                    }
-                                                                    {
-                                                                        item.Thursday == '1' &&
-                                                                        <div className={styles['layout-day']} style={{ borderColor: '#FF5722' }}>Th</div>
-                                                                    }
-                                                                    {
-                                                                        item.Friday == '1' &&
-                                                                        <div className={styles['layout-day']} style={{ borderColor: '#00BCD4' }}>F</div>
-                                                                    }
-                                                                    {
-                                                                        item.Saturday == '1' &&
-                                                                        <div className={styles['layout-day']} style={{ borderColor: '#b85ac7' }}>Sa</div>
-                                                                    }
-                                                                    {
-                                                                        item.Sunday == '1' &&
-                                                                        <div className={styles['layout-day']} style={{ borderColor: '#f71a0a' }}>Su</div>
+                                                                        item.MarketOpenDay
                                                                     }
                                                                 </div>
                                                             </Col>
@@ -2260,20 +2268,6 @@ class PotentialImage extends Component {
                                                             </Col>
                                                             <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
                                                                 <span>{`${item.TimeOpen}-${item.TimeClose}`}</span>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row gutter={16} style={{ marginBottom: '5px' }}>
-                                                            <Col className={styles['gutter-row']} span={5}>
-                                                                <span>สาขาที่สำรวจ</span>
-                                                            </Col>
-                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                <span>{item.Branch}</span>
-                                                            </Col>
-                                                            <Col className={styles['gutter-row']} span={5}>
-                                                                <span>วันที่สำรวจ</span>
-                                                            </Col>
-                                                            <Col className={styles['gutter-row']} span={7} style={{ paddingLeft: '0' }}>
-                                                                <span>{moment(item.SurveyDate).format("DD/MM/YYYY")}</span>
                                                             </Col>
                                                         </Row>
                                                         <Row gutter={16}>

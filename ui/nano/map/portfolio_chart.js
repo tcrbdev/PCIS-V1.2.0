@@ -46,6 +46,35 @@ const CustomizeLabel = props => {
     return <text x={x} y={y} dy={-10} {...custom}>{`${parseFloat(dataItem[index].TotalAmtAch).toFixed(1)}%`}</text>
 }
 
+const CustomizeDay = props => {
+    const { x, y, stroke, value, index, dataItem, ...custom } = props
+
+    if (dataItem[index].value == '1') {
+        if (dataItem[index].name == 'พฤ') {
+            return <g>
+                <rect x={x - 11} y={y} width="22" height="10" fill="#b3b3b3"></rect>
+                <text x={x - 8} y={y + 7}>{`${dataItem[index].name}`}</text>
+            </g>
+        }
+        else {
+            return <g>
+                <rect x={x - 6} y={y} width="13" height="10" fill="#b3b3b3"></rect>
+                <text x={x - 4} y={y + 7}>{`${dataItem[index].name}`}</text>
+            </g>
+        }
+    }
+    else {
+        if (dataItem[index].name == 'พฤ') {
+            return <text x={x - 8} y={y + 7}>{`${dataItem[index].name}`}</text>
+        }
+        else {
+            return <text x={x - 4} y={y + 7}>{`${dataItem[index].name}`}</text>
+        }
+    }
+    // return <text x={x} y={y}>{`${dataItem[index].name}`}</text>
+    // return <text x={x} y={y} stroke="#51c5cf" stroke-width="2px" dy=".3em" text-anchor="middle" alignment-baseline="middle">{`${dataItem[index].name}`}</text>
+}
+
 const CustomizeLabelCurve = props => {
     const { x, y, stroke, value, index, dataItem, ...custom } = props
 
@@ -153,7 +182,7 @@ const GaugeChart = (props) => {
 
     const { data, colorData } = props
 
-    const width = 140;
+    const width = 155;
     const height = 117;
     const chartValue = 100//data.FirstPinAch;
 
@@ -287,7 +316,7 @@ const GaugeChart1Needle = (props) => {
 
     const { data, colorData } = props
 
-    const width = 140;
+    const width = 155;
     const height = 117;
     const chartValue = 100//data.FirstPinAch;
 
@@ -521,12 +550,12 @@ class PortfolioChart extends Component {
                 }
                 <Layout style={{ backgroundColor: '#FFF', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'center', backgroundColor: '#f0f2f5' }}>
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '0px' }}>
-                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
+                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '200px', height: '170px', padding: '5px' }}>
                             <div>
                                 <span className={styles['header-other-chart']}>Collection Movement Trend</span>
                             </div>
                             <div id="my-chart" style={{ flex: '1', width: '100%', height: '100px' }}>
-                                <ComposedChart layout="vertical" width={178} height={142}
+                                <ComposedChart layout="vertical" width={188} height={142}
                                     margin={{ top: 5, right: 15, left: -20, bottom: 0 }}
                                     data={
                                         [{ name: 'NPL', red: item.PORTFOLIO_QUALITY_CHART[0][0].RankR, yellow: item.PORTFOLIO_QUALITY_CHART[0][0].RankY, green: item.PORTFOLIO_QUALITY_CHART[0][0].RankG, actual: item.PORTFOLIO_QUALITY_CHART[0][0].RankAch },
@@ -548,7 +577,7 @@ class PortfolioChart extends Component {
                                 </ComposedChart>
                             </div>
                         </div>
-                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
+                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '210px', height: '170px', padding: '5px' }}>
                             <div>
                                 <span className={styles['header-other-chart']}>% of Current (W0 >87%)</span>
                             </div>
@@ -560,21 +589,28 @@ class PortfolioChart extends Component {
                                     TotalAmt={item.PORTFOLIO_QUALITY_CHART[1][0].TotalAmt} />
                             </div>
                         </div>
-                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '190px', height: '170px', padding: '5px' }}>
+                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '220px', height: '170px', padding: '5px' }}>
                             <div style={{ marginBottom: '5px' }}>
-                                <span className={styles['header-other-chart']}>Wkcycle Due Plan</span>
+                                <span className={styles['header-other-chart']}>WkCycle Due / PMT Succ.</span>
                             </div>
                             <div style={{ flex: '1', width: '100%', height: '100px' }}>
-                                <BarChart width={178} height={137} data={[
+                                <BarChart width={208} height={117} data={[
                                     { name: 'จ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Mon, color: '#f7d827' },
                                     { name: 'อ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Tue, color: '#ef3ecf' },
                                     { name: 'พ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Wed, color: '#17b21e' },
                                     { name: 'พฤ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Thu, color: '#d64713' },
                                     { name: 'ศ', value: item.PORTFOLIO_QUALITY_CHART[2][0].Fri, color: '#12c0e8' }
                                 ]}
-                                    margin={{ top: 5, right: 0, left: -30, bottom: -15 }}>
+                                    margin={{ top: 0, right: 0, left: -30, bottom: -15 }}>
+                                    {/* <XAxis tick={<CustomizeDay dataItem={[
+                                        { name: 'จ', value: item.PORTFOLIO_QUALITY_CHART[2][2].Mon },
+                                        { name: 'อ', value: item.PORTFOLIO_QUALITY_CHART[2][2].Tue },
+                                        { name: 'พ', value: item.PORTFOLIO_QUALITY_CHART[2][2].Wed },
+                                        { name: 'พฤ', value: item.PORTFOLIO_QUALITY_CHART[2][2].Thu },
+                                        { name: 'ศ', value: item.PORTFOLIO_QUALITY_CHART[2][2].Fri }
+                                    ]} />} /> */}
                                     <XAxis dataKey="name" tick={{ style: { fontSize: '11px' } }} />
-                                    <YAxis dataKey="value" tick={{ style: { fontSize: '11px' } }} />
+                                    <YAxis dataKey="value" tick={{ style: { fontSize: '10px' } }} domain={[0, 'dataMax']} />
                                     <Tooltip />
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <Bars dataKey="value" label={{ position: 'insideBottom', fill: '#000', style: { fontSize: '11px', fontWeight: 'bold' } }} >
@@ -592,10 +628,60 @@ class PortfolioChart extends Component {
                                     </Bars>
                                 </BarChart>
                             </div>
+                            <div style={{ fontSize: '.8em', color: '#445761', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '0px' }}>
+                                <span style={{ display: 'block', width: '23%', textAlign: 'center', color: `${parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { GroupName: 0 }).GroupName) >= 90 ? '#69c300' : '#445761'}` }}>Succ. {`${(item.PORTFOLIO_QUALITY_CHART[2][1] || { GroupName: 0 }).GroupName}%`}</span>
+                                {
+                                    [
+                                        { name: 'จ', IsHilight: item.PORTFOLIO_QUALITY_CHART[2][2].Mon, value: parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Mon: 0 }).Mon), color: '#f7d827' },
+                                        { name: 'อ', IsHilight: item.PORTFOLIO_QUALITY_CHART[2][2].Tue, value: parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Tue: 0 }).Tue), color: '#ef3ecf' },
+                                        { name: 'พ', IsHilight: item.PORTFOLIO_QUALITY_CHART[2][2].Wed, value: parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Wed: 0 }).Wed), color: '#17b21e' },
+                                        { name: 'พฤ', IsHilight: item.PORTFOLIO_QUALITY_CHART[2][2].Thu, value: parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Thu: 0 }).Thu), color: '#d64713' },
+                                        { name: 'ศ', IsHilight: item.PORTFOLIO_QUALITY_CHART[2][2].Fri, value: parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Fri: 0 }).Fri), color: '#12c0e8' }
+                                    ].map((item, index) => {
+
+                                        let config = {
+                                            width: '25%',
+                                            color: `${item.value >= 90 ? '#69c300' : '#445761'}`,
+                                            position: 'relative',
+                                            display: 'grid'
+                                        }
+
+                                        let configH = {}
+
+                                        if (item.IsHilight == '1') {
+                                            configH = {
+                                                width: '25px',
+                                                height: '25px',
+                                                background: '#ececec',
+                                                position: 'absolute',
+                                                top: '-5px',
+                                                left: '-2px',
+                                                right: '0',
+                                                marginLeft: 'auto',
+                                                marginRight: 'auto',
+                                                borderRadius: '50%',
+                                                border: `1px solid ${item.color}`,
+                                                zIndex: '1'
+                                            }
+                                        }
+
+                                        return <span
+                                            style={config}>
+                                            <p style={{ zIndex: '2', textAlign: 'center' }}>{`${item.value}%`}</p>
+                                            <i style={configH}></i>
+                                        </span>
+                                    })
+                                }
+                                {/* <span style={{ width: '25%', textAlign: 'center', color: `${parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Mon: 0 }).Mon) >= 90 ? '#69c300' : '#445761'}` }}>{`${(item.PORTFOLIO_QUALITY_CHART[2][1] || { Mon: 0 }).Mon}%`}</span>
+                                <span style={{ width: '25%', textAlign: 'center', color: `${parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Tue: 0 }).Tue) >= 90 ? '#69c300' : '#445761'}` }}>{`${(item.PORTFOLIO_QUALITY_CHART[2][1] || { Tue: 0 }).Tue}%`}</span>
+                                <span style={{ width: '25%', textAlign: 'center', color: `${parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Wed: 0 }).Wed) >= 90 ? '#69c300' : '#445761'}` }}>{`${(item.PORTFOLIO_QUALITY_CHART[2][1] || { Wed: 0 }).Wed}%`}</span>
+                                <span style={{ width: '25%', textAlign: 'center', color: `${parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Thu: 0 }).Thu) >= 90 ? '#69c300' : '#445761'}` }}>{`${(item.PORTFOLIO_QUALITY_CHART[2][1] || { Thu: 0 }).Thu}%`}</span>
+                                <span style={{ width: '25%', textAlign: 'center', color: `${parseInt((item.PORTFOLIO_QUALITY_CHART[2][1] || { Fri: 0 }).Fri) >= 90 ? '#69c300' : '#445761'}` }}>{`${(item.PORTFOLIO_QUALITY_CHART[2][1] || { Fri: 0 }).Fri}%`}</span> */}
+                            </div>
                         </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '10px' }}>
-                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '160px', padding: '5px' }}>
+                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '157', height: '160px', padding: '5px' }}>
                             <div style={{ marginBottom: '5px' }}>
                                 <span className={styles['header-other-chart']}>%Flow Rate 0 MDPD</span>
                             </div>
@@ -623,7 +709,7 @@ class PortfolioChart extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '160px', padding: '5px' }}>
+                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '157', height: '160px', padding: '5px' }}>
                             <div style={{ marginBottom: '5px' }}>
                                 <span className={styles['header-other-chart']}>%Flow Rate 1-30 MDPD</span>
                             </div>
@@ -651,7 +737,7 @@ class PortfolioChart extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '160px', padding: '5px' }}>
+                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '157', height: '160px', padding: '5px' }}>
                             <div style={{ marginBottom: '5px' }}>
                                 <span className={styles['header-other-chart']}>%Flow Rate 31-60 MDPD</span>
                             </div>
@@ -679,7 +765,7 @@ class PortfolioChart extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '142', height: '160px', padding: '5px' }}>
+                        <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '157', height: '160px', padding: '5px' }}>
                             <div style={{ marginBottom: '5px' }}>
                                 <span className={styles['header-other-chart']}>%0 WDPD of New Cust.</span>
                             </div>
@@ -715,7 +801,7 @@ class PortfolioChart extends Component {
                             <div id="my-chart" style={{ flex: '1', width: '100%', height: '100px' }}>
                                 <AreaChart
                                     margin={{ top: 12, left: 5, bottom: 5, right: 5 }}
-                                    width={598}
+                                    width={658}
                                     height={72}
                                     data={[
                                         {
@@ -832,7 +918,7 @@ class CurrentPieChart extends Component {
         }
 
         return (
-            <PieChart width={178} height={142} margin={{ top: 10, right: 40, left: 0, bottom: 12 }}>
+            <PieChart width={198} height={142} margin={{ top: 10, right: 40, left: 0, bottom: 12 }}>
                 <Pies
                     data={data}
                     labelLine={false}

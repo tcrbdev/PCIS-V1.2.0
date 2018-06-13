@@ -138,13 +138,14 @@ class DailyCustAtOperTooltip extends Component {
 class ProductivityTooltip extends Component {
     render() {
         const { active, payload } = this.props
+
         if (active) {
             const { payload, label, coordinate } = this.props
             return (
 
                 <div key={`${label}_${coordinate.x}_${coordinate.y}`} className={styles['custom-tooltip']}>
                     <div className={styles['color-dot-container']}>
-                        <span>{`${payload[0].payload.text} (CA HC ${payload[0].payload.TotalEmp})`}</span>
+                        <span>{`${payload[0].payload.text} (CA HC ${payload[0].payload.CA_HeadCount})`}</span>
                     </div>
                     <div className={styles['color-dot-container']}>
                         <span className={styles['color-dot-border']} style={{ backgroundColor: payload[1].color }}></span>
@@ -382,8 +383,8 @@ class SaleSummaryChart extends Component {
                                     <Timeline>
                                         <Timeline.Item style={{ paddingBottom: '0px' }} className={styles['no-padding-bottom-chart']}>
                                             <div className={styles['chart-container']} style={{ width: '258px', height: '105px', marginLeft: '-6px', marginTop: '3px' }}>
-                                                <div style={{ textAlign: 'center' }}>
-                                                    <span>% of Micro Share</span>
+                                                <div style={{ textAlign: 'center', paddingLeft: '70px' }}>
+                                                    <span>% of Micro Share (YTD)</span>
                                                 </div>
                                                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                                                     <div>
@@ -440,18 +441,18 @@ class SaleSummaryChart extends Component {
                                                             {
                                                                 !this.props.type ?
                                                                     <ComposedChart width={240} height={130} data={[
-                                                                        { name: 'J', text: 'Jan', ca: PRODUCTIVITY_LINE[1].Jan, br: PRODUCTIVITY_LINE[0].Jan, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'F', text: 'Feb', ca: PRODUCTIVITY_LINE[1].Feb, br: PRODUCTIVITY_LINE[0].Feb, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'M', text: 'Mar', ca: PRODUCTIVITY_LINE[1].Mar, br: PRODUCTIVITY_LINE[0].Mar, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'A', text: 'Apr', ca: PRODUCTIVITY_LINE[1].Apr, br: PRODUCTIVITY_LINE[0].Apr, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'M', text: 'May', ca: PRODUCTIVITY_LINE[1].May, br: PRODUCTIVITY_LINE[0].May, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'J', text: 'Jun', ca: PRODUCTIVITY_LINE[1].Jun, br: PRODUCTIVITY_LINE[0].Jun, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'J', text: 'Jul', ca: PRODUCTIVITY_LINE[1].Jul, br: PRODUCTIVITY_LINE[0].Jul, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'A', text: 'Aug', ca: PRODUCTIVITY_LINE[1].Aug, br: PRODUCTIVITY_LINE[0].Aug, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'S', text: 'Sep', ca: PRODUCTIVITY_LINE[1].Sep, br: PRODUCTIVITY_LINE[0].Sep, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'O', text: 'Oct', ca: PRODUCTIVITY_LINE[1].Oct, br: PRODUCTIVITY_LINE[0].Oct, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'N', text: 'Nov', ca: PRODUCTIVITY_LINE[1].Nov, br: PRODUCTIVITY_LINE[0].Nov, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp },
-                                                                        { name: 'D', text: 'Dec', ca: PRODUCTIVITY_LINE[1].Dec, br: PRODUCTIVITY_LINE[0].Dec, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp }
+                                                                        { name: 'J', text: 'Jan', ca: PRODUCTIVITY_LINE[1].Jan, br: PRODUCTIVITY_LINE[0].Jan, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Jan },
+                                                                        { name: 'F', text: 'Feb', ca: PRODUCTIVITY_LINE[1].Feb, br: PRODUCTIVITY_LINE[0].Feb, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Feb },
+                                                                        { name: 'M', text: 'Mar', ca: PRODUCTIVITY_LINE[1].Mar, br: PRODUCTIVITY_LINE[0].Mar, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Mar },
+                                                                        { name: 'A', text: 'Apr', ca: PRODUCTIVITY_LINE[1].Apr, br: PRODUCTIVITY_LINE[0].Apr, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Apr },
+                                                                        { name: 'M', text: 'May', ca: PRODUCTIVITY_LINE[1].May, br: PRODUCTIVITY_LINE[0].May, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].May },
+                                                                        { name: 'J', text: 'Jun', ca: PRODUCTIVITY_LINE[1].Jun, br: PRODUCTIVITY_LINE[0].Jun, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Jun },
+                                                                        { name: 'J', text: 'Jul', ca: PRODUCTIVITY_LINE[1].Jul, br: PRODUCTIVITY_LINE[0].Jul, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Jul },
+                                                                        { name: 'A', text: 'Aug', ca: PRODUCTIVITY_LINE[1].Aug, br: PRODUCTIVITY_LINE[0].Aug, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Aug },
+                                                                        { name: 'S', text: 'Sep', ca: PRODUCTIVITY_LINE[1].Sep, br: PRODUCTIVITY_LINE[0].Sep, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Sep },
+                                                                        { name: 'O', text: 'Oct', ca: PRODUCTIVITY_LINE[1].Oct, br: PRODUCTIVITY_LINE[0].Oct, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Oct },
+                                                                        { name: 'N', text: 'Nov', ca: PRODUCTIVITY_LINE[1].Nov, br: PRODUCTIVITY_LINE[0].Nov, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Nov },
+                                                                        { name: 'D', text: 'Dec', ca: PRODUCTIVITY_LINE[1].Dec, br: PRODUCTIVITY_LINE[0].Dec, TotalEmp: PRODUCTIVITY_LINE[0].TotalEmp, CA_HeadCount: PRODUCTIVITY_LINE[2].Dec }
 
                                                                     ]}
                                                                         margin={{ left: -33, right: 0, top: 10, bottom: -10 }}>

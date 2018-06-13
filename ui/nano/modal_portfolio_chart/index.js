@@ -64,7 +64,7 @@ class ModalPortfolioChart extends Component {
                     <article className={styles['wrapper']}>
                         <PortfolioChart
                             item={{ PORTFOLIO_QUALITY_CHART: this.props.type ? this.props.CHART_PORTFOLIO_QUALITY_BY_CA : this.props.RELATED_CHART_PORTFOLIO_QUALITY }}
-                            ON_CLOSE_MARKER={this.handleModal} custom_width="600px"
+                            ON_CLOSE_MARKER={this.handleModal} custom_width="660px"
                             type={this.props.type} />
                     </article>
                 </Modal>

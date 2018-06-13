@@ -217,20 +217,25 @@ class BranchSummary extends Component {
 
                 temp = {
                     CAID: value[0].CAID,
-                    Period: work_date_format,
+                    Period: `Work period : ${value[0].Period || 'none'}`,
                     GroupName: key,
                     Data: value,
-                    OrderByOS: _.find(value, { Kpi: 'Unit' }).OS
+                    OrderByOS: _.find(value, { Kpi: 'Unit' }).OS,
+                    BranchName: value[0].BranchName
                 }
             }
             else {
 
                 temp = {
+                    Period: '',
                     GroupName: key,
+                    BranchCode: value[0].BranchCode,
                     Data: value,
-                    Period: null,
                     OrderByOS: _.find(value, { Kpi: 'Unit' }).OS,
-                    BranchCode: value[0].BranchCode
+                }
+
+                if (this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.branch || this.props.NANO_FILTER_CRITERIA.QueryType == constantQueryType.branch_kiosk) {
+                    temp.Period = `Br. Open : ${moment(value[0].Period).format("MMM-YY") || 'Br. Open: Coming soon..'}`
                 }
             }
 
@@ -255,6 +260,7 @@ class BranchSummary extends Component {
                                                 <div>
                                                     <span>{item.GroupName}</span>
                                                     <span>{item.Period}</span>
+                                                    <span>{item.BranchName}</span>
                                                 </div>
                                             </div>
                                         }
@@ -265,7 +271,7 @@ class BranchSummary extends Component {
                                     :
                                     <Tooltip
                                         placement="topLeft"
-                                        title={<div>{item.GroupName} <br /> Br. Open: Coming soon..</div>}>
+                                        title={<div>{item.GroupName} <br />{item.Period} {/*Br. Open: Coming soon..*/}</div>}>
                                         <div>{item.GroupName.indexOf('osk') <= 0 ? item.GroupName.split(' ')[0] : item.GroupName.split(' ')[1]}</div>
                                     </Tooltip>
                             }

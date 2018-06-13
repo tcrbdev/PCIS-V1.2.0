@@ -594,12 +594,12 @@
 
         &  > span:nth-child(2) [class*=fa] , > div:nth-child(2) > span
          {
-             color: #E91E63;
+             color: #64a717;
          }
 
         &  > span:nth-child(3) [class*=fa] , > div:nth-child(3) > span
          {
-             color: #64a717;
+             color: #E91E63;
          }
 
          & > [class*=stop-approval]:after
@@ -614,12 +614,12 @@
 
         &  > span:nth-child(2):after , > div:nth-child(2):after
          {
-             background-color: #E91E63;
+             background-color: #64a717;
          }
 
         &  > span:nth-child(3):after , > div:nth-child(3):after
          {
-             background-color: #64a717;
+             background-color: #E91E63;
          }
 
 }
