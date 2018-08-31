@@ -75,7 +75,7 @@ class Index extends Component {
             }
         }
         else {
-            getNanoMasterData({ EmployeeCode: '58385' });
+            getNanoMasterData({ EmployeeCode: '59012' });
             getNanoVisitPopupInformation({});
         }
     }
