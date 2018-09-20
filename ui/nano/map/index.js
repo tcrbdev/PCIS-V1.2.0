@@ -4,7 +4,7 @@ import { renderToString } from 'react-dom/server'
 
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
 
-import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
+// import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
 
 import { MAP } from 'react-google-maps/lib/constants';
 
@@ -2554,6 +2554,7 @@ class Map extends Component {
     }
 }
 
+// const wrapMap = withScriptjs(withGoogleMap(Map))
 const wrapMap = withGoogleMap(Map)
 
 export default connect(
@@ -2568,6 +2569,7 @@ export default connect(
         RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA,
         RELATED_PLAN_OPEN_BRANCH_DATA: state.RELATED_PLAN_OPEN_BRANCH_DATA
     }), {
+        googleMapURL:'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places&sensor=true',
         setOpenBranchMarker: setOpenBranchMarker,
         setOpenBranchMarkerMenu: setOpenBranchMarkerMenu,
         setOpenExitingMarketMarker: setOpenExitingMarketMarker,

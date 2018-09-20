@@ -66,7 +66,7 @@ class Index extends Component {
             if (!_.isEmpty(cookies.get('authen_info'))) {
                 const auth = cookies.get('authen_info')
                 getNanoMasterData(auth.Auth);
-                getNanoVisitPopupInformation({ EmpCode: auth.Auth.EmployeeCode });
+                // getNanoVisitPopupInformation({ EmpCode: auth.Auth.EmployeeCode });
                 this.setState({ role: auth.Auth.EmployeeCode })
             }
             else {
@@ -76,7 +76,7 @@ class Index extends Component {
         }
         else {
             getNanoMasterData({ EmployeeCode: '59012' });
-            getNanoVisitPopupInformation({});
+            // getNanoVisitPopupInformation({});
         }
     }
 
@@ -107,6 +107,8 @@ class Index extends Component {
                 <div className={styles['map-container']}>
                     <HOCScript>
                         <GMap
+                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places&sensor=true"
+                            loadingElement={<div style={{ height: `100%` }} />}
                             containerElement={<div style={{ height: `100%` }} />}
                             mapElement={<div style={{ height: `100%` }} />}
                         />
@@ -239,9 +241,9 @@ class Index extends Component {
                                     </Tooltip>
                                 </div>
                             </a>
-                            <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
+                            {/* <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
                                 <ModalNanoStopApproval />
-                            </div>
+                            </div> */}
                             {/* <div className={styles['ca-icon-lists']} style={{ height: '100%', paddingTop: '5px' }}>
                                 <ModalNanoNewsFeed />
                             </div> */}
