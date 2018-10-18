@@ -17,7 +17,7 @@ const new_script = (src) => {
     })
 };
 // Promise Interface can ensure load the script only once.
-const gapi = new_script('https://maps.googleapis.com/maps/api/js?key=AIzaSyAUC1Wou6aP9PPGzh8vXMlCD_xKEh739JQ&libraries=geometry,drawing,places&language=th&sensor=true');
+const gapi = new_script('https://maps.googleapis.com/maps/api/js?key=AIzaSyAz3d9Z7MLoDq4IdCz4g9ji0hGNl2Dg14U&libraries=geometry,drawing,places&language=th&sensor=true');
 
 class HOCScript extends Component {
     constructor(props) {

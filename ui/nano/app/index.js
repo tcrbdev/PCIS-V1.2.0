@@ -13,6 +13,7 @@ import BranchSummary from '../branch_summary'
 import FontAwesome from 'react-fontawesome'
 
 import HOCScript from './HOCScript'
+import ModalCaDirectionMarket from '../modal_ca_direction_market'
 
 import moment from 'moment'
 
@@ -75,7 +76,7 @@ class Index extends Component {
             }
         }
         else {
-            getNanoMasterData({ EmployeeCode: '59012' });
+            getNanoMasterData({ EmployeeCode: '60069' });
             // getNanoVisitPopupInformation({});
         }
     }
@@ -105,14 +106,14 @@ class Index extends Component {
         else {
             return (
                 <div className={styles['map-container']}>
-                    <HOCScript>
+
                         <GMap
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places&sensor=true"
+                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz3d9Z7MLoDq4IdCz4g9ji0hGNl2Dg14U&v=3.exp&libraries=geometry,drawing,places&sensor=true&language=th"
                             loadingElement={<div style={{ height: `100%` }} />}
                             containerElement={<div style={{ height: `100%` }} />}
                             mapElement={<div style={{ height: `100%` }} />}
                         />
-                    </HOCScript>
+
                     {/* <div style={{ width: '100%', height: '100%' }}>
                         <div style={{ width: '100%', height: '100%' }}>
                             <Icon type="exclamation-circle" style={{ marginBottom: '15px', fontSize: '35px', color: '#F44336' }} />
@@ -283,6 +284,9 @@ class Index extends Component {
                 </Draggable>
                 <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
                     <div id="nano-news-feed" className={styles['multiple-window']}></div>
+                </Draggable>
+                <Draggable handle=".ModalHeader" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div id="ca-directino-market" className={styles['multiple-window']}></div>
                 </Draggable>
             </Layout>
         )

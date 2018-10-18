@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { renderToString } from 'react-dom/server'
 
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
+import {withScriptjs} from "react-google-maps"
 
 // import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
 
@@ -36,6 +37,8 @@ import InsertNote from './insertnote'
 import StreetViewMap from './streetview'
 import PortfolioChart from './portfolio_chart'
 import SaleSummaryChart from './sale_summary_chart'
+import ModalCaDirectMarket from '../modal_ca_direction_market'
+
 // import NewNote from './newnote'
 // import NoteTable from './notetable'
 
@@ -2341,7 +2344,8 @@ class Map extends Component {
         location_direction: {
             a: null,
             b: null
-        }
+        },
+        caDirectionOpen: false
     }
 
     handleShowModal = (item) => {
@@ -2404,8 +2408,12 @@ class Map extends Component {
                 location_direction.a = { name: 'point a', Latitude: event.latLng.lat(), Longitude: event.latLng.lng() }
             }
 
-            this.setState({ location_direction })
+            this.setState({ location_direction,caDirectionOpen:true})
         }
+    }
+
+    openCaDirectionToMarket =()=>{
+        this.setState({ caDirectionOpen:!this.state.caDirectionOpen })
     }
 
     changeLocationDirection(event, point) {
@@ -2467,6 +2475,9 @@ class Map extends Component {
                 }
                 {
                     <ModalDirectionInfo handleDirection={this.getDirection} directions={this.state.directions} close={this.closeDirection} />
+                }
+                {
+                    <ModalCaDirectMarket {...this.props} center={options.center} openCaDirectionToMarket={this.openCaDirectionToMarket} caDirectionOpen={this.state.caDirectionOpen}/>
                 }
                 <GoogleMap
                     defaultZoom={8}
@@ -2554,8 +2565,8 @@ class Map extends Component {
     }
 }
 
-// const wrapMap = withScriptjs(withGoogleMap(Map))
-const wrapMap = withGoogleMap(Map)
+const wrapMap = withScriptjs(withGoogleMap(Map))
+// const wrapMap = withGoogleMap(Map)
 
 export default connect(
     (state) => ({
@@ -2569,7 +2580,6 @@ export default connect(
         RELATED_CA_IN_MARKET_DATA: state.RELATED_CA_IN_MARKET_DATA,
         RELATED_PLAN_OPEN_BRANCH_DATA: state.RELATED_PLAN_OPEN_BRANCH_DATA
     }), {
-        googleMapURL:'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places&sensor=true',
         setOpenBranchMarker: setOpenBranchMarker,
         setOpenBranchMarkerMenu: setOpenBranchMarkerMenu,
         setOpenExitingMarketMarker: setOpenExitingMarketMarker,
