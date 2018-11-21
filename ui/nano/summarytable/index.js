@@ -355,7 +355,7 @@ class SummaryTable extends Component {
             return _.orderBy(_.filter(this.props.RELATED_EXITING_MARKET_DATA, { BranchCode: value }), ['RadiusToPure', 'Radius'], ['asc', 'asc'])
         }
         else {
-            return _.orderBy(_.filter(this.props.RELATED_EXITING_MARKET_DATA, { BranchCode: value }), ['Radius'], ['asc'])
+            return _.orderBy(_.filter(this.props.RELATED_EXITING_MARKET_DATA, (o => o.BranchCode == value || o.OriginBranchCode == value)), ['Radius'], ['asc'])
         }
     }
 

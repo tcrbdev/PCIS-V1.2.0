@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withCookies } from 'react-cookie';
 import Draggable from 'react-draggable'
 
-import { Icon, Button, Collapse, Layout, Table, Tooltip, Popover, Menu, Dropdown, Modal } from 'antd';
+import { Button, Collapse, Layout, Tooltip } from 'antd';
 import Scrollbar from 'react-smooth-scrollbar';
 
 import SummaryTable from '../summarytable'
@@ -12,8 +12,8 @@ import GMap from '../map'
 import BranchSummary from '../branch_summary'
 import FontAwesome from 'react-fontawesome'
 
-import HOCScript from './HOCScript'
-import ModalCaDirectionMarket from '../modal_ca_direction_market'
+// import HOCScript from './HOCScript'
+// import ModalCaDirectionMarket from '../modal_ca_direction_market'
 
 import moment from 'moment'
 
@@ -24,10 +24,10 @@ import {
 } from '../actions/nanomaster'
 
 import VisitPopup from './visit-popup'
-import ModalNanoStopApproval from '../modal_nano_stop_approval'
-import ModalNanoNewsFeed from '../modal_nano_news_feed'
+// import ModalNanoStopApproval from '../modal_nano_stop_approval'
+// import ModalNanoNewsFeed from '../modal_nano_news_feed'
 
-import { constantQueryType } from '../../common/constants/constants'
+// import { constantQueryType } from '../../common/constants/constants'
 import styles from './index.scss'
 
 const { Header, Sider, Content } = Layout
@@ -107,12 +107,12 @@ class Index extends Component {
             return (
                 <div className={styles['map-container']}>
 
-                        <GMap
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz3d9Z7MLoDq4IdCz4g9ji0hGNl2Dg14U&v=3.exp&libraries=geometry,drawing,places&sensor=true&language=th"
-                            loadingElement={<div style={{ height: `100%` }} />}
-                            containerElement={<div style={{ height: `100%` }} />}
-                            mapElement={<div style={{ height: `100%` }} />}
-                        />
+                    <GMap
+                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz3d9Z7MLoDq4IdCz4g9ji0hGNl2Dg14U&v=3.exp&libraries=geometry,drawing,places&sensor=true&language=th"
+                        loadingElement={<div style={{ height: `100%` }} />}
+                        containerElement={<div style={{ height: `100%` }} />}
+                        mapElement={<div style={{ height: `100%` }} />}
+                    />
 
                     {/* <div style={{ width: '100%', height: '100%' }}>
                         <div style={{ width: '100%', height: '100%' }}>
@@ -127,7 +127,7 @@ class Index extends Component {
                         <Button
                             shape="circle"
                             icon="arrow-right"
-                            className={this.state.collapsed && styles['rotate']}
+                            className={`${this.state.collapsed ? styles['rotate'] : ''}`}
                             onClick={this.handlePanel} />
                     </div>
                 </div >
@@ -258,35 +258,75 @@ class Index extends Component {
                     }
 
                 </Sider>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="add-sale" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="add-sale" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="add-area" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="add-area" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
-                    <div id="direction-info" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="direction-info" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="add-portfolio-chart" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="add-portfolio-chart" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="add-portfolio-chart2" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="add-portfolio-chart2" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="add-sale-summary-chart" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="add-sale-summary-chart" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="add-sale-summary-chart2" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="add-sale-summary-chart2" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="nano-stop-approval" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="nano-stop-approval" ></div>
+                    </div>
                 </Draggable>
-                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="nano-news-feed" className={styles['multiple-window']}></div>
+
+                <Draggable handle=".ModalHeader" bounds="parent" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: '100%', height: '35px', right: '60px', position: 'absolute', zIndex: '1001', background: 'transparent' }}></div>
+                        <div id="nano-news-feed" ></div>
+                    </div>
                 </Draggable>
-                <Draggable handle=".ModalHeader" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} defaultPosition={{ x: (Coordinates.width / 2) - 350, y: (Coordinates.height / 2) - 270 }}>
-                    <div id="ca-directino-market" className={styles['multiple-window']}></div>
+
+                <Draggable cancel=".ModalHeader" cancel="" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} >
+                    <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="ModalHeader" style={{ width: 'calc(100% - 130px)', height: '35px', left: '40px', right: '85px', position: 'absolute', zIndex: '1001' }}></div>
+                        <div id="ca-directino-market" style={{ position: 'relative' }} ></div>
+                    </div>
                 </Draggable>
             </Layout>
         )

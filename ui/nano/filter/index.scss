@@ -1,95 +1,117 @@
-.panel-header
-{
-    display: flex;
-    align-items : center;
-    font-size: 16px;
-    color: rgba(0, 0, 0, 0.62);
-    & i
-    {
-        font-size:20px;
-        color: #00BCD4;
-        margin-right: 10px;
-    }
-}
-.check-box
-{
-    display: flex;
-    align-items: center;
+.panel-header {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.62);
+  & i {
+    font-size: 20px;
+    color: #00bcd4;
+    margin-right: 10px;
+  }
 }
 
-.row-label
+
+.filter-panel
 {
-    margin-bottom: 10px;
-
-    & > [class*=ant-form-item-label]
+    & > div > div:first-child
     {
-        text-align: left;
-    }
-}
-
-[class*=ant-select-tree-dropdown]
-{
-    max-height: 250px !important;
-
-    & li:first-child > span:first-child
-    {
-        // display: none;
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
     }
 
-    & > li:first-child > ul
+    & > div > div:nth-child(2)
     {
-        // padding: 0;
+        & > div
+        {
+            padding: 8px;
+        }
     }
 }
 
-[class*=ant-select-selection--multiple]
-{
-    max-height: 55px;
-    overflow: auto;
+.check-box {
+  display: flex;
+  align-items: center;
+  & > span:nth-child(2) {
+    font-size: 12px;
+  }
 }
 
-.no-margin-right
-{
-    & > label
-    {
-        margin-right: 0px !important;
+.check-box-text {
+  & > label > span:nth-child(2) {
+    font-size: 12px;
+  }
+}
+
+.row-label {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+
+  & > [class*="ant-form-item-label"] {
+    text-align: left;
+    line-height: normal !important;
+    & > label {
+      font-size: 12px;
     }
+  }
+
+  & [class*="ant-form-item-control"] {
+    line-height: 0 !important;
+  }
 }
 
-.complititorBrand
-{
-    width: 55px;
-    height: 55px;
-    cursor: pointer;
+[class*="ant-select-tree-dropdown"] {
+  max-height: 250px !important;
+
+  & li:first-child > span:first-child {
+    // display: none;
+  }
+
+  & > li:first-child > ul {
+    // padding: 0;
+  }
 }
 
-.complititorBrand-modal
-{
-    width: 55px;
-    height: 55px;
-    cursor: pointer;
-    margin-left: 20px;
+[class*="ant-select-selection--multiple"] {
+  max-height: 55px;
+  overflow: auto;
 }
 
-.select-maxheight
-{
-    max-height: 270px;
+.no-margin-right {
+  & > label {
+    margin-right: 0px !important;
+  }
 }
 
-.complititor-container
-{
-    position: absolute;
-    top:-15px;
-    cursor: pointer;
-    z-index: 1;
+.complititorBrand {
+  width: 55px;
+  height: 55px;
+  cursor: pointer;
+}
+
+.complititorBrand-modal {
+  width: 55px;
+  height: 55px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.select-maxheight {
+  max-height: 270px;
+}
+
+.complititor-container {
+  position: absolute;
+  top: -15px;
+  cursor: pointer;
+  z-index: 1;
 }
 
 button.searchCriteria {
-    & i + span {
-        margin-left: 2px !important;
-    }
+  & i + span {
+    margin-left: 2px !important;
+  }
 }
-
 
 .region_field,
 .area_field,
@@ -98,39 +120,41 @@ button.searchCriteria {
 .province_field,
 .branch_type_field,
 .competitor_field {
-    cursor: pointer;
-    /* Let's get this party started */
-& > span::-webkit-scrollbar {
+  cursor: pointer;
+  /* Let's get this party started */
+  & > span::-webkit-scrollbar {
     width: 4px;
-}
- 
-/* Track */
-& > span::-webkit-scrollbar-track {
+  }
+
+  /* Track */
+  & > span::-webkit-scrollbar-track {
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background: #EEE; 
-}
- 
-/* Handle */
-& > span::-webkit-scrollbar-thumb {
+    background: #eee;
+  }
+
+  /* Handle */
+  & > span::-webkit-scrollbar-thumb {
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background: #6f6f6f; 
+    background: #6f6f6f;
+  }
+
+  & [class*="ant-select-selection__choice"] {
+    margin-right: 0.11em;
+  }
+
+  & > span > ul > li {
+    font-size: 12px;
+  }
 }
 
-& [class*=ant-select-selection__choice]
-{
-margin-right: .11em;
-}
-}
-
-.as-of-date
-{
-    flex: 1;
-    justify-content: flex-end;
-    align-items: flex-end;
-    display: flex;
-    margin-right: 10px;
-    font-size: 0.7em;
-    padding-right: 10px;
+.as-of-date {
+  flex: 1;
+  justify-content: flex-end;
+  align-items: flex-end;
+  display: flex;
+  margin-right: 10px;
+  font-size: 0.7em;
+  padding-right: 10px;
 }

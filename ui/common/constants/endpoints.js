@@ -62,4 +62,6 @@ export const GET_PORTFOLIO_QUALITY_CHART_URL = `${url}/nano/portfolioquality/cha
 export const GET_SALE_SUMMARY_CHART_URL = `${url}/nano/salesummary/chart`
 export const GET_NANO_STOP_APPROVAL_URL = `${url}/nano/nano/stopapproval`
 
+export const GET_NANO_BRANCH_DIRECTION_URL = `${url}/nano/branch/direction/`
+
 

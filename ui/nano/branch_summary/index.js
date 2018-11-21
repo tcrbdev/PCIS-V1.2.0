@@ -392,7 +392,7 @@ class BranchSummary extends Component {
         else {
             auth_pass = true
         }
-        console.log(this.props.hiddenPanel)
+        
         return (
             <div className={`${styles['show-sm']} ${collapsedSummary}`}>
                 <div>

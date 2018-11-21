@@ -1,35 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { renderToString } from 'react-dom/server'
+// import { renderToString } from 'react-dom/server'
 
 import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
-import {withScriptjs} from "react-google-maps"
+import { withScriptjs } from "react-google-maps"
 
 // import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
 
 import { MAP } from 'react-google-maps/lib/constants';
 
-import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination, Card } from 'antd';
+import { Layout, Icon, Button, Table, Tooltip, Modal, Form, Row, Col, Popover, Carousel, Tabs, Pagination, Card, Menu } from 'antd';
 import FontAwesome from 'react-fontawesome'
-import {
-    Sector,
-    Cell,
-    PieChart,
-    Pie as Pies,
-    Tooltip as Tooltips,
-    BarChart,
-    Bar as Bars,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Legend,
-    Area,
-    Line as Lines,
-    Scatter,
-    ComposedChart,
-    ReferenceDot
-} from 'recharts'
-import { Doughnut, HorizontalBar, Bar, Pie, Line } from 'react-chartjs-2'
+
+import { Doughnut } from 'react-chartjs-2'
 import moment from 'moment'
 import Scrollbar from 'react-smooth-scrollbar';
 
@@ -45,22 +28,22 @@ import ModalCaDirectMarket from '../modal_ca_direction_market'
 import icon_full_branch from '../../../image/icon_full_branch.png'
 import icon_Keyos from '../../../image/icon_Keyos.png'
 import icon_Market from '../../../image/icon_Market.png'
-import icon_Target from '../../../image/icon_Target.png'
+// import icon_Target from '../../../image/icon_Target.png'
 import icon_Nano from '../../../image/icon_Nano.png'
 import icon_Srisawat from '../../../image/icon_Srisawat.png'
 import icon_SrisawatPower from '../../../image/icon_SrisawatPower.png'
 import icon_Mtls from '../../../image/icon_Mtls.png'
-import pinpao from '../../../image/pinpao.png'
+// import pinpao from '../../../image/pinpao.png'
 import icon_Plan_Branch_Nano from '../../../image/i_Nano.png'
 import resize_radius from '../../../image/resize-radius.png'
-import icon_destination_a from '../../../image/icon_destination_a.png'
-import icon_destination_b from '../../../image/icon_destination_b.png'
+// import icon_destination_a from '../../../image/icon_destination_a.png'
+// import icon_destination_b from '../../../image/icon_destination_b.png'
 import icon_destination_a2 from '../../../image/icon_destination_a2.png'
 import icon_destination_b2 from '../../../image/icon_destination_b2.png'
 import flag_r from '../../../image/Flag_R.png'
 import Flag_Gray from '../../../image/Flag_Gray.png'
 import flag_g from '../../../image/Flag_G.png'
-import flag_y from '../../../image/Flag_Y.png'
+// import flag_y from '../../../image/Flag_Y.png'
 
 import {
     setOpenBranchMarker,
@@ -220,7 +203,7 @@ const options = {
             fillColor: '#F33A00',
             fillOpacity: 0.04
         }
-    }],
+    }]
 }
 
 const handleBounds = (props, map) => {
@@ -462,7 +445,7 @@ const getFormatShortDay = (value) => {
 }
 
 const getCAData = (item) => {
-    console.log(item,"9999999999999999999999999999999999999999999999999999999999999")
+
     if (!_.isEmpty(item)) {
         let data = []
         _.mapKeys(_.groupBy(item, "CAName"), (value, key) => {
@@ -715,7 +698,7 @@ const getBranchMarkerMenu = (props) => {
                     MktCode: null,
                     CAID: null,
                     EmpCode: null,
-                    IncludeKiosk : 'Y'
+                    IncludeKiosk: 'Y'
                 }
 
                 return (
@@ -725,7 +708,6 @@ const getBranchMarkerMenu = (props) => {
                         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                         getPixelPositionOffset={getPixelPositionOffset}>
                         <div className={styles['overlayView']}>
-
                             <div className={styles['circle-menu']}>
                                 <input type="checkbox" className={styles["cn-button"]} id={`cn-button_${index}`} checked={true} />
                                 <Tooltip title={item.BranchName}>
@@ -754,7 +736,7 @@ const getBranchMarkerMenu = (props) => {
     }
 }
 
-const getBranchMarker = (props, handleShowModal, handleDirection) => {
+const getBranchMarker = (props, handleShowModal, handleDirection, openCARouteInfomation) => {
 
     const { NANO_FILTER_CRITERIA, RELATED_BRANCH_DATA } = props
 
@@ -765,7 +747,6 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
             let icon = icon_full_branch
             let related_branch = [], current_branch
             current_branch = _.find(item.BRANCH_DESCRIPTION, { BranchCode: item.BranchCode })
-            console.log(current_branch)
 
             switch (item.BranchType) {
                 case 'K':
@@ -810,6 +791,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                         key={`Branch_${index}`}
                         title={item.BranchName}
                         onClick={() => props.setOpenBranchMarkerMenu(item, props.RELATED_BRANCH_DATA, true)}
+                        onRightClick={e => item.BranchType != 'K' && openCARouteInfomation(e, item, true)}
                         position={{ lat: parseFloat(item.BranchLatitude), lng: parseFloat(item.BranchLongitude) }}
                         icon={{
                             url: icon
@@ -850,7 +832,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                                             <div className={styles['detail-container']}>
                                                 <div className={styles['detail-chart']}>
                                                     <div style={{ width: '160px', height: '160px' }}>
-                                                        <Doughnut {...chartData(item.BRANCH_INFORMATION) } />
+                                                        <Doughnut {...chartData(item.BRANCH_INFORMATION)} />
                                                         <span>{`${parseFloat(!_.isEmpty(item.BRANCH_INFORMATION) && getMarketSummaryData(item.BRANCH_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
                                                     </div>
                                                     <div>
@@ -944,7 +926,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection) => {
                             </InfoWindow>
                         }
                     </Marker>
-                </div >
+                </div>
             )
         })
     }
@@ -1199,7 +1181,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                             <div className={styles['detail-container']}>
                                                 <div className={styles['detail-chart']}>
                                                     <div style={{ width: '160px', height: '160px' }}>
-                                                        <Doughnut {...chartData(item.MARKET_INFORMATION) } />
+                                                        <Doughnut {...chartData(item.MARKET_INFORMATION)} />
                                                         <span>{`${parseFloat(!_.isEmpty(item.MARKET_INFORMATION) && getMarketSummaryData(item.MARKET_INFORMATION)[1].sum_penatation || 0).toFixed(0)}%`}</span>
                                                     </div>
                                                     <div>
@@ -1296,7 +1278,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
     }
 }
 
-const distanceBetweenPoints = (p1, p2) => {
+export const distanceBetweenPoints = (p1, p2) => {
     if (!p1 || !p2) {
         return 0;
     }
@@ -1957,14 +1939,12 @@ class ModalDirectionInfo extends Component {
                 wrapClassName={`parent_salesummary ${styles['modalParentDirectionInfo']}`}
                 className={styles['modalDirectionInfo']}
                 visible={this.props.directions}
-                onOk={false}
                 onCancel={this.props.close}
                 footer={null}
                 closable={false}
                 maskClosable={false}
                 mask={false}
-                getContainer={() => document.getElementById('modal-direction-info')}
-            >
+                getContainer={() => document.getElementById('modal-direction-info')}>
                 <article className={styles['wrapper']}>
                     <div className={styles['header-container']}>
                         <div className={styles['title-img-direction']}>
@@ -2288,8 +2268,8 @@ class PotentialImage extends Component {
                                                         style={{ marginBottom: '10px' }}
                                                         title={(<div><Icon type="solution" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#FF9800' }} /><span>หมายเหตุ</span></div>)}>
                                                         {
-                                                            item.Note ?
-                                                                <span>{item.Note}</span>
+                                                            item.Remark ?
+                                                                <span>{item.Remark}</span>
                                                                 :
                                                                 <span style={{ textAlign: 'center', display: 'block' }}><Icon type="frown-o" style={{ marginRight: '5px', fontSize: '14px', fontWeight: '400', color: '#F44336' }} />Nothing</span>
                                                         }
@@ -2345,7 +2325,10 @@ class Map extends Component {
             a: null,
             b: null
         },
-        caDirectionOpen: false
+        caDirectionOpen: false,
+        caDirectionItem: null,
+        isOpenContextMenu: false,
+        contextMenuSelectItem: {}
     }
 
     handleShowModal = (item) => {
@@ -2408,13 +2391,40 @@ class Map extends Component {
                 location_direction.a = { name: 'point a', Latitude: event.latLng.lat(), Longitude: event.latLng.lng() }
             }
 
-            this.setState({ location_direction,caDirectionOpen:true})
+            // this.setState({ location_direction,caDirectionOpen:true});
+            this.setState({ location_direction });
         }
     }
 
-    openCaDirectionToMarket =()=>{
-        this.setState({ caDirectionOpen:!this.state.caDirectionOpen })
+
+    openCARouteInfomation = (e, data, open) => {
+        if (process.env.NODE_ENV === 'production') {
+            if (this.props.AUTH_NANO_USER.BaseBranchCode == "000") {
+                if (open) {
+                    if (!this.state.isOpenContextMenu) {
+                        this.setState({ isOpenContextMenu: true, contextMenuSelectItem: data });
+                    }
+                }
+                else {
+                    this.setState({ isOpenContextMenu: false, contextMenuSelectItem: null });
+                }
+            }
+        }
+        else {
+            if (open) {
+                if (!this.state.isOpenContextMenu) {
+                    this.setState({ isOpenContextMenu: true, contextMenuSelectItem: data });
+                }
+            }
+            else {
+                this.setState({ isOpenContextMenu: false, contextMenuSelectItem: null });
+            }
+        }
     }
+
+    // openCaDirectionToMarket =()=>{
+    //     this.setState({ caDirectionOpen:!this.state.caDirectionOpen , isOpenContextMenu:false })
+    // }
 
     changeLocationDirection(event, point) {
         let location_direction = this.state.location_direction
@@ -2456,7 +2466,7 @@ class Map extends Component {
     render() {
         const props = this.props
         const { NANO_FILTER_CRITERIA } = props
-        const { modalSelectData } = this.state
+        const { modalSelectData, contextMenuPosition, contextMenuSelectItem, isOpenContextMenu } = this.state
 
         return (
             <div>
@@ -2477,19 +2487,22 @@ class Map extends Component {
                     <ModalDirectionInfo handleDirection={this.getDirection} directions={this.state.directions} close={this.closeDirection} />
                 }
                 {
-                    <ModalCaDirectMarket {...this.props} center={options.center} openCaDirectionToMarket={this.openCaDirectionToMarket} caDirectionOpen={this.state.caDirectionOpen}/>
+                    isOpenContextMenu &&
+                    <ModalCaDirectMarket item={this.state.contextMenuSelectItem} closeCaDirectionToMarket={this.openCARouteInfomation} center={options.center} />
                 }
                 <GoogleMap
+                    key="MainGooglemap"
                     defaultZoom={8}
                     defaultCenter={options.center}
                     disableDoubleClickZoom={true}
                     ref={(map) => (handleBounds(props, map))}
+                    onClick={() => this.state.isOpenContextMenu && this.setState({ isOpenContextMenu: false, contextMenuSelectItem: null, contextMenuPosition: { x: 0, y: 0 } })}
                     onRightClick={(event) => this.setLocationDirection(event)}>
                     {
                         getBranchMarkerMenu(props)
                     }
                     {
-                        getBranchMarker(props, this.handleShowModal, this.getDirection)
+                        getBranchMarker(props, this.handleShowModal, this.getDirection, this.openCARouteInfomation)
                     }
                     {
                         getBranchMarkerCircle(props)
@@ -2528,35 +2541,6 @@ class Map extends Component {
                         <TrafficLayer autoUpdate />
                     }
                     {
-                        /*<DrawingManager
-                            defaultDrawingMode={google.maps.drawing.OverlayType.CIRCLE}
-                            onPolylineComplete={this.onPolylineComplete}
-                            defaultOptions={{
-                                drawingControl: true,
-                                drawingControlOptions: {
-                                    position: google.maps.ControlPosition.TOP_CENTER,
-                                    drawingModes: [
-                                        google.maps.drawing.OverlayType.CIRCLE,
-                                        google.maps.drawing.OverlayType.POLYGON,
-                                        google.maps.drawing.OverlayType.POLYLINE,
-                                        google.maps.drawing.OverlayType.RECTANGLE,
-                                    ],
-                                },
-                                polylineOptions: {
-                                    editable: true
-                                },
-                                circleOptions: {
-                                    fillColor: `#ffff00`,
-                                    fillOpacity: 1,
-                                    strokeWeight: 5,
-                                    clickable: false,
-                                    editable: true,
-                                    zIndex: 1,
-                                },
-                            }}
-                        />*/
-                    }
-                    {
                         this.getLocationDirectionMarker()
                     }
                 </GoogleMap>
@@ -2570,6 +2554,7 @@ const wrapMap = withScriptjs(withGoogleMap(Map))
 
 export default connect(
     (state) => ({
+        AUTH_NANO_USER: state.AUTH_NANO_USER,
         NANO_FILTER_CRITERIA: state.NANO_FILTER_CRITERIA,
         SELECTED_CA_MAP: state.SELECTED_CA_MAP,
         DO_BOUNDS_MAP: state.DO_BOUNDS_MAP,

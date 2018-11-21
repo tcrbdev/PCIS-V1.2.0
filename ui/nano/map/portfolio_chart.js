@@ -279,7 +279,7 @@ const GaugeChart = (props) => {
                 activeIndex={activeSectorIndex}
                 data={colorData}
                 innerRadius={(width) * 0.23}
-                { ...pieProps }
+                {...pieProps}
                 strokeWidth={0}>
                 {
                     colorData.map((entry, index) => (
@@ -295,7 +295,7 @@ const GaugeChart = (props) => {
                 data={arrowData}
                 outerRadius={pieRadius.innerRadius}
                 fill="none"
-                { ...pieProps }
+                {...pieProps}
             />
             <Pies
                 name="needle_2"
@@ -305,7 +305,7 @@ const GaugeChart = (props) => {
                 data={arrowData2}
                 outerRadius={pieRadius.innerRadius}
                 fill="none"
-                { ...pieProps }
+                {...pieProps}
             />
             <Tooltips content={<CollectionMovementTooltip />} />
         </PieChart>
@@ -400,7 +400,7 @@ const GaugeChart1Needle = (props) => {
                 activeIndex={activeSectorIndex}
                 data={colorData}
                 innerRadius={(width) * 0.23}
-                { ...pieProps }
+                {...pieProps}
                 strokeWidth={0}>
                 {
                     colorData.map((entry, index) => (
@@ -415,7 +415,7 @@ const GaugeChart1Needle = (props) => {
                 data={arrowData}
                 outerRadius={pieRadius.innerRadius}
                 fill="none"
-                { ...pieProps }
+                {...pieProps}
             />
         </PieChart>
     );
@@ -579,7 +579,15 @@ class PortfolioChart extends Component {
                         </div>
                         <div className={styles['bg-chart']} style={{ display: 'flex', flexDirection: 'column', width: '210px', height: '170px', padding: '5px' }}>
                             <div>
-                                <span className={styles['header-other-chart']}>% of Current (W0 >87%)</span>
+                                <span className={styles['header-other-chart']}>
+                                    % of Current (W0-W2 > 90%)
+                                    <div>
+                                        {
+                                            `Total OS ${(item.PORTFOLIO_QUALITY_CHART[1] && item.PORTFOLIO_QUALITY_CHART[1][0]) ? item.PORTFOLIO_QUALITY_CHART[1][0].AllAmt : 0}Mb 
+                                        (${(item.PORTFOLIO_QUALITY_CHART[1] && item.PORTFOLIO_QUALITY_CHART[1][0]) ? item.PORTFOLIO_QUALITY_CHART[1][0].AllAct : 0} Cust.)`
+                                        }
+                                    </div>
+                                </span>
                             </div>
                             <div style={{ flex: '1', width: '100%', height: '100px' }}>
                                 <CurrentPieChart
@@ -963,7 +971,7 @@ class CurveTooltip extends Component {
     }
 }
 
-const CustomizedCurveDot = React.createClass({
+class CustomizedCurveDot extends Component {
     render() {
         const { cx, cy, stroke, payload, value } = this.props;
         let sx = cx
@@ -983,7 +991,29 @@ const CustomizedCurveDot = React.createClass({
             return null
         }
     }
-});
+}
+
+// const CustomizedCurveDot = React.createClass({
+//     render() {
+//         const { cx, cy, stroke, payload, value } = this.props;
+//         let sx = cx
+
+//         if (payload.type == 'W1-2') {
+//             sx += 45
+//         }
+
+//         if (payload.actual > payload.target) {
+//             return (
+//                 <svg x={sx - 27} y={cy - 10} width={15} height={15} fill="red" viewBox="0 0 1024 1024">
+//                     <path d="M517.12 53.248q95.232 0 179.2 36.352t145.92 98.304 98.304 145.92 36.352 179.2-36.352 179.2-98.304 145.92-145.92 98.304-179.2 36.352-179.2-36.352-145.92-98.304-98.304-145.92-36.352-179.2 36.352-179.2 98.304-145.92 145.92-98.304 179.2-36.352zM663.552 261.12q-15.36 0-28.16 6.656t-23.04 18.432-15.872 27.648-5.632 33.28q0 35.84 21.504 61.44t51.2 25.6 51.2-25.6 21.504-61.44q0-17.408-5.632-33.28t-15.872-27.648-23.04-18.432-28.16-6.656zM373.76 261.12q-29.696 0-50.688 25.088t-20.992 60.928 20.992 61.44 50.688 25.6 50.176-25.6 20.48-61.44-20.48-60.928-50.176-25.088zM520.192 602.112q-51.2 0-97.28 9.728t-82.944 27.648-62.464 41.472-35.84 51.2q-1.024 1.024-1.024 2.048-1.024 3.072-1.024 8.704t2.56 11.776 7.168 11.264 12.8 6.144q25.6-27.648 62.464-50.176 31.744-19.456 79.36-35.328t114.176-15.872q67.584 0 116.736 15.872t81.92 35.328q37.888 22.528 63.488 50.176 17.408-5.12 19.968-18.944t0.512-18.944-3.072-7.168-1.024-3.072q-26.624-55.296-100.352-88.576t-176.128-33.28z" />
+//                 </svg>
+//             )
+//         }
+//         else {
+//             return null
+//         }
+//     }
+// });
 
 export default connect(
     (state) => ({

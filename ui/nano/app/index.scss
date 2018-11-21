@@ -444,13 +444,20 @@
 
 .no-padding-lef-right
 {
+    & > div > div:first-child
+    {
+        padding: 8px 0 8px 40px !important;
+    }
+
     & > div > div:nth-child(2)
     {
         padding: 0 0;
         & > div
         {
-            padding-top: 0px;
-            padding-bottom: 0px;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
         }
     }
 }

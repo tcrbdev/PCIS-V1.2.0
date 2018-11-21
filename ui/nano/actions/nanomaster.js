@@ -29,7 +29,9 @@ import {
 
     GET_PORTFOLIO_QUALITY_CHART_URL,
     GET_SALE_SUMMARY_CHART_URL,
-    GET_NANO_STOP_APPROVAL_URL
+    GET_NANO_STOP_APPROVAL_URL,
+
+    GET_NANO_BRANCH_DIRECTION_URL
 } from '../../common/constants/endpoints'
 
 import {
@@ -79,7 +81,13 @@ import {
 
     GET_NANO_VISIT_POPUP_INFO_REQUEST,
     GET_NANO_VISIT_POPUP_INFO_SUCCESS,
-    GET_NANO_VISIT_POPUP_INFO_FAILURE
+    GET_NANO_VISIT_POPUP_INFO_FAILURE,
+
+    GET_NANO_BRANCH_DIRECTION_REQUEST,
+    GET_NANO_BRANCH_DIRECTION_SUCCESS,
+    GET_NANO_BRANCH_DIRECTION_FAILURE,
+
+    SET_GLOBAL_POPOVER_STATE
 } from '../../common/constants/actionsType'
 
 export const setLocationDirectionMarker = () => dispatch => {
@@ -952,4 +960,17 @@ export const getPortfolioQualityChart = criteria => dispatch => dispatch({
         types: [GET_PORTFOLIO_QUALITY_CHART_REQUEST, GET_PORTFOLIO_QUALITY_CHART_SUCCESS, GET_PORTFOLIO_QUALITY_CHART_FAILURE]
     }
 })
+
+export const getNanoBranchDirection = BRANCH_CODE => dispatch => {
+    dispatch({
+        [CALL_API]: {
+            endpoint: `${GET_NANO_BRANCH_DIRECTION_URL}${BRANCH_CODE}`,
+            method: 'GET',
+            types: [GET_NANO_BRANCH_DIRECTION_REQUEST, GET_NANO_BRANCH_DIRECTION_SUCCESS, GET_NANO_BRANCH_DIRECTION_FAILURE]
+        }
+    })
+}
+
+export const setGlobalPopoverState = (Key, PopoverOpen) => dispatch => dispatch({ type: SET_GLOBAL_POPOVER_STATE, GlobalPopoverState: { Key, IsOpen: PopoverOpen } })
+
 

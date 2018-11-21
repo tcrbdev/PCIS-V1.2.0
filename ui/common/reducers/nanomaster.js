@@ -33,7 +33,13 @@ import {
 
     GET_NANO_VISIT_POPUP_INFO_REQUEST,
     GET_NANO_VISIT_POPUP_INFO_SUCCESS,
-    GET_NANO_VISIT_POPUP_INFO_FAILURE
+    GET_NANO_VISIT_POPUP_INFO_FAILURE,
+
+    GET_NANO_BRANCH_DIRECTION_REQUEST,
+    GET_NANO_BRANCH_DIRECTION_SUCCESS,
+    GET_NANO_BRANCH_DIRECTION_FAILURE,
+
+    SET_GLOBAL_POPOVER_STATE
 } from '../constants/actionsType'
 
 const initialStateObj = {}
@@ -453,6 +459,39 @@ export const CA_SUMMARY_ONLY_MARKET_CONTRIBUTION = (state = initialStateArray, a
             break;
         default:
             return state
+            break;
+    }
+}
+
+export const NANO_BRANCH_DIRECTION_DATA = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case GET_NANO_BRANCH_DIRECTION_SUCCESS:
+            return action.payload
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const NANO_BRANCH_DIRECTION_DATA_STATUS = (state = false, action) => {
+    switch (action.type) {
+        case GET_NANO_BRANCH_DIRECTION_SUCCESS:
+            return true
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const GLOBAL_POPOVER_STATE = (state = initialStateObj, action) => {
+    switch (action.type) {
+        case SET_GLOBAL_POPOVER_STATE:
+            return action.GlobalPopoverState
+            break;
+        default:
+            return { Key: null, IsOpen: false }
             break;
     }
 }

@@ -38,7 +38,7 @@ const CheckboxGroup = Checkbox.Group
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 
 const tProps = {
-    size: 'large',
+    size: 'medium',
     multiple: true,
     treeCheckable: true,
     showCheckedStrategy: SHOW_PARENT,
@@ -72,16 +72,17 @@ class Filter extends Component {
     }
 
     getRegionSelectItem() {
-        const { NANO_MASTER_ALL: { MASTER_REGION_DATA } } = this.props
+        const { NANO_MASTER_ALL: { MASTER_REGION_DATA }, form: { resetFields } } = this.props
 
         if (!_.isEmpty(MASTER_REGION_DATA)) {
+
             return [{
-                label: 'Select All',
+                title: 'Select All',
                 value: MASTER_REGION_DATA.map(item => item.RegionID).join(','),
                 key: 'all',
                 children: _.orderBy(MASTER_REGION_DATA, ['RegionID'], ['asc']).map((item, index) => {
                     return ({
-                        label: item.RegionID,
+                        title: item.RegionID,
                         value: `${item.RegionID}`,
                         key: `${item.RegionID}`
                     })
@@ -96,7 +97,7 @@ class Filter extends Component {
             if (key == 'Current') {
                 value.map((item, index) => {
                     resultGroupBy.push({
-                        label: item.label,
+                        title: item.label,
                         value: item.value,
                         key: item.value,
                     })
@@ -104,11 +105,11 @@ class Filter extends Component {
             }
             else {
                 resultGroupBy.push({
-                    label: key,
+                    title: key,
                     value: value.map(item => item.value).join(','),
                     key: value.map(item => item.value).join(','),
                     children: value.map((item, index) => ({
-                        label: item.label,
+                        title: item.label,
                         value: item.value,
                         key: item.value
                     }))
@@ -117,7 +118,7 @@ class Filter extends Component {
         })
 
         return [{
-            label: 'Select All',
+            title: 'Select All',
             value: resultGroupBy.map(item => item.value).join(','),
             key: 'all',
             children: resultGroupBy
@@ -150,15 +151,15 @@ class Filter extends Component {
             })
 
             return [{
-                label: 'Select All',
+                title: 'Select All',
                 value: resultGroupBy.map(item => item.AreaID).join(','),
                 key: 'all',
                 children: resultGroupBy.map((item, index) => ({
-                    label: item.AreaID,
+                    title: item.AreaID,
                     value: item.AreaID,
                     key: item.AreaID,
                     children: item.Zone.map(zone => ({
-                        label: zone.ZoneText,
+                        title: zone.ZoneText,
                         value: zone.ZoneValue,
                         key: zone.ZoneValue
                     }))
@@ -211,11 +212,11 @@ class Filter extends Component {
                     if (obj.length > 1) {
                         if (!_.isEmpty(_.find(obj, o => o.BranchType != 'K')) && !_.isEmpty(_.find(obj, { BranchType: 'K' }))) {
                             group.push({
-                                label: item.BranchName,
+                                title: item.BranchName,
                                 value: valueKey,
                                 key: valueKey,
                                 children: obj.map(s => ({
-                                    label: s.BranchName,
+                                    title: s.BranchName,
                                     value: s.BranchCode,
                                     key: s.BranchCode
                                 }))
@@ -224,7 +225,7 @@ class Filter extends Component {
                         else {
                             obj.map(s => {
                                 group.push({
-                                    label: s.BranchName,
+                                    title: s.BranchName,
                                     value: s.BranchCode,
                                     key: s.BranchCode
                                 })
@@ -233,7 +234,7 @@ class Filter extends Component {
                     }
                     else {
                         group.push({
-                            label: item.BranchName,
+                            title: item.BranchName,
                             value: valueKey,
                             key: valueKey
                         })
@@ -243,7 +244,7 @@ class Filter extends Component {
             else {
                 kiosk.map(s => {
                     group.push({
-                        label: s.BranchName,
+                        title: s.BranchName,
                         value: s.BranchCode,
                         key: s.BranchCode
                     })
@@ -251,7 +252,7 @@ class Filter extends Component {
             }
 
             return _.cloneDeep([{
-                label: 'Select All',
+                title: 'Select All',
                 value: BRANCH_DATA.map(item => item.BranchCode).join(','),
                 key: 'all',
                 children: group
@@ -272,13 +273,13 @@ class Filter extends Component {
             _.mapKeys(_.groupBy(CALIST_DATA, "OriginBranchCode"), (values, key) => {
 
                 let obj = {
-                    label: _.isEmpty(_.find(MASTER_BRANCH_DATA, { BranchCode: key })) ? key : _.find(MASTER_BRANCH_DATA, { BranchCode: key }).BranchName,
+                    title: _.isEmpty(_.find(MASTER_BRANCH_DATA, { BranchCode: key })) ? key : _.find(MASTER_BRANCH_DATA, { BranchCode: key }).BranchName,
                     value: values.map(m => m.CA_Code).join(','),
                     key: values.map(m => m.CA_Code).join(',')
                 }
 
                 obj.children = values.map((item, index) => ({
-                    label: item.CA_Name,
+                    title: item.CA_Name,
                     value: item.CA_Code,
                     key: item.CA_Code
                 }))
@@ -286,14 +287,15 @@ class Filter extends Component {
                 group.push(obj)
             })
 
-            console.log("-----------------------", group)
-
-            return [{
-                label: 'Select All',
-                value: _.uniq(CALIST_DATA.map(item => item.CA_Code)).join(','),
-                key: _.uniq(CALIST_DATA.map(item => item.CA_Code)).join(','),
-                children: group
-            }]
+            // const value = `${CALIST_DATA.map(item => item.CA_Code).join(',')}`;
+            // console.log(value)
+            return group
+            // return [{
+            //     title: 'Select All',
+            //     value: value,
+            //     key: value,
+            //     children: group
+            // }]
         }
     }
 
@@ -314,7 +316,7 @@ class Filter extends Component {
             _.mapKeys(_.groupBy(PROVINCE_DATA, "Province"), (value, key) => {
 
                 let group = {
-                    label: key,
+                    title: key,
                     value: value.map(o => o.PotentialMarketCode).join(","),
                     key: value.map(o => o.PotentialMarketCode).join(","),
                     children: []
@@ -324,7 +326,7 @@ class Filter extends Component {
 
                 _.mapKeys(_.groupBy(value, "Amphor"), (a_value, a_key) => {
                     let a_group = {
-                        label: a_key,
+                        title: a_key,
                         value: a_value.map(o => o.PotentialMarketCode).join(","),
                         key: a_value.map(o => o.PotentialMarketCode).join(",")
                     }
@@ -345,7 +347,7 @@ class Filter extends Component {
             // })
 
             return [{
-                label: 'Select All',
+                title: 'Select All',
                 value: [..._.uniqBy(PROVINCE_DATA, "PotentialMarketCode").map(item => item.PotentialMarketCode)].join(','),
                 key: [..._.uniqBy(PROVINCE_DATA, "PotentialMarketCode").map(item => item.PotentialMarketCode)].join(','),
                 children: _.orderBy(result, 'key', 'asc')
@@ -402,14 +404,14 @@ class Filter extends Component {
             let group = []
             _.mapKeys(_.groupBy(PROVINCE_DATA, "ProvinceName"), (value, key) => {
                 let obj = {
-                    label: key,
+                    title: key,
                     value: value.map(m => m.District).join(','),
                     key: value.map(m => m.District).join(',')
                 }
 
                 if (value.length > 1) {
                     obj.children = value.map((item, index) => ({
-                        label: item.District,
+                        title: item.District,
                         value: item.District,
                         key: `${item.District}_${index}`
                     }))
@@ -419,7 +421,7 @@ class Filter extends Component {
             })
 
             return [{
-                label: 'Select All',
+                title: 'Select All',
                 value: PROVINCE_DATA.map(item => item.District).join(','),
                 key: PROVINCE_DATA.map(item => item.District).join(','),
                 children: group
@@ -470,6 +472,7 @@ class Filter extends Component {
                     criteria.EmpCode = auth.Session.sess_empcode
                 }
 
+                console.log(criteria)
                 searchNanoData(criteria)
             }
         });
@@ -730,7 +733,7 @@ class Filter extends Component {
         }
 
         return (
-            <Collapse bordered={true} onChange={this.onFilterCollapsedChange} style={{ zIndex: '3' }} activeKey={this.state.openFilterCollapsed}>
+            <Collapse className={styles['filter-panel']} bordered={true} onChange={this.onFilterCollapsedChange} style={{ zIndex: '3' }} activeKey={this.state.openFilterCollapsed}>
                 <Panel
                     key={"1"}
                     header={
@@ -759,7 +762,7 @@ class Filter extends Component {
                                                 className={styles['region_field']}
                                                 treeData={this.getRegionSelectItem()}
                                                 searchPlaceholder="Please select area"
-                                                treeNodeFilterProp="label"
+                                                treeNodeFilterProp="title"
                                                 onClick={this.onRegionExpand(styles['region_field'])}
                                             />
                                             )
@@ -809,7 +812,7 @@ class Filter extends Component {
                                                 treeData={this.getBranchSelectItem()}
                                                 dropdownMatchSelectWidth={false}
                                                 onClick={this.onBrExpand}
-                                                treeNodeFilterProp="label"
+                                                treeNodeFilterProp="title"
                                                 searchPlaceholder="Please select branch"
                                             />
                                             )
@@ -859,7 +862,7 @@ class Filter extends Component {
                                                 treeData={this.getCANameSelect()}
                                                 dropdownMatchSelectWidth={false}
                                                 onClick={this.onCAExpand}
-                                                treeNodeFilterProp="label"
+                                                treeNodeFilterProp="title"
                                                 searchPlaceholder="Search ca name"
                                             />
                                             )
@@ -877,7 +880,7 @@ class Filter extends Component {
                                             initialValue: defaultShowMarkerOptions
                                         })
                                             (
-                                            <CheckboxGroup options={ShowMarkerOptions} style={{ marginRight: '0px' }} />
+                                            <CheckboxGroup className={styles['check-box-text']} options={ShowMarkerOptions} style={{ marginRight: '0px' }} />
                                             )
                                     }
                                 </FormItem>
@@ -911,6 +914,7 @@ class Filter extends Component {
                                         })
                                             (
                                             <Checkbox
+                                                size="medium"
                                                 className={styles['check-box']}>
                                                 Include Branch Market ({_.filter(this.props.RELATED_EXITING_MARKET_DATA, o => o.BranchType != 'K').length})
                                             </Checkbox>
@@ -929,9 +933,8 @@ class Filter extends Component {
                                 <Modal className={styles['modalComplititor']}
                                     title="Competitor Location PIN"
                                     visible={this.state.visible}
-                                    onOk={false}
+
                                     onCancel={this.handleCancel}
-                                    width="400"
                                     footer={null}
                                 >
                                     <article className={styles["complititorContent"]}>
@@ -998,7 +1001,7 @@ class Filter extends Component {
                                                             treeData={this.getComplititorSelect()}
                                                             searchPlaceholder="กรุณาเลือกจังหวัด"
                                                             style={{ 'width': '100%' }}
-                                                            treeNodeFilterProp="label"
+                                                            treeNodeFilterProp="title"
                                                             onClick={this.onCompetitorExpand} />
                                                         )
                                                 }
@@ -1071,11 +1074,11 @@ class Filter extends Component {
                                                 <TreeSelect
                                                     {...tProps}
                                                     className={styles['province_field']}
-                                                    treeDefaultExpandAll={true}
+                                                    treeDefaultExpandAll={false}
                                                     treeDefaultExpandedKeys={['all']}
                                                     treeData={this.getProvinceSelect()}
                                                     searchPlaceholder="Search employee name"
-                                                    treeNodeFilterProp="label"
+                                                    treeNodeFilterProp="title"
                                                     onClick={this.onProvinceExpand} />
                                                 )
                                         }
