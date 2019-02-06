@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 // import { renderToString } from 'react-dom/server'
 
-import { withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
+import { withGoogleMap, GoogleMap, Marker, MarkerWithLabel, Circle, InfoWindow, OverlayView, Polyline, StreetViewPanorama, DirectionsRenderer, TrafficLayer, InfoBox } from "react-google-maps"
 import { withScriptjs } from "react-google-maps"
 
 // import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
@@ -21,6 +21,7 @@ import StreetViewMap from './streetview'
 import PortfolioChart from './portfolio_chart'
 import SaleSummaryChart from './sale_summary_chart'
 import ModalCaDirectMarket from '../modal_ca_direction_market'
+import MapCustomerInMarket from './MapCustomerInMarket'
 
 // import NewNote from './newnote'
 // import NoteTable from './notetable'
@@ -45,8 +46,12 @@ import Flag_Gray from '../../../image/Flag_Gray.png'
 import flag_g from '../../../image/Flag_G.png'
 // import flag_y from '../../../image/Flag_Y.png'
 
+import icon_Market_Kiosk_2 from '../../../image/icon_Market_Kiosk_2.png'
+import icon_Market_Kiosk from '../../../image/icon_Market_Kiosk.png'
+
 import {
     setOpenBranchMarker,
+    setOpenBranchShopLayoutMarker,
     setOpenBranchMarkerMenu,
     setOpenBranchImageMarker,
     setOpenBranchPortfolioMarker,
@@ -87,6 +92,9 @@ const onDomReady = (isImage) => {
     }
     else if (isImage == 'potential') {
         iwOuter.addClass(styles['potential-marker'])
+    }
+    else if (isImage == 'shop') {
+        iwOuter.addClass(styles['shop-layout'])
     }
 
     let iwCloseBtn = iwOuter.next();
@@ -721,7 +729,7 @@ const getBranchMarkerMenu = (props) => {
                                 <div className={styles["cn-wrapper"]} id={`cn-wrapper_${index}`}>
                                     <ul>
                                         <li onClick={() => props.setOpenBranchImageMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Picture"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="picture-o" /></span></label></Tooltip></li>
-                                        <li><Tooltip title="Shop Layout"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
+                                        <li onClick={() => props.setOpenBranchShopLayoutMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Shop Layout"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="map-marker" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenBranchSaleSummaryMarker(item, props.RELATED_BRANCH_DATA, true, criteria)}><Tooltip title="Sale Summary"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="line-chart" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenBranchMarker(item, props.RELATED_BRANCH_DATA, true)}><Tooltip title="Market Penatation"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="table" /></span></label></Tooltip></li>
                                         <li onClick={() => props.setOpenBranchPortfolioMarker(item, props.RELATED_BRANCH_DATA, true, criteria)}><Tooltip title="Portfolio Quality"><label htmlFor={`cn-button_${index}`}><span><FontAwesome name="dollar" /></span></label></Tooltip></li>
@@ -789,6 +797,7 @@ const getBranchMarker = (props, handleShowModal, handleDirection, openCARouteInf
                     }
                     <Marker
                         key={`Branch_${index}`}
+                        zIndex={2}
                         title={item.BranchName}
                         onClick={() => props.setOpenBranchMarkerMenu(item, props.RELATED_BRANCH_DATA, true)}
                         onRightClick={e => item.BranchType != 'K' && openCARouteInfomation(e, item, true)}
@@ -799,6 +808,28 @@ const getBranchMarker = (props, handleShowModal, handleDirection, openCARouteInf
                         {
                             item.showImage &&
                             (<BranchImage item={item} index={index} ownProps={props} />)
+                        }
+                        {
+                            item.showShopLayout &&
+                            <InfoWindow
+                                title={item.BranchName}
+                                onDomReady={() => onDomReady('shop')}>
+                                <Layout >
+                                    <div className={styles['headers']}>
+                                        <FontAwesome className="trigger" name="map-marker" />
+                                        <span>
+                                            {`(${item.BranchCode}) ${item.BranchName} (${item.BranchType})`}
+                                        </span>
+                                        <Icon
+                                            onClick={() => props.setOpenBranchShopLayoutMarker(item, RELATED_BRANCH_DATA, false)}
+                                            className="trigger"
+                                            type='close' />
+                                    </div>
+                                    <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                        <MapCustomerInMarket Market={item} Data={item.SHOP_LAYOUT} index={index} ownProps={props} Type="B" />
+                                    </Layout>
+                                </Layout>
+                            </InfoWindow>
                         }
                         {
                             item.showInfo &&
@@ -1063,6 +1094,24 @@ const getExitingMarkerMenu = props => {
         })
     }
 }
+// const getExitingMarkerMarketKiosk = props => {
+//     const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
+
+//     if (_.filter(NANO_FILTER_CRITERIA.MarkerOptions, o => o == 'MR').length > 0) {
+//         return _.filter(RELATED_EXITING_MARKET_DATA, { BranchType: 'K' }).map((item, index) => {
+//             return (
+//                 <Marker
+//                     key={`ExitingMarket_Kiosk_${index}`}
+//                     title={item.MarketName}
+//                     zIndex={0}
+//                     position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
+//                     icon={{
+//                         url: icon_Market_Kiosk_2
+//                     }} />
+//             )
+//         });
+//     }
+// }
 
 const getExitingMarker = (props, handleShowModal, handleDirection) => {
     const { NANO_FILTER_CRITERIA, RELATED_EXITING_MARKET_DATA } = props
@@ -1109,13 +1158,14 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                     <Marker
                         key={`ExitingMarket_${index}`}
                         title={item.MarketName}
+                        zIndex={1}
                         onClick={() => {
                             if (!item.showInfo && !item.showImage)
                                 props.setOpenExitingMarketMarkerMenu(item, RELATED_EXITING_MARKET_DATA, true)
                         }}
                         position={{ lat: parseFloat(item.Latitude), lng: parseFloat(item.Longitude) }}
                         icon={{
-                            url: icon
+                            url: item.BranchType == 'K' ? icon_Market_Kiosk_2 : icon
                         }}>
                         {
                             item.showImage &&
@@ -1127,12 +1177,12 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                             item.showShopLayout &&
                             <InfoWindow
                                 title={item.MarketName}
-                                onDomReady={onDomReady}>
-                                <Layout>
+                                onDomReady={() => onDomReady('shop')}>
+                                <Layout >
                                     <div className={styles['headers']}>
                                         <FontAwesome className="trigger" name="map-marker" />
                                         <span>
-                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType})`}
+                                            {`(${item.MarketCode}) ${item.MarketName} (${item.BranchType}) อายุตลาด ${item.TelsOpenMarket}`}
                                         </span>
                                         <Icon
                                             onClick={() => props.setOpenExitingMarketMarker(item, RELATED_EXITING_MARKET_DATA, false)}
@@ -1140,6 +1190,7 @@ const getExitingMarker = (props, handleShowModal, handleDirection) => {
                                             type='close' />
                                     </div>
                                     <Layout style={{ backgroundColor: '#FFF', padding: '10px' }}>
+                                        <MapCustomerInMarket Market={item} Data={item.SHOP_LAYOUT} index={index} ownProps={props} Type="M" />
                                     </Layout>
                                 </Layout>
                             </InfoWindow>
@@ -2399,16 +2450,16 @@ class Map extends Component {
 
     openCARouteInfomation = (e, data, open) => {
         if (process.env.NODE_ENV === 'production') {
-            if (this.props.AUTH_NANO_USER.BaseBranchCode == "000") {
-                if (open) {
-                    if (!this.state.isOpenContextMenu) {
-                        this.setState({ isOpenContextMenu: true, contextMenuSelectItem: data });
-                    }
-                }
-                else {
-                    this.setState({ isOpenContextMenu: false, contextMenuSelectItem: null });
+            // if (this.props.AUTH_NANO_USER.BaseBranchCode == "000") {
+            if (open) {
+                if (!this.state.isOpenContextMenu) {
+                    this.setState({ isOpenContextMenu: true, contextMenuSelectItem: data });
                 }
             }
+            else {
+                this.setState({ isOpenContextMenu: false, contextMenuSelectItem: null });
+            }
+            // }
         }
         else {
             if (open) {
@@ -2488,7 +2539,7 @@ class Map extends Component {
                 }
                 {
                     isOpenContextMenu &&
-                    <ModalCaDirectMarket item={this.state.contextMenuSelectItem} closeCaDirectionToMarket={this.openCARouteInfomation} center={options.center} />
+                    <ModalCaDirectMarket item={this.state.contextMenuSelectItem} closeCaDirectionToMarket={this.openCARouteInfomation} />
                 }
                 <GoogleMap
                     key="MainGooglemap"
@@ -2512,6 +2563,9 @@ class Map extends Component {
                     }
                     {
                         getExitingMarkerMenu(props)
+                    }
+                    {
+                        // getExitingMarkerMarketKiosk(props)
                     }
                     {
                         getExitingMarker(props, this.handleShowModal, this.getDirection)
@@ -2566,6 +2620,7 @@ export default connect(
         RELATED_PLAN_OPEN_BRANCH_DATA: state.RELATED_PLAN_OPEN_BRANCH_DATA
     }), {
         setOpenBranchMarker: setOpenBranchMarker,
+        setOpenBranchShopLayoutMarker: setOpenBranchShopLayoutMarker,
         setOpenBranchMarkerMenu: setOpenBranchMarkerMenu,
         setOpenExitingMarketMarker: setOpenExitingMarketMarker,
         setOpenExitingMarketMarkerMenu: setOpenExitingMarketMarkerMenu,

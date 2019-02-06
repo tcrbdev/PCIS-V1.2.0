@@ -196,13 +196,13 @@ class GMapPath extends Component {
 
     componentDidMount() {
         // if (this.props.paths.length > 0) {
-        this.fitBounds(this.props.paths);
+        // this.fitBounds(this.props.paths);
         // }
     }
 
     componentWillReceiveProps(nextProps) {
         // if (nextProps.paths.length > 0) {
-        this.fitBounds(nextProps.paths);
+        // this.fitBounds(nextProps.paths);
         // }
     }
 
@@ -232,27 +232,25 @@ class GMapPath extends Component {
             kioskBranch.map((kiosk, index) => bounds.extend(new google.maps.LatLng(kiosk.Latitude, kiosk.Longitude)));
             // }
 
-            this
-                .refs
-                .map
-                .fitBounds(bounds);
+            this.refs.map.fitBounds(bounds);
         }
     }
 
     getPolyLine = () => {
         const { paths } = this.props
-
-        return paths.map((itemPath, index) => (
-            <Polyline
+        return paths.map((itemPath, index) => {
+            const lines = _.filter(itemPath.paths.map(path => ({ lat: path.item.Latitude, lng: path.item.Longitude })), o => o.lat != null)
+            return (<Polyline
                 key={`PolyLine_${index}`}
                 path={
-                    itemPath.paths.map(path => ({ lat: path.item.Latitude, lng: path.item.Longitude }))
+                    lines
                 }
                 options={{
                     strokeColor: itemPath.strokeColor,
                     strokeWeight: 3
                 }} />
-        ));
+            )
+        });
     }
 
     getRadiusCircle = () => {
@@ -339,6 +337,8 @@ class GMapPath extends Component {
 
         const { onShowVirtualDirectionChanged, data } = this.props;
 
+        // let dataAssign = data ? this.props.branchPCAMode ? data[4] : data[2] : [];
+
         let dataAssign = data ? data[2] : [];
 
         return [
@@ -349,7 +349,7 @@ class GMapPath extends Component {
                 width: '33%',
                 className: `${styless['td-vertical-bottom']}`,
                 render: (text, record, index) => {
-                    const filterAssign = _.filter(dataAssign, { OwnerCode: record.Code });
+                    const filterAssign = this.props.branchPCAMode ? [] : _.filter(dataAssign, { OwnerCode: record.Code });
 
                     return (
                         <div style={{ display: 'inline-flex', alignItems: 'center' }}>
@@ -561,252 +561,182 @@ class GMapPath extends Component {
         ];
     }
 
-    getcolumnsMarketCA = () => ([
-        {
-            title: (<span>Market Name</span>),
-            dataIndex: 'MarketName',
-            key: 'MarketName',
-            width: '33%',
-            className: styless['margin-top-td'],
-            render: (value, row, index) => {
+    getcolumnsMarketCA = (Title) => ([{
+        title: Title,
+        colSpan: 7,
+        dataIndex: 'EmpName',
+        key: 'EmpName',
+        align: 'center',
+        width: '9%',
+        className: styless['td-vertical-middle'],
+        render: (value, row, index) => {
+            let dataAssign = _.filter(this.props.data[3], { MarketCode: row.MarketCode, OwnerCode: row.EmpCode });
 
-                const data = this.getDataMarketTotal(row);
+            const color = ['#03a694', '#023852', '#023852', '#f24738', '#ff5722', '#9e9e9e', '#4caf50', '#673ab7'];
 
-                const obj = {
-                    children: (
-                        <Tooltip title={value} placement="top" >
-                            <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                                <span className={styless['text-ellipsis']}>{value}</span>
-                            </div>
-                        </Tooltip>
-                    ),
-                    props: {}
-                }
-
-                if (index < data.length && (index + 1) < data.length) {
-                    if (data[index + 1].MarketCode == row.MarketCode) {
-                        obj.props.rowSpan = _
-                            .filter(data, { MarketCode: row.MarketCode })
-                            .length;
-                    }
-                }
-
-                if (index > 0 && (index - 1) >= 0) {
-                    // These two are merged into above cell
-                    if (data[index - 1].MarketCode == row.MarketCode) {
-                        obj.props.rowSpan = 0;
-                    }
-                }
-
-                return obj;
+            let chartData = [];
+            if (dataAssign.length > 0) {
+                chartData.push({ name: row.EmpName, value: row.Total, color: '#03a9f4' });
+                chartData = _.union(chartData, dataAssign.map((o, i) => ({ name: o.Name, value: o.Total, color: color[i] })));
             }
-        }, {
-            title: '',
-            dataIndex: 'Total',
-            key: 'kkk',
-            width: '7%',
-            align: 'center',
-            className: `blacklight-column ${styless['margin-top-td']}`,
-            render: (value, row, index) => {
-                const data = this.getDataMarketTotal(row);
 
-                // const sumTotalByMarket = _.sumBy(_.filter(data, { MarketCode: row.MarketCode }), "Total");
+            const ActiveEmp = !_.isEmpty(_.find(this.props.selectedCaItem, { Code: row.EmpCode })) ? { border: '2px solid red' } : {}
 
-                const obj = {
-                    children: (<span className={styless['color-soft']}>{row.Total}</span>),
-                    props: {}
-                }
-
-                if (index < data.length && (index + 1) < data.length) {
-                    if (data[index + 1].MarketCode == row.MarketCode) {
-                        obj.props.rowSpan = _
-                            .filter(data, { MarketCode: row.MarketCode })
-                            .length;
-                    }
-                }
-
-                if (index > 0 && (index - 1) >= 0) {
-                    // These two are merged into above cell
-                    if (data[index - 1].MarketCode == row.MarketCode) {
-                        obj.props.rowSpan = 0;
-                    }
-                }
-
-                return obj;
-            }
-        }, {
-            colSpan: 2,
-            dataIndex: 'EmpName',
-            key: 'EmpName',
-            align: 'center',
-            width: '9%',
-            className: styless['td-vertical-middle'],
-            render: (value, row, index) => {
-                let dataAssign = _.filter(this.props.data[3], { MarketCode: row.MarketCode, OwnerCode: row.EmpCode });
-
-                const color = ['#03a694', '#023852', '#023852', '#f24738', '#ff5722', '#9e9e9e', '#4caf50', '#673ab7'];
-
-                let chartData = [];
-                if (dataAssign.length > 0) {
-                    chartData.push({ name: row.EmpName, value: row.Total, color: '#03a9f4' });
-                    chartData = _.union(chartData, dataAssign.map((o, i) => ({ name: o.Name, value: o.Total, color: color[i] })));
-                }
-
-                return (
-                    <Popover
-                        content={(
-                            <div className={styless['assign-detail-ca']}>
-                                <div className={styless['marker-tm-pictures']}>
-                                    <img
-                                        className={styless['ca-big-img']}
-                                        src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${row.EmpCode}`} />
-                                    <div>
-                                        <span>{`${row.EmpName}`}</span>
-                                        <span>{`${row.Mobile} (${row.NickName})`}</span>
-                                        <span>{`${moment(row.StartWorking).format('DD-MM-YYYY')} (${row.Period})`}</span>
-                                    </div>
-                                    {
-                                        dataAssign.length > 0 &&
-                                        <div style={{ flex: '1', justifyContent: 'center', alignItems: 'center', maxHeight: '80px' }}>
-                                            <PieChart
-                                                width={110}
-                                                height={120}>
-                                                <Pie
-                                                    data={chartData}
-                                                    innerRadius={30}
-                                                    activeIndex={0}
-                                                    labelLine={false}
-                                                >
-                                                    {
-                                                        chartData.map((entry, index) => <Cell fill={entry.color} />)
-                                                    }
-                                                    <Label width={30} position="center" content={<CustomLabel value={(parseFloat(_.sumBy(dataAssign, "Total")) / parseFloat(row.Total)) * 100} />}>
-                                                    </Label>
-                                                </Pie>
-                                                <Tooltips content={<AssignmentTooltip />} />
-                                            </PieChart>
-                                        </div>
-                                    }
+            return (
+                <Popover
+                    content={(
+                        <div className={styless['assign-detail-ca']}>
+                            <div className={styless['marker-tm-pictures']}>
+                                <img
+                                    className={styless['ca-big-img']}
+                                    src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${row.EmpCode}`} />
+                                <div>
+                                    <span>{`${row.EmpName}`}</span>
+                                    <span>{`${row.Mobile} (${row.NickName})`}</span>
+                                    <span>{`${moment(row.StartWorking).format('DD-MM-YYYY')} (${row.Period})`}</span>
                                 </div>
                                 {
-                                    // dataAssign.length > 0 &&
-                                    // <span style={{ fontSize: '12px', marginBottom: '7px' }}>{`${row.MarketName} (${parseFloat(row.Radius).toFixed(2)}Km.) ${row.RadiusFrom}`}</span>
-                                }
-                                {
                                     dataAssign.length > 0 &&
-                                    <Table
-                                        className={styless['table-direction-body-padding']}
-                                        size="small"
-                                        showHeader={false}
-                                        style={{ width: '370px' }}
-                                        pagination={false}
-                                        columns={this.getcolumnsBranchCA(true)}
-                                        dataSource={dataAssign} />
+                                    <div style={{ flex: '1', justifyContent: 'center', alignItems: 'center', maxHeight: '80px' }}>
+                                        <PieChart
+                                            width={110}
+                                            height={120}>
+                                            <Pie
+                                                data={chartData}
+                                                innerRadius={30}
+                                                activeIndex={0}
+                                                labelLine={false}
+                                            >
+                                                {
+                                                    chartData.map((entry, index) => <Cell fill={entry.color} />)
+                                                }
+                                                <Label width={30} position="center" content={<CustomLabel value={(parseFloat(_.sumBy(dataAssign, "Total")) / parseFloat(row.Total)) * 100} />}>
+                                                </Label>
+                                            </Pie>
+                                            <Tooltips content={<AssignmentTooltip />} />
+                                        </PieChart>
+                                    </div>
                                 }
                             </div>
-                        )}>
-                        <div
-                            style={{
-                                position: 'relative'
-                            }}>
                             {
-                                dataAssign.length > 0 ?
-                                    <Badge style={{
-                                        fontSize: '9px',
-                                        height: '15px',
-                                        lineHeight: '15px',
-                                        top: '-6px',
-                                        background: 'transparent',
-                                        boxShadow: 'none',
-                                        color: '#000'
-                                    }} count={_.sumBy(dataAssign, "Total")} overflowCount={99} >
-                                        <img className={styless['ca-mini-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${row.EmpCode}`} />
-                                    </Badge>
-                                    :
-                                    <img className={styless['ca-mini-img']} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${row.EmpCode}`} />
+                                // dataAssign.length > 0 &&
+                                // <span style={{ fontSize: '12px', marginBottom: '7px' }}>{`${row.MarketName} (${parseFloat(row.Radius).toFixed(2)}Km.) ${row.RadiusFrom}`}</span>
+                            }
+                            {
+                                dataAssign.length > 0 &&
+                                <Table
+                                    className={styless['table-direction-body-padding']}
+                                    size="small"
+                                    showHeader={false}
+                                    style={{ width: '350px' }}
+                                    pagination={false}
+                                    columns={this.getcolumnsBranchCA(true)}
+                                    dataSource={dataAssign} />
                             }
                         </div>
-                    </Popover>
-                )
-            }
-        }, {
-            dataIndex: 'TotalPercent',
-            colSpan: 0,
-            key: 'TotalPercent',
-            align: 'center',
-            width: '10%',
-            className: styless['td-vertical-middle'],
-            render: (text, record, index) => {
-                return (<span className={styless['align-right-text']}>{parseFloat(text).toFixed(0)}%</span>)
-            }
-        }, {
-            title: 'M',
-            dataIndex: 'Mon',
-            key: 'Mon',
-            align: 'center',
-            width: '34px',
-            className: `Mon ${styless['td-vertical-middle']}`,
-            render: (value, row, index) => {
-                if (value != 0) {
-                    return value
-                }
-            }
-        }, {
-            title: 'T',
-            dataIndex: 'Tue',
-            key: 'Tue',
-            align: 'center',
-            width: '34px',
-            className: `Tue ${styless['td-vertical-middle']}`,
-            render: (value, row, index) => {
-                if (value != 0) {
-                    return value
-                }
-            }
-        }, {
-            title: 'W',
-            dataIndex: 'Wed',
-            key: 'Wed',
-            align: 'center',
-            width: '34px',
-            className: `Wed ${styless['td-vertical-middle']}`,
-            render: (value, row, index) => {
-                if (value != 0) {
-                    return value
-                }
-            }
-        }, {
-            title: 'Th',
-            dataIndex: 'Thu',
-            key: 'Thu',
-            align: 'center',
-            width: '35px',
-            className: `Thu ${styless['td-vertical-middle']}`,
-            render: (value, row, index) => {
-                if (value != 0) {
-                    return value
-                }
-            }
-        }, {
-            title: 'F',
-            dataIndex: 'Fri',
-            key: 'Fri',
-            align: 'center',
-            width: '34px',
-            className: `Fri ${styless['td-vertical-middle']}`,
-            render: (value, row, index) => {
-                if (value != 0) {
-                    return value
-                }
+                    )}>
+                    <div
+                        style={{
+                            position: 'relative'
+                        }}>
+                        {
+                            dataAssign.length > 0 ?
+                                <Badge style={{
+                                    fontSize: '9px',
+                                    height: '15px',
+                                    lineHeight: '15px',
+                                    top: '-6px',
+                                    background: 'transparent',
+                                    boxShadow: 'none',
+                                    color: '#000'
+                                }} count={_.sumBy(dataAssign, "Total")} overflowCount={99} >
+                                    <img className={styless['ca-mini-img']} style={ActiveEmp} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${row.EmpCode}`} />
+                                </Badge>
+                                :
+                                <img className={styless['ca-mini-img']} style={ActiveEmp} src={`http://172.17.9.94/newservices/LBServices.svc/employee/image/${row.EmpCode}`} />
+                        }
+                    </div>
+                </Popover>
+            )
+        }
+    }, {
+        dataIndex: 'TotalPercent',
+        colSpan: 0,
+        key: 'TotalPercent',
+        align: 'center',
+        width: '40px',
+        className: styless['td-vertical-middle'],
+        render: (text, record, index) => {
+            return (<span className={styless['align-right-text']}>{parseFloat(text).toFixed(0)}%</span>)
+        }
+    }, {
+        dataIndex: 'Mon',
+        key: 'Mon',
+        colSpan: 0,
+        align: 'center',
+        width: '30px',
+        className: `Mon ${styless['td-vertical-middle']}`,
+        render: (value, row, index) => {
+            if (value != 0) {
+                return value
             }
         }
+    }, {
+        dataIndex: 'Tue',
+        key: 'Tue',
+        colSpan: 0,
+        align: 'center',
+        width: '30px',
+        className: `Tue ${styless['td-vertical-middle']}`,
+        render: (value, row, index) => {
+            if (value != 0) {
+                return value
+            }
+        }
+    }, {
+        dataIndex: 'Wed',
+        key: 'Wed',
+        colSpan: 0,
+        align: 'center',
+        width: '30px',
+        className: `Wed ${styless['td-vertical-middle']}`,
+        render: (value, row, index) => {
+            if (value != 0) {
+                return value
+            }
+        }
+    }, {
+        dataIndex: 'Thu',
+        key: 'Thu',
+        colSpan: 0,
+        align: 'center',
+        width: '30px',
+        className: `Thu ${styless['td-vertical-middle']}`,
+        render: (value, row, index) => {
+            if (value != 0) {
+                return value
+            }
+        }
+    }, {
+        dataIndex: 'Fri',
+        key: 'Fri',
+        colSpan: 0,
+        align: 'center',
+        width: '30px',
+        className: `Fri ${styless['td-vertical-middle']}`,
+        render: (value, row, index) => {
+            if (value != 0) {
+                return value
+            }
+        }
+    }
     ]);
 
     getDataMarketTotal = item => {
         const { data } = this.props;
 
         if (item) {
-            return _.filter(data[1], { MarketCode: item.MarketCode });
+            return _.filter(this.props.branchPCAMode ? data[5] : data[1], { MarketCode: item.MarketCode });
         }
         else {
             return ([])
@@ -833,7 +763,7 @@ class GMapPath extends Component {
 
     getOverlayView = () => {
         const { paths, onMarketMouseOver } = this.props
-
+        console.log(paths)
         return paths.map((itemPath, rootIndex) => (
             itemPath.paths.map((path, index) => index > 0 &&
                 (
@@ -847,20 +777,22 @@ class GMapPath extends Component {
                         getPixelPositionOffset={getPixelPositionOffset}>
                         <Popover content={(
                             <div style={{ display: 'flex', flexDirection: 'column', margin: '-8px' }}>
-                                <span style={{ fontSize: '12px', marginBottom: '3px', marginLeft: '3px' }}>
-                                    {
-                                        `ระยะห่างจากสาขา ${parseFloat(CoordinateDistanceMiles(itemPath.paths[0].item.Latitude, itemPath.paths[0].item.Longitude, path.item.Latitude, path.item.Longitude)).toFixed(1)} Km. `
-                                    }
-                                    {
-                                        index + 1 == itemPath.paths.length ? 'ตลาดนี้เป็นจุดสุดท้าย' : `ตลาดถัดไป ${parseFloat(itemPath.paths[index + 1].KM).toFixed(1)} Km.`
-                                    }
-                                </span>
                                 <Table
                                     key="PopOverTableMarket"
                                     className={styless['table-direction-body-padding']}
                                     size="small"
+                                    style={{ width: '240px' }}
                                     pagination={false}
-                                    columns={this.getcolumnsMarketCA()}
+                                    columns={this.getcolumnsMarketCA(
+                                        <span style={{ fontSize: '12px', marginBottom: '3px', marginLeft: '3px' }}>
+                                            {
+                                                `ระยะจากสาขา ${parseFloat(CoordinateDistanceMiles(itemPath.paths[0].item.Latitude, itemPath.paths[0].item.Longitude, path.item.Latitude, path.item.Longitude)).toFixed(1)} Km. `
+                                            }
+                                            {
+                                                index + 1 == itemPath.paths.length ? 'ตลาดนี้เป็นจุดสุดท้าย' : `ตลาดถัดไป ${parseFloat(itemPath.paths[index + 1].KM).toFixed(1)} Km.`
+                                            }
+                                        </span>
+                                    )}
                                     dataSource={this.getDataMarketTotal(path.item)} />
                             </div>
                         )}>
@@ -931,12 +863,12 @@ class GMapPath extends Component {
     }
 
     render() {
-        const { paths, center, data, selectedItem } = this.props
+        const { paths, data, selectedItem } = this.props
 
         const Branch = _.find(data[0], o => o.BranchType != 'K' && o.No == 1);
 
         return (
-            <GoogleMap ref="map" defaultZoom={8} defaultCenter={center}>
+            <GoogleMap ref="map" defaultCenter={{ lat: selectedItem.BranchLatitude, lng: selectedItem.BranchLongitude }} defaultZoom={12} >
                 {
                     this.getBaseMarker()
                 }
@@ -1045,10 +977,10 @@ class ModalCaDirectMarket extends Component {
 
     onMarketMouseOver = (item, onOver) => {
         if (onOver) {
-            this.setState({ marketOver: item, fitBounds: false });
+            this.setState({ marketOver: item });
         }
         else {
-            this.setState({ marketOver: null, fitBounds: false });
+            this.setState({ marketOver: null });
         }
     }
 
@@ -1260,6 +1192,7 @@ class ModalCaDirectMarket extends Component {
         let originMarkets = _.cloneDeep(markets);
 
         for (let i = 0; i <= originMarkets.length; i++) {
+
             const nextPath = this.findBestRouteToMarkets(originPath, originMarkets);
 
             resultPaths.push(nextPath);
@@ -1414,10 +1347,10 @@ class ModalCaDirectMarket extends Component {
                             {item && item.BranchName}
                         </span>
 
-                        <Icon
+                        {/* <Icon
                             onClick={this.setVisibleContent}
                             className={styles["trigger-close"]}
-                            type={iconVisible} />
+                            type={iconVisible} /> */}
 
                         <Tooltip title='Close'>
                             <Icon
@@ -1441,7 +1374,7 @@ class ModalCaDirectMarket extends Component {
                                             backgroundColor: '#FFF',
                                             padding: '5px',
                                             minWidth: '1200px',
-                                            height: '750px'
+                                            height: '670px'
                                         }}>
                                         <div
                                             className={`${styles['detail-container']} Cancel`}
@@ -1452,7 +1385,6 @@ class ModalCaDirectMarket extends Component {
                                                 height: '100%'
                                             }}>
                                             <MapWithAMarker
-                                                center={this.props.center}
                                                 paths={this.state.paths}
                                                 selectedItem={item}
                                                 selectedCaItem={this.state.selectedCaItem}
@@ -1519,5 +1451,9 @@ class ModalCaDirectMarket extends Component {
 
 export default connect((state) => ({
     NANO_BRANCH_DIRECTION_DATA: state.NANO_BRANCH_DIRECTION_DATA,
+    NANO_BRANCH_DIRECTION_NOTE_DATA: state.NANO_BRANCH_DIRECTION_NOTE_DATA,
     NANO_BRANCH_DIRECTION_DATA_STATUS: state.NANO_BRANCH_DIRECTION_DATA_STATUS
-}), { getNanoBranchDirection: getNanoBranchDirection })(ModalCaDirectMarket)
+}), {
+        getNanoBranchDirection: getNanoBranchDirection
+    }
+)(ModalCaDirectMarket)

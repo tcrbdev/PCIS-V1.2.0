@@ -53,6 +53,7 @@ export const GET_BRANCH_MARKER_DATA_URL = `${url}/nano/branch/`
 export const GET_BRANCH_IMAGE_MARKER_URL = `${urlPcis}/nano/branch/image/list/`
 export const GET_EXITING_MARKET_MARKER_DATA_URL = `${url}/nano/market/`
 export const GET_EXITING_MARKET_IMAGE_MARKER_URL = `${urlPcis}/nano/market/image/list/`
+export const GET_SHOP_LAYOUT_MARKER_URL = `${url}/nano/market/layout/`
 export const GET_POTENTIAL_MARKET_IMAGE_MARKER_URL = `${urlPcis}/nano/potential/image/list/`
 
 
@@ -63,5 +64,9 @@ export const GET_SALE_SUMMARY_CHART_URL = `${url}/nano/salesummary/chart`
 export const GET_NANO_STOP_APPROVAL_URL = `${url}/nano/nano/stopapproval`
 
 export const GET_NANO_BRANCH_DIRECTION_URL = `${url}/nano/branch/direction/`
+
+export const INSERT_UPDATE_DELETE_MARKETDPD_NOTE_URL = `${url}/nano/direction/note/`
+
+
 
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withCookies } from 'react-cookie';
 import Draggable from 'react-draggable'
 
-import { Button, Collapse, Layout, Tooltip } from 'antd';
+import { Button, Collapse, Layout, Tooltip, Icon } from 'antd';
 import Scrollbar from 'react-smooth-scrollbar';
 
 import SummaryTable from '../summarytable'
@@ -76,7 +76,7 @@ class Index extends Component {
             }
         }
         else {
-            getNanoMasterData({ EmployeeCode: '60069' });
+            getNanoMasterData({ EmployeeCode: '58385' });
             // getNanoVisitPopupInformation({});
         }
     }
@@ -322,10 +322,14 @@ class Index extends Component {
                     </div>
                 </Draggable>
 
-                <Draggable cancel=".ModalHeader" cancel="" onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer} >
+                <Draggable onDrag={this.handleDrag} defaultClassNameDragged={styles['top-layer']} onMouseDown={this.handleLayer}>
                     <div className={styles['multiple-window']} style={{ display: 'flex', flexDirection: 'column' }}>
                         <div className="ModalHeader" style={{ width: 'calc(100% - 130px)', height: '35px', left: '40px', right: '85px', position: 'absolute', zIndex: '1001' }}></div>
-                        <div id="ca-directino-market" style={{ position: 'relative' }} ></div>
+                        <div className="ModalHeader" id="ca-directino-market" style={{ position: 'relative' }} ></div>
+                        <div className="ModalHeader" style={{ width: '100%', height: '10px', left: '0px', right: '85px', cursor: 'pointer', bottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'absolute', zIndex: '1001' }}>
+                            <Icon type="caret-up" style={{ transform: 'rotate(-135deg)' }} />
+                            <Icon type="caret-down" style={{ transform: 'rotate(-45deg)' }} />
+                        </div>
                     </div>
                 </Draggable>
             </Layout>

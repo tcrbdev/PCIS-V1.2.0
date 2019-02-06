@@ -39,6 +39,10 @@ import {
     GET_NANO_BRANCH_DIRECTION_SUCCESS,
     GET_NANO_BRANCH_DIRECTION_FAILURE,
 
+    GET_NANO_BRANCH_DIRECTION_NOTE_REQUEST,
+    GET_NANO_BRANCH_DIRECTION_NOTE_SUCCESS,
+    GET_NANO_BRANCH_DIRECTION_NOTE_FAILURE,
+
     SET_GLOBAL_POPOVER_STATE
 } from '../constants/actionsType'
 
@@ -466,6 +470,20 @@ export const CA_SUMMARY_ONLY_MARKET_CONTRIBUTION = (state = initialStateArray, a
 export const NANO_BRANCH_DIRECTION_DATA = (state = initialStateArray, action) => {
     switch (action.type) {
         case GET_NANO_BRANCH_DIRECTION_SUCCESS:
+            return action.payload.NANO_BRANCH_DIRECTION_DATA
+            break;
+        default:
+            return state
+            break;
+    }
+}
+
+export const NANO_BRANCH_DIRECTION_NOTE_DATA = (state = initialStateArray, action) => {
+    switch (action.type) {
+        case GET_NANO_BRANCH_DIRECTION_SUCCESS:
+            return action.payload.NANO_BRANCH_DIRECTION_NOTE_DATA
+            break;
+        case GET_NANO_BRANCH_DIRECTION_NOTE_SUCCESS:
             return action.payload
             break;
         default:
@@ -481,6 +499,45 @@ export const NANO_BRANCH_DIRECTION_DATA_STATUS = (state = false, action) => {
             break;
         default:
             return state
+            break;
+    }
+}
+
+export const uuidv4 = () => ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+
+export const NANO_BRANCH_DIRECTION_NOTE_STATUS = (state = initialStateObj, action) => {
+    switch (action.type) {
+        case GET_NANO_BRANCH_DIRECTION_NOTE_REQUEST:
+            return {
+                ID: uuidv4(),
+                isSaveNote: true,
+                isSuccess: false,
+                text: "กำลังบันทึกข้อมูล",
+            }
+            break;
+        case GET_NANO_BRANCH_DIRECTION_NOTE_SUCCESS:
+            return {
+                ID: uuidv4(),
+                isSaveNote: false,
+                isSuccess: true,
+                text: "บันทึกข้อมูลเรียบร้อย",
+            }
+            break;
+        case GET_NANO_BRANCH_DIRECTION_NOTE_FAILURE:
+            return {
+                ID: uuidv4(),
+                isSaveNote: false,
+                isSuccess: false,
+                text: "เกิดข้อผิดพลาดระหว่างการบันทึกข้อมูลกรุณาลองใหม่อีกครั้ง",
+            }
+            break;
+        default:
+            return {
+                ID: uuidv4(),
+                isSaveNote: false,
+                isSuccess: false,
+                text: "",
+            }
             break;
     }
 }

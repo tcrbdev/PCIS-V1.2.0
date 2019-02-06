@@ -583,7 +583,7 @@ class PortfolioChart extends Component {
                                     % of Current (W0-W2 > 90%)
                                     <div>
                                         {
-                                            `Total OS ${(item.PORTFOLIO_QUALITY_CHART[1] && item.PORTFOLIO_QUALITY_CHART[1][0]) ? item.PORTFOLIO_QUALITY_CHART[1][0].AllAmt : 0}Mb 
+                                            `Total OS ${(item.PORTFOLIO_QUALITY_CHART[1] && item.PORTFOLIO_QUALITY_CHART[1][0]) ? item.PORTFOLIO_QUALITY_CHART[1][0].AllAmt : 0} 
                                         (${(item.PORTFOLIO_QUALITY_CHART[1] && item.PORTFOLIO_QUALITY_CHART[1][0]) ? item.PORTFOLIO_QUALITY_CHART[1][0].AllAct : 0} Cust.)`
                                         }
                                     </div>

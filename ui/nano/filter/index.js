@@ -144,7 +144,8 @@ class Filter extends Component {
                 _.mapKeys(_.groupBy(value, 'ZoneValue'), (i, k) => {
                     result.Zone.push({
                         ZoneValue: k,
-                        ZoneText: i[0].ZoneText
+                        ZoneText: i[0].ZoneText,
+                        Seq: parseInt(_.replace(i[0].ZoneText, "Zone", "").split("-")[1])
                     })
                 })
                 resultGroupBy.push(result)
@@ -158,7 +159,7 @@ class Filter extends Component {
                     title: item.AreaID,
                     value: item.AreaID,
                     key: item.AreaID,
-                    children: item.Zone.map(zone => ({
+                    children: _.orderBy(item.Zone, "Seq").map(zone => ({
                         title: zone.ZoneText,
                         value: zone.ZoneValue,
                         key: zone.ZoneValue
@@ -757,14 +758,14 @@ class Filter extends Component {
                                             ],
                                         })
                                             (
-                                            <TreeSelect
-                                                {...tProps}
-                                                className={styles['region_field']}
-                                                treeData={this.getRegionSelectItem()}
-                                                searchPlaceholder="Please select area"
-                                                treeNodeFilterProp="title"
-                                                onClick={this.onRegionExpand(styles['region_field'])}
-                                            />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    className={styles['region_field']}
+                                                    treeData={this.getRegionSelectItem()}
+                                                    searchPlaceholder="Please select area"
+                                                    treeNodeFilterProp="title"
+                                                    onClick={this.onRegionExpand(styles['region_field'])}
+                                                />
                                             )
                                     }
                                 </FormItem>
@@ -779,15 +780,15 @@ class Filter extends Component {
                                         {
                                             getFieldDecorator('AreaID')
                                                 (
-                                                <TreeSelect
-                                                    {...tProps}
-                                                    disabled={_.isEmpty(getFieldValue("RegionID"))}
-                                                    className={`${styles['area_field']} ${styles['select-maxheight']}`}
-                                                    treeData={this.getAreaSelectItem()}
-                                                    autoExpandParent={true}
-                                                    searchPlaceholder="Please select area"
-                                                    onClick={this.onExpand(styles['area_field'])}
-                                                />
+                                                    <TreeSelect
+                                                        {...tProps}
+                                                        disabled={_.isEmpty(getFieldValue("RegionID"))}
+                                                        className={`${styles['area_field']} ${styles['select-maxheight']}`}
+                                                        treeData={this.getAreaSelectItem()}
+                                                        autoExpandParent={true}
+                                                        searchPlaceholder="Please select area"
+                                                        onClick={this.onExpand(styles['area_field'])}
+                                                    />
                                                 )
                                         }
                                     </FormItem>
@@ -804,17 +805,17 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('BranchCode')
                                             (
-                                            <TreeSelect
-                                                {...tProps}
-                                                className={styles['branch_field']}
-                                                disabled={_.isEmpty(getFieldValue("AreaID"))}
-                                                treeDefaultExpandAll={false}
-                                                treeData={this.getBranchSelectItem()}
-                                                dropdownMatchSelectWidth={false}
-                                                onClick={this.onBrExpand}
-                                                treeNodeFilterProp="title"
-                                                searchPlaceholder="Please select branch"
-                                            />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    className={styles['branch_field']}
+                                                    disabled={_.isEmpty(getFieldValue("AreaID"))}
+                                                    treeDefaultExpandAll={false}
+                                                    treeData={this.getBranchSelectItem()}
+                                                    dropdownMatchSelectWidth={false}
+                                                    onClick={this.onBrExpand}
+                                                    treeNodeFilterProp="title"
+                                                    searchPlaceholder="Please select branch"
+                                                />
                                             )
                                     }
                                 </FormItem>
@@ -830,14 +831,14 @@ class Filter extends Component {
                                             initialValue: defaultBranchType
                                         })
                                             (
-                                            <TreeSelect
-                                                {...tProps}
-                                                className={`${styles['branch_type_field']} ${styles['select-maxheight']}`}
-                                                treeData={this.getBranchTypeSelectItem()}
-                                                autoExpandParent={true}
-                                                searchPlaceholder="Please select branch type"
-                                                onClick={this.onExpand(styles['branch_type_field'])}
-                                            />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    className={`${styles['branch_type_field']} ${styles['select-maxheight']}`}
+                                                    treeData={this.getBranchTypeSelectItem()}
+                                                    autoExpandParent={true}
+                                                    searchPlaceholder="Please select branch type"
+                                                    onClick={this.onExpand(styles['branch_type_field'])}
+                                                />
                                             )
                                     }
                                 </FormItem>
@@ -854,17 +855,17 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('CAName')
                                             (
-                                            <TreeSelect
-                                                {...tProps}
-                                                className={styles['calist_field']}
-                                                disabled={_.isEmpty(getFieldValue("BranchCode"))}
-                                                treeDefaultExpandAll={false}
-                                                treeData={this.getCANameSelect()}
-                                                dropdownMatchSelectWidth={false}
-                                                onClick={this.onCAExpand}
-                                                treeNodeFilterProp="title"
-                                                searchPlaceholder="Search ca name"
-                                            />
+                                                <TreeSelect
+                                                    {...tProps}
+                                                    className={styles['calist_field']}
+                                                    disabled={_.isEmpty(getFieldValue("BranchCode"))}
+                                                    treeDefaultExpandAll={false}
+                                                    treeData={this.getCANameSelect()}
+                                                    dropdownMatchSelectWidth={false}
+                                                    onClick={this.onCAExpand}
+                                                    treeNodeFilterProp="title"
+                                                    searchPlaceholder="Search ca name"
+                                                />
                                             )
                                     }
                                 </FormItem>
@@ -880,7 +881,7 @@ class Filter extends Component {
                                             initialValue: defaultShowMarkerOptions
                                         })
                                             (
-                                            <CheckboxGroup className={styles['check-box-text']} options={ShowMarkerOptions} style={{ marginRight: '0px' }} />
+                                                <CheckboxGroup className={styles['check-box-text']} options={ShowMarkerOptions} style={{ marginRight: '0px' }} />
                                             )
                                     }
                                 </FormItem>
@@ -896,7 +897,7 @@ class Filter extends Component {
                                     {
                                         getFieldDecorator('MarketName')
                                             (
-                                            <Input disabled={true} />
+                                                <Input disabled={true} />
                                             )
                                     }
                                 </FormItem>
@@ -913,10 +914,10 @@ class Filter extends Component {
                                             initialValue: false,
                                         })
                                             (
-                                            <Checkbox
-                                                size="medium"
-                                                className={styles['check-box']}>
-                                                Include Branch Market ({_.filter(this.props.RELATED_EXITING_MARKET_DATA, o => o.BranchType != 'K').length})
+                                                <Checkbox
+                                                    size="medium"
+                                                    className={styles['check-box']}>
+                                                    Include Branch Market ({_.filter(this.props.RELATED_EXITING_MARKET_DATA, o => o.BranchType != 'K').length})
                                             </Checkbox>
                                             )
                                     }
@@ -950,7 +951,7 @@ class Filter extends Component {
                                                         initialValue: false,
                                                     })
                                                         (
-                                                        <Checkbox className={styles['check-box']}>เงินติดล้อ ({_.filter(this.props.RELATED_COMPLITITOR_DATA, { TypeCode: '2' }).length})</Checkbox>
+                                                            <Checkbox className={styles['check-box']}>เงินติดล้อ ({_.filter(this.props.RELATED_COMPLITITOR_DATA, { TypeCode: '2' }).length})</Checkbox>
                                                         )
                                                 }
 
@@ -965,7 +966,7 @@ class Filter extends Component {
                                                         initialValue: false,
                                                     })
                                                         (
-                                                        <Checkbox className={styles['check-box']}>เมืองไทย ({_.filter(this.props.RELATED_COMPLITITOR_DATA, { TypeCode: '3' }).length})</Checkbox>
+                                                            <Checkbox className={styles['check-box']}>เมืองไทย ({_.filter(this.props.RELATED_COMPLITITOR_DATA, { TypeCode: '3' }).length})</Checkbox>
                                                         )
                                                 }
 
@@ -980,7 +981,7 @@ class Filter extends Component {
                                                         initialValue: false,
                                                     })
                                                         (
-                                                        <Checkbox className={styles['check-box']}>ศรีสวัสดิ์ ({_.filter(this.props.RELATED_COMPLITITOR_DATA, { TypeCode: '1' }).length})</Checkbox>
+                                                            <Checkbox className={styles['check-box']}>ศรีสวัสดิ์ ({_.filter(this.props.RELATED_COMPLITITOR_DATA, { TypeCode: '1' }).length})</Checkbox>
                                                         )
                                                 }
 
@@ -993,16 +994,16 @@ class Filter extends Component {
                                                         initialValue: []
                                                     })
                                                         (
-                                                        <TreeSelect
-                                                            {...tProps}
-                                                            className={styles['competitor_field']}
-                                                            treeDefaultExpandAll={false}
-                                                            dropdownMatchSelectWidth={false}
-                                                            treeData={this.getComplititorSelect()}
-                                                            searchPlaceholder="กรุณาเลือกจังหวัด"
-                                                            style={{ 'width': '100%' }}
-                                                            treeNodeFilterProp="title"
-                                                            onClick={this.onCompetitorExpand} />
+                                                            <TreeSelect
+                                                                {...tProps}
+                                                                className={styles['competitor_field']}
+                                                                treeDefaultExpandAll={false}
+                                                                dropdownMatchSelectWidth={false}
+                                                                treeData={this.getComplititorSelect()}
+                                                                searchPlaceholder="กรุณาเลือกจังหวัด"
+                                                                style={{ 'width': '100%' }}
+                                                                treeNodeFilterProp="title"
+                                                                onClick={this.onCompetitorExpand} />
                                                         )
                                                 }
                                             </Col>
@@ -1030,8 +1031,8 @@ class Filter extends Component {
                                             initialValue: false,
                                         })
                                             (
-                                            <Checkbox className={styles['check-box']}>
-                                                Include Potential Mkt ({this.props.RELATED_TARGET_MARKET_DATA.length})
+                                                <Checkbox className={styles['check-box']}>
+                                                    Include Potential Mkt ({this.props.RELATED_TARGET_MARKET_DATA.length})
                                             </Checkbox>
                                             )
                                     }
@@ -1050,9 +1051,9 @@ class Filter extends Component {
                                             initialValue: false,
                                         })
                                             (
-                                            <Checkbox
-                                                className={styles['check-box']}>
-                                                Include Kiosk Market ({_.filter(this.props.RELATED_EXITING_MARKET_DATA, { BranchType: 'K' }).length})
+                                                <Checkbox
+                                                    className={styles['check-box']}>
+                                                    Include Kiosk Market ({_.filter(this.props.RELATED_EXITING_MARKET_DATA, { BranchType: 'K' }).length})
                                             </Checkbox>
                                             )
                                     }
@@ -1071,15 +1072,15 @@ class Filter extends Component {
                                         {
                                             getFieldDecorator('Province')
                                                 (
-                                                <TreeSelect
-                                                    {...tProps}
-                                                    className={styles['province_field']}
-                                                    treeDefaultExpandAll={false}
-                                                    treeDefaultExpandedKeys={['all']}
-                                                    treeData={this.getProvinceSelect()}
-                                                    searchPlaceholder="Search employee name"
-                                                    treeNodeFilterProp="title"
-                                                    onClick={this.onProvinceExpand} />
+                                                    <TreeSelect
+                                                        {...tProps}
+                                                        className={styles['province_field']}
+                                                        treeDefaultExpandAll={false}
+                                                        treeDefaultExpandedKeys={['all']}
+                                                        treeData={this.getProvinceSelect()}
+                                                        searchPlaceholder="Search employee name"
+                                                        treeNodeFilterProp="title"
+                                                        onClick={this.onProvinceExpand} />
                                                 )
                                         }
                                     </FormItem>

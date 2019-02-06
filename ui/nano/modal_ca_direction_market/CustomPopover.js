@@ -81,7 +81,7 @@ class CustomPopOver extends Component {
             }
             else if (GLOBAL_POPOVER_STATE.Key == this.state.key && GLOBAL_POPOVER_STATE.IsOpen) {
                 render(
-                    <div className={`${styles['transparent-popover']}`}>
+                    <div className={`${styles['custom-popover']}`}>
                         <div className={styles['custom-popover-header']}>
                             <div>
                                 {
@@ -160,6 +160,7 @@ class CustomPopOver extends Component {
         if ((trigger || '').toLowerCase() == 'click') {
             if (GLOBAL_POPOVER_STATE.Key == this.state.key && GLOBAL_POPOVER_STATE.IsOpen) {
                 activeStyle.backgroundColor = '#F44336';
+                activeStyle.color = '#000';
             }
         }
 

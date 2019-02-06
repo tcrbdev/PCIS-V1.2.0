@@ -413,6 +413,7 @@ class ModalSaleSummary extends Component {
         const { CA_SUMMARY_ONLY_MARKET_CONTRIBUTION } = this.props
 
         let result = [], top = 5
+
         _.mapKeys(_.groupBy(CA_SUMMARY_ONLY_MARKET_CONTRIBUTION, 'MarketCode'), (value, key) => {
 
             const os = _.find(value, { Status: 'OS' })
@@ -453,7 +454,8 @@ class ModalSaleSummary extends Component {
             }
         })
 
-        return objResult
+        return _.filter(objResult, o => o.OS_App > 0)
+        // return objResult
     }
 
     handleDrag = (e, ui) => {
@@ -537,7 +539,7 @@ class ModalSaleSummary extends Component {
                                     <div className={styles['detail-container']}>
                                         <div className={styles['detail-chart']}>
                                             <div style={{ width: '160px', height: '160px' }}>
-                                                <Doughnut {...this.chartData() } style={{ position: 'absolute' }} />
+                                                <Doughnut {...this.chartData()} style={{ position: 'absolute' }} />
                                                 <span>{parseFloat(os.Ach).toFixed(0)}%</span>
                                             </div>
                                             <div>

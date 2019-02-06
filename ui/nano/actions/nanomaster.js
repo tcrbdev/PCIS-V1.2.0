@@ -23,6 +23,7 @@ import {
     GET_BRANCH_IMAGE_MARKER_URL,
     GET_EXITING_MARKET_MARKER_DATA_URL,
     GET_EXITING_MARKET_IMAGE_MARKER_URL,
+    GET_SHOP_LAYOUT_MARKER_URL,
     GET_POTENTIAL_MARKET_IMAGE_MARKER_URL,
 
     INSERT_UPDATE_MARKER_NOTE_URL,
@@ -31,7 +32,8 @@ import {
     GET_SALE_SUMMARY_CHART_URL,
     GET_NANO_STOP_APPROVAL_URL,
 
-    GET_NANO_BRANCH_DIRECTION_URL
+    GET_NANO_BRANCH_DIRECTION_URL,
+    INSERT_UPDATE_DELETE_MARKETDPD_NOTE_URL
 } from '../../common/constants/endpoints'
 
 import {
@@ -87,6 +89,10 @@ import {
     GET_NANO_BRANCH_DIRECTION_SUCCESS,
     GET_NANO_BRANCH_DIRECTION_FAILURE,
 
+    GET_NANO_BRANCH_DIRECTION_NOTE_REQUEST,
+    GET_NANO_BRANCH_DIRECTION_NOTE_SUCCESS,
+    GET_NANO_BRANCH_DIRECTION_NOTE_FAILURE,
+
     SET_GLOBAL_POPOVER_STATE
 } from '../../common/constants/actionsType'
 
@@ -119,6 +125,8 @@ export const setOpenBranchMarker = (targetMarker, currentState, isOpen) => dispa
             item.showMenu = false
             item.showPortfolio = false
             item.showSaleSummary = false
+            item.showShopLayout = false
+            item.SHOP_LAYOUT = []
             item.BRANCH_INFORMATION = res[0]
             item.CA_BRANCH_INFORMATION = res[1]
             item.BRANCH_DESCRIPTION = res[2]
@@ -137,6 +145,69 @@ export const setOpenBranchMarker = (targetMarker, currentState, isOpen) => dispa
         })
 }
 
+export const setOpenBranchShopLayoutMarker = (targetMarker, currentState, isOpen) => dispatch => {
+    let api = [
+        fetch(`${GET_SHOP_LAYOUT_MARKER_URL}${targetMarker.BranchCode}`).then(res => (res.json())),
+        fetch(`${GET_BRANCH_IMAGE_MARKER_URL}${targetMarker.BranchCode}`).then(res => (res.json()))
+    ]
+
+    if (isOpen) {
+        bluebird.all(api)
+            .spread((SHOP_LAYOUT, BRANCH_IMAGE) => {
+                let item = _.find(currentState, { BranchCode: targetMarker.BranchCode })
+                item.showInfo = false
+                item.showImage = false
+                item.showMenu = false
+                item.showPortfolio = false
+                item.showSaleSummary = false
+                item.showShopLayout = isOpen
+                item.SHOP_LAYOUT = SHOP_LAYOUT
+                item.BRANCH_INFORMATION = []
+                item.CA_BRANCH_INFORMATION = []
+                item.BRANCH_DESCRIPTION = []
+                item.BRANCH_RADIUS = []
+                item.NOTE = []
+                item.BRANCH_IMAGE = BRANCH_IMAGE
+                item.PORTFOLIO_QUALITY_CHART = []
+                item.SALE_SUMMARY_CHART = []
+
+                let newState = _.cloneDeep(currentState)
+
+                dispatch({
+                    type: SET_OPEN_BRANCH_MARKER_REQUEST,
+                    payload: newState
+                })
+            })
+    }
+    else {
+        let item = _.find(currentState, { BranchCode: targetMarker.BranchCode })
+        item.showInfo = false
+        item.showImage = false
+        item.showMenu = false
+        item.showPortfolio = false
+        item.showSaleSummary = false
+        item.showShopLayout = isOpen
+        item.SHOP_LAYOUT = []
+        item.BRANCH_INFORMATION = []
+        item.CA_BRANCH_INFORMATION = []
+        item.BRANCH_DESCRIPTION = []
+        item.BRANCH_RADIUS = []
+        item.NOTE = []
+        item.BRANCH_IMAGE = []
+        item.PORTFOLIO_QUALITY_CHART = []
+        item.SALE_SUMMARY_CHART = []
+
+        let newState = _.cloneDeep(currentState)
+
+        dispatch({
+            type: SET_OPEN_BRANCH_MARKER_REQUEST,
+            payload: newState
+        })
+    }
+
+
+}
+
 export const setOpenBranchImageMarker = (targetMarker, currentState, isOpen) => dispatch => {
     const URL = `${GET_BRANCH_IMAGE_MARKER_URL}${targetMarker.BranchCode}`
 
@@ -149,6 +220,8 @@ export const setOpenBranchImageMarker = (targetMarker, currentState, isOpen) => 
             item.showMenu = false
             item.showPortfolio = false
             item.showSaleSummary = false
+            item.showShopLayout = false
+            item.SHOP_LAYOUT = []
             item.BRANCH_INFORMATION = []
             item.CA_BRANCH_INFORMATION = []
             item.BRANCH_DESCRIPTION = []
@@ -186,6 +259,8 @@ export const setOpenBranchPortfolioMarker = (targetMarker, currentState, isOpen,
             item.showMenu = false
             item.showPortfolio = isOpen
             item.showSaleSummary = false
+            item.showShopLayout = false
+            item.SHOP_LAYOUT = []
             item.BRANCH_INFORMATION = []
             item.CA_BRANCH_INFORMATION = []
             item.BRANCH_DESCRIPTION = []
@@ -223,6 +298,8 @@ export const setOpenBranchSaleSummaryMarker = (targetMarker, currentState, isOpe
             item.showMenu = false
             item.showPortfolio = false
             item.showSaleSummary = isOpen
+            item.showShopLayout = false
+            item.SHOP_LAYOUT = []
             item.BRANCH_INFORMATION = []
             item.CA_BRANCH_INFORMATION = []
             item.BRANCH_DESCRIPTION = []
@@ -271,6 +348,7 @@ export const setOpenExitingMarketMarker = (targetMarker, currentState, isOpen) =
             item.CA_INFORMATION = res[1]
             item.NOTE = res[2]
             item.MARKET_IMAGE = []
+            item.SHOP_LAYOUT = []
             item.PORTFOLIO_QUALITY_CHART = []
             item.SALE_SUMMARY_CHART = []
 
@@ -301,6 +379,7 @@ export const setOpenExitingMarketImageMarker = (targetMarker, currentState, isOp
             item.CA_INFORMATION = []
             item.NOTE = []
             item.MARKET_IMAGE = res
+            item.SHOP_LAYOUT = []
             item.PORTFOLIO_QUALITY_CHART = []
             item.SALE_SUMMARY_CHART = []
 
@@ -315,11 +394,13 @@ export const setOpenExitingMarketImageMarker = (targetMarker, currentState, isOp
 
 export const setOpenExitingMarketShopLayoutMarker = (targetMarker, currentState, isOpen) => dispatch => {
 
-    const URL = `${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`
+    let api = [
+        fetch(`${GET_SHOP_LAYOUT_MARKER_URL}${targetMarker.MarketCode}`).then(res => (res.json())),
+        fetch(`${GET_EXITING_MARKET_IMAGE_MARKER_URL}${targetMarker.MarketCode}`).then(res => (res.json()))
+    ]
 
-    fetch(URL)
-        .then(res => (res.json()))
-        .then(res => {
+    bluebird.all(api)
+        .spread((SHOP_LAYOUT, MARKET_IMAGE) => {
             let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
             item.showInfo = false
             item.showImage = false
@@ -330,7 +411,8 @@ export const setOpenExitingMarketShopLayoutMarker = (targetMarker, currentState,
             item.MARKET_INFORMATION = []
             item.CA_INFORMATION = []
             item.NOTE = []
-            item.MARKET_IMAGE = res
+            item.MARKET_IMAGE = MARKET_IMAGE
+            item.SHOP_LAYOUT = SHOP_LAYOUT
             item.PORTFOLIO_QUALITY_CHART = []
             item.SALE_SUMMARY_CHART = []
 
@@ -341,6 +423,45 @@ export const setOpenExitingMarketShopLayoutMarker = (targetMarker, currentState,
                 payload: newState
             })
         })
+        .catch(e => {
+            if (!e.response) {
+                dispatch({
+                    type: GET_NANO_BRANCH_DIRECTION_FAILURE,
+                    payload: {
+                        status: "Error",
+                        statusText: e.response
+                    }
+                })
+            }
+        })
+
+    // const URL = `${GET_SHOP_LAYOUT_MARKER_URL}${targetMarker.MarketCode}`
+
+    // fetch(URL)
+    //     .then(res => (res.json()))
+    //     .then(res => {
+    //         let item = _.find(currentState, { MarketCode: targetMarker.MarketCode })
+    //         item.showInfo = false
+    //         item.showImage = false
+    //         item.showMenu = false
+    //         item.showShopLayout = isOpen
+    //         item.showSaleSummary = false
+    //         item.showPortfolio = false
+    //         item.MARKET_INFORMATION = []
+    //         item.CA_INFORMATION = []
+    //         item.NOTE = []
+    //         item.MARKET_IMAGE = []
+    //         item.SHOP_LAYOUT = res
+    //         item.PORTFOLIO_QUALITY_CHART = []
+    //         item.SALE_SUMMARY_CHART = []
+
+    //         let newState = _.cloneDeep(currentState)
+
+    //         dispatch({
+    //             type: SET_OPEN_EXITING_MARKET_MARKER_REQUEST,
+    //             payload: newState
+    //         })
+    //     })
 }
 
 export const setOpenExitingMarketSaleSummaryMarker = (targetMarker, currentState, isOpen, criteria) => dispatch => {
@@ -369,6 +490,7 @@ export const setOpenExitingMarketSaleSummaryMarker = (targetMarker, currentState
             item.CA_INFORMATION = []
             item.NOTE = []
             item.MARKET_IMAGE = res
+            item.SHOP_LAYOUT = []
             item.PORTFOLIO_QUALITY_CHART = []
             item.SALE_SUMMARY_CHART = res
 
@@ -412,6 +534,7 @@ export const setOpenExitingMarketPortfolioMarker = (targetMarker, currentState, 
             item.CA_INFORMATION = []
             item.NOTE = []
             item.MARKET_IMAGE = res
+            item.SHOP_LAYOUT = []
             item.PORTFOLIO_QUALITY_CHART = res
             item.SALE_SUMMARY_CHART = []
 
@@ -962,14 +1085,82 @@ export const getPortfolioQualityChart = criteria => dispatch => dispatch({
 })
 
 export const getNanoBranchDirection = BRANCH_CODE => dispatch => {
-    dispatch({
-        [CALL_API]: {
-            endpoint: `${GET_NANO_BRANCH_DIRECTION_URL}${BRANCH_CODE}`,
-            method: 'GET',
-            types: [GET_NANO_BRANCH_DIRECTION_REQUEST, GET_NANO_BRANCH_DIRECTION_SUCCESS, GET_NANO_BRANCH_DIRECTION_FAILURE]
-        }
-    })
+
+    dispatch({ type: GET_NANO_BRANCH_DIRECTION_REQUEST })
+
+    let api = [
+        fetch(`${GET_NANO_BRANCH_DIRECTION_URL}${BRANCH_CODE}`).then(res => (res.json())),
+        fetch(`${INSERT_UPDATE_DELETE_MARKETDPD_NOTE_URL}?BranchCode=${BRANCH_CODE}`).then(res => (res.json()))
+    ]
+
+    //         app.get('/nano/branch/direction/:BranchCode', BranchMarketDirection);
+    // app.get('/nano/direction/note/:Query?', NanoMarketRouteNoteRead);
+    // app.post('/nano/direction/note', NanoMarketRouteNoteInsert);
+    // app.put('/nano/direction/note', NanoMarketRouteNoteUpdate);
+    // app.delete('/nano/direction/note/:Query?', NanoMarketRouteNoteDelete);
+
+    bluebird.all(api)
+        .spread((NANO_BRANCH_DIRECTION_DATA, NANO_BRANCH_DIRECTION_NOTE_DATA) => {
+            const res = {
+                NANO_BRANCH_DIRECTION_DATA,
+                NANO_BRANCH_DIRECTION_NOTE_DATA
+            }
+
+            dispatch({
+                type: GET_NANO_BRANCH_DIRECTION_SUCCESS,
+                payload: res
+            })
+        })
+        .catch(e => {
+            if (!e.response) {
+                dispatch({
+                    type: GET_NANO_BRANCH_DIRECTION_FAILURE,
+                    payload: {
+                        status: "Error",
+                        statusText: e.response
+                    }
+                })
+            }
+        })
 }
+
+export const insertBranchDirectionNote = param => dispatch => dispatch({
+    [CALL_API]: {
+        endpoint: INSERT_UPDATE_DELETE_MARKETDPD_NOTE_URL,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify(param),
+        types: [GET_NANO_BRANCH_DIRECTION_NOTE_REQUEST, GET_NANO_BRANCH_DIRECTION_NOTE_SUCCESS, GET_NANO_BRANCH_DIRECTION_NOTE_FAILURE]
+    }
+})
+
+export const updateBranchDirectionNote = param => dispatch => dispatch({
+    [CALL_API]: {
+        endpoint: INSERT_UPDATE_DELETE_MARKETDPD_NOTE_URL,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        method: 'PUT',
+        body: JSON.stringify(param),
+        types: [GET_NANO_BRANCH_DIRECTION_NOTE_REQUEST, GET_NANO_BRANCH_DIRECTION_NOTE_SUCCESS, GET_NANO_BRANCH_DIRECTION_NOTE_FAILURE]
+    }
+})
+
+export const deleteBranchDirectionNote = param => dispatch => dispatch({
+    [CALL_API]: {
+        endpoint: `${INSERT_UPDATE_DELETE_MARKETDPD_NOTE_URL}?SysNO=${param.SysNO}&=${param.UpdatedBy}`,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        method: 'DELETE',
+        types: [GET_NANO_BRANCH_DIRECTION_NOTE_REQUEST, GET_NANO_BRANCH_DIRECTION_NOTE_SUCCESS, GET_NANO_BRANCH_DIRECTION_NOTE_FAILURE]
+    }
+})
 
 export const setGlobalPopoverState = (Key, PopoverOpen) => dispatch => dispatch({ type: SET_GLOBAL_POPOVER_STATE, GlobalPopoverState: { Key, IsOpen: PopoverOpen } })
 

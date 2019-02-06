@@ -114,27 +114,27 @@ class SummaryTable extends Component {
                         initialValue: [this.props.NANO_FILTER_CRITERIA.CAName.split(',')[0]]
                     })
                         (
-                        <Select
-                            mode="multiple"
-                            disabled={this.state.disabledCA}
-                            onChange={this.onCANameChange}
-                            dropdownMatchSelectWidth={false}
-                            style={{ width: '80%' }}>
-                            {
-                                groupItem.map((item, index) => {
-                                    return (
-                                        <OptGroup key={item.BranchName} label={item.BranchName}>
-                                            {
-                                                item.CAItem.map((ca, i) => {
-                                                    return <Option key={ca.CACode} value={ca.CACode}>{ca.CAName}</Option>
-                                                })
-                                            }
-                                        </OptGroup>
-                                    )
+                            <Select
+                                mode="multiple"
+                                disabled={this.state.disabledCA}
+                                onChange={this.onCANameChange}
+                                dropdownMatchSelectWidth={false}
+                                style={{ width: '80%' }}>
+                                {
+                                    groupItem.map((item, index) => {
+                                        return (
+                                            <OptGroup key={item.BranchName} label={item.BranchName}>
+                                                {
+                                                    item.CAItem.map((ca, i) => {
+                                                        return <Option key={ca.CACode} value={ca.CACode}>{ca.CAName}</Option>
+                                                    })
+                                                }
+                                            </OptGroup>
+                                        )
 
-                                })
-                            }
-                        </Select>
+                                    })
+                                }
+                            </Select>
                         )
 
                 }
@@ -223,7 +223,7 @@ class SummaryTable extends Component {
         title: (<div className={styles['div-center']}><span>MarketName</span></div>),
         dataIndex: 'MarketName',
         key: 'MarketName',
-        width: '24%',
+        width: '18%',
         className: `${styles['align-left']} ${styles['sm-paddings']} ${styles['vertical-middle']}`,
         render: (text, record, index) => {
             return (
@@ -278,7 +278,7 @@ class SummaryTable extends Component {
         children: [
             {
                 title: (<div className={styles['div-center']}><span>Pot.</span></div>),
-                width: '5%',
+                width: '7%',
                 dataIndex: 'Potential',
                 className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
                 render: (text, record, index) => {
@@ -302,7 +302,7 @@ class SummaryTable extends Component {
                         dataIndex: 'SetupAch',
                         className: `${styles['align-right']} ${styles['sm-paddings']} ${styles['vertical-bottom']}`,
                         //className: `${styles['header-hide']} ${styles['align-right']} ${styles['vertical-bottom']}`,
-                        width: '5%',
+                        width: '7%',
                         render: (text, record, index) => {
                             return <span style={{ padding: '3px' }} className={text < 0 && styles['red-font']}>{Math.round(parseFloat(text ? text : 0))}%</span>
                         }
